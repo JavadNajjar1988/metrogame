@@ -1,0 +1,123 @@
+.timer {
+    font-size: 2em;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px;
+    background-color: #209c7d;
+    color: #fff;
+    border-radius: 5px;
+    animation: pulse 1s ease infinite;
+    font-family: 'Vazir', sans-serif; /* مثال با استفاده از فونت Tahoma */
+}
+.timer2 {
+    font-size: 2em;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px;
+    background-color: #f79b12;
+    color: #fff;
+    border-radius: 5px;
+    animation: pulse 1s ease infinite;
+    font-family: 'Vazir', sans-serif; /* مثال با استفاده از فونت Tahoma */
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+/* استایل مودال */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+}
+
+.modal-content {
+    background-color: #fff;
+    width: 60%;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+.charge-modal-content {
+    background-color: #fff;
+    width: 60%;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+.debt-modal-content {
+    background-color: #fff;
+    width: 60%;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+.customer-modal-content {
+    background-color: #fff;
+    width: 60%;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+/* بستن مودال */
+.close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 10px;
+    cursor: pointer;
+}
+
+/* استایل دکمه باز کردن مودال */
+#openModalBtn {
+    margin: 20px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* استایل فرم داخل مودال */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+select[type="text"],
+input[type="number"] {
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button[type="submit"] {
+    padding: 10px 20px;
+    background-color: #24b147;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+  
