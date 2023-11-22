@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html
+    dir="rtl"
+    lang="fa"
+>
+<head>
+    <meta
+        http-equiv="Content-Type"
+        content="text/html; charset=UTF-8"
+    ></meta>
+
+    <meta charset="utf-8"></meta>
+
+    <meta
+        http-equiv="X-UA-Compatible"
+        content="IE=edge"
+    ></meta>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    ></meta>
+
+    <meta
+        name="fontiran.com:license"
+        content="Y68A9"
+    ></meta>
+
+    <link
+        rel="icon"
+        href="./build/images/metrogame.png"
+        type="image/ico"
+    ></link>
+
+    <title>متروگیم</title>
+
+    <!-- Bootstrap -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+        integrity="sha384-eU+03PiSO1vefe4tcWp5pLOb4Nl+V5f7RRP6j05poUFW+CkYY9V6xemY5p2rAL3d"
+        crossorigin="anonymous"
+    ></link>
+
+    <link
+        href="vendors/bootstrap/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    ></link>
+
+    <link
+        href="vendors/bootstrap-rtl/dist/css/bootstrap-rtl.min.css"
+        rel="stylesheet"
+    ></link>
+
+    <!-- Font Awesome -->
+
+    <link
+        href="vendors/font-awesome/css/font-awesome.min.css"
+        rel="stylesheet"
+    ></link>
+
+    <link
+        href="build/css/all.css"
+        rel="stylesheet"
+    ></link>
+
+    <link
+        href="build/css/all.min.css"
+        rel="stylesheet"
+    ></link>
+
+    <!-- NProgress -->
+
+    <link
+        href="vendors/nprogress/nprogress.css"
+        rel="stylesheet"
+    ></link>
+
+    <!-- bootstrap-progressbar -->
+
+    <link
+        href="vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css"
+        rel="stylesheet"
+    ></link>
+
+    <!-- iCheck -->
+
+    <link
+        href="vendors/iCheck/skins/flat/green.css"
+        rel="stylesheet"
+    ></link>
+
+    <!-- Custom Theme Style -->
+
+    <link
+        href="build/css/custom.min.css"
+        rel="stylesheet"
+    ></link>
+
+    <link
+        href="fontello/css/my-icon.css"
+        rel="stylesheet"
+    ></link>
+
+    <link
+        href="./assets/css/daterangepicker.css"
+        rel="stylesheet"
+        type="text/css"
+        media="all"
+    ></link>
+
+    <link
+        href="./assets/css/datepicker-theme.css"
+        rel="stylesheet"
+        type="text/css"
+        media="all"
+    ></link>
+
+    <script src="./JS/income.js"></script>
+</head>
+
+<body class="nav-md">
+    <div class="container body">
+        <div class="main_container">
+            <div class="col-md-3 left_col hidden-print">
+                <div class="left_col scroll-view">
+                    <div
+                        class="navbar nav_title"
+                        style="border: 0;"
+                    >
+                        <a
+                            href="index.html"
+                            class="site_title"
+                        >
+                            <span>پنل مدیریت</span>
+
+                            <img
+                                src="build/images/metrogame copy.png"
+                                alt=""
+                                width="30%"
+                                style="min-width: 60px;"
+                            >
+                        </a>
+                    </div>
+
+                    <div class="clearfix"></div>
+                    <br>
+                    <!-- sidebar menu -->
+
+                    <div
+                        id="sidebar-menu"
+                        class="main_menu_side hidden-print main_menu"
+                    >
+                        <div class="menu_section">
+                            <ul class="nav side-menu">
+                                <li>
+                                    <a href="index.html">
+                                        <i class="fa fa-home"></i>
+                                        خانه
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="console.html">
+                                        <i class="fa fa-gamepad"></i>
+                                        مدیریت کنسول ها
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="buffet.html">
+                                        <i class="fa fa-coffee"></i>
+                                        مدیریت بوفه
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="acounts.html">
+                                        <i class="fa fa-users"></i>
+                                        مشتریان
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="Debtors.html">
+                                        <i class="fa fa-hand-sparkles"></i>
+                                        بدهکاران
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="income.html">
+                                        <i
+                                            class="fa-regular fa-sack-dollar"
+                                            style="font-size: large;"
+                                        ></i>
+
+                                        درآمد
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- /sidebar menu -->
+                    <!-- /menu footer buttons -->
+
+                    <div class="sidebar-footer hidden-small">
+                        <a
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="تنظیمات"
+                        >
+                            <span
+                                class="glyphicon glyphicon-cog"
+                                aria-hidden="true"
+                            ></span>
+                        </a>
+
+                        <a
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="تمام صفحه"
+                            onclick="toggleFullScreen();"
+                        >
+                            <span
+                                class="glyphicon glyphicon-fullscreen"
+                                aria-hidden="true"
+                            ></span>
+                        </a>
+
+                        <a
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="قفل"
+                            class="lock_btn"
+                        >
+                            <span
+                                class="glyphicon glyphicon-eye-close"
+                                aria-hidden="true"
+                            ></span>
+                        </a>
+
+                        <a
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="خروج"
+                            href="login.html"
+                        >
+                            <span
+                                class="glyphicon glyphicon-off"
+                                aria-hidden="true"
+                            ></span>
+                        </a>
+                    </div>
+
+                    <!-- /menu footer buttons -->
+                </div>
+            </div>
+
+            <!-- top navigation -->
+
+            <div class="top_nav hidden-print">
+                <div class="nav_menu">
+                    <nav>
+                        <div class="nav toggle">
+                            <a id="menu_toggle">
+                                <i class="fa fa-bars"></i>
+                            </a>
+                        </div>
+
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="">
+                                <a
+                                    href="javascript:;"
+                                    class="user-profile dropdown-toggle"
+                                    data-toggle="dropdown"
+                                    aria-expanded="false"
+                                >
+                                    <img
+                                        src="build/images/no-avatar.png"
+                                        alt=""
+                                    >
+
+                                    متروگیم
+
+                                    <span class="fa fa-angle-down"></span>
+                                </a>
+
+                                <ul class="dropdown-menu dropdown-usermenu pull-right">
+                                    <li>
+                                        <a href="login.html">
+                                            <i class="fa fa-sign-out pull-right"></i>
+                                            خروج
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- /top navigation -->
+            <!-- /header content -->
+            <!-- page content -->
+
+            <div
+                class="right_col"
+                role="main"
+            >
+                <div class="">
+                    <div class="clearfix"></div>
+
+                    <div class="row">
+                        <!-- form input mask -->
+
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="x_panel">
+                                <div class="row x_title">
+                                    <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="input-group">
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                id="datarangepicker"
+                                                placeholder="لطفا بازه زمانی خود را انتخاب کنید"
+                                            ></input>
+
+                                            <span class="input-group-addon">
+                                                <i
+                                                    class="fa-duotone fa-calendar-days"
+                                                    style="color: rgb(30, 48, 80);"
+                                                ></i>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    
+                                        <div class="row col-md-9">
+                                            <div class="col-md-3"></div>
+
+                                            <div
+                                                class="row col-md-6 tableTitle"
+                                                id="tableTitle"
+                                            ></div>
+                                            <div class="col-md-3"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="x_content">
+                                    <div
+                                        class="row"
+                                        style="background: #f5f5f5"
+                                    >
+                                        <br>
+
+                                        <div class="col-md-9 table-responsive">
+                                            <table
+                                                class="table table-striped jambo_table bulk_action"
+                                                id="GameIncomeTable"
+                                            >
+                                                <thead>
+                                                    <tr>
+                                                        <th
+                                                            colspan="8"
+                                                            style="text-align: center;background-color: rgb(67, 147, 147);"
+                                                        >صورت حساب بازی</th>
+                                                    </tr>
+
+                                                    <tr class="headings">
+                                                        <th class="column-title">نوع درآمد</th>
+
+                                                        <th class="column-title">
+                                                            <i
+                                                                class="demo-icon icon-ps4"
+                                                                style="font-size: 25px;"
+                                                                title="PS4"
+                                                            ></i>
+                                                        </th>
+
+                                                        <th class="column-title">
+                                                            <i
+                                                                class="demo-icon icon-ps50"
+                                                                style="font-size: 25px;"
+                                                                title="PS5"
+                                                            ></i>
+                                                        </th>
+
+                                                        <th class="column-title">
+                                                            <i
+                                                                class="demo-icon icon-computer"
+                                                                style="font-size: 25px;"
+                                                                title="بازی های رایانه ای"
+                                                            ></i>
+                                                        </th>
+
+                                                        <th class="column-title">
+                                                            <i
+                                                                class="demo-icon icon-xbox"
+                                                                style="font-size: 25px;"
+                                                                title="XBOX"
+                                                            ></i>
+                                                        </th>
+
+                                                        <th class="column-title">
+                                                            <i
+                                                                class="demo-icon icon-jewelry"
+                                                                style="font-size: 25px;"
+                                                                title="VIP"
+                                                            ></i>
+                                                        </th>
+
+                                                        <th class="column-title">
+                                                            <i
+                                                                class="demo-icon icon-foosball"
+                                                                style="font-size: 25px;"
+                                                                title="فوتبال دستی"
+                                                            ></i>
+                                                        </th>
+
+                                                        <th class="column-title">کل حساب</th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                    <!-- اطلاعات از فایل JSONبه اینجا اضافه می‌شود -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <canvas id="gameChart"></canvas>
+                                            <br>
+                                        </div>
+                                    </div>
+
+                                    <br>
+
+                                    <div
+                                        class="row"
+                                        style="background: #f5f5f5"
+                                    >
+                                        <br>
+
+                                        <div class="col-md-9 table-responsive">
+                                            <table
+                                                class="table table-striped jambo_table bulk_action"
+                                                id="BuffetIncomeTable"
+                                            >
+                                                <thead>
+                                                    <tr>
+                                                        <th
+                                                            colspan="7"
+                                                            style="text-align: center;background-color: rgb(147, 67, 67);"
+                                                        >صورت حساب بوفه</th>
+                                                    </tr>
+
+                                                    <tr class="headings">
+                                                        <th class="column-title">نوع درآمد</th>
+
+                                                        <th class="column-title">
+                                                            <i
+                                                                class="fa-light fa-whiskey-glass-ice"
+                                                                style="font-size: 25px;"
+                                                                title="نوشیدنی سرد"
+                                                            ></i>
+                                                        </th>
+
+                                                        <th class="column-title">
+                                                            <i
+                                                                class="fa-light fa-mug-hot"
+                                                                style="font-size: 25px;"
+                                                                title="نوشیدنی گرم"
+                                                            ></i>
+                                                        </th>
+
+                                                        <th class="column-title">
+                                                            <i
+                                                                class="fa-light fa-cookie-bite"
+                                                                style="font-size: 25px;"
+                                                                title="اسنک"
+                                                            ></i>
+                                                        </th>
+
+                                                        <th class="column-title">
+                                                            <i
+                                                                class="fa-light fa-burger"
+                                                                style="font-size: 25px;"
+                                                                title="فست فود"
+                                                            ></i>
+                                                        </th>
+
+                                                        <th class="column-title">
+                                                            <i
+                                                                class="fa-light fa-burrito"
+                                                                style="font-size: 25px;"
+                                                                title="سایر"
+                                                            ></i>
+                                                        </th>
+
+                                                        <th class="column-title">کل حساب</th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                    <!-- اطلاعات از فایل JSONبه اینجا اضافه می‌شود -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <canvas id="buffetChart"></canvas>
+                                            <br>
+                                        </div>
+                                    </div>
+
+                                    <br>
+
+                                    <div
+                                        class="row"
+                                        style="background: #f5f5f5"
+                                    >
+                                        <br>
+
+                                        <div class="col-md-8  table-responsive">
+                                            <table
+                                                class="table table-striped jambo_table bulk_action"
+                                                id="IncomeTable"
+                                            >
+                                                <thead>
+                                                    <tr>
+                                                        <th
+                                                            colspan="4"
+                                                            style="text-align: center;background-color: rgb(146, 67, 147);"
+                                                        >صورت حساب کل</th>
+                                                    </tr>
+
+                                                    <tr class="headings">
+                                                        <th class="column-title">نقدی</th>
+
+                                                        <th class="column-title">کارتخوان</th>
+
+                                                        <th class="column-title">حساب کاربری</th>
+
+                                                        <th class="column-title">کل حساب</th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                    <!-- اطلاعات از فایل JSONبه اینجا اضافه می‌شود -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <canvas id="totalChart"></canvas>
+                                            <br>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="hidden-print">
+            <div class="pull-left">
+                <span class="text-right">
+                    تمامی حقوق برای
+
+                    <a
+                        target="_blank"
+                        href="#"
+                    >متروگیم</a>
+
+                    محفوظ است.
+                </span>
+
+                <span class="float-left">
+                    طراحی شده توسط:
+
+                    <a
+                        target="_blank"
+                        href="09153679400"
+                    >
+                        <b>لیندو</b>
+                    </a>
+                </span>
+            </div>
+
+            <div class="clearfix"></div>
+        </footer>
+
+        <!-- /footer content -->
+
+        <div id="lock_screen">
+            <table>
+                <tr>
+                    <td>
+                        <div class="clock"></div>
+
+                        <span class="unlock">
+                            <span class="fa-stack fa-5x">
+                                <i
+                                    id="icon_lock"
+                                    class="fa fa-lock fa-stack-1x fa-inverse"
+                                ></i>
+                            </span>
+                        </span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <script
+            type="text/javascript"
+            src="https://code.jquery.com/jquery-1.11.3.min.js"
+        ></script>
+
+        <script
+            src="assets/js/moment.min.js"
+            type="text/javascript"
+        ></script>
+
+        <script src="assets/js/moment-jalaali.js"></script>
+        <script src="assets/js/daterangepicker-fa-ex.js"></script>
+        <script src="./JS/Calender.js"></script>
+        <!-- jQuery -->
+        <!-- Bootstrap -->
+        <script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+        <!-- FastClick -->
+        <script src="vendors/fastclick/lib/fastclick.js"></script>
+        <!-- NProgress -->
+        <script src="vendors/nprogress/nprogress.js"></script>
+        <!-- bootstrap-progressbar -->
+        <script src="vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+        <!-- iCheck -->
+        <script src="vendors/iCheck/icheck.min.js"></script>
+        <!-- bootstrap-daterangepicker -->
+        <!-- Chart.js -->
+        <!-- Custom Theme Scripts -->
+        <script src="build/js/custom.min.js"></script>
+    </div>
+</body>
+</html>

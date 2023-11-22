@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html
+    lang="fa"
+    dir="rtl"
+>
+<head>
+    <meta
+        http-equiv="Content-Type"
+        content="text/html; charset=UTF-8"
+    ></meta>
+
+    <meta charset="utf-8"></meta>
+
+    <meta
+        http-equiv="X-UA-Compatible"
+        content="IE=edge"
+    ></meta>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    ></meta>
+
+    <meta
+        name="fontiran.com:license"
+        content="Y68A9"
+    ></meta>
+
+    <link
+        rel="icon"
+        href="./build/images/metrogame.png"
+        type="image/ico"
+    ></link>
+
+    <title>متروگیم</title>
+
+    <!-- Bootstrap -->
+
+    <link
+        href="vendors/bootstrap/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    ></link>
+
+    <link
+        href="vendors/bootstrap-rtl/dist/css/bootstrap-rtl.min.css"
+        rel="stylesheet"
+    ></link>
+
+    <!-- Font Awesome -->
+
+    <link
+        href="vendors/font-awesome/css/font-awesome.min.css"
+        rel="stylesheet"
+    ></link>
+
+    <link
+        href="build/css/all.css"
+        rel="stylesheet"
+    ></link>
+
+    <link
+        href="build/css/all.min.css"
+        rel="stylesheet"
+    ></link>
+
+    <!-- NProgress -->
+
+    <link
+        href="vendors/nprogress/nprogress.css"
+        rel="stylesheet"
+    ></link>
+
+    <!-- bootstrap-progressbar -->
+
+    <link
+        href="vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css"
+        rel="stylesheet"
+    ></link>
+
+    <!-- iCheck -->
+
+    <link
+        href="vendors/iCheck/skins/flat/green.css"
+        rel="stylesheet"
+    ></link>
+
+    <!-- bootstrap-daterangepicker -->
+
+    <link
+        href="vendors/bootstrap-daterangepicker/daterangepicker.css"
+        rel="stylesheet"
+    ></link>
+
+    <!-- Custom Theme Style -->
+
+    <link
+        href="build/css/custom.min.css"
+        rel="stylesheet"
+    ></link>
+
+    <link
+        href="fontello/css/my-icon.css"
+        rel="stylesheet"
+    ></link>
+
+    <link
+        href="build/css/timer.css"
+        rel="stylesheet"
+    ></link>
+    <script src="./JS/showErrorAlert.js"> </script>
+
+</head>
+
+<body class="nav-md footer_fixed">
+    <div class="container body">
+        <div class="main_container">
+            <div class="col-md-3 left_col hidden-print">
+                <div class="left_col scroll-view">
+                    <div
+                        class="navbar nav_title"
+                        style="border: 0;"
+                    >
+                        <a
+                            href="index.html"
+                            class="site_title"
+                        >
+                            <span>پنل مدیریت</span>
+
+                            <img
+                                src="build/images/metrogame copy.png"
+                                alt=""
+                                width="30%"
+                                style="min-width: 60px;"
+                            >
+                        </a>
+                    </div>
+
+                    <div class="clearfix"></div>
+                    <br>
+                    <!-- sidebar menu -->
+
+                    <div
+                        id="sidebar-menu"
+                        class="main_menu_side hidden-print main_menu"
+                    >
+                        <div class="menu_section">
+                            <ul class="nav side-menu">
+                                <li>
+                                    <a href="index.html">
+                                        <i class="fa fa-home"></i>
+                                        خانه
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="console.html">
+                                        <i class="fa fa-gamepad"></i>
+                                        مدیریت کنسول ها
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="buffet.html">
+                                        <i class="fa fa-coffee"></i>
+                                        مدیریت بوفه
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="acounts.html">
+                                        <i class="fa fa-users"></i>
+                                        مشتریان
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="Debtors.html">
+                                        <i class="fa fa-hand-sparkles"></i>
+                                        بدهکاران
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="income.html">
+                                        <i class="fa-regular fa-sack-dollar" style="font-size: large;"></i>
+                                        درآمد
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- /sidebar menu -->
+                    <!-- /menu footer buttons -->
+
+                    <div class="sidebar-footer hidden-small">
+                        <a
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="تنظیمات"
+                        >
+                            <span
+                                class="glyphicon glyphicon-cog"
+                                aria-hidden="true"
+                            ></span>
+                        </a>
+
+                        <a
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="تمام صفحه"
+                            onclick="toggleFullScreen();"
+                        >
+                            <span
+                                class="glyphicon glyphicon-fullscreen"
+                                aria-hidden="true"
+                            ></span>
+                        </a>
+
+                        <a
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="قفل"
+                            class="lock_btn"
+                        >
+                            <span
+                                class="glyphicon glyphicon-eye-close"
+                                aria-hidden="true"
+                            ></span>
+                        </a>
+
+                        <a
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="خروج"
+                            href="login.html"
+                        >
+                            <span
+                                class="glyphicon glyphicon-off"
+                                aria-hidden="true"
+                            ></span>
+                        </a>
+                    </div>
+
+                    <!-- /menu footer buttons -->
+                </div>
+            </div>
+
+            <!-- top navigation -->
+
+            <div class="top_nav hidden-print">
+                <div class="nav_menu">
+                    <nav>
+                        <div class="nav toggle">
+                            <a id="menu_toggle">
+                                <i class="fa fa-bars"></i>
+                            </a>
+                        </div>
+
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="">
+                                <a
+                                    href="javascript:;"
+                                    class="user-profile dropdown-toggle"
+                                    data-toggle="dropdown"
+                                    aria-expanded="false"
+                                >
+                                    <img
+                                        src="build/images/no-avatar.png"
+                                        alt=""
+                                    >
+
+                                    متروگیم
+
+                                    <span class="fa fa-angle-down"></span>
+                                </a>
+
+                                <ul class="dropdown-menu dropdown-usermenu pull-right">
+                                    <li>
+                                        <a href="login.html">
+                                            <i class="fa fa-sign-out pull-right"></i>
+                                            خروج
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- /top navigation -->
+            <!-- /header content -->
+            <!-- page content -->
+
+            <div
+                class="right_col"
+                role="main"
+            >
+                <div>
+                    <div class="clearfix"></div>
+
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="x_panel">
+                                <div class="x_title">
+                                    <h2>میز مدیریت</h2>
+
+                                    <div class="clearfix"></div>
+                                </div>
+
+                                <div class="x_content">
+                                    <br>
+
+                                    <form
+                                        action="process.php"
+                                        method="POST"
+                                        id="reservation-form"
+                                        class="form-horizontal text-right"
+                                        data-parsley-validate="data-parsley-validate"
+                                        onsubmit="return validatePayment()"
+                                    >
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="tableNumber">شماره میز:</label>
+
+                                                <input
+                                                    type="number"
+                                                    class="form-control"
+                                                    id="tableNumber"
+                                                    placeholder="شماره میز"
+                                                    required="required"
+                                                    name="tableNumber"
+                                                ></input>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label>نوع پرداخت:</label>
+
+                                                <div class="radio">
+                                                    <label>
+                                                        <input
+                                                            type="radio"
+                                                            name="post-payment"
+                                                            value="post-payment"
+                                                            onclick="togglePaymentBox(this)"
+                                                            checked="checked"
+                                                        ></input>
+
+                                                        پس پرداخت
+                                                    </label>
+                                                </div>
+
+                                                <div class="radio">
+                                                    <label>
+                                                        <input
+                                                            type="radio"
+                                                            name="pre-payment"
+                                                            value="pre-payment"
+                                                            onclick="togglePaymentBox(this)"
+                                                        ></input>
+
+                                                        پیش پرداخت
+
+                                                        <br>
+                                                        <br>
+
+                                                        <input
+                                                            type="number"
+                                                            class="form-control"
+                                                            id="pre-payment-cost"
+                                                            name="pre-payment-cost"
+                                                            disabled="disabled"
+                                                            placeholder="مبلغ پیش پرداخت"
+                                                            required="required"
+                                                        ></input>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="consoleType">نوع کنسول:</label>
+
+                                                <select
+                                                    class="form-control"
+                                                    id="consoleType"
+                                                    name="consoleType"
+                                                ></select>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label for="priceType">نوع قیمت:</label>
+
+                                                <select
+                                                    class="form-control"
+                                                    id="priceType"
+                                                    name="priceType"
+                                                >
+                                                    <option
+                                                        id="one_player_price"
+                                                        value="one_player_price"
+                                                    >یک نفره</option>
+
+                                                    <option
+                                                        id="two_player_price"
+                                                        value="two_player_price"
+                                                    >دو نفره</option>
+
+                                                    <option
+                                                        id="three_player_price"
+                                                        value="three_player_price"
+                                                    >سه نفره</option>
+
+                                                    <option
+                                                        id="four_player_price"
+                                                        value="four_player_price"
+                                                    >چهار نفره</option>
+                                                </select>
+                                            </div>
+
+                                            <script>
+                                                fetch('./data.json')
+                                                    .then(function(response) {
+                                                        return response.json(); // تبدیل پاسخ به فرمت JSON
+                                                    })
+                                                    .then(function(data) {
+                                                        // دسترسی به اطلاعات درون فایل JSON
+                                                        var consolesData = data.consoles;
+                                            
+                                                        // دسترسی به عناصر فیلد انتخاب
+                                                        var consoleSelect = document.getElementById("consoleType");
+                                            
+                                                        // حذف گزینه‌های موجود در فیلد انتخاب
+                                                        consoleSelect.innerHTML = "";
+                                            
+                                                        // ایجاد گزینه‌ها از اطلاعات JSON
+                                                        consolesData.forEach(function(console) {
+                                                            var option = document.createElement("option");
+                                                            option.value = console.name;
+                                                            option.text = console.title;
+                                                            consoleSelect.appendChild(option);
+                                                        });
+                                                    })
+                                                    .catch(function(error) {
+                                                        console.error('خطا در درخواست fetch:', error);
+                                                    });
+                                            </script>
+
+                                            <div class="form-group">
+                                                <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                                                    <button
+                                                        type="submit"
+                                                        class="btn btn-primary btn-lg"
+                                                        id="startReservationButton"
+                                                        onclick="showErrorAlert()"
+                                                    >
+                                                        ثبت
+
+                                                        <i class="fa fa-pencil-square-o"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <script>
+                                function togglePaymentBox(radioButton) {
+                                        var prepaymentBox = document.getElementById("pre-payment-cost");
+                                        var postPaymentRadio = document.querySelector('input[name="post-payment"]');
+                                        var prePaymentRadio = document.querySelector('input[name="pre-payment"]');
+                                        
+                                        if (radioButton.value === "pre-payment") {
+                                            prepaymentBox.disabled = false;
+                                            postPaymentRadio.checked = false; // غیرانتخاب کردن دکمه "پس پرداخت"
+                                        } else {
+                                            prepaymentBox.disabled = true;
+                                            prePaymentRadio.checked = false; // غیرانتخاب کردن دکمه "پیش پرداخت"
+                                        }
+                                    }
+                            </script>
+
+                            <script>
+                                function validatePayment() {
+                                        var paymentMethod = document.querySelector('input[name="post-payment"]:checked') || 
+                                                           document.querySelector('input[name="pre-payment"]:checked');
+                                      
+                                        if(!paymentMethod) {
+                                          alert('لطفا نوع پرداخت را انتخاب کنید');
+                                          return false; 
+                                        }
+                                      
+                                        return true;
+                                      }
+                            </script>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="x_panel">
+                        <div class="x_content">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12 col-xs-12 text-center"></div>
+                                <div class="clearfix"></div>
+
+                                <div class="table-responsive">
+                                    <table class="table table-striped jambo_table bulk_action">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 1%">ردیف</th>
+
+                                                <th style="width: 20%">زمان</th>
+
+                                                <th>شماره میز</th>
+
+                                                <th>نوع قیمت</th>
+
+                                                <th>نوع کنسول</th>
+
+                                                <th>بوفه</th>
+
+                                                <th style="width: 20%">عملیات</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody id="reservationTableBody"></tbody>
+                                    </table>
+                                </div>
+
+                                <div
+                                    id="ChargeModal"
+                                    class="modal"
+                                >
+                                    <div class="charge-modal-content">
+                                        <span class="close">&times;</span>
+
+                                        <h3 id="chargeFormTitle">عنوان فرم</h3>
+
+                                        <form id="chargeForm">
+                                            <br>
+
+                                            <label>
+                                                لطفا جهت شارژ میز فقط یکی از موارد ذیل را انتخاب کنید:
+                                            </label>
+
+                                            <br>
+
+                                            <label for="chargeAmount">مبلغ (تومان):</label>
+
+                                            <input
+                                                type="number"
+                                                id="chargeAmount"
+                                                name="chargeAmount"
+                                                min="5000"
+                                            ></input>
+
+                                            <br>
+
+                                            <label for="chargeTime">زمان (دقیقه):</label>
+
+                                            <input
+                                                type="number"
+                                                id="chargeTime"
+                                                name="chargeTime"
+                                                min="1"
+                                            ></input>
+
+                                            <br>
+
+                                            <button type="submit" class="btn btn-warning">ارسال</button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <div
+                                    id="myModal"
+                                    class="modal"
+                                >
+                                    <div class="modal-content">
+                                        <span class="close">&times;</span>
+
+                                        <h3 id="formTitle"></h3>
+                                        <br>
+
+                                        <form id="buyForm">
+                                            <label for="productDropdown">محصول:</label>
+
+                                            <select
+                                                type="text"
+                                                id="productDropdown"
+                                                name="product"
+                                                aria-autocomplete="none"
+                                            >
+                                                <!-- گزینه‌های دراپ‌دان به صورت دینامیک از فایل JSON پر می‌شوند -->
+                                            </select>
+
+                                            <br>
+
+                                            <label for="quantity">تعداد:</label>
+
+                                            <input
+                                                type="number"
+                                                id="quantity"
+                                                name="quantity"
+                                                min="1"
+                                                value="1"
+                                            ></input>
+
+                                            <br>
+
+                                            <button type="submit"  class="btn btn-primary">خرید محصول</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <audio
+            id="alarmSound"
+            src="./src/alarm.mp3"
+            preload="auto"
+        ></audio>
+    </div>
+
+    <script>
+        function convertToPersian(number) {
+            const persianDigits = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
+            return String(number).split('').map(digit => persianDigits[digit]).join('');
+          }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+
+  
+    <!-- /page content -->
+    <!-- footer content -->
+
+    <footer class="hidden-print">
+        <div class="pull-left">
+            <span class="text-right">
+                تمامی حقوق برای
+
+                <a
+                    target="_blank"
+                    href="#"
+                >متروگیم</a>
+
+                محفوظ است.
+            </span>
+
+            <span class="float-left">
+                طراحی شده توسط:
+
+                <a
+                    target="_blank"
+                    href="09153679400"
+                >
+                    <b>لیندو</b>
+                </a>
+            </span>
+        </div>
+
+        <div class="clearfix"></div>
+    </footer>
+
+    <!-- /footer content -->
+
+    <div id="lock_screen">
+        <table>
+            <tr>
+                <td>
+                    <div class="clock"></div>
+
+                    <span class="unlock">
+                        <span class="fa-stack fa-5x">
+                            
+                            <i
+                                id="icon_lock"
+                                class="fa fa-lock fa-stack-1x fa-inverse"
+                            ></i>
+                        </span>
+                    </span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <script src="./JS/7878.js"></script>
+    <!-- jQuery -->
+    <script src="vendors/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- FastClick -->
+    <script src="vendors/fastclick/lib/fastclick.js"></script>
+    <!-- NProgress -->
+    <script src="vendors/nprogress/nprogress.js"></script>
+    <!-- bootstrap-progressbar -->
+    <script src="vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+    <!-- iCheck -->
+    <script src="vendors/iCheck/icheck.min.js"></script>
+    <!-- bootstrap-daterangepicker -->
+    <script src="vendors/moment/min/moment.min.js"></script>
+    <script src="vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <!-- Custom Theme Scripts -->
+    <script src="build/js/custom.min.js"></script>
+</body>
+</html>
