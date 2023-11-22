@@ -1,0 +1,9 @@
+
+.icon-xbox { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe700;&nbsp;'); }
+.icon-ps4 { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe701;&nbsp;'); }
+.icon-jewelry { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe702;&nbsp;'); }
+.icon-pool-table { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe703;&nbsp;'); }
+.icon-computer { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe704;&nbsp;'); }
+.icon-foosball { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe705;&nbsp;'); }
+.icon-table { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe707;&nbsp;'); }
+.icon-ps50 { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe710;&nbsp;'); }

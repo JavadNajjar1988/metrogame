@@ -1,0 +1,20 @@
+[class^="icon-"], [class*=" icon-"] {
+  font-family: 'gamenet';
+  font-style: normal;
+  font-weight: normal;
+
+  /* fix buttons height */
+  line-height: 1em;
+
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
+}
+
+.icon-xbox { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe700;&nbsp;'); }
+.icon-ps4 { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe701;&nbsp;'); }
+.icon-jewelry { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe702;&nbsp;'); }
+.icon-pool-table { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe703;&nbsp;'); }
+.icon-computer { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe704;&nbsp;'); }
+.icon-foosball { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe705;&nbsp;'); }
+.icon-table { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe707;&nbsp;'); }
+.icon-ps50 { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe710;&nbsp;'); }
