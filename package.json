@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "node preview.mjs",
-    "start": "node preview.mjs"
+    "dev": "node server.mjs",
+    "start": "node server.mjs"
   }
 }

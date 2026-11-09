@@ -318,7 +318,7 @@
                                         id="reservation-form"
                                         class="form-horizontal text-right"
                                         data-parsley-validate="data-parsley-validate"
-                                        onsubmit="return validatePayment()"
+                                        onsubmit="if (validatePayment()) showErrorAlert(); return false;"
                                     >
                                         <div class="form-row">
                                             <div class="form-group col-md-6">
@@ -454,7 +454,6 @@
                                                         type="submit"
                                                         class="btn btn-primary btn-lg"
                                                         id="startReservationButton"
-                                                        onclick="showErrorAlert()"
                                                     >
                                                         ثبت
 

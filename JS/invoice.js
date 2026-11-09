@@ -1,3 +1,4 @@
+const requestedTable = new URLSearchParams(location.search).get("table");
 var factor_name = ""
 let buffetPayment = [];
 
@@ -7,7 +8,12 @@ let buffetPayment = [];
     const tableBody = document.getElementById('invoicegameTable').getElementsByTagName('tbody')[0];
     let rowNumber = 1;
     // ایجاد یک حلقه برای پیمایش دسته‌ها
-    for (const categoryName in jsonData) {
+    const tableNumbers = Object.keys(jsonData);
+    const selectedTable = requestedTable ?? (tableNumbers.length === 1 ? tableNumbers[0] : null);
+    if (selectedTable === null || !Object.hasOwn(jsonData, selectedTable)) return;
+    let gameTotal = 0;
+    let consoleType;
+    for (const categoryName of [selectedTable]) {
         factor_name = categoryName
       if (jsonData.hasOwnProperty(categoryName)) {
         // دریافت داده‌های مرتبط با دسته
@@ -41,13 +47,13 @@ let buffetPayment = [];
             cell5.innerHTML = consoleData.gameCost !== null ? parseFloat(consoleData.gameCost).toLocaleString('fa-IR') + ' تومان' : '';
             
             rowNumber++;
-            var gameTotal = consoleData.gameCost
-            var consoleType = consoleData.consoleType
+            gameTotal += Number(consoleData.gameCost)
+            consoleType = consoleData.consoleType
           }
         }
       }
     }
-    let seenItems = [];
+
 
 
     fetch('buffet_temporary.json')
@@ -59,8 +65,8 @@ let buffetPayment = [];
     let totalBuffetPrice = 0; // متغیر برای نگهداری مجموع محاسبات
     
     // ایجاد یک حلقه برای پیمایش دسته‌ها
-    for (const categoryName in jsonData) {
-      if (jsonData.hasOwnProperty(categoryName)) {
+    for (const categoryName of [factor_name]) {
+      if (Object.hasOwn(jsonData, categoryName)) {
         // دریافت داده‌های مرتبط با دسته
         const categoryData = jsonData[factor_name];
         
@@ -68,12 +74,6 @@ let buffetPayment = [];
         for (const key in categoryData) {
           if (categoryData.hasOwnProperty(key)) {
             const buffetData = categoryData[key];
-            const itemKey = buffetData.productType + '-' + (buffetData.unitPrice * buffetData.quantity);
-            if (seenItems.includes(itemKey)) {
-              continue; // اگر تکراری بود، به ردیف بعدی برو
-            } else {
-              seenItems.push(itemKey);
-            }
             const newRow = tableBody.insertRow();
             const cell1 = newRow.insertCell(0);
             const cell2 = newRow.insertCell(1);

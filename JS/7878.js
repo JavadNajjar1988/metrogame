@@ -202,137 +202,38 @@ $(document).ready(function() {
                  isPrePayment = false; // تغییر وضعیت به non-pre-payment
                 }
                     });
-            newRow.find('.end-button').click(function() {
-                        if (isPostPayment) {
-                                 
-                                                     var tableNumber = reservation.tableNumber;
-                                                     let gameCost = null;
-                                                     let consoleType = reservation.consoleType;
-                                                     let priceType = reservation.priceType;
-                                                     gameCost = Math.round(hourlyPrice * (stopTimer() / 3600))
-             
-                                                                                 $.ajax({
-                                                                                         type: 'POST',
-                                                                                         url: './game_temporary.php', // آدرس کد PHP برای حذف ردیف
-                                                                                         data: { gameCost: gameCost ,consoleType: consoleType,priceType:priceType,tableNumber:tableNumber},
-             
-                                                                                         done: function(response) {
-                                                                                         
-                                                                                         },
-                                                                                         error: function() {
-                                                                                             alert('خطا در ارتباط با سرور');
-                                                                                         }
-             
-                                                                                     });
-                                                                      // اضافه کردن کد برای رویداد کلیک روی دکمه "پایان"
-                                                                      var tableNumber = reservation.tableNumber; 
-                                                                              newRow.remove();
-                                                                      $.ajax({
-                                                                                 type: 'POST',
-                                                                                 url: './delete_reservation.php', // آدرس کد PHP برای حذف ردیف
-                                                                                 data: { tableNumber: tableNumber },
-                                                                                 
-                                                                                 done: function(response) {
-                                                                                 
-                                                                                 },
-                                                                                 error: function() {
-                                                                                     alert('خطا در ارتباط با سرور');
-                                                                                 }
-                                                                             });
-             
-                                                                              var newPageUrl = 'invoice.html'; 
-                                                                                 window.open(newPageUrl, '_self');
-                                                                               
-             
-                                                                    
-                                                                        
-             
-                                                                     // اضافه کردن کد برای رویداد کلیک روی دکمه "شارژ مجدد"
-                                             
-             
-                                     isPostPayment = false; // تغییر وضعیت به non-post-payment
-                                 } else if (isPrePayment) {
-             
-                                    
-                                                     function gameCost(tableNumber) {
-             return new Promise((resolve, reject) => {
-             fetch('./finishTime.json')
-             .then(response => response.json())
-             .then(data => {
-             const table = data.find(item => item.tableNumber === tableNumber);
-             
-             if (table) {
-               const finish = parseInt(table.finishTime);
-               const start = parseInt(table.startTime);
-               const gameCost = (Math.round((((finish - start) / 3600) * parseInt(hourlyPrice)) / 1000) * 1000);
-               resolve(gameCost);
-             } else {
-               reject('شماره میز یافت نشد');
-             }
-             })
-             .catch(error => {
-             reject('خطا در خواندن مقدار اولیه از فایل JSON');
-             });
-             });
-             }
-             
-             // درخواست اطلاعات gameCost از سرور
-             const gameCostPromise = gameCost(reservation.tableNumber);
-             
-             // داخل تابع then، ارسال درخواست POST به سرور
-             gameCostPromise.then(cost => {
-             const gameCost = cost
-             const tableNumber = reservation.tableNumber;
-             const consoleType = reservation.consoleType;
-             const priceType = reservation.priceType;
-             
-             $.ajax({
-                                                                     type: 'POST',
-                                                                     url: './game_temporary.php', // آدرس کد PHP برای حذف ردیف
-                                                                     data: { gameCost: gameCost ,consoleType: consoleType,priceType:priceType,tableNumber:tableNumber},
-                                                             
-                                                                     done: function(response) {
-                                                                     
-                                                                     },
-                                                                     error: function() {
-                                                                         alert('خطا در ارتباط با سرور');
-                                                                     }
-                                                                 
-                                                                 });
-                                                                 
-             
-                                                                 newRow.remove();
-                                                                      $.ajax({
-                                                                                 type: 'POST',
-                                                                                 url: './delete_reservation.php', // آدرس کد PHP برای حذف ردیف
-                                                                                 data: { tableNumber: tableNumber },
-                                                                                 
-                                                                                 done: function(response) {
-                                                                                 
-                                                                                 },
-                                                                                 error: function() {
-                                                                                    
-                                                                                 }
-                                                                             });
-             
-                                                                             var newPageUrl = 'invoice.html'; 
-                                                                              window.open(newPageUrl, '_self');
-                                                                             
-             
-                                                                         });
-                                                              
-                                                       
-                                                         
-                                                     
-                                                                             
-                                                     
-                                                 
-                                                  // اضافه کردن کد برای رویداد کلیک روی دکمه "شارژ مجدد"
-                                          
-                                    
-                                  isPrePayment = false; // تغییر وضعیت به non-pre-payment
-                                 }
-                                     });
+            newRow.find('.end-button').click(async function(event) {
+                event.preventDefault();
+                const button = $(this);
+                if (button.data('closing')) return;
+                button.data('closing', true);
+                try {
+                    let gameCost;
+                    if (isPostPayment) {
+                        gameCost = Math.round(hourlyPrice * (stopTimer() / 3600));
+                    } else if (isPrePayment) {
+                        const response = await fetch('./finishTime.json');
+                        if (!response.ok) throw new Error('Could not read timers');
+                        const timers = await response.json();
+                        const timer = timers.find(item => String(item.tableNumber) === String(reservation.tableNumber));
+                        if (!timer) throw new Error('Timer not found');
+                        gameCost = Math.round(((timer.finishTime - timer.startTime) / 3600) * hourlyPrice / 1000) * 1000;
+                    } else {
+                        return;
+                    }
+
+                    if (!button.data('gameSaved')) {
+                        await $.post('./game_temporary.php', { gameCost, consoleType, priceType, tableNumber: reservation.tableNumber });
+                        button.data('gameSaved', true);
+                    }
+                    await $.post('./delete_reservation.php', { tableNumber: reservation.tableNumber });
+                    location.href = 'invoice.html?table=' + encodeURIComponent(reservation.tableNumber);
+                } catch {
+                    alert('پایان بازی ثبت نشد. دوباره تلاش کنید.');
+                } finally {
+                    button.data('closing', false);
+                }
+            });
             newRow.find('.charge-button').click(function() {
                                         if (isPrePayment) {      
                                            // کد مربوط به عملیات شارژ مجدد رزرو را اینجا قرار دهید
@@ -394,8 +295,8 @@ $(document).ready(function() {
                                                            tableNumber: tableNumber,
                                                            charge_Time: charge_Time
                                                        },
-                                                       success: function (response) {
-                                                        
+                                                       success: function () {
+                                                           location.reload();
                                                        },
                                                        error: function () {
                                                            alert('خطا در ارتباط با سرور');
@@ -404,7 +305,6 @@ $(document).ready(function() {
                                                  
                                                                             
                                              chargeModal.style.display = 'none';
-                                             location.reload();
                                          
                                            });
                                        
