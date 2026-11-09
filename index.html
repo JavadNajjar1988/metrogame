@@ -1,715 +1,707 @@
 <!DOCTYPE html>
-<html
-    lang="fa"
-    dir="rtl"
->
+<html lang="fa" dir="rtl">
 <head>
-    <meta
-        http-equiv="Content-Type"
-        content="text/html; charset=UTF-8"
-    ></meta>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>پنل مدیریت گیم‌نت متروگیم</title>
+  <meta name="description" content="داشبورد مدیریت مدرن و پیشرفته گیم‌نت متروگیم شامل مدیریت میزها، کنسول‌های بازی (PS5، PS4، PC، بیلیارد)، زمان‌سنج سشن‌ها، شارژ میز، بوفه، مشتریان و گزارش‌های مالی.">
+  <meta property="og:title" content="پنل مدیریت گیم‌نت متروگیم">
+  <meta property="og:description" content="داشبورد مدیریت مدرن و پیشرفته گیم‌نت متروگیم شامل مدیریت میزها، کنسول‌های بازی (PS5، PS4، PC، بیلیارد)، زمان‌سنج سشن‌ها، شارژ میز، بوفه، مشتریان و گزارش‌های مالی.">
+  <link rel="icon" href="src/assets/images/metrogame_emblem_1794207267121.jpg" type="image/jpeg">
 
-    <meta charset="utf-8"></meta>
-
-    <meta
-        http-equiv="X-UA-Compatible"
-        content="IE=edge"
-    ></meta>
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1"
-    ></meta>
-
-    <meta
-        name="fontiran.com:license"
-        content="Y68A9"
-    ></meta>
-
-    <link
-        rel="icon"
-        href="./build/images/metrogame.png"
-        type="image/ico"
-    ></link>
-
-    <title>متروگیم</title>
-
-    <!-- Bootstrap -->
-
-    <link
-        href="vendors/bootstrap/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    ></link>
-
-    <link
-        href="vendors/bootstrap-rtl/dist/css/bootstrap-rtl.min.css"
-        rel="stylesheet"
-    ></link>
-
-    <!-- Font Awesome -->
-
-    <link
-        href="vendors/font-awesome/css/font-awesome.min.css"
-        rel="stylesheet"
-    ></link>
-
-    <link
-        href="build/css/all.css"
-        rel="stylesheet"
-    ></link>
-
-    <link
-        href="build/css/all.min.css"
-        rel="stylesheet"
-    ></link>
-
-    <!-- NProgress -->
-
-    <link
-        href="vendors/nprogress/nprogress.css"
-        rel="stylesheet"
-    ></link>
-
-    <!-- bootstrap-progressbar -->
-
-    <link
-        href="vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css"
-        rel="stylesheet"
-    ></link>
-
-    <!-- iCheck -->
-
-    <link
-        href="vendors/iCheck/skins/flat/green.css"
-        rel="stylesheet"
-    ></link>
-
-    <!-- bootstrap-daterangepicker -->
-
-    <link
-        href="vendors/bootstrap-daterangepicker/daterangepicker.css"
-        rel="stylesheet"
-    ></link>
-
-    <!-- Custom Theme Style -->
-
-    <link
-        href="build/css/custom.min.css"
-        rel="stylesheet"
-    ></link>
-
-    <link
-        href="fontello/css/my-icon.css"
-        rel="stylesheet"
-    ></link>
-
-    <link
-        href="build/css/timer.css"
-        rel="stylesheet"
-    ></link>
-    <script src="./JS/showErrorAlert.js"> </script>
-
+  <!-- Local Stylesheets -->
+  <link href="assets/bootstrap/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/bootstrap/bootstrap-rtl.css" rel="stylesheet">
+  <link href="fontello/css/my-icon.css" rel="stylesheet">
+  <link href="assets/css/gaming-dashboard.css" rel="stylesheet">
 </head>
+<body>
+  <audio id="alarmSound" src="src/alarm.mp3" preload="none"></audio>
+  <div id="sidebarBackdrop" class="mg-sidebar-backdrop"></div>
 
-<body class="nav-md footer_fixed">
-    <div class="container body">
-        <div class="main_container">
-            <div class="col-md-3 left_col hidden-print">
-                <div class="left_col scroll-view">
-                    <div
-                        class="navbar nav_title"
-                        style="border: 0;"
-                    >
-                        <a
-                            href="index.html"
-                            class="site_title"
-                        >
-                            <span>پنل مدیریت</span>
+  <div class="mg-app-shell">
+    <!-- 2. Sidebar Navigation -->
+    <aside id="mgSidebar" class="mg-sidebar" aria-label="منوی اصلی مدیریت">
+      <div class="mg-brand">
+        <img src="src/assets/images/metrogame_emblem_1794207267121.jpg" alt="لوگوی گیم‌نت متروگیم" class="mg-brand-logo">
+        <div class="mg-brand-text">
+          <h2 class="mg-brand-title">متروگیم پنل</h2>
+          <span class="mg-brand-subtitle">مرکز فرماندهی گیم‌نت</span>
+        </div>
+      </div>
 
-                            <img
-                                src="build/images/metrogame copy.png"
-                                alt=""
-                                width="30%"
-                                style="min-width: 60px;"
-                            >
-                        </a>
-                    </div>
+      <div class="mg-sidebar-section-label">بخش‌های مدیریتی</div>
+      <ul class="mg-nav-list">
+        <li class="mg-nav-item active">
+          <a href="index.html">
+            <span class="mg-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </span>
+            <span>خانه (پیشخوان)</span>
+          </a>
+        </li>
+        <li class="mg-nav-item">
+          <a href="#tables-section">
+            <span class="mg-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="12" rx="2"/><line x1="2" y1="20" x2="22" y2="20"/><line x1="12" y1="16" x2="12" y2="20"/></svg>
+            </span>
+            <span>میزها</span>
+            <span id="navTablesBadge" class="mg-nav-badge badge-Highlight">۰</span>
+          </a>
+        </li>
+        <li class="mg-nav-item">
+          <a href="console.html">
+            <span class="mg-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><rect x="2" y="6" width="20" height="12" rx="4"/></svg>
+            </span>
+            <span>مدیریت کنسول‌ها</span>
+            <span id="navConsolesBadge" class="mg-nav-badge">۰</span>
+          </a>
+        </li>
+        <li class="mg-nav-item">
+          <a href="buffet.html">
+            <span class="mg-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+            </span>
+            <span>مدیریت بوفه</span>
+          </a>
+        </li>
+        <li class="mg-nav-item">
+          <a href="acounts.html">
+            <span class="mg-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </span>
+            <span>مشتریان</span>
+            <span id="navCustomersBadge" class="mg-nav-badge">۰</span>
+          </a>
+        </li>
+        <li class="mg-nav-item">
+          <a href="Debtors.html">
+            <span class="mg-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            </span>
+            <span>بدهکاران</span>
+            <span id="navDebtorsBadge" class="mg-nav-badge">۰</span>
+          </a>
+        </li>
+        <li class="mg-nav-item">
+          <a href="income.html">
+            <span class="mg-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            </span>
+            <span>گزارش درآمد</span>
+          </a>
+        </li>
+      </ul>
 
-                    <div class="clearfix"></div>
-                    <br>
-                    <!-- sidebar menu -->
+      <div class="mg-sidebar-footer">
+        <div class="mg-sidebar-status-box">
+          <span><span class="mg-status-dot"></span>سرور محلی متروگیم</span>
+          <strong style="color: #34D399;">متصل</strong>
+        </div>
+        <a href="login.html" class="mg-logout-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span>خروج از پنل</span>
+        </a>
+      </div>
+    </aside>
 
-                    <div
-                        id="sidebar-menu"
-                        class="main_menu_side hidden-print main_menu"
-                    >
-                        <div class="menu_section">
-                            <ul class="nav side-menu">
-                                <li>
-                                    <a href="index.html">
-                                        <i class="fa fa-home"></i>
-                                        خانه
-                                    </a>
-                                </li>
+    <!-- Main Wrapper -->
+    <div class="mg-main-wrapper">
+      <!-- 1. Top Area / Header -->
+      <header class="mg-topbar">
+        <div class="mg-topbar-right">
+          <button type="button" id="mobileMenuBtn" class="mg-mobile-menu-btn" aria-label="باز کردن منو">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="mg-page-heading">
+            <h1>
+              <span>مدیریت میزها و ایستگاه‌ها</span>
+              <span class="mg-card-tag">شیفت فعال</span>
+            </h1>
+            <p>کنترل لحظه‌ای سشن‌های PS5، PS4، سیستم‌های PC، میزهای بیلیارد و سفارش‌های بوفه</p>
+          </div>
+        </div>
 
-                                <li>
-                                    <a href="console.html">
-                                        <i class="fa fa-gamepad"></i>
-                                        مدیریت کنسول ها
-                                    </a>
-                                </li>
+        <div class="mg-topbar-center">
+          <div class="mg-search-box">
+            <span class="mg-search-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </span>
+            <input type="text" id="dashboardSearch" placeholder="جستجوی سریع شماره میز، نوع کنسول (PS5، PS4، بیلیارد) یا حالت بازی...">
+          </div>
+        </div>
 
-                                <li>
-                                    <a href="buffet.html">
-                                        <i class="fa fa-coffee"></i>
-                                        مدیریت بوفه
-                                    </a>
-                                </li>
+        <div class="mg-topbar-left">
+          <div class="mg-live-clock" title="زمان سیستم">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#22D3EE" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span id="mgLiveClockText">در حال بارگذاری ساعت...</span>
+          </div>
 
-                                <li>
-                                    <a href="acounts.html">
-                                        <i class="fa fa-users"></i>
-                                        مشتریان
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a href="Debtors.html">
-                                        <i class="fa fa-hand-sparkles"></i>
-                                        بدهکاران
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a href="income.html">
-                                        <i class="fa-regular fa-sack-dollar" style="font-size: large;"></i>
-                                        درآمد
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- /sidebar menu -->
-                    <!-- /menu footer buttons -->
-
-                    <div class="sidebar-footer hidden-small">
-                        <a
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title="تنظیمات"
-                        >
-                            <span
-                                class="glyphicon glyphicon-cog"
-                                aria-hidden="true"
-                            ></span>
-                        </a>
-
-                        <a
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title="تمام صفحه"
-                            onclick="toggleFullScreen();"
-                        >
-                            <span
-                                class="glyphicon glyphicon-fullscreen"
-                                aria-hidden="true"
-                            ></span>
-                        </a>
-
-                        <a
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title="قفل"
-                            class="lock_btn"
-                        >
-                            <span
-                                class="glyphicon glyphicon-eye-close"
-                                aria-hidden="true"
-                            ></span>
-                        </a>
-
-                        <a
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title="خروج"
-                            href="login.html"
-                        >
-                            <span
-                                class="glyphicon glyphicon-off"
-                                aria-hidden="true"
-                            ></span>
-                        </a>
-                    </div>
-
-                    <!-- /menu footer buttons -->
-                </div>
+          <div class="mg-notification-wrap">
+            <button type="button" id="mgNotifBtn" class="mg-icon-btn" aria-label="اعلان‌های سیستم">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span id="mgNotifCount" class="mg-notif-count">۰</span>
+            </button>
+            <div id="mgNotifDropdown" class="mg-notif-dropdown">
+              <div class="mg-notif-header">
+                <span>وضعیت سشن‌ها و اعلان‌ها</span>
+                <span style="color: #22D3EE; font-size: 11px;">زنده</span>
+              </div>
+              <ul id="mgNotifList" class="mg-notif-list">
+                <li class="mg-notif-item">در حال بررسی وضعیت میزها...</li>
+              </ul>
             </div>
+          </div>
 
-            <!-- top navigation -->
-
-            <div class="top_nav hidden-print">
-                <div class="nav_menu">
-                    <nav>
-                        <div class="nav toggle">
-                            <a id="menu_toggle">
-                                <i class="fa fa-bars"></i>
-                            </a>
-                        </div>
-
-                        <ul class="nav navbar-nav navbar-right">
-                            <li class="">
-                                <a
-                                    href="javascript:;"
-                                    class="user-profile dropdown-toggle"
-                                    data-toggle="dropdown"
-                                    aria-expanded="false"
-                                >
-                                    <img
-                                        src="build/images/no-avatar.png"
-                                        alt=""
-                                    >
-
-                                    متروگیم
-
-                                    <span class="fa fa-angle-down"></span>
-                                </a>
-
-                                <ul class="dropdown-menu dropdown-usermenu pull-right">
-                                    <li>
-                                        <a href="login.html">
-                                            <i class="fa fa-sign-out pull-right"></i>
-                                            خروج
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
+          <div class="mg-profile-chip">
+            <img src="src/assets/images/admin_avatar_1794207268017.jpg" alt="مدیر گیم‌نت" class="mg-profile-avatar">
+            <div class="mg-profile-info">
+              <span class="mg-profile-name">مدیر شیفت</span>
+              <span class="mg-profile-role">دسترسی کامل ادمین</span>
             </div>
+          </div>
+        </div>
+      </header>
 
-            <!-- /top navigation -->
-            <!-- /header content -->
-            <!-- page content -->
+      <!-- Subtle Summary Status Strip -->
+      <div class="mg-status-strip">
+        <div class="mg-status-strip-items">
+          <span class="mg-status-pill">
+            <span class="mg-status-dot"></span>
+            میزهای فعال: <strong id="statusStripActiveTables">۰</strong>
+          </span>
+          <span class="mg-status-divider"></span>
+          <span class="mg-status-pill">
+            ایستگاه‌های آماده پذیرش: <strong id="statusStripFreeStations">۰</strong>
+          </span>
+          <span class="mg-status-divider"></span>
+          <span class="mg-status-pill">
+            ضریب اشغال سالن: <strong id="statusStripOccupancy">۰٪</strong>
+          </span>
+          <span class="mg-status-divider"></span>
+          <span class="mg-status-pill">
+            سفارش‌های باز بوفه: <strong id="statusStripOpenBuffet">۰ تومان</strong>
+          </span>
+        </div>
+        <div>
+          <a href="invoice.html" style="color: #67E8F9; font-weight: 700;">مشاهده صورت‌حساب و تسویه &larr;</a>
+        </div>
+      </div>
 
-            <div
-                class="right_col"
-                role="main"
-            >
+      <!-- 3. Main Management Content -->
+      <main class="mg-content">
+        <!-- Section Group 1: 8. Dashboard Summary Widgets (5 KPI Cards) -->
+        <div class="mg-section-group">
+          <div class="mg-section-bar">
+            <div class="mg-section-bar-right">
+              <span class="mg-section-accent"></span>
+              <h2 class="mg-section-heading">شاخص‌های کلیدی و وضعیت لحظه‌ای سالن</h2>
+              <span class="mg-section-caption">— بروزرسانی خودکار از داده‌های گیم‌نت</span>
+            </div>
+          </div>
+
+          <section aria-label="خلاصه وضعیت گیم‌نت" class="mg-kpi-grid">
+            <!-- KPI 1: Number of active tables -->
+            <article class="mg-kpi-card mg-stagger-item" style="--stagger-idx: 1;">
+              <div class="mg-kpi-top">
                 <div>
-                    <div class="clearfix"></div>
-
-                    <div class="row">
-                        <div class="col-md-12 col-sm-12 col-xs-12">
-                            <div class="x_panel">
-                                <div class="x_title">
-                                    <h2>میز مدیریت</h2>
-
-                                    <div class="clearfix"></div>
-                                </div>
-
-                                <div class="x_content">
-                                    <br>
-
-                                    <form
-                                        action="process.php"
-                                        method="POST"
-                                        id="reservation-form"
-                                        class="form-horizontal text-right"
-                                        data-parsley-validate="data-parsley-validate"
-                                        onsubmit="if (validatePayment()) showErrorAlert(); return false;"
-                                    >
-                                        <div class="form-row">
-                                            <div class="form-group col-md-6">
-                                                <label for="tableNumber">شماره میز:</label>
-
-                                                <input
-                                                    type="number"
-                                                    class="form-control"
-                                                    id="tableNumber"
-                                                    placeholder="شماره میز"
-                                                    required="required"
-                                                    name="tableNumber"
-                                                ></input>
-                                            </div>
-
-                                            <div class="form-group col-md-6">
-                                                <label>نوع پرداخت:</label>
-
-                                                <div class="radio">
-                                                    <label>
-                                                        <input
-                                                            type="radio"
-                                                            name="post-payment"
-                                                            value="post-payment"
-                                                            onclick="togglePaymentBox(this)"
-                                                            checked="checked"
-                                                        ></input>
-
-                                                        پس پرداخت
-                                                    </label>
-                                                </div>
-
-                                                <div class="radio">
-                                                    <label>
-                                                        <input
-                                                            type="radio"
-                                                            name="pre-payment"
-                                                            value="pre-payment"
-                                                            onclick="togglePaymentBox(this)"
-                                                        ></input>
-
-                                                        پیش پرداخت
-
-                                                        <br>
-                                                        <br>
-
-                                                        <input
-                                                            type="number"
-                                                            class="form-control"
-                                                            id="pre-payment-cost"
-                                                            name="pre-payment-cost"
-                                                            disabled="disabled"
-                                                            placeholder="مبلغ پیش پرداخت"
-                                                            required="required"
-                                                        ></input>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-row">
-                                            <div class="form-group col-md-6">
-                                                <label for="consoleType">نوع کنسول:</label>
-
-                                                <select
-                                                    class="form-control"
-                                                    id="consoleType"
-                                                    name="consoleType"
-                                                ></select>
-                                            </div>
-
-                                            <div class="form-group col-md-6">
-                                                <label for="priceType">نوع قیمت:</label>
-
-                                                <select
-                                                    class="form-control"
-                                                    id="priceType"
-                                                    name="priceType"
-                                                >
-                                                    <option
-                                                        id="one_player_price"
-                                                        value="one_player_price"
-                                                    >یک نفره</option>
-
-                                                    <option
-                                                        id="two_player_price"
-                                                        value="two_player_price"
-                                                    >دو نفره</option>
-
-                                                    <option
-                                                        id="three_player_price"
-                                                        value="three_player_price"
-                                                    >سه نفره</option>
-
-                                                    <option
-                                                        id="four_player_price"
-                                                        value="four_player_price"
-                                                    >چهار نفره</option>
-                                                </select>
-                                            </div>
-
-                                            <script>
-                                                fetch('./data.json')
-                                                    .then(function(response) {
-                                                        return response.json(); // تبدیل پاسخ به فرمت JSON
-                                                    })
-                                                    .then(function(data) {
-                                                        // دسترسی به اطلاعات درون فایل JSON
-                                                        var consolesData = data.consoles;
-                                            
-                                                        // دسترسی به عناصر فیلد انتخاب
-                                                        var consoleSelect = document.getElementById("consoleType");
-                                            
-                                                        // حذف گزینه‌های موجود در فیلد انتخاب
-                                                        consoleSelect.innerHTML = "";
-                                            
-                                                        // ایجاد گزینه‌ها از اطلاعات JSON
-                                                        consolesData.forEach(function(console) {
-                                                            var option = document.createElement("option");
-                                                            option.value = console.name;
-                                                            option.text = console.title;
-                                                            consoleSelect.appendChild(option);
-                                                        });
-                                                    })
-                                                    .catch(function(error) {
-                                                        console.error('خطا در درخواست fetch:', error);
-                                                    });
-                                            </script>
-
-                                            <div class="form-group">
-                                                <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-                                                    <button
-                                                        type="submit"
-                                                        class="btn btn-primary btn-lg"
-                                                        id="startReservationButton"
-                                                    >
-                                                        ثبت
-
-                                                        <i class="fa fa-pencil-square-o"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-
-                            <script>
-                                function togglePaymentBox(radioButton) {
-                                        var prepaymentBox = document.getElementById("pre-payment-cost");
-                                        var postPaymentRadio = document.querySelector('input[name="post-payment"]');
-                                        var prePaymentRadio = document.querySelector('input[name="pre-payment"]');
-                                        
-                                        if (radioButton.value === "pre-payment") {
-                                            prepaymentBox.disabled = false;
-                                            postPaymentRadio.checked = false; // غیرانتخاب کردن دکمه "پس پرداخت"
-                                        } else {
-                                            prepaymentBox.disabled = true;
-                                            prePaymentRadio.checked = false; // غیرانتخاب کردن دکمه "پیش پرداخت"
-                                        }
-                                    }
-                            </script>
-
-                            <script>
-                                function validatePayment() {
-                                        var paymentMethod = document.querySelector('input[name="post-payment"]:checked') || 
-                                                           document.querySelector('input[name="pre-payment"]:checked');
-                                      
-                                        if(!paymentMethod) {
-                                          alert('لطفا نوع پرداخت را انتخاب کنید');
-                                          return false; 
-                                        }
-                                      
-                                        return true;
-                                      }
-                            </script>
-                        </div>
-                    </div>
+                  <p class="mg-kpi-label">تعداد میزهای فعال</p>
+                  <h3 class="mg-kpi-value">
+                    <span id="kpiActiveTables" data-countup="true">۰</span>
+                    <span class="mg-kpi-unit">میز</span>
+                  </h3>
                 </div>
-
-                <div class="col-md-12">
-                    <div class="x_panel">
-                        <div class="x_content">
-                            <div class="row">
-                                <div class="col-md-12 col-sm-12 col-xs-12 text-center"></div>
-                                <div class="clearfix"></div>
-
-                                <div class="table-responsive">
-                                    <table class="table table-striped jambo_table bulk_action">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: 1%">ردیف</th>
-
-                                                <th style="width: 20%">زمان</th>
-
-                                                <th>شماره میز</th>
-
-                                                <th>نوع قیمت</th>
-
-                                                <th>نوع کنسول</th>
-
-                                                <th>بوفه</th>
-
-                                                <th style="width: 20%">عملیات</th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody id="reservationTableBody"></tbody>
-                                    </table>
-                                </div>
-
-                                <div
-                                    id="ChargeModal"
-                                    class="modal"
-                                >
-                                    <div class="charge-modal-content">
-                                        <span class="close">&times;</span>
-
-                                        <h3 id="chargeFormTitle">عنوان فرم</h3>
-
-                                        <form id="chargeForm">
-                                            <br>
-
-                                            <label>
-                                                لطفا جهت شارژ میز فقط یکی از موارد ذیل را انتخاب کنید:
-                                            </label>
-
-                                            <br>
-
-                                            <label for="chargeAmount">مبلغ (تومان):</label>
-
-                                            <input
-                                                type="number"
-                                                id="chargeAmount"
-                                                name="chargeAmount"
-                                                min="5000"
-                                            ></input>
-
-                                            <br>
-
-                                            <label for="chargeTime">زمان (دقیقه):</label>
-
-                                            <input
-                                                type="number"
-                                                id="chargeTime"
-                                                name="chargeTime"
-                                                min="1"
-                                            ></input>
-
-                                            <br>
-
-                                            <button type="submit" class="btn btn-warning">ارسال</button>
-                                        </form>
-                                    </div>
-                                </div>
-
-                                <div
-                                    id="myModal"
-                                    class="modal"
-                                >
-                                    <div class="modal-content">
-                                        <span class="close">&times;</span>
-
-                                        <h3 id="formTitle"></h3>
-                                        <br>
-
-                                        <form id="buyForm">
-                                            <label for="productDropdown">محصول:</label>
-
-                                            <select
-                                                type="text"
-                                                id="productDropdown"
-                                                name="product"
-                                                aria-autocomplete="none"
-                                            >
-                                                <!-- گزینه‌های دراپ‌دان به صورت دینامیک از فایل JSON پر می‌شوند -->
-                                            </select>
-
-                                            <br>
-
-                                            <label for="quantity">تعداد:</label>
-
-                                            <input
-                                                type="number"
-                                                id="quantity"
-                                                name="quantity"
-                                                min="1"
-                                                value="1"
-                                            ></input>
-
-                                            <br>
-
-                                            <button type="submit"  class="btn btn-primary">خرید محصول</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="mg-kpi-ring-wrap" title="نسبت میزهای فعال">
+                  <svg class="mg-kpi-ring-svg" viewBox="0 0 48 48" aria-hidden="true">
+                    <circle class="mg-kpi-ring-track" cx="24" cy="24" r="20"></circle>
+                    <circle id="kpiRingActiveTables" class="mg-kpi-ring-bar ring-indigo" cx="24" cy="24" r="20" stroke-dasharray="125.66" stroke-dashoffset="125.66"></circle>
+                  </svg>
+                  <div class="mg-kpi-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                  </div>
                 </div>
+              </div>
+              <div class="mg-kpi-footer">
+                <span id="kpiActiveTablesSub">۰ پس‌کرایه · ۰ پیش‌پرداخت</span>
+              </div>
+            </article>
+
+            <!-- KPI 2: Occupied vs available stations -->
+            <article class="mg-kpi-card kpi-cyan mg-stagger-item" style="--stagger-idx: 2;">
+              <div class="mg-kpi-top">
+                <div>
+                  <p class="mg-kpi-label">ایستگاه‌های مشغول / کل</p>
+                  <h3 class="mg-kpi-value">
+                    <span id="kpiStationsRatio">۰ / ۱۲</span>
+                    <span class="mg-kpi-unit">ایستگاه</span>
+                  </h3>
+                </div>
+                <div class="mg-kpi-ring-wrap" title="ضریب اشغال ایستگاه‌ها">
+                  <svg class="mg-kpi-ring-svg" viewBox="0 0 48 48" aria-hidden="true">
+                    <circle class="mg-kpi-ring-track" cx="24" cy="24" r="20"></circle>
+                    <circle id="kpiRingStations" class="mg-kpi-ring-bar ring-cyan" cx="24" cy="24" r="20" stroke-dasharray="125.66" stroke-dashoffset="125.66"></circle>
+                  </svg>
+                  <div class="mg-kpi-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                  </div>
+                </div>
+              </div>
+              <div class="mg-kpi-footer">
+                <span id="kpiStationsSub">۱۲ ایستگاه آزاد (۰٪ اشغال)</span>
+              </div>
+            </article>
+
+            <!-- KPI 3: Today's / Total revenue -->
+            <article class="mg-kpi-card kpi-emerald mg-stagger-item" style="--stagger-idx: 3;">
+              <div class="mg-kpi-top">
+                <div>
+                  <p class="mg-kpi-label">درآمد ثبت‌شده گیم‌نت</p>
+                  <h3 class="mg-kpi-value">
+                    <span id="kpiTotalRevenue" data-countup="true">۰</span>
+                    <span class="mg-kpi-unit">تومان</span>
+                  </h3>
+                </div>
+                <div class="mg-kpi-ring-wrap" title="سهم درآمد بازی از کل درآمد">
+                  <svg class="mg-kpi-ring-svg" viewBox="0 0 48 48" aria-hidden="true">
+                    <circle class="mg-kpi-ring-track" cx="24" cy="24" r="20"></circle>
+                    <circle id="kpiRingRevenue" class="mg-kpi-ring-bar ring-emerald" cx="24" cy="24" r="20" stroke-dasharray="125.66" stroke-dashoffset="125.66"></circle>
+                  </svg>
+                  <div class="mg-kpi-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                  </div>
+                </div>
+              </div>
+              <div class="mg-kpi-footer">
+                <span id="kpiRevenueSub">سهم بازی: ۰ تومان</span>
+              </div>
+            </article>
+
+            <!-- KPI 4: Current active sessions -->
+            <article class="mg-kpi-card kpi-purple mg-stagger-item" style="--stagger-idx: 4;">
+              <div class="mg-kpi-top">
+                <div>
+                  <p class="mg-kpi-label">سشن‌های در حال اجرا</p>
+                  <h3 class="mg-kpi-value">
+                    <span id="kpiActiveSessions" data-countup="true">۰</span>
+                    <span class="mg-kpi-unit">تایمر روشن</span>
+                  </h3>
+                </div>
+                <div class="mg-kpi-ring-wrap" title="نسبت تایمرهای روشن به میزهای فعال">
+                  <svg class="mg-kpi-ring-svg" viewBox="0 0 48 48" aria-hidden="true">
+                    <circle class="mg-kpi-ring-track" cx="24" cy="24" r="20"></circle>
+                    <circle id="kpiRingSessions" class="mg-kpi-ring-bar ring-purple" cx="24" cy="24" r="20" stroke-dasharray="125.66" stroke-dashoffset="125.66"></circle>
+                  </svg>
+                  <div class="mg-kpi-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  </div>
+                </div>
+              </div>
+              <div class="mg-kpi-footer">
+                <span id="kpiSessionsSub">آماده شروع زمان‌سنج</span>
+              </div>
+            </article>
+
+            <!-- KPI 5: Buffet sales summary -->
+            <article class="mg-kpi-card kpi-amber mg-stagger-item" style="--stagger-idx: 5;">
+              <div class="mg-kpi-top">
+                <div>
+                  <p class="mg-kpi-label">خلاصه فروش بوفه</p>
+                  <h3 class="mg-kpi-value">
+                    <span id="kpiBuffetRevenue" data-countup="true">۰</span>
+                    <span class="mg-kpi-unit">تومان</span>
+                  </h3>
+                </div>
+                <div class="mg-kpi-ring-wrap" title="سهم بوفه از کل درآمد">
+                  <svg class="mg-kpi-ring-svg" viewBox="0 0 48 48" aria-hidden="true">
+                    <circle class="mg-kpi-ring-track" cx="24" cy="24" r="20"></circle>
+                    <circle id="kpiRingBuffet" class="mg-kpi-ring-bar ring-amber" cx="24" cy="24" r="20" stroke-dasharray="125.66" stroke-dashoffset="125.66"></circle>
+                  </svg>
+                  <div class="mg-kpi-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>
+                  </div>
+                </div>
+              </div>
+              <div class="mg-kpi-footer">
+                <span id="kpiBuffetSub">۰ سفارش باز</span>
+              </div>
+            </article>
+          </section>
+
+          <!-- Animated Circular Progress & Interactive Donut Charts Strip -->
+          <section aria-label="نمودارهای حلقه‌ای و تحلیل زنده" class="mg-charts-grid mg-reveal">
+            <!-- Chart 1: Circular Progress Chart (Occupancy & Station Utilization) -->
+            <article class="mg-chart-card chart-cyan" id="chartOccupancyCard">
+              <div class="mg-chart-info">
+                <div class="mg-chart-badge">ظرفیت زنده سالن</div>
+                <h3 class="mg-chart-title">ضریب اشغال ایستگاه‌ها</h3>
+                <p class="mg-chart-desc" id="chartOccupancyDesc">۲ ایستگاه مشغول از ۱۲ ایستگاه فعال</p>
+                <div class="mg-chart-legend">
+                  <div class="mg-legend-item" data-highlight-ring="occupied">
+                    <span class="mg-legend-dot dot-cyan"></span>
+                    <span class="mg-legend-label">ایستگاه مشغول:</span>
+                    <strong id="legendOccupiedCount">۲ میز</strong>
+                  </div>
+                  <div class="mg-legend-item" data-highlight-ring="free">
+                    <span class="mg-legend-dot dot-slate"></span>
+                    <span class="mg-legend-label">آماده پذیرش:</span>
+                    <strong id="legendFreeCount">۱۰ میز</strong>
+                  </div>
+                </div>
+              </div>
+              <div class="mg-circular-gauge" role="img" aria-label="نمودار حلقه‌ای ضریب اشغال سالن">
+                <svg class="mg-gauge-svg" viewBox="0 0 120 120">
+                  <defs>
+                    <linearGradient id="gradCyanIndigo" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#22D3EE" />
+                      <stop offset="100%" stop-color="#6366F1" />
+                    </linearGradient>
+                  </defs>
+                  <circle class="mg-gauge-track" cx="60" cy="60" r="46"></circle>
+                  <circle id="gaugeOccupancyArc" class="mg-gauge-progress stroke-cyan" cx="60" cy="60" r="46" stroke="url(#gradCyanIndigo)" stroke-dasharray="289.03" stroke-dashoffset="289.03"></circle>
+                </svg>
+                <div class="mg-gauge-center">
+                  <span id="gaugeOccupancyPercent" class="mg-gauge-percent">۰٪</span>
+                  <span id="gaugeOccupancySub" class="mg-gauge-caption">اشغال سالن</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Chart 2: Interactive Multi-Segment Donut Chart (Revenue Share: Game vs Buffet) -->
+            <article class="mg-chart-card chart-emerald" id="chartRevenueDonutCard">
+              <div class="mg-chart-info">
+                <div class="mg-chart-badge badge-emerald">تفکیک منابع درآمد</div>
+                <h3 class="mg-chart-title">سهم درآمد کنسول و بوفه</h3>
+                <p class="mg-chart-desc" id="chartRevenueDesc">مجموع کل: ۱,۸۵۷,۷۱۹ تومان</p>
+                <div class="mg-chart-legend" id="revenueDonutLegend">
+                  <div class="mg-legend-item" data-donut-target="revenue" data-segment-index="0">
+                    <span class="mg-legend-dot dot-emerald"></span>
+                    <span class="mg-legend-label">سشن‌های بازی:</span>
+                    <strong id="legendGameRev">۰ تومان (۰٪)</strong>
+                  </div>
+                  <div class="mg-legend-item" data-donut-target="revenue" data-segment-index="1">
+                    <span class="mg-legend-dot dot-amber"></span>
+                    <span class="mg-legend-label">فروش بوفه:</span>
+                    <strong id="legendBuffetRev">۰ تومان (۰٪)</strong>
+                  </div>
+                </div>
+              </div>
+              <div class="mg-circular-gauge" role="img" aria-label="نمودار دونات سهم درآمد بازی و بوفه">
+                <svg class="mg-gauge-svg" viewBox="0 0 120 120" id="revenueDonutSvg">
+                  <circle class="mg-gauge-track" cx="60" cy="60" r="46"></circle>
+                  <circle id="donutRevSeg0" class="mg-donut-segment seg-emerald" data-segment-index="0" cx="60" cy="60" r="46" stroke="#10B981" stroke-dasharray="0 289.03" stroke-dashoffset="0"></circle>
+                  <circle id="donutRevSeg1" class="mg-donut-segment seg-amber" data-segment-index="1" cx="60" cy="60" r="46" stroke="#F59E0B" stroke-dasharray="0 289.03" stroke-dashoffset="0"></circle>
+                </svg>
+                <div class="mg-gauge-center">
+                  <span id="donutRevCenterValue" class="mg-gauge-percent">۰٪</span>
+                  <span id="donutRevCenterLabel" class="mg-gauge-caption">سهم بازی</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Chart 3: Interactive Multi-Segment Donut Chart (Active Timers & Payment Mode Mix) -->
+            <article class="mg-chart-card chart-purple" id="chartSessionsDonutCard">
+              <div class="mg-chart-info">
+                <div class="mg-chart-badge badge-purple">مانیتورینگ زمان‌سنج‌ها</div>
+                <h3 class="mg-chart-title">وضعیت سشن‌ها و تایمرها</h3>
+                <p class="mg-chart-desc" id="chartSessionsDesc">نسبت تایمرهای روشن و آماده استارت</p>
+                <div class="mg-chart-legend" id="sessionsDonutLegend">
+                  <div class="mg-legend-item" data-donut-target="sessions" data-segment-index="0">
+                    <span class="mg-legend-dot dot-purple"></span>
+                    <span class="mg-legend-label">تایمر در حال اجرا:</span>
+                    <strong id="legendRunningSessions">۰ سشن</strong>
+                  </div>
+                  <div class="mg-legend-item" data-donut-target="sessions" data-segment-index="1">
+                    <span class="mg-legend-dot dot-cyan"></span>
+                    <span class="mg-legend-label">آماده استارت:</span>
+                    <strong id="legendWaitingSessions">۰ سشن</strong>
+                  </div>
+                </div>
+              </div>
+              <div class="mg-circular-gauge" role="img" aria-label="نمودار دونات وضعیت تایمرهای سشن">
+                <svg class="mg-gauge-svg" viewBox="0 0 120 120" id="sessionsDonutSvg">
+                  <circle class="mg-gauge-track" cx="60" cy="60" r="46"></circle>
+                  <circle id="donutSessSeg0" class="mg-donut-segment seg-purple" data-segment-index="0" cx="60" cy="60" r="46" stroke="#A855F7" stroke-dasharray="0 289.03" stroke-dashoffset="0"></circle>
+                  <circle id="donutSessSeg1" class="mg-donut-segment seg-cyan" data-segment-index="1" cx="60" cy="60" r="46" stroke="#22D3EE" stroke-dasharray="0 289.03" stroke-dashoffset="0"></circle>
+                </svg>
+                <div class="mg-gauge-center">
+                  <span id="donutSessCenterValue" class="mg-gauge-percent">۰٪</span>
+                  <span id="donutSessCenterLabel" class="mg-gauge-caption">تایمر فعال</span>
+                </div>
+              </div>
+            </article>
+          </section>
+        </div>
+
+        <!-- Section Group 2: Station Control, Charging & Buffet Operations -->
+        <div class="mg-section-group">
+          <div class="mg-section-bar">
+            <div class="mg-section-bar-right">
+              <span class="mg-section-accent"></span>
+              <h2 class="mg-section-heading">پنل فرماندهی، شارژ و سفارشات بوفه</h2>
+              <span class="mg-section-caption">— ثبت سشن جدید، تمدید زمان بازی و افزودن خوراکی به فاکتور میز</span>
             </div>
+          </div>
+
+          <div class="mg-operations-grid">
+            <!-- 4. Table Registration / Control Form -->
+            <section class="mg-card mg-col-5" aria-labelledby="regCardHeading">
+              <div class="mg-card-header">
+                <div class="mg-card-header-main">
+                  <div class="mg-header-icon-box">
+                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                  </div>
+                  <div>
+                    <h2 id="regCardHeading" class="mg-card-title">ثبت و راه‌اندازی میز جدید</h2>
+                    <p class="mg-card-subtitle">تخصیص کنسول، نوع بازی و حالت پرداخت ایستگاه</p>
+                  </div>
+                </div>
+                <span class="mg-card-tag">کنترل میز</span>
+              </div>
+
+              <form action="process.php" method="post" class="mg-card-form">
+                <div class="mg-form-grid">
+                  <div class="mg-form-group">
+                    <label for="tableNumber" class="mg-label">شماره میز / ایستگاه</label>
+                    <input type="text" id="tableNumber" name="table-number" required class="form-control mg-input" placeholder="مثلاً: ۱ یا ۴">
+                  </div>
+
+                  <div class="mg-form-group">
+                    <label for="consoleType" class="mg-label">نوع کنسول / دستگاه</label>
+                    <select class="form-control mg-select" id="consoleType" name="consoleType" required>
+                      <option value="">انتخاب کنسول...</option>
+                      <option value="ps50">پلی‌استیشن ۵ (PS5)</option>
+                      <option value="ps4">پلی‌استیشن ۴ (PS4)</option>
+                      <option value="xbox">ایکس‌باکس (Xbox)</option>
+                      <option value="computer">سیستم گیمینگ (PC)</option>
+                      <option value="pool-table">میز بیلیارد (Billiard)</option>
+                      <option value="foosball">فوتبال دستی</option>
+                      <option value="jewelry">وی‌آر / ویژه (VIP)</option>
+                    </select>
+                  </div>
+
+                  <div class="mg-form-group full-width">
+                    <label class="mg-label">نوع پرداخت میز</label>
+                    <div class="mg-payment-modes">
+                      <label class="mg-radio-card is-selected" for="post-payment">
+                        <input type="radio" name="post-payment" id="post-payment" value="post-payment" checked>
+                        <span>پس‌کرایه (زمان باز)</span>
+                      </label>
+                      <label class="mg-radio-card" for="pre-payment">
+                        <input type="radio" name="pre-payment" id="pre-payment" value="pre-payment">
+                        <span>پیش‌پرداخت (شارژی)</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="mg-form-group">
+                    <label for="pre-payment-cost" class="mg-label">مبلغ پیش‌پرداخت (تومان)</label>
+                    <input type="number" id="pre-payment-cost" name="pre-payment-cost" class="form-control mg-input" placeholder="مبلغ به تومان" disabled>
+                    <div class="mg-preset-chips">
+                      <button type="button" class="mg-chip-btn" data-prepay-preset="30000">۳۰,۰۰۰</button>
+                      <button type="button" class="mg-chip-btn" data-prepay-preset="50000">۵۰,۰۰۰</button>
+                      <button type="button" class="mg-chip-btn" data-prepay-preset="100000">۱۰۰,۰۰۰</button>
+                    </div>
+                  </div>
+
+                  <div class="mg-form-group">
+                    <label for="priceType" class="mg-label">نوع بازی / تعداد دسته</label>
+                    <select class="form-control mg-select" id="priceType" name="priceType" required>
+                      <option value="">انتخاب تعرفه بازی...</option>
+                      <option value="one_player_price">یک نفره (تک دسته)</option>
+                      <option value="two_player_price">دو نفره (دو دسته)</option>
+                      <option value="three_player_price">سه نفره (سه دسته)</option>
+                      <option value="four_player_price">چهار نفره (چهار دسته)</option>
+                    </select>
+                    <div class="mg-preset-chips">
+                      <button type="button" class="mg-chip-btn" data-price-preset="one_player_price">تک نفره</button>
+                      <button type="button" class="mg-chip-btn" data-price-preset="two_player_price">دو نفره</button>
+                      <button type="button" class="mg-chip-btn" data-price-preset="four_player_price">چهار نفره</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mg-card-cta-wrap">
+                  <button type="submit" id="startReservationButton" class="btn btn-primary mg-btn mg-btn-primary mg-btn-block">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span>ثبت و افزودن به میزهای فعال</span>
+                  </button>
+                </div>
+              </form>
+            </section>
+
+            <!-- Right Column Pair: 6. Table Charging Section & 7. Buffet Purchase Section -->
+            <div class="mg-col-7">
+              <!-- 6. Table Charging Section -->
+              <div id="ChargeModal" class="charge-modal">
+                <div class="charge-modal-content">
+                  <div class="mg-card-header">
+                    <div class="mg-card-header-main">
+                      <div class="mg-header-icon-box icon-cyan">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                      </div>
+                      <div>
+                        <h3 class="mg-card-title">شارژ مجدد میز</h3>
+                        <p id="chargeFormTitle" class="mg-card-subtitle">افزودن زمان یا مبلغ به سشن میز فعال</p>
+                      </div>
+                    </div>
+                    <span class="mg-card-tag" style="color: #67E8F9; border-color: rgba(6,182,212,0.35); background: rgba(6,182,212,0.12);">شارژ سریع</span>
+                  </div>
+
+                  <form id="chargeForm" class="mg-card-form">
+                    <div class="mg-form-group">
+                      <label for="chargeTableSelect" class="mg-label">انتخاب میز جهت شارژ</label>
+                      <select id="chargeTableSelect" class="form-control mg-select">
+                        <option value="">در حال بارگذاری میزها...</option>
+                      </select>
+                    </div>
+
+                    <div class="mg-form-group">
+                      <label for="chargeAmount" class="mg-label">مبلغ شارژ (تومان)</label>
+                      <input type="number" id="chargeAmount" name="chargeAmount" class="form-control mg-input" placeholder="مثلاً: ۵۰,۰۰۰ تومان">
+                      <div class="mg-preset-chips">
+                        <button type="button" class="mg-chip-btn" data-charge-amount="25000">+۲۵,۰۰۰</button>
+                        <button type="button" class="mg-chip-btn" data-charge-amount="50000">+۵۰,۰۰۰</button>
+                        <button type="button" class="mg-chip-btn" data-charge-amount="100000">+۱۰۰,۰۰۰</button>
+                      </div>
+                    </div>
+
+                    <div class="mg-form-group">
+                      <label for="chargeTime" class="mg-label">زمان اضافه (دقیقه)</label>
+                      <input type="number" id="chargeTime" name="chargeTime" class="form-control mg-input" placeholder="مثلاً: ۳۰ دقیقه">
+                      <div class="mg-preset-chips">
+                        <button type="button" class="mg-chip-btn" data-charge-time="30">۳۰ دقیقه</button>
+                        <button type="button" class="mg-chip-btn" data-charge-time="60">۶۰ دقیقه</button>
+                        <button type="button" class="mg-chip-btn" data-charge-time="90">۹۰ دقیقه</button>
+                      </div>
+                    </div>
+
+                    <div class="mg-card-cta-wrap">
+                      <button type="submit" class="btn btn-info mg-btn mg-btn-cyan mg-btn-block">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        <span>ثبت شارژ میز</span>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <!-- 7. Buffet Purchase Section -->
+              <div id="myModal" class="modal">
+                <div class="modal-content">
+                  <div class="mg-card-header">
+                    <div class="mg-card-header-main">
+                      <div class="mg-header-icon-box icon-amber">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>
+                      </div>
+                      <div>
+                        <h3 class="mg-card-title">خرید از بوفه</h3>
+                        <p id="formTitle" class="mg-card-subtitle">ثبت خوراکی و نوشیدنی روی فاکتور میز</p>
+                      </div>
+                    </div>
+                    <span class="mg-card-tag" style="color: #FCD34D; border-color: rgba(245,158,11,0.35); background: rgba(245,158,11,0.12);">بوفه گیم‌نت</span>
+                  </div>
+
+                  <form id="buyForm" class="mg-card-form">
+                    <div class="mg-form-group">
+                      <label for="buffetTableSelect" class="mg-label">انتخاب میز سفارش‌دهنده</label>
+                      <select id="buffetTableSelect" class="form-control mg-select">
+                        <option value="">در حال بارگذاری میزها...</option>
+                      </select>
+                    </div>
+
+                    <div class="mg-form-group">
+                      <label for="productDropdown" class="mg-label">انتخاب محصول بوفه</label>
+                      <select id="productDropdown" name="product" class="form-control mg-select"></select>
+                    </div>
+
+                    <div class="mg-form-group">
+                      <label for="quantity" class="mg-label">تعداد سفارش</label>
+                      <input type="number" id="quantity" name="quantity" min="1" value="1" class="form-control mg-input">
+                      <div class="mg-preset-chips">
+                        <button type="button" class="mg-chip-btn active" data-buffet-qty="1">۱ عدد</button>
+                        <button type="button" class="mg-chip-btn" data-buffet-qty="2">۲ عدد</button>
+                        <button type="button" class="mg-chip-btn" data-buffet-qty="3">۳ عدد</button>
+                        <button type="button" class="mg-chip-btn" data-buffet-qty="4">۴ عدد</button>
+                      </div>
+                    </div>
+
+                    <div class="mg-card-cta-wrap">
+                      <button type="submit" class="btn btn-warning mg-btn mg-btn-amber mg-btn-block">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        <span>ثبت سفارش در فاکتور میز</span>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- 5. Active Tables / Records Table -->
+            <section id="tables-section" class="mg-card mg-col-12" aria-labelledby="activeTablesHeading">
+              <div class="mg-card-header mg-table-toolbar">
+                <div class="mg-card-header-main">
+                  <div class="mg-header-icon-box icon-emerald">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                  </div>
+                  <div>
+                    <h2 id="activeTablesHeading" class="mg-card-title">
+                      <span>میزهای فعال و سشن‌های در حال اجرا</span>
+                      <span id="activeTableFilteredCount" class="mg-card-tag">۰ میز فعال</span>
+                    </h2>
+                    <p class="mg-card-subtitle">مانیتورینگ زنده زمان‌سنج‌ها، ثبت سفارش بوفه، شارژ مجدد و صدور فاکتور پایان بازی</p>
+                  </div>
+                </div>
+
+                <div class="mg-filter-pills" role="group" aria-label="فیلتر جدول میزها">
+                  <button type="button" class="mg-filter-btn active" data-table-filter="all">همه میزها</button>
+                  <button type="button" class="mg-filter-btn" data-table-filter="post-payment">پس‌کرایه</button>
+                  <button type="button" class="mg-filter-btn" data-table-filter="pre-payment">پیش‌پرداخت</button>
+                  <button type="button" class="mg-filter-btn" data-table-filter="console">پلی‌استیشن / ایکس‌باکس</button>
+                  <button type="button" class="mg-filter-btn" data-table-filter="other">سیستم PC / بیلیارد</button>
+                </div>
+              </div>
+
+              <div class="mg-table-responsive">
+                <table class="table mg-table">
+                  <thead>
+                    <tr>
+                      <th>ردیف</th>
+                      <th>زمان / تایمر سشن</th>
+                      <th>شماره میز</th>
+                      <th>نوع قیمت / بازی</th>
+                      <th>نوع کنسول</th>
+                      <th>سفارش بوفه</th>
+                      <th>عملیات کنترل میز</th>
+                    </tr>
+                  </thead>
+                  <tbody id="reservationTableBody"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
         </div>
+      </main>
 
-        <audio
-            id="alarmSound"
-            src="./src/alarm.mp3"
-            preload="auto"
-        ></audio>
+      <!-- 5. Super Mario Decorative Pixel-Art Runner Stage -->
+      <div id="mgMarioStage" class="mg-mario-stage" aria-hidden="true"></div>
     </div>
+  </div>
 
-    <script>
-        function convertToPersian(number) {
-            const persianDigits = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
-            return String(number).split('').map(digit => persianDigits[digit]).join('');
-          }
-    </script>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-
-
-  
-    <!-- /page content -->
-    <!-- footer content -->
-
-    <footer class="hidden-print">
-        <div class="pull-left">
-            <span class="text-right">
-                تمامی حقوق برای
-
-                <a
-                    target="_blank"
-                    href="#"
-                >متروگیم</a>
-
-                محفوظ است.
-            </span>
-
-            <span class="float-left">
-                طراحی شده توسط:
-
-                <a
-                    target="_blank"
-                    href="09153679400"
-                >
-                    <b>لیندو</b>
-                </a>
-            </span>
-        </div>
-
-        <div class="clearfix"></div>
-    </footer>
-
-    <!-- /footer content -->
-
-    <div id="lock_screen">
-        <table>
-            <tr>
-                <td>
-                    <div class="clock"></div>
-
-                    <span class="unlock">
-                        <span class="fa-stack fa-5x">
-                            
-                            <i
-                                id="icon_lock"
-                                class="fa fa-lock fa-stack-1x fa-inverse"
-                            ></i>
-                        </span>
-                    </span>
-                </td>
-            </tr>
-        </table>
+  <!-- Error Alert Modal (used by showErrorAlert.js) -->
+  <div id="errorModal" class="modal">
+    <div class="modal-content">
+      <h4 id="errorText" style="margin: 0 0 16px;"></h4>
+      <button type="button" id="closeModal" class="btn btn-danger mg-btn mg-btn-crimson">بستن</button>
     </div>
-    <script src="./JS/7878.js"></script>
-    <!-- jQuery -->
-    <script src="vendors/jquery/dist/jquery.min.js"></script>
-    <!-- Bootstrap -->
-    <script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
-    <!-- FastClick -->
-    <script src="vendors/fastclick/lib/fastclick.js"></script>
-    <!-- NProgress -->
-    <script src="vendors/nprogress/nprogress.js"></script>
-    <!-- bootstrap-progressbar -->
-    <script src="vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
-    <!-- iCheck -->
-    <script src="vendors/iCheck/icheck.min.js"></script>
-    <!-- bootstrap-daterangepicker -->
-    <script src="vendors/moment/min/moment.min.js"></script>
-    <script src="vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
-    <!-- Custom Theme Scripts -->
-    <script src="build/js/custom.min.js"></script>
+  </div>
+
+  <!-- Scripts -->
+  <script src="vendors/bootstrap-rtl/dist/js/jquery.min.js"></script>
+  <script src="vendors/bootstrap-sass/assets/javascripts/bootstrap.min.js"></script>
+  <script src="JS/7878.js"></script>
+  <script src="JS/showErrorAlert.js"></script>
+  <script type="module" src="JS/dashboard-ui.js"></script>
 </body>
 </html>

@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "node server.mjs",
-    "start": "node server.mjs"
+    "start": "node server.mjs",
+    "build": "node -e 'process.exit(0)'",
+    "lint": "node --check server.mjs && node --check backend.mjs && node --check JS/dashboard-metrics.mjs"
   }
 }

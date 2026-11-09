@@ -1,440 +1,613 @@
-
-$(document).ready(function() {
-    // درخواست همزمان اطلاعات از هر دو فایل
-    Promise.all([
-        fetch('./data.json'),
-        fetch('./reservations.json'),
-        fetch('./products.json')
-    ])
-    .then(function(responses) {
-        // وقتی هر دو درخواست با موفقیت انجام شد
-        return Promise.all(responses.map(r => r.json()));
-    })
-    .then(function(data) {
-        // داده های JSON را به متغیرها اختصاص می‌دهیم
-        const dataJson = data[0];
-        const reservationsJson = data[1];
-        const productsJson = data[2];
-      
-
-
-        var tableBody = $('#reservationTableBody');
-        var rowNumber = 1 // متغیر شماره ردیف
-
-        $.each(reservationsJson, function(index, reservation) {
-            // دریافت اطلاعات مورد نیاز از اطلاعات رزرو
-            const prePaymentCost = reservation.prePaymentCost;
-            const consoleType = reservation.consoleType; // نوع کنسول
-            const priceType = reservation.priceType; // نوع قیمت‌گذاری
-
-            // استفاده از اطلاعات "data.json" برای یافتن "hourlyPrice"
-            const hourlyPrice = dataJson.consoles.find(c => c.name === consoleType)[`${priceType}`];
-
-            // محاسبه زمان بر اساس فرمول
-            const timeSeconds = Math.round(3600 * prePaymentCost / hourlyPrice);
-
-            // تابع displayTime را با استفاده از تغییرات اعمال شده فراخوانی می‌کنیم
-            const timeText = displayTime(reservation);
-
-            // درج ردیف جدید در جدول
-            var newRow = $('<tr></tr>');
-            newRow.append('<td>' + convertToPersian(rowNumber++) + '</td>'); // شماره ردیف
-            newRow.append('<td>'+  timeText +' </td>'); // زمان و وضعیت پرداخت
-            newRow.append('<td><ul class="list-inline"><i class="demo-icon icon-table" style="font-size: 20px;"></i><span>' + convertToPersian(reservation.tableNumber)+ '</span></ul></td>'); // شماره میز
-
-            // اضافه کردن آیکن مرتبط با "priceType"
-            if (reservation.priceType === 'one_player_price') {
-                newRow.append('<td>یک نفره</td>');
-            } else if (reservation.priceType === 'two_player_price') {
-                newRow.append('<td>دو نفره</td>');
-            } else if (reservation.priceType === 'three_player_price') {
-                newRow.append('<td>سه نفره</td>');
-            } else if (reservation.priceType === 'four_player_price') {
-                newRow.append('<td>چهارنفره</td>');
-            } else {
-                newRow.append('<td><i class="fa fa-default" style="font-size: 30px;"></i></td>');
-            }
-
-            newRow.append('<td><i class="demo-icon icon-' + reservation.consoleType + '" style="font-size: 30px;"></i></td>'); // نوع کنسول
-            newRow.append('<td><button class="btn btn-warning btn-xs bufeh-button" ><i class="fa fa-coffee"></i> بوفـه</button></td>'); // بوفه
-       
-            newRow.find('.bufeh-button').click(function() {
-                let modalTitle = `  بوفه برای میز ${reservation.tableNumber}`;
-                let formTitle = `خرید از بوفه برای میز ${convertToPersian(reservation.tableNumber)}`;
-                let modal = document.getElementById('myModal');
-                modal.style.display = 'block';
-                document.querySelector('.modal-content h3').textContent = modalTitle;
-                document.getElementById('formTitle').textContent = formTitle;
-                let dropdown = document.getElementById('productDropdown');
-                
-                productsJson.forEach(product => {
-                    let option = document.createElement('option');
-                    option.value = product.productCode;
-                    option.text = product.title;
-                    dropdown.appendChild(option);  
-                });
-
-                // بستن مودال با کلیک بیرون از مودال
-                window.addEventListener('click', function(event) {
-                    if (event.target == modal) {
-                        modal.style.display = 'none';
-                        location.reload();
-                    
-                    }
-                });
-
-                // بستن مودال با کلید ESC
-                window.addEventListener('keydown', function(event) {
-                    if (event.key === 'Escape') {
-                        modal.style.display = 'none';
-                        location.reload();
-
-                    }  
-                });
-
-                // اضافه کردن دکمه بستن به مودال
-
-                // اضافه کردن تگ بستن به مودال 
-                let closeSpan = document.createElement('span');
-                closeSpan.classList.add('close'); 
-                closeSpan.textContent = '';
-
-                closeSpan.addEventListener('click', function(){
-                    modal.style.display = 'none';
-                    location.reload();
-
-                });
-
-                modal.querySelector('.modal-content').appendChild(closeSpan);
-                // دریافت element های فرم
-                const form = document.getElementById('buyForm');
-                const productSelect = document.getElementById('productDropdown');
-                const productCode = productSelect.value;
-
-                // اضافه کردن event listener به форм برای submit
-                form.addEventListener('submit', e => {
-                
-                  // متوقف کردن ارسال پیش‌فرض форм
-                  e.preventDefault();
-                
-                  // ساختن یک FormData جدید از داده‌های فرم
-                  const formData = new FormData(form);
-                  formData.append('tableNumber', reservation.tableNumber);
-                  formData.append('productCode', productSelect.value);
-               
-                  // ارسال درخواست fetch به temporary.php
-                  fetch('buffet_temporary.php', {
-                    method: 'POST',
-                    body: formData
-                  })
-                  .then(response => response.json()) 
-                  .then(data => {
-                    // موفقیت، داده ذخیره شد
-                  })
-                  .catch(error => {
-                    // خطا در ارسال
-                  });
-              
-                });
-            });
-
-            // تعریف متغیرهای برای وضعیت‌های پرداخت
-            var isPostPayment = (reservation.postPayment == 'post-payment');
-            var isPrePayment = (reservation.prePayment == 'pre-payment');
-
-            // اضافه کردن دکمه "شروع" به رزروهای با وضعیت post-payment یا pre-payment
-            if (isPostPayment) {
-                newRow.append('<td class="nowrap"><a href="#" class="btn btn-success btn btn-xs start-button"><i class="fa fa-play"></i>   شــروع</a><a href="#" class="btn btn-danger btn-xs end-button"><i class="fa fa-power-off"></i> پایان</a></td>');
-              
-           
-            } else if (isPrePayment) {
-                newRow.append('<td class="nowrap"><a href="#" class="btn btn-success btn btn-xs start-button"><i class="fa fa-play"></i>   شــروع</a><a href="#" class="btn btn-danger btn-xs end-button"><i class="fa fa-power-off"></i> پایان</a><a href="#" class="btn btn-info btn-xs charge-button"><i class="fa fa-pencil"></i> شارژمجدد</a></td>');
-               
-            } else {
-                newRow.append('<td class="nowrap">وضعیت نامعلوم</td>');
-            }
-
-            // اضافه کردن کد برای رویداد کلیک روی دکمه "شروع"
-            newRow.find('.start-button').click(function() {
-                if (isPostPayment) {
-                    let clickTime = null;
-                    var tableNumber = reservation.tableNumber; 
-                    if (clickTime === null) {
-                        clickTime = Math.floor(Date.now() / 1000);}
-                     $.ajax({
-                                type: 'POST',
-                                url: './timing.php', // آدرس کد PHP برای حذف ردیف
-                                data: { tableNumber: tableNumber , clickTime: clickTime},
-                                
-                                success: function(response) {
-                                    location.reload();
-                                },
-                                error: function() {
-                                    alert('خطا در ارتباط با سرور');
-                                }
-                                
-                            });
-                            
-                  
-                    isPostPayment = false; // تغییر وضعیت به non-post-payment
-                } else if (isPrePayment) {
-
-                    let startTime = null;
-                    let finishTime = null;
-                    let duration = timeSeconds;
-                    var tableNumber = reservation.tableNumber; 
-                    if (startTime === null) {
-                                startTime = Math.floor(Date.now() / 1000);
-                                finishTime = startTime + duration;}
-                     $.ajax({
-                                type: 'POST',
-                                url: './timer.php', // آدرس کد PHP برای حذف ردیف
-                                data: { tableNumber: tableNumber , finishTime: finishTime,startTime:startTime},
-                                
-                                success: function(response) {
-                                    location.reload();
-                                },
-                                error: function() {
-                                    alert('خطا در ارتباط با سرور');
-                                }
-                            });
-                   
-                 isPrePayment = false; // تغییر وضعیت به non-pre-payment
-                }
-                    });
-            newRow.find('.end-button').click(async function(event) {
-                event.preventDefault();
-                const button = $(this);
-                if (button.data('closing')) return;
-                button.data('closing', true);
-                try {
-                    let gameCost;
-                    if (isPostPayment) {
-                        gameCost = Math.round(hourlyPrice * (stopTimer() / 3600));
-                    } else if (isPrePayment) {
-                        const response = await fetch('./finishTime.json');
-                        if (!response.ok) throw new Error('Could not read timers');
-                        const timers = await response.json();
-                        const timer = timers.find(item => String(item.tableNumber) === String(reservation.tableNumber));
-                        if (!timer) throw new Error('Timer not found');
-                        gameCost = Math.round(((timer.finishTime - timer.startTime) / 3600) * hourlyPrice / 1000) * 1000;
-                    } else {
-                        return;
-                    }
-
-                    if (!button.data('gameSaved')) {
-                        await $.post('./game_temporary.php', { gameCost, consoleType, priceType, tableNumber: reservation.tableNumber });
-                        button.data('gameSaved', true);
-                    }
-                    await $.post('./delete_reservation.php', { tableNumber: reservation.tableNumber });
-                    location.href = 'invoice.html?table=' + encodeURIComponent(reservation.tableNumber);
-                } catch {
-                    alert('پایان بازی ثبت نشد. دوباره تلاش کنید.');
-                } finally {
-                    button.data('closing', false);
-                }
-            });
-            newRow.find('.charge-button').click(function() {
-                                        if (isPrePayment) {      
-                                           // کد مربوط به عملیات شارژ مجدد رزرو را اینجا قرار دهید
-                                           let chargeModalTitle = `  شارژ برای میز ${reservation.tableNumber}`;
-                                           let chargeFormTitle = `شارژ برای میز ${convertToPersian(reservation.tableNumber)}`;
-                                           let chargeModal = document.getElementById('ChargeModal');
-                                           chargeModal.style.display = 'block';
-                                           document.querySelector('.charge-modal-content h3').textContent = chargeModalTitle;
-                                           document.getElementById('chargeFormTitle').textContent = chargeFormTitle;
-                                          
-                                       
-                                           // بستن مودال شارژ با کلیک بیرون از مودال
-                                           window.addEventListener('click', function(event) {
-                                               if (event.target == chargeModal) {
-                                                   chargeModal.style.display = 'none';
-                                                   location.reload();
-                                               }
-                                           });
-                                       
-                                           // بستن مودال شارژ با کلید ESC
-                                           window.addEventListener('keydown', function(event) {
-                                               if (event.key === 'Escape') {
-                                                   chargeModal.style.display = 'none';
-                                                   location.reload();
-                                               }
-                                           });
-                                       
-                                           // اضافه کردن دکمه بستن به مودال شارژ
-                                       
-                                           // اضافه کردن تگ بستن به مودال شارژ
-                                           let closeSpan = document.createElement('span');
-                                           closeSpan.classList.add('close');
-                                           closeSpan.textContent = '';
-                                       
-                                           closeSpan.addEventListener('click', function() {
-                                               chargeModal.style.display = 'none';
-                                               location.reload();
-                                           });
-                                       
-                                           chargeModal.querySelector('.charge-modal-content').appendChild(closeSpan);
-                                           const form = document.getElementById('chargeForm');
-                                           // اضافه کردن event listener به форм برای submit
-                                           form.addEventListener('submit', e => {
-                                           
-                                             // متوقف کردن ارسال پیش‌فرض форм
-                                             e.preventDefault();
-                                           
-                                            // دسترسی به ورودی‌های فرم با استفاده از document.getElementById
-                                            const chargeAmountInput = document.getElementById('chargeAmount');
-                                            const chargeTimeInput = document.getElementById('chargeTime');
-                                            // گرفتن مقادیر از ورودی‌های فرم
-                                            const chargeAmount = chargeAmountInput.value;
-                                            const charge_Time = (chargeTimeInput.value)*60 + Math.round(3600 * chargeAmount / hourlyPrice);
-                                               var tableNumber = reservation.tableNumber; 
-                                               $.ajax({
-                                                       type: 'POST',
-                                                       url: './charging.php',
-                                                       data: {
-                                                           tableNumber: tableNumber,
-                                                           charge_Time: charge_Time
-                                                       },
-                                                       success: function () {
-                                                           location.reload();
-                                                       },
-                                                       error: function () {
-                                                           alert('خطا در ارتباط با سرور');
-                                                       }
-                                                   });
-                                                 
-                                                                            
-                                             chargeModal.style.display = 'none';
-                                         
-                                           });
-                                       
-                                       
-                                                        
-                                            isPrePayment = false; // تغییر وضعیت به non-pre-payment
-                                           }
-                                               });
-            // اضافه کردن ردیف به جدول
-            tableBody.append(newRow);
-let elapsedTime = 0;
-let timerStarted = false 
-let timerInterval;
-let clickTime = null; 
-
-// console.log(tableNumber);
-// تابع برای به روز رسانی تایمر
-function updateTimer() {
-let hours = Math.floor(elapsedTime / 3600);
-let minutes = Math.floor(elapsedTime % 3600 / 60);
-let seconds = elapsedTime % 60;
-let element = document.getElementById(`timer${reservation.tableNumber}`);
-
-element.textContent = 
-(hours < 10 ? '۰' : '') + hours.toLocaleString('fa-IR', { useGrouping: false }) + ':' +
-(minutes < 10 ? '۰' : '') + minutes.toLocaleString('fa-IR', { useGrouping: false }) + ':' +
-(seconds < 10 ? '۰' : '') + seconds.toLocaleString('fa-IR', { useGrouping: false });
-}
-
-// تابع برای شروع تایمر و به روز رسانی آن به صورت مداوم
-function startTimer() {
-timerInterval = setInterval(function() {
-elapsedTime = Math.floor(Date.now() / 1000) - clickTime
-updateTimer();
-}, 1000);
-}
-// بخوانید مقدار اولیه clickTime از فایل JSON
-function loadTimer(tableNumber) {
-fetch('./clickTime.json')
-.then(response => response.json())
-.then(data => {
-const tableData = data.find(item => item.tableNumber === tableNumber);
-if (tableData) {
-clickTime = parseInt(tableData.clickTime);
-startTimer();
-} else {
-console.error('شماره میز یافت نشد');
-}
-})
-.catch(error => {
-console.error('خطا در خواندن مقدار اولیه از فایل JSON', error);
-});
-}
-
-function stopTimer() {
-clearInterval(timerInterval); // توقف تایمر
-updateTimer(); // نمایش میزان زمان فعلی
-
-return elapsedTime; // ذخیره مقدار زمان فعلی
-
+window.convertToPersian = function convertToPersian(number) {
+  const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+  return String(number ?? '').replace(/\d/g, (digit) => persianDigits[Number(digit)]);
 };
-let elapesd = 0;
-let finishTime = null;
-let timeinterval; 
-//  var table = reservation.tableNumber;
-// تابع برای به روز رسانی تایمر
-function updateTime() {
-let hours = Math.floor(elapesd / 3600);
-let minutes = Math.floor(elapesd % 3600 / 60);
-let seconds = elapesd % 60;
-let element = document.getElementById(`PreTime${reservation.tableNumber}`);
 
-element.textContent = 
-(hours < 10 ? '۰' : '') + hours.toLocaleString('fa-IR', { useGrouping: false }) + ':' +
-(minutes < 10 ? '۰' : '') + minutes.toLocaleString('fa-IR', { useGrouping: false }) + ':' +
-(seconds < 10 ? '۰' : '') + seconds.toLocaleString('fa-IR', { useGrouping: false });
-}
+$(document).ready(function () {
+  // Bind post-payment vs pre-payment radio toggle
+  const postRadio = document.getElementById('post-payment');
+  const preRadio = document.getElementById('pre-payment');
+  const preCostInput = document.getElementById('pre-payment-cost');
 
-function startTime() {
-timeinterval = setInterval(function() {
-elapesd = finishTime - Math.floor(Date.now() / 1000);
-updateTime();
+  if (postRadio && preRadio && preCostInput) {
+    postRadio.addEventListener('change', function () {
+      if (this.checked) {
+        preRadio.checked = false;
+        preCostInput.disabled = true;
+        preCostInput.value = '';
+        postRadio.closest('.mg-radio-card')?.classList.add('is-selected');
+        preRadio.closest('.mg-radio-card')?.classList.remove('is-selected');
+      }
+    });
+    preRadio.addEventListener('change', function () {
+      if (this.checked) {
+        postRadio.checked = false;
+        preCostInput.disabled = false;
+        preCostInput.focus();
+        preRadio.closest('.mg-radio-card')?.classList.add('is-selected');
+        postRadio.closest('.mg-radio-card')?.classList.remove('is-selected');
+      }
+    });
+  }
 
-if (elapesd <= 0) {
-clearInterval(timeinterval); // توقف تایمر
-updateTime(); // نمایش میزان زمان فعلی
-finishTime = 0;
-// پخش صدا
-const alarmSound = document.getElementById("alarmSound");
-alarmSound.play();
-alert( `  پایان زمان  میز ${reservation.tableNumber} `);
-}
-}, 1000);
-}
+  const CONSOLE_LABELS = {
+    ps50: 'پلی‌استیشن ۵',
+    ps4: 'پلی‌استیشن ۴',
+    xbox: 'ایکس‌باکس',
+    computer: 'سیستم PC',
+    'pool-table': 'بیلیارد',
+    foosball: 'فوتبال دستی',
+    jewelry: 'وی‌آر / VIP',
+  };
 
+  const PRICE_LABELS = {
+    one_player_price: 'یک نفره',
+    two_player_price: 'دو نفره',
+    three_player_price: 'سه نفره',
+    four_player_price: 'چهار نفره',
+  };
 
-// بخوانید مقدار اولیه clickTime از فایل JSON
+  function showToast(message) {
+    let toast = document.getElementById('mgToast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'mgToast';
+      toast.className = 'mg-toast';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.classList.add('show');
+    clearTimeout(window.__mgToastTimer);
+    window.__mgToastTimer = setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3200);
+  }
 
+  function highlightCard(elementId) {
+    const container = document.getElementById(elementId);
+    if (!container) return;
+    const card = container.querySelector('.charge-modal-content, .modal-content') || container;
+    card.classList.add('card-highlight');
+    container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => card.classList.remove('card-highlight'), 1800);
+  }
 
-function loadTime(tableNumber) {
-fetch('./finishTime.json')
-.then(response => response.json())
-.then(data => {
-const table = data.find(item => item.tableNumber === tableNumber);
-if (table) {
-finishTime = parseInt(table.finishTime);
-startTime(); // شروع تایمر بلافاصله بعد از بارگذاری فایل JSON
-} else {
-console.error('شماره میز یافت نشد');
-}
-})
-.catch(error => {
-console.error('خطا در خواندن مقدار اولیه از فایل JSON', error);
-});
-};
-      function displayTime(reservation) {
-           
-            if (reservation.postPayment === 'post-payment') {
-                          loadTimer(reservation.tableNumber);
-                          
-                return `<div class="timer" id="timer${reservation.tableNumber}">۰۰:۰۰:۰۰</div>`;
-            } else if (reservation.prePayment === 'pre-payment') {
-                                 loadTime(reservation.tableNumber);
-                                
-                return  `<div class="timer2" id="PreTime${reservation.tableNumber}">۰۰:۰۰:۰۰</div>`;
-            } else {
-                return 'زمان نامشخص';
-            }
+  const fetchSharedJson = (url, fallback) => {
+    window.__mgJsonPromises = window.__mgJsonPromises || {};
+    if (!window.__mgJsonPromises[url]) {
+      window.__mgJsonPromises[url] = fetch(url)
+        .then((r) => (r.ok ? r.json() : fallback))
+        .catch(() => fallback);
+    }
+    return window.__mgJsonPromises[url];
+  };
+
+  Promise.all([
+    fetchSharedJson('./data.json', { consoles: [] }),
+    fetchSharedJson('./reservations.json', []),
+    fetchSharedJson('./products.json', []),
+    fetchSharedJson('./clickTime.json', []),
+    fetchSharedJson('./finishTime.json', []),
+    fetchSharedJson('./buffet_temporary.json', []),
+  ])
+    .then(function ([dataJson, reservationsJson, productsJson, clickTimesJson, finishTimesJson, buffetTempJson]) {
+      const consolesList = Array.isArray(dataJson?.consoles) ? dataJson.consoles : [];
+      const reservations = Array.isArray(reservationsJson) ? reservationsJson : [];
+      const products = Array.isArray(productsJson) ? productsJson : [];
+      const clickTimes = Array.isArray(clickTimesJson) ? clickTimesJson : [];
+      const finishTimes = Array.isArray(finishTimesJson) ? finishTimesJson : [];
+      const buffetTemp = Array.isArray(buffetTempJson) ? buffetTempJson : [];
+
+      function getHourlyPrice(consoleType, priceType) {
+        const found = consolesList.find((c) => c.name === consoleType);
+        const rate = found ? Number(found[priceType]) : 0;
+        return rate > 0 ? rate : 60000;
+      }
+
+      // 1. Populate Buffet Product Dropdown immediately
+      const productDropdown = document.getElementById('productDropdown');
+      if (productDropdown) {
+        productDropdown.innerHTML = '';
+        if (products.length === 0) {
+          const opt = document.createElement('option');
+          opt.value = '';
+          opt.textContent = 'محصولی ثبت نشده است';
+          productDropdown.appendChild(opt);
+        } else {
+          products.forEach((product) => {
+            const option = document.createElement('option');
+            option.value = product.productCode;
+            const priceVal = Number(product.unitPrice ?? product.price ?? 0);
+            const priceFormatted = priceVal.toLocaleString('fa-IR');
+            option.textContent = `${product.title} — ${priceFormatted} تومان`;
+            productDropdown.appendChild(option);
+          });
         }
-    }) 
+      }
+
+      // 2. Populate Table Selectors inside Dedicated Charge & Buffet Cards
+      const chargeTableSelect = document.getElementById('chargeTableSelect');
+      const buffetTableSelect = document.getElementById('buffetTableSelect');
+
+      function populateTableSelectors() {
+        [chargeTableSelect, buffetTableSelect].forEach((selectEl) => {
+          if (!selectEl) return;
+          selectEl.innerHTML = '';
+          if (reservations.length === 0) {
+            const emptyOpt = document.createElement('option');
+            emptyOpt.value = '';
+            emptyOpt.textContent = 'میز فعالی وجود ندارد';
+            selectEl.appendChild(emptyOpt);
+            return;
+          }
+          reservations.forEach((res) => {
+            const opt = document.createElement('option');
+            opt.value = res.tableNumber;
+            const cLabel = CONSOLE_LABELS[res.consoleType] || res.consoleType;
+            const pMode = res.prePayment === 'pre-payment' ? 'پیش‌پرداخت' : 'پس‌کرایه';
+            opt.textContent = `میز ${convertToPersian(res.tableNumber)} (${cLabel} - ${pMode})`;
+            selectEl.appendChild(opt);
+          });
+        });
+      }
+      populateTableSelectors();
+
+      // Update card titles when dropdown changes
+      if (chargeTableSelect) {
+        chargeTableSelect.addEventListener('change', function () {
+          const tNum = this.value;
+          const titleEl = document.getElementById('chargeFormTitle');
+          if (titleEl && tNum) {
+            titleEl.textContent = `شارژ زمان و اعتبار برای میز ${convertToPersian(tNum)}`;
+          }
+        });
+      }
+
+      if (buffetTableSelect) {
+        buffetTableSelect.addEventListener('change', function () {
+          const tNum = this.value;
+          const titleEl = document.getElementById('formTitle');
+          if (titleEl && tNum) {
+            titleEl.textContent = `ثبت سفارش بوفه برای میز ${convertToPersian(tNum)}`;
+          }
+        });
+      }
+
+      // 3. Bind Dedicated Buffet Form Submit (#buyForm)
+      const buyForm = document.getElementById('buyForm');
+      if (buyForm && !buyForm.dataset.bound) {
+        buyForm.dataset.bound = 'true';
+        buyForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          const targetTable =
+            (buffetTableSelect && buffetTableSelect.value) ||
+            buyForm.dataset.selectedTable ||
+            (reservations[0] && reservations[0].tableNumber);
+
+          if (!targetTable) {
+            showToast('ابتدا یک میز فعال ثبت یا انتخاب کنید.');
+            return;
+          }
+
+          const formData = new FormData(buyForm);
+          formData.set('tableNumber', targetTable);
+          if (productDropdown) {
+            formData.set('productCode', productDropdown.value);
+          }
+
+          fetch('buffet_temporary.php', {
+            method: 'POST',
+            body: formData,
+          })
+            .then((response) => response.json())
+            .then(() => {
+              showToast(`سفارش بوفه برای میز ${convertToPersian(targetTable)} با موفقیت ثبت شد.`);
+              setTimeout(() => location.reload(), 600);
+            })
+            .catch(() => {
+              showToast('خطا در ثبت سفارش بوفه.');
+            });
+        });
+      }
+
+      // 4. Bind Dedicated Charge Form Submit (#chargeForm)
+      const chargeForm = document.getElementById('chargeForm');
+      if (chargeForm && !chargeForm.dataset.bound) {
+        chargeForm.dataset.bound = 'true';
+        chargeForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          const targetTable =
+            (chargeTableSelect && chargeTableSelect.value) ||
+            chargeForm.dataset.selectedTable ||
+            (reservations[0] && reservations[0].tableNumber);
+
+          if (!targetTable) {
+            showToast('ابتدا یک میز فعال برای شارژ انتخاب کنید.');
+            return;
+          }
+
+          const targetRes = reservations.find((r) => String(r.tableNumber) === String(targetTable));
+          const hourlyPrice = targetRes
+            ? getHourlyPrice(targetRes.consoleType, targetRes.priceType)
+            : 60000;
+
+          const chargeAmountInput = document.getElementById('chargeAmount');
+          const chargeTimeInput = document.getElementById('chargeTime');
+          const chargeAmount = Number(chargeAmountInput ? chargeAmountInput.value : 0) || 0;
+          const chargeMinutes = Number(chargeTimeInput ? chargeTimeInput.value : 0) || 0;
+          const charge_Time = chargeMinutes * 60 + Math.round((3600 * chargeAmount) / hourlyPrice);
+
+          if (charge_Time <= 0) {
+            showToast('لطفاً مبلغ شارژ یا زمان (دقیقه) را وارد نمایید.');
+            return;
+          }
+
+          $.ajax({
+            type: 'POST',
+            url: './charging.php',
+            data: {
+              tableNumber: targetTable,
+              charge_Time: charge_Time,
+            },
+            success: function () {
+              showToast(`شارژ میز ${convertToPersian(targetTable)} با موفقیت اعمال شد.`);
+              setTimeout(() => location.reload(), 600);
+            },
+            error: function () {
+              showToast('خطا در ارتباط با سرور هنگام شارژ میز.');
+            },
+          });
+        });
+      }
+
+      // 5. Render Active Tables Rows inside #reservationTableBody
+      const tableBody = $('#reservationTableBody');
+      tableBody.empty();
+
+      if (reservations.length === 0) {
+        tableBody.append(
+          `<tr class="mg-empty-row">
+            <td colspan="7" class="mg-empty-state">
+              هیچ میز فعالی در حال حاضر ثبت نشده است. از فرم «ثبت و راه‌اندازی میز» برای شروع سشن جدید استفاده کنید.
+            </td>
+          </tr>`
+        );
+        return;
+      }
+
+      let rowNumber = 1;
+
+      $.each(reservations, function (index, reservation) {
+        const prePaymentCost = Number(reservation.prePaymentCost) || 0;
+        const consoleType = reservation.consoleType;
+        const priceType = reservation.priceType;
+        const hourlyPrice = getHourlyPrice(consoleType, priceType);
+        const timeSeconds = Math.round((3600 * prePaymentCost) / hourlyPrice);
+
+        const isPostPayment = reservation.postPayment === 'post-payment';
+        const isPrePayment = reservation.prePayment === 'pre-payment';
+        const paymentModeKey = isPrePayment ? 'pre-payment' : 'post-payment';
+
+        // Calculate buffet items count for this table (supports both object map and array)
+        const tableBuffetItems = Array.isArray(buffetTempJson)
+          ? buffetTempJson.filter((b) => String(b.tableNumber) === String(reservation.tableNumber))
+          : buffetTempJson && Array.isArray(buffetTempJson[String(reservation.tableNumber)])
+          ? buffetTempJson[String(reservation.tableNumber)]
+          : [];
+        const tableBuffetCount = tableBuffetItems.reduce(
+          (sum, item) => sum + (Number(item.quantity) || 1),
+          0
+        );
+
+        const timeText = displayTime(reservation);
+        const consoleLabel = CONSOLE_LABELS[consoleType] || consoleType;
+        const priceLabel = PRICE_LABELS[priceType] || 'استاندارد';
+        const payModeLabel = isPrePayment ? 'پیش‌پرداخت' : 'پس‌کرایه';
+
+        const newRow = $('<tr></tr>');
+        newRow.attr('data-table', String(reservation.tableNumber));
+        newRow.attr('data-console', String(consoleType));
+        newRow.attr('data-payment', paymentModeKey);
+        newRow.attr('data-search', `${reservation.tableNumber} ${consoleLabel} ${priceLabel} ${consoleType}`);
+
+        newRow.append('<td><span class="mg-row-index">' + convertToPersian(rowNumber++) + '</span></td>');
+        newRow.append(
+          '<td><div class="mg-timer-wrap">' +
+            timeText +
+            '<span class="mg-pay-mode-tag">' +
+            payModeLabel +
+            '</span></div></td>'
+        );
+        newRow.append(
+          '<td><ul class="list-inline mg-station-badge"><i class="demo-icon icon-table" style="font-size: 18px;"></i><span>میز ' +
+            convertToPersian(reservation.tableNumber) +
+            '</span></ul></td>'
+        );
+
+        newRow.append('<td><span class="mg-player-badge">' + priceLabel + '</span></td>');
+
+        newRow.append(
+          '<td><div class="mg-console-cell"><i class="demo-icon icon-' +
+            consoleType +
+            '" style="font-size: 22px;"></i><span>' +
+            consoleLabel +
+            '</span></div></td>'
+        );
+
+        const buffetBadgeHtml =
+          tableBuffetCount > 0
+            ? ` <span class="mg-nav-badge badge-Highlight">${convertToPersian(tableBuffetCount)}</span>`
+            : '';
+
+        newRow.append(
+          '<td><button type="button" class="btn btn-warning btn-xs bufeh-button">بوفـه' +
+            buffetBadgeHtml +
+            '</button></td>'
+        );
+
+        // Buffet button focuses the dedicated Buffet Purchase card for this table
+        newRow.find('.bufeh-button').click(function () {
+          const modalTitle = `بوفه برای میز ${convertToPersian(reservation.tableNumber)}`;
+          const formTitle = `خرید از بوفه برای میز ${convertToPersian(reservation.tableNumber)}`;
+          const modal = document.getElementById('myModal');
+          if (modal) {
+            modal.style.display = 'flex';
+            const h3 = modal.querySelector('.modal-content h3');
+            if (h3) h3.textContent = modalTitle;
+          }
+          const formTitleEl = document.getElementById('formTitle');
+          if (formTitleEl) formTitleEl.textContent = formTitle;
+          if (buffetTableSelect) {
+            buffetTableSelect.value = String(reservation.tableNumber);
+          }
+          if (buyForm) {
+            buyForm.dataset.selectedTable = String(reservation.tableNumber);
+          }
+          highlightCard('myModal');
+        });
+
+        // Session Action Buttons (Start, End, Recharge)
+        if (isPostPayment) {
+          newRow.append(
+            '<td class="nowrap"><div class="mg-actions-cell">' +
+              '<a href="#" class="btn btn-success btn-xs start-button">▶ شــروع</a>' +
+              '<a href="#" class="btn btn-danger btn-xs end-button">■ پایان و فاکتور</a>' +
+              '</div></td>'
+          );
+        } else if (isPrePayment) {
+          newRow.append(
+            '<td class="nowrap"><div class="mg-actions-cell">' +
+              '<a href="#" class="btn btn-success btn-xs start-button">▶ شــروع</a>' +
+              '<a href="#" class="btn btn-danger btn-xs end-button">■ پایان و فاکتور</a>' +
+              '<a href="#" class="btn btn-info btn-xs charge-button">⚡ شارژ مجدد</a>' +
+              '</div></td>'
+          );
+        } else {
+          newRow.append('<td class="nowrap">وضعیت نامعلوم</td>');
+        }
+
+        // Start timer handler
+        let sessionPostPayment = isPostPayment;
+        let sessionPrePayment = isPrePayment;
+
+        newRow.find('.start-button').click(function (e) {
+          e.preventDefault();
+          const tableNumber = reservation.tableNumber;
+          if (sessionPostPayment) {
+            const clickTimeNow = Math.floor(Date.now() / 1000);
+            $.ajax({
+              type: 'POST',
+              url: './timing.php',
+              data: { tableNumber: tableNumber, clickTime: clickTimeNow },
+              success: function () {
+                location.reload();
+              },
+              error: function () {
+                showToast('خطا در شروع زمان‌سنج میز.');
+              },
+            });
+            sessionPostPayment = false;
+          } else if (sessionPrePayment) {
+            const startTimeNow = Math.floor(Date.now() / 1000);
+            const finishTimeNow = startTimeNow + (timeSeconds > 0 ? timeSeconds : 3600);
+            $.ajax({
+              type: 'POST',
+              url: './timer.php',
+              data: {
+                tableNumber: tableNumber,
+                finishTime: finishTimeNow,
+                startTime: startTimeNow,
+              },
+              success: function () {
+                location.reload();
+              },
+              error: function () {
+                showToast('خطا در شروع تایمر میز.');
+              },
+            });
+            sessionPrePayment = false;
+          }
+        });
+
+        // End session handler -> saves game_temporary.php, deletes reservation, redirects to invoice.html
+        newRow.find('.end-button').click(async function (event) {
+          event.preventDefault();
+          const button = $(this);
+          if (button.data('closing')) return;
+          button.data('closing', true);
+          try {
+            let gameCost = 0;
+            if (isPostPayment) {
+              const elapsedSec = Math.max(60, stopTimer());
+              gameCost = Math.round(hourlyPrice * (elapsedSec / 3600));
+            } else if (isPrePayment) {
+              const response = await fetch('./finishTime.json');
+              const timers = response.ok ? await response.json() : [];
+              const timer = Array.isArray(timers)
+                ? timers.find((item) => String(item.tableNumber) === String(reservation.tableNumber))
+                : null;
+              if (timer && timer.finishTime && timer.startTime) {
+                gameCost =
+                  Math.round((((timer.finishTime - timer.startTime) / 3600) * hourlyPrice) / 1000) *
+                  1000;
+              } else {
+                gameCost = prePaymentCost || Math.round(hourlyPrice);
+              }
+            } else {
+              return;
+            }
+
+            if (!button.data('gameSaved')) {
+              await $.post('./game_temporary.php', {
+                gameCost,
+                consoleType,
+                priceType,
+                tableNumber: reservation.tableNumber,
+              });
+              button.data('gameSaved', true);
+            }
+            await $.post('./delete_reservation.php', { tableNumber: reservation.tableNumber });
+            location.href = 'invoice.html?table=' + encodeURIComponent(reservation.tableNumber);
+          } catch {
+            showToast('پایان بازی ثبت نشد. دوباره تلاش کنید.');
+          } finally {
+            button.data('closing', false);
+          }
+        });
+
+        // Charge button focuses the dedicated Table Charging Card
+        newRow.find('.charge-button').click(function (e) {
+          e.preventDefault();
+          const chargeModalTitle = `شارژ برای میز ${convertToPersian(reservation.tableNumber)}`;
+          const chargeFormTitle = `شارژ برای میز ${convertToPersian(reservation.tableNumber)}`;
+          const chargeModal = document.getElementById('ChargeModal');
+          if (chargeModal) {
+            chargeModal.style.display = 'block';
+            const h3 = chargeModal.querySelector('.charge-modal-content h3');
+            if (h3) h3.textContent = chargeModalTitle;
+          }
+          const titleEl = document.getElementById('chargeFormTitle');
+          if (titleEl) titleEl.textContent = chargeFormTitle;
+          if (chargeTableSelect) {
+            chargeTableSelect.value = String(reservation.tableNumber);
+          }
+          if (chargeForm) {
+            chargeForm.dataset.selectedTable = String(reservation.tableNumber);
+          }
+          highlightCard('ChargeModal');
+        });
+
+        tableBody.append(newRow);
+
+        // Live Timer Logic for Post-Payment (Count Up)
+        let elapsedTime = 0;
+        let timerInterval = null;
+        let clickTime = null;
+
+        function updateTimer() {
+          const safeElapsed = Math.max(0, elapsedTime);
+          const hours = Math.floor(safeElapsed / 3600);
+          const minutes = Math.floor((safeElapsed % 3600) / 60);
+          const seconds = safeElapsed % 60;
+          const element = document.getElementById(`timer${reservation.tableNumber}`);
+          if (!element) return;
+          element.textContent =
+            (hours < 10 ? '۰' : '') +
+            hours.toLocaleString('fa-IR', { useGrouping: false }) +
+            ':' +
+            (minutes < 10 ? '۰' : '') +
+            minutes.toLocaleString('fa-IR', { useGrouping: false }) +
+            ':' +
+            (seconds < 10 ? '۰' : '') +
+            seconds.toLocaleString('fa-IR', { useGrouping: false });
+        }
+
+        function startTimer() {
+          elapsedTime = Math.max(0, Math.floor(Date.now() / 1000) - clickTime);
+          updateTimer();
+          timerInterval = setInterval(function () {
+            elapsedTime = Math.max(0, Math.floor(Date.now() / 1000) - clickTime);
+            updateTimer();
+          }, 1000);
+        }
+
+        function loadTimer(tableNumber) {
+          const tableData = clickTimes.find((item) => String(item.tableNumber) === String(tableNumber));
+          if (tableData && Number(tableData.clickTime) > 0) {
+            clickTime = parseInt(tableData.clickTime, 10);
+            startTimer();
+          }
+        }
+
+        function stopTimer() {
+          if (timerInterval) clearInterval(timerInterval);
+          updateTimer();
+          return elapsedTime;
+        }
+
+        // Live Timer Logic for Pre-Payment (Countdown)
+        let elapesd = 0;
+        let finishTime = null;
+        let timeinterval = null;
+
+        function updateTime() {
+          const safeRemaining = Math.max(0, elapesd);
+          const hours = Math.floor(safeRemaining / 3600);
+          const minutes = Math.floor((safeRemaining % 3600) / 60);
+          const seconds = safeRemaining % 60;
+          const element = document.getElementById(`PreTime${reservation.tableNumber}`);
+          if (!element) return;
+          element.textContent =
+            (hours < 10 ? '۰' : '') +
+            hours.toLocaleString('fa-IR', { useGrouping: false }) +
+            ':' +
+            (minutes < 10 ? '۰' : '') +
+            minutes.toLocaleString('fa-IR', { useGrouping: false }) +
+            ':' +
+            (seconds < 10 ? '۰' : '') +
+            seconds.toLocaleString('fa-IR', { useGrouping: false });
+        }
+
+        function startTime() {
+          elapesd = finishTime - Math.floor(Date.now() / 1000);
+          updateTime();
+          timeinterval = setInterval(function () {
+            elapesd = finishTime - Math.floor(Date.now() / 1000);
+            updateTime();
+
+            if (elapesd <= 0) {
+              clearInterval(timeinterval);
+              elapesd = 0;
+              updateTime();
+              finishTime = 0;
+              const alarmSound = document.getElementById('alarmSound');
+              if (alarmSound && typeof alarmSound.play === 'function') {
+                alarmSound.play().catch(() => {});
+              }
+              showToast(`پایان زمان میز ${convertToPersian(reservation.tableNumber)}`);
+            }
+          }, 1000);
+        }
+
+        function loadTime(tableNumber) {
+          const table = finishTimes.find((item) => String(item.tableNumber) === String(tableNumber));
+          if (table && Number(table.finishTime) > 0) {
+            finishTime = parseInt(table.finishTime, 10);
+            startTime();
+          }
+        }
+
+        function displayTime(res) {
+          if (res.postPayment === 'post-payment') {
+            setTimeout(() => loadTimer(res.tableNumber), 0);
+            return `<div class="timer" id="timer${res.tableNumber}">۰۰:۰۰:۰۰</div>`;
+          } else if (res.prePayment === 'pre-payment') {
+            setTimeout(() => loadTime(res.tableNumber), 0);
+            return `<div class="timer2" id="PreTime${res.tableNumber}">۰۰:۰۰:۰۰</div>`;
+          } else {
+            return 'زمان نامشخص';
+          }
+        }
+      });
     });
-                   
-    });
+});

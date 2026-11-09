@@ -1,658 +1,199 @@
 <!DOCTYPE html>
-<html
-    lang="fa"
-    dir="rtl"
->
+<html lang="fa" dir="rtl">
 <head>
-    <meta
-        http-equiv="Content-Type"
-        content="text/html; charset=UTF-8"
-    ></meta>
-
-    <meta charset="utf-8"></meta>
-
-    <meta
-        http-equiv="X-UA-Compatible"
-        content="IE=edge"
-    ></meta>
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1"
-    ></meta>
-
-    <meta
-        name="fontiran.com:license"
-        content="Y68A9"
-    ></meta>
-
-    <link
-        rel="icon"
-        href="./build/images/metrogame.png"
-        type="image/ico"
-    ></link>
-
-    <title>متروگیم</title>
-
-    <!-- Bootstrap -->
-
-    <link
-        href="vendors/bootstrap/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    ></link>
-
-    <link
-        href="vendors/bootstrap-rtl/dist/css/bootstrap-rtl.min.css"
-        rel="stylesheet"
-    ></link>
-
-    <!-- Font Awesome -->
-
-    <link
-        href="vendors/font-awesome/css/font-awesome.min.css"
-        rel="stylesheet"
-    ></link>
-
-    <link
-        href="build/css/all.css"
-        rel="stylesheet"
-    ></link>
-
-    <link
-        href="build/css/all.min.css"
-        rel="stylesheet"
-    ></link>
-
-    <!-- NProgress -->
-
-    <link
-        href="vendors/nprogress/nprogress.css"
-        rel="stylesheet"
-    ></link>
-
-    <!-- bootstrap-progressbar -->
-
-    <link
-        href="vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css"
-        rel="stylesheet"
-    ></link>
-
-    <!-- iCheck -->
-
-    <link
-        href="vendors/iCheck/skins/flat/green.css"
-        rel="stylesheet"
-    ></link>
-
-    <!-- bootstrap-daterangepicker -->
-
-    <link
-        href="vendors/bootstrap-daterangepicker/daterangepicker.css"
-        rel="stylesheet"
-    ></link>
-
-    <!-- Custom Theme Style -->
-
-    <link
-        href="build/css/custom.min.css"
-        rel="stylesheet"
-    ></link>
-
-    <link
-        href="fontello/css/my-icon.css"
-        rel="stylesheet"
-    ></link>
-
-    <link
-        href="build/css/timer.css"
-        rel="stylesheet"
-    ></link>
-    <script src="./JS/invoice.js"></script>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>صدور صورت‌حساب و تسویه | پنل مدیریت گیم‌نت متروگیم</title>
+  <link rel="icon" href="src/assets/images/metrogame_emblem_1794207267121.jpg" type="image/jpeg">
+  <link href="assets/bootstrap/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/bootstrap/bootstrap-rtl.css" rel="stylesheet">
+  <link href="fontello/css/my-icon.css" rel="stylesheet">
+  <link href="assets/css/gaming-dashboard.css" rel="stylesheet">
 </head>
-
-<body class="nav-md">
-    <div class="container body">
-        <div class="main_container">
-            <div class="col-md-3 left_col hidden-print">
-                <div class="left_col scroll-view">
-                    <div
-                        class="navbar nav_title"
-                        style="border: 0;"
-                    >
-                        <a
-                            href="index.html"
-                            class="site_title"
-                        >
-                            <span>پنل مدیریت</span>
-
-                            <img
-                                src="build/images/metrogame copy.png"
-                                alt=""
-                                width="30%"
-                                style="min-width: 60px;"
-                            >
-                        </a>
-                    </div>
-
-                    <div class="clearfix"></div>
-                    <br>
-                    <!-- sidebar menu -->
-
-                    <div
-                        id="sidebar-menu"
-                        class="main_menu_side hidden-print main_menu"
-                    >
-                        <div class="menu_section">
-                            <ul class="nav side-menu">
-                                <li>
-                                    <a href="index.html">
-                                        <i class="fa fa-home"></i>
-                                        خانه
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a href="console.html">
-                                        <i class="fa fa-gamepad"></i>
-                                        مدیریت کنسول ها
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a href="buffet.html">
-                                        <i class="fa fa-coffee"></i>
-                                        مدیریت بوفه
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a href="acounts.html">
-                                        <i class="fa fa-users"></i>
-                                        مشتریان
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a href="Debtors.html">
-                                        <i class="fa fa-hand-sparkles"></i>
-                                        بدهکاران
-                                    </a>
-                                </li>
-
-                                
-                                <li>
-                                    <a href="income.html">
-                                        <i class="fa-regular fa-sack-dollar" style="font-size: large;"></i>
-                                        درآمد
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- /sidebar menu -->
-                    <!-- /menu footer buttons -->
-
-                    <div class="sidebar-footer hidden-small">
-                        <a
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title="تنظیمات"
-                        >
-                            <span
-                                class="glyphicon glyphicon-cog"
-                                aria-hidden="true"
-                            ></span>
-                        </a>
-
-                        <a
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title="تمام صفحه"
-                            onclick="toggleFullScreen();"
-                        >
-                            <span
-                                class="glyphicon glyphicon-fullscreen"
-                                aria-hidden="true"
-                            ></span>
-                        </a>
-
-                        <a
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title="قفل"
-                            class="lock_btn"
-                        >
-                            <span
-                                class="glyphicon glyphicon-eye-close"
-                                aria-hidden="true"
-                            ></span>
-                        </a>
-
-                        <a
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title="خروج"
-                            href="login.html"
-                        >
-                            <span
-                                class="glyphicon glyphicon-off"
-                                aria-hidden="true"
-                            ></span>
-                        </a>
-                    </div>
-
-                    <!-- /menu footer buttons -->
-                </div>
-            </div>
-
-            <!-- top navigation -->
-
-            <div class="top_nav hidden-print">
-                <div class="nav_menu">
-                    <nav>
-                        <div class="nav toggle">
-                            <a id="menu_toggle">
-                                <i class="fa fa-bars"></i>
-                            </a>
-                        </div>
-
-                        <ul class="nav navbar-nav navbar-right">
-                            <li class="">
-                                <a
-                                    href="javascript:;"
-                                    class="user-profile dropdown-toggle"
-                                    data-toggle="dropdown"
-                                    aria-expanded="false"
-                                >
-                                    <img
-                                        src="build/images/no-avatar.png"
-                                        alt=""
-                                    >
-
-                                    متروگیم
-
-                                    <span class="fa fa-angle-down"></span>
-                                </a>
-
-                                <ul class="dropdown-menu dropdown-usermenu pull-right">
-                                    <li>
-                                        <a href="login.html">
-                                            <i class="fa fa-sign-out pull-right"></i>
-                                            خروج
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
-
-            <!-- /top navigation -->
-            <!-- /header content -->
-            <!-- page content -->
-
-            <div
-                class="right_col"
-                role="main"
-            >
-                <div class="">
-                    <div class="clearfix"></div>
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="x_panel">
-                                <div class="x_content">
-                                    <section class="content invoice">
-                                        <!-- title row -->
-
-                                        <div class="row">
-                                            <div
-                                                class="col-xs-12 invoice-header"
-                                                id="invoiceHeader"
-                                            ></div>
-
-                                            <!-- /.col -->
-                                        </div>
-
-                                        <!-- Table row -->
-
-                                        <div class="row">
-                                            <div class="col-xs-12 table">
-                                                <table
-                                                    class="table table-striped"
-                                                    id="invoicegameTable"
-                                                >
-                                                    <thead>
-                                                        <tr>
-                                                            <th
-                                                                colspan="5"
-                                                                style="text-align: center;"
-                                                            >صورت حساب بازی</th>
-                                                        </tr>
-
-                                                        <tr>
-                                                            <th>ردیف</th>
-
-                                                            <th>شرح</th>
-
-                                                            <th>تعداد</th>
-
-                                                            <th>قیمت یک ساعت</th>
-
-                                                            <th>قیمت نهایی</th>
-                                                        </tr>
-                                                    </thead>
-
-                                                    <tbody></tbody>
-                                                </table>
-
-                                                <table
-                                                    class="table table-striped"
-                                                    id="invoicebuffetTable"
-                                                >
-                                                    <thead>
-                                                        <tr>
-                                                            <th
-                                                                colspan="5"
-                                                                style="text-align: center;"
-                                                            >صورت حساب بوفه</th>
-                                                        </tr>
-
-                                                        <tr>
-                                                            <th>ردیف</th>
-
-                                                            <th>شرح</th>
-
-                                                            <th>تعداد</th>
-
-                                                            <th>قیمت واحد</th>
-
-                                                            <th>قیمت کل</th>
-                                                        </tr>
-                                                    </thead>
-
-                                                    <tbody></tbody>
-                                                </table>
-                                            </div>
-
-                                            <!-- /.col -->
-                                        </div>
-
-                                        <!-- /.row -->
-
-                                        <div class="row">
-                                            <!-- accepted payments column -->
-
-                                            <div class="col-xs-6">
-                                                <p class="lead">روش‌های پرداخت:</p>
-
-                                                <div
-                                                    class="btn-group"
-                                                    data-toggle="buttons"
-                                                >
-                                                    <label class="btn btn-default">
-                                                        <input
-                                                            type="radio"
-                                                            name="options"
-                                                            id="cash"
-                                                        ></input>
-
-                                                        <i class="fa fa-wallet"></i>
-                                                        نقدی
-                                                    </label>
-
-                                                    <label class="btn btn-default">
-                                                        <input
-                                                            type="radio"
-                                                            name="options"
-                                                            id="pos"
-                                                        ></input>
-
-                                                        <i class="fa fa-fax"></i>
-                                                        کارتخوان
-                                                    </label>
-
-                                                    <label class="btn btn-default">
-                                                        <input
-                                                            type="radio"
-                                                            name="options"
-                                                            id="acount"
-                                                        ></input>
-
-                                                        <i class="fa fa-user"></i>
-                                                        حساب کاربری
-                                                    </label>
-
-                                                    <label class="btn btn-default">
-                                                        <input
-                                                            type="radio"
-                                                            name="options"
-                                                            id="debt"
-                                                        ></input>
-
-                                                        <i class="fa fa-hand-sparkles"></i>
-                                                        نسیه
-                                                    </label>
-                                                </div>
-
-                                                <div
-                                                    class="alert alert-danger"
-                                                    style="margin-top: 10px"
-                                                >
-                                                    <p style="color: rgb(255, 255, 255);">
-                                                        لطفا یکی از روش های پرداخت را انتخاب کنید
-                                                    </p>
-                                                </div>
-                                            </div>
-
-                                            <!-- /.col -->
-
-                                            <div class="col-xs-6">
-                                                <div class="table-responsive">
-                                                    <table
-                                                        class="table"
-                                                        id="invoiceTotalTable"
-                                                    >
-                                                        <tbody>
-                                                            <tr>
-                                                                <th style="width:50%">فاکتور بازی:</th>
-
-                                                                <td id="gameTotal">0 تومان</td>
-                                                            </tr>
-
-                                                            <tr>
-                                                                <th style="width:50%">مجموع فاکتور بوفه:</th>
-
-                                                                <td id="buffetTotal">0 تومان</td>
-                                                            </tr>
-
-                                                            <tr>
-                                                                <th style="width:50%">مجموع کل:</th>
-
-                                                                <td id="total">0 تومان</td>
-                                                            </tr>
-
-                                                            <tr>
-                                                                <th>قابل پرداخت:</th>
-
-                                                                <td id="payable">0 تومان</td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-
-                                            <!-- /.col -->
-                                        </div>
-
-                                        <!-- /.row -->
-                                        <!-- this row will not appear when printing -->
-
-                                        <div class="row no-print hidden-print">
-                                            <div class="col-xs-12">
-                                                <button
-                                                    class="btn btn-default"
-                                                    onclick="window.print();"
-                                                >
-                                                    <i class="fa fa-print"></i>
-                                                    چاپ
-                                                </button>
-
-                                                <button
-                                                    id="paymentButton"
-                                                    class="btn btn-success pull-left"
-                                                >
-                                                    <i class="fa fa-credit-card"></i>
-                                                    ارسال
-                                                    پرداخت
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </section>
-                                </div>
-
-                                <div
-                                    id="debtModal"
-                                    class="modal"
-                                >
-                                    <div class="debt-modal-content">
-                                        <span class="close">&times;</span>
-
-                                        <form id="debtForm">
-                                            <br>
-
-                                            <label>
-                                                لطفا نام و نام خانوادگی بدهکار را وارد نمائید:
-                                            </label>
-
-                                            <br>
-
-                                            <label for="debtName">نام و نام خانوادگی:</label>
-
-                                            <input
-                                                type="text"
-                                                id="debtName"
-                                                name="debtName"
-                                            ></input>
-
-                                            <br>
-
-                                            <button type="submit">ارسال</button>
-                                        </form>
-                                    </div>
-                                </div>
-
-                                <div
-                                    id="customerModal"
-                                    class="modal"
-                                >
-                                    <div class="customer-modal-content">
-                                        <span class="close">&times;</span>
-
-                                        <form id="customerForm">
-                                            <br>
-
-                                            <label>
-                                                لطفا کد مشتری را وارد نمائید:
-                                            </label>
-
-                                            <br>
-
-                                            <label for="customerId"> شناسه مشتری </label>
-
-                                            <input
-                                                type="number"
-                                                id="customerId"
-                                                name="customerId"
-                                            ></input>
-
-                                            <br>
-
-                                            <button type="submit">ارسال</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<body>
+  <div id="sidebarBackdrop" class="mg-sidebar-backdrop"></div>
+  <div class="mg-app-shell">
+    <aside id="mgSidebar" class="mg-sidebar hidden-print">
+      <div class="mg-brand">
+        <img src="src/assets/images/metrogame_emblem_1794207267121.jpg" alt="لوگوی گیم‌نت متروگیم" class="mg-brand-logo">
+        <div class="mg-brand-text">
+          <h2 class="mg-brand-title">متروگیم پنل</h2>
+          <span class="mg-brand-subtitle">مرکز فرماندهی گیم‌نت</span>
         </div>
+      </div>
+      <div class="mg-sidebar-section-label">بخش‌های مدیریتی</div>
+      <ul class="mg-nav-list">
+        <li class="mg-nav-item"><a href="index.html"><span>خانه (پیشخوان)</span></a></li>
+        <li class="mg-nav-item"><a href="index.html#tables-section"><span>میزها</span><span id="navTablesBadge" class="mg-nav-badge">۰</span></a></li>
+        <li class="mg-nav-item"><a href="console.html"><span>مدیریت کنسول‌ها</span><span id="navConsolesBadge" class="mg-nav-badge">۰</span></a></li>
+        <li class="mg-nav-item"><a href="buffet.html"><span>مدیریت بوفه</span></a></li>
+        <li class="mg-nav-item"><a href="acounts.html"><span>مشتریان</span><span id="navCustomersBadge" class="mg-nav-badge">۰</span></a></li>
+        <li class="mg-nav-item"><a href="Debtors.html"><span>بدهکاران</span><span id="navDebtorsBadge" class="mg-nav-badge">۰</span></a></li>
+        <li class="mg-nav-item"><a href="income.html"><span>گزارش درآمد</span></a></li>
+      </ul>
+      <div class="mg-sidebar-footer">
+        <a href="login.html" class="mg-logout-btn"><span>خروج از پنل</span></a>
+      </div>
+    </aside>
 
-        
+    <div class="mg-main-wrapper">
+      <header class="mg-topbar hidden-print">
+        <div class="mg-topbar-right">
+          <button type="button" id="mobileMenuBtn" class="mg-mobile-menu-btn" aria-label="باز کردن منو">☰</button>
+          <div class="mg-page-heading">
+            <h1>صدور صورت‌حساب و تسویه نهایی میز</h1>
+            <p>محاسبه دقیق کارکرد بازی و سفارش‌های بوفه و ثبت روش پرداخت</p>
+          </div>
+        </div>
+        <div class="mg-topbar-left">
+          <a href="index.html" class="mg-btn mg-btn-primary">بازگشت به مدیریت میزها</a>
+        </div>
+      </header>
 
-        
-
-        <!-- /page content -->
-        <!-- footer content -->
-
-        <footer class="hidden-print">
-            <div class="pull-left">
-                <span class="text-right">
-                    تمامی حقوق برای
-
-                    <a
-                        target="_blank"
-                        href="#"
-                    >متروگیم</a>
-
-                    محفوظ است.
-                </span>
-
-                <span class="float-left">
-                    طراحی شده توسط:
-
-                    <a href="tel:09153679400">
-                        <b>لیندو</b>
-                    </a>
-                </span>
+      <main class="mg-content">
+        <div class="mg-card">
+          <section class="content invoice">
+            <div class="mg-card-header">
+              <div id="invoiceHeader" class="invoice-header">
+                <h2 class="mg-card-title">فاکتور تسویه میز</h2>
+              </div>
+              <span class="mg-card-tag">صورت‌حساب رسمی</span>
             </div>
 
-            <div class="clearfix"></div>
-        </footer>
+            <div class="mg-table-responsive" style="margin-bottom: 20px;">
+              <table class="table mg-table" id="invoicegameTable">
+                <thead>
+                  <tr>
+                    <th colspan="6" style="text-align: center;">جزئیات کارکرد بازی</th>
+                  </tr>
+                  <tr>
+                    <th>ردیف</th>
+                    <th>شرح کنسول</th>
+                    <th>نوع بازی</th>
+                    <th>نرخ پایه</th>
+                    <th>مبلغ بازی</th>
+                    <th>حذف</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
 
-        <!-- /footer content -->
+            <div class="mg-table-responsive" style="margin-bottom: 24px;">
+              <table class="table mg-table" id="invoicebuffetTable">
+                <thead>
+                  <tr>
+                    <th colspan="6" style="text-align: center;">جزئیات سفارش‌های بوفه</th>
+                  </tr>
+                  <tr>
+                    <th>ردیف</th>
+                    <th>شرح محصول</th>
+                    <th>تعداد</th>
+                    <th>قیمت واحد</th>
+                    <th>قیمت کل</th>
+                    <th>حذف</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <h3 style="font-size: 15px; margin-bottom: 12px;">انتخاب روش تسویه حساب:</h3>
+                <div class="btn-group" data-toggle="buttons" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                  <label class="mg-radio-card">
+                    <input type="radio" name="options" id="cash">
+                    <span>نقدی</span>
+                  </label>
+                  <label class="mg-radio-card">
+                    <input type="radio" name="options" id="pos">
+                    <span>کارتخوان (POS)</span>
+                  </label>
+                  <label class="mg-radio-card">
+                    <input type="radio" name="options" id="acount">
+                    <span>کسر از حساب مشتری</span>
+                  </label>
+                  <label class="mg-radio-card">
+                    <input type="radio" name="options" id="debt">
+                    <span>ثبت در بدهکاران (نسیه)</span>
+                  </label>
+                </div>
+                <p style="color: var(--text-secondary); font-size: 12px; margin-top: 10px;">
+                  یکی از روش‌های پرداخت بالا را انتخاب کرده و سپس دکمه «ثبت و تسویه فاکتور» را بزنید.
+                </p>
+              </div>
+
+              <div class="col-md-6">
+                <div class="mg-table-responsive">
+                  <table class="table mg-table" id="invoiceTotalTable">
+                    <tbody>
+                      <tr>
+                        <th style="width: 50%">جمع فاکتور بازی:</th>
+                        <td id="gameTotal">۰ تومان</td>
+                      </tr>
+                      <tr>
+                        <th style="width: 50%">جمع فاکتور بوفه:</th>
+                        <td id="buffetTotal">۰ تومان</td>
+                      </tr>
+                      <tr>
+                        <th style="width: 50%">مجموع کل:</th>
+                        <td id="total">۰ تومان</td>
+                      </tr>
+                      <tr>
+                        <th>مبلغ قابل پرداخت:</th>
+                        <td id="payable" style="color: #34D399; font-weight: 700;">۰ تومان</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class=" hidden-print" style="display: flex; justify-content: space-between; margin-top: 20px;">
+              <button type="button" class="btn btn-default mg-btn" style="background: rgba(30,41,59,0.8); color: #fff;" onclick="window.print();">
+                چاپ صورت‌حساب
+              </button>
+              <button type="button" id="paymentButton" class="btn btn-success mg-btn mg-btn-emerald">
+                ثبت و تسویه فاکتور
+              </button>
+            </div>
+          </section>
+
+          <div id="debtModal" class="modal" style="display: none; margin-top: 18px;">
+            <div class="debt-modal-content mg-card">
+              <span class="close" style="cursor: pointer; float: left;">&times;</span>
+              <form id="debtForm">
+                <div class="mg-form-group">
+                  <label for="debtName" class="mg-label">نام و نام خانوادگی بدهکار را وارد نمایید:</label>
+                  <input type="text" id="debtName" name="debtName" class="form-control mg-input" required>
+                </div>
+                <button type="submit" class="btn btn-warning mg-btn mg-btn-amber">ثبت در فهرست بدهکاران</button>
+              </form>
+            </div>
+          </div>
+
+          <div id="customerModal" class="modal" style="display: none; margin-top: 18px;">
+            <div class="customer-modal-content mg-card">
+              <span class="close" style="cursor: pointer; float: left;">&times;</span>
+              <form id="customerForm">
+                <div class="mg-form-group">
+                  <label for="customerId" class="mg-label">کد اشتراک مشتری را وارد نمایید:</label>
+                  <input type="number" id="customerId" name="customerId" class="form-control mg-input" required>
+                </div>
+                <button type="submit" class="btn btn-info mg-btn mg-btn-cyan">کسر از شارژ حساب مشتری</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
+  </div>
 
-    <div id="lock_screen">
-        <table>
-            <tr>
-                <td>
-                    <div class="clock"></div>
-
-                    <span class="unlock">
-                        <span class="fa-stack fa-5x">
-                           
-
-                            <i
-                                id="icon_lock"
-                                class="fa fa-lock fa-stack-1x fa-inverse"
-                            ></i>
-                        </span>
-                    </span>
-                </td>
-            </tr>
-        </table>
-    </div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- jQuery -->
-    <script src="vendors/jquery/dist/jquery.min.js"></script>
-    <!-- Bootstrap -->
-    <script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
-    <!-- FastClick -->
-    <script src="vendors/fastclick/lib/fastclick.js"></script>
-    <!-- NProgress -->
-    <script src="vendors/nprogress/nprogress.js"></script>
-    <!-- bootstrap-progressbar -->
-    <script src="vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
-    <!-- iCheck -->
-    <script src="vendors/iCheck/icheck.min.js"></script>
-    <!-- bootstrap-daterangepicker -->
-    <script src="vendors/moment/min/moment.min.js"></script>
-    <script src="vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
-    <!-- Custom Theme Scripts -->
-    <script src="build/js/custom.min.js"></script>
+  <script src="vendors/bootstrap-rtl/dist/js/jquery.min.js"></script>
+  <script src="vendors/bootstrap-sass/assets/javascripts/bootstrap.min.js"></script>
+  <script src="JS/invoice.js"></script>
+  <script type="module" src="JS/dashboard-ui.js"></script>
 </body>
 </html>

@@ -1,0 +1,8 @@
+{
+  "name": "پنل مدیریت گیم‌نت متروگیم",
+  "description": "داشبورد پیشرفته و مدرن مدیریت گیم‌نت، کنسول‌های بازی، میزها، بوفه، مشتریان و گزارش‌های مالی با رابط کاربری فارسی (RTL).",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -26,10 +26,7 @@
             }
         }
     };
-    setTimeout(function () {
-        xhr.send();
-    }, 500);
-   
+    xhr.send();
 }
 
     

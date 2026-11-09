@@ -1,23 +1,4 @@
-fetch('./console_costs.php')
-  .then(response => response.json())
-  .then(data => {
-    setTimeout(function () {
-      location.reload();
-  }, 500);
-    
-    if (data.error) {
-        // نمایش پیغام خطا در المان با id="error-message"
-        document.getElementById('error-message').innerHTML = data.error;
-    } else {
-        // در صورت موفقیت، انتقال به صفحه دیگر یا انجام عملیات مورد نیاز
-        window.location.href = "console.html";
-    }
-  })
-  .catch(error => {
-    console.error('خطا در درخواست fetch:', error);
-  });
-
-
+let data = {};
 
 fetch('data.json')
 .then(response => response.json())

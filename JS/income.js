@@ -199,17 +199,26 @@ Promise.all([
           label: ' درآمد کنسول ',
           data: [totalColumn['ps4'], totalColumn['ps50'],totalColumn['computer'],totalColumn['xbox'],totalColumn['jewelry'],totalColumn['foosball']],
           backgroundColor: [
-            'rgb(41, 173, 178)',
-            'rgb(233, 184, 36)',
-            'rgb(241, 26, 123)',
-          'rgb(153, 102, 255)',
-          'rgb(178, 83, 62)',
-          'rgb(102, 128, 106)'
+            '#06B6D4',
+            '#6366F1',
+            '#EC4899',
+            '#8B5CF6',
+            '#F59E0B',
+            '#10B981'
           ],
-          borderWidth: 1
+          borderColor: '#090D1A',
+          borderWidth: 2,
+          hoverOffset: 10
         }]
       },
       options: {
+        cutout: '66%',
+        animation: {
+          animateRotate: true,
+          animateScale: true,
+          duration: 1350,
+          easing: 'easeOutQuart'
+        },
         scales: {
           y: {
             display: false,
@@ -219,13 +228,12 @@ Promise.all([
         plugins: {
             legend: {
                 labels: {
-                    // This more specific font property overrides the global property
+                    color: '#E2E8F0',
                     font: {
-                        size: 10,
+                        size: 11,
                         family: 'Yekan',
                     }
                 },
-                
             }
         }
     }
@@ -272,16 +280,25 @@ new Chart(ctx1, {
       label: ' درآمد بوفه',
       data: [totalBuffetColumn['cold_drink'], totalBuffetColumn['hot_drink'],  totalBuffetColumn['snack'],totalBuffetColumn['fastfood'],totalBuffetColumn['other']],
       backgroundColor: [
-        'rgb(255, 99, 132)',
-        'rgb(54, 162, 235)',
-        'rgb(255, 205, 86)',
-      'rgb(153, 102, 255)',
-      'rgb(201, 203, 207)'
+        '#F43F5E',
+        '#06B6D4',
+        '#F59E0B',
+        '#8B5CF6',
+        '#10B981'
       ],
-      borderWidth: 1
+      borderColor: '#090D1A',
+      borderWidth: 2,
+      hoverOffset: 10
     }]
   },
   options: {
+    cutout: '66%',
+    animation: {
+      animateRotate: true,
+      animateScale: true,
+      duration: 1350,
+      easing: 'easeOutQuart'
+    },
     scales: {
       y: {
         display: false,
@@ -291,9 +308,9 @@ new Chart(ctx1, {
     plugins: {
         legend: {
             labels: {
-                // This more specific font property overrides the global property
+                color: '#E2E8F0',
                 font: {
-                    size: 10,
+                    size: 11,
                     family: 'Yekan',
                 }
             }
@@ -320,42 +337,51 @@ new Chart(ctx, {
       label: 'درآمد',
       data: [totalCash, totalCredit, totalAccount],
       backgroundColor: [
-        'rgba(255, 99, 132, 0.2)',
-      'rgba(75, 192, 192, 0.2)',
-      'rgba(153, 102, 255, 0.2)'
-       
+        'rgba(16, 185, 129, 0.35)',
+        'rgba(6, 182, 212, 0.35)',
+        'rgba(139, 92, 246, 0.35)'
       ],
       borderColor: [
-        'rgb(255, 99, 132)',
-        'rgb(255, 159, 64)',
-        'rgb(255, 205, 86)',],
-      borderWidth: 1
+        '#10B981',
+        '#22D3EE',
+        '#A855F7'],
+      borderWidth: 1.5,
+      borderRadius: 6
     }]
   },
   options: {
+    animation: {
+      duration: 1250,
+      easing: 'easeOutQuart'
+    },
     scales: {
       y: {
-       
         beginAtZero: true,
         ticks: {
+          color: '#94A3B8',
           font: {
-            family: 'Yekan', // یا نام فونت دلخواه خود را انتخاب کنید
+            family: 'Yekan',
           }
         }
       },
-     
-
+      x: {
+        ticks: {
+          color: '#CBD5E1',
+          font: {
+            family: 'Yekan',
+          }
+        }
+      }
     },
     plugins: {
         legend: {
             labels: {
-                // This more specific font property overrides the global property
+                color: '#E2E8F0',
                 font: {
-                    size: 10,
+                    size: 11,
                     family: 'Yekan',
                 }
             },
-            
         }
     }
 }

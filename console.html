@@ -1,688 +1,170 @@
 <!DOCTYPE html>
-<html
-    lang="fa"
-    dir="rtl"
->
+<html lang="fa" dir="rtl">
 <head>
-    <meta
-        http-equiv="Content-Type"
-        content="text/html; charset=UTF-8"
-    ></meta>
-
-    <meta charset="utf-8"></meta>
-
-    <meta
-        http-equiv="X-UA-Compatible"
-        content="IE=edge"
-    ></meta>
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1"
-    ></meta>
-
-    <meta
-        name="fontiran.com:license"
-        content="Y68A9"
-    ></meta>
-
-    <link
-        rel="icon"
-        href="./build/images/metrogame.png"
-        type="image/ico"
-    ></link>
-
-    <title>متروگیم</title>
-
-    <!-- Bootstrap -->
-
-    <link
-        href="vendors/bootstrap/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    ></link>
-
-    <link
-        href="vendors/bootstrap-rtl/dist/css/bootstrap-rtl.min.css"
-        rel="stylesheet"
-    ></link>
-
-    <!-- Font Awesome -->
-
-    <link
-        href="vendors/font-awesome/css/font-awesome.min.css"
-        rel="stylesheet"
-    ></link>
-
-    <link
-        href="build/css/all.css"
-        rel="stylesheet"
-    ></link>
-
-    <link
-        href="build/css/all.min.css"
-        rel="stylesheet"
-    ></link>
-
-    <!-- NProgress -->
-
-    <link
-        href="vendors/nprogress/nprogress.css"
-        rel="stylesheet"
-    ></link>
-
-    <!-- bootstrap-progressbar -->
-
-    <link
-        href="vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css"
-        rel="stylesheet"
-    ></link>
-
-    <!-- iCheck -->
-
-    <link
-        href="vendors/iCheck/skins/flat/green.css"
-        rel="stylesheet"
-    ></link>
-
-    <!-- bootstrap-daterangepicker -->
-
-    <link
-        href="vendors/bootstrap-daterangepicker/daterangepicker.css"
-        rel="stylesheet"
-    ></link>
-
-    <!-- Custom Theme Style -->
-
-    <link
-        href="build/css/custom.min.css"
-        rel="stylesheet"
-    ></link>
-
-    <link
-        href="fontello/css/my-icon.css"
-        rel="stylesheet"
-    ></link>
-    <script src="./JS/console.js"></script>
-
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>مدیریت کنسول‌ها | پنل مدیریت گیم‌نت متروگیم</title>
+  <link rel="icon" href="src/assets/images/metrogame_emblem_1794207267121.jpg" type="image/jpeg">
+  <link href="assets/bootstrap/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/bootstrap/bootstrap-rtl.css" rel="stylesheet">
+  <link href="fontello/css/my-icon.css" rel="stylesheet">
+  <link href="assets/css/gaming-dashboard.css" rel="stylesheet">
 </head>
+<body>
+  <div id="sidebarBackdrop" class="mg-sidebar-backdrop"></div>
+  <div class="mg-app-shell">
+    <!-- Sidebar Navigation -->
+    <aside id="mgSidebar" class="mg-sidebar">
+      <div class="mg-brand">
+        <img src="src/assets/images/metrogame_emblem_1794207267121.jpg" alt="لوگوی گیم‌نت متروگیم" class="mg-brand-logo">
+        <div class="mg-brand-text">
+          <h2 class="mg-brand-title">متروگیم پنل</h2>
+          <span class="mg-brand-subtitle">مرکز فرماندهی گیم‌نت</span>
+        </div>
+      </div>
+      <div class="mg-sidebar-section-label">بخش‌های مدیریتی</div>
+      <ul class="mg-nav-list">
+        <li class="mg-nav-item"><a href="index.html"><span>خانه (پیشخوان)</span></a></li>
+        <li class="mg-nav-item"><a href="index.html#tables-section"><span>میزها</span><span id="navTablesBadge" class="mg-nav-badge">۰</span></a></li>
+        <li class="mg-nav-item active"><a href="console.html"><span>مدیریت کنسول‌ها</span><span id="navConsolesBadge" class="mg-nav-badge">۰</span></a></li>
+        <li class="mg-nav-item"><a href="buffet.html"><span>مدیریت بوفه</span></a></li>
+        <li class="mg-nav-item"><a href="acounts.html"><span>مشتریان</span><span id="navCustomersBadge" class="mg-nav-badge">۰</span></a></li>
+        <li class="mg-nav-item"><a href="Debtors.html"><span>بدهکاران</span><span id="navDebtorsBadge" class="mg-nav-badge">۰</span></a></li>
+        <li class="mg-nav-item"><a href="income.html"><span>گزارش درآمد</span></a></li>
+      </ul>
+      <div class="mg-sidebar-footer">
+        <a href="login.html" class="mg-logout-btn"><span>خروج از پنل</span></a>
+      </div>
+    </aside>
 
-<body class="nav-md">
-    <div class="container body">
-        <div class="main_container">
-            <div class="col-md-3 left_col hidden-print">
-                <div class="left_col scroll-view">
-                    <div
-                        class="navbar nav_title"
-                        style="border: 0;"
-                    >
-                        <a
-                            href="index.html"
-                            class="site_title"
-                        >
-                            <span>پنل مدیریت</span>
+    <div class="mg-main-wrapper">
+      <header class="mg-topbar">
+        <div class="mg-topbar-right">
+          <button type="button" id="mobileMenuBtn" class="mg-mobile-menu-btn" aria-label="باز کردن منو">☰</button>
+          <div class="mg-page-heading">
+            <h1>مدیریت کنسول‌ها و تعرفه‌های ساعتی</h1>
+            <p>تعریف و ویرایش نرخ ساعتی PS5، PS4، سیستم‌های PC، ایکس‌باکس و میز بیلیارد</p>
+          </div>
+        </div>
+        <div class="mg-topbar-left">
+          <div class="mg-live-clock"><span id="mgLiveClockText">ساعت سیستم</span></div>
+          <div class="mg-profile-chip">
+            <img src="src/assets/images/admin_avatar_1794207268017.jpg" alt="مدیر گیم‌نت" class="mg-profile-avatar">
+            <div class="mg-profile-info">
+              <span class="mg-profile-name">مدیر شیفت</span>
+              <span class="mg-profile-role">ادمین</span>
+            </div>
+          </div>
+        </div>
+      </header>
 
-                            <img
-                                src="build/images/metrogame copy.png"
-                                alt=""
-                                width="30%"
-                                style="min-width: 60px;"
-                            >
-                        </a>
-                    </div>
+      <main class="mg-content">
+        <div class="mg-card">
+          <div class="mg-card-header">
+            <div>
+              <h2 class="mg-card-title">افزودن یا بروزرسانی تعرفه کنسول</h2>
+              <p class="mg-card-subtitle">انتخاب دستگاه و تعیین نرخ یک تا چهار نفره به تومان</p>
+            </div>
+            <span class="mg-card-tag">تعرفه ساعتی</span>
+          </div>
 
-                    <div class="clearfix"></div>
-                    <br>
-                    <!-- sidebar menu -->
-
-                    <div
-                        id="sidebar-menu"
-                        class="main_menu_side hidden-print main_menu"
-                    >
-                        <div class="menu_section">
-                            <ul class="nav side-menu">
-                                <li>
-                                    <a href="index.html">
-                                        <i class="fa fa-home"></i>
-                                        خانه
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a href="console.html">
-                                        <i class="fa fa-gamepad"></i>
-                                        مدیریت کنسول ها
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a href="buffet.html">
-                                        <i class="fa fa-coffee"></i>
-                                        مدیریت بوفه
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a href="acounts.html">
-                                        <i class="fa fa-users"></i>
-                                        مشتریان
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a href="Debtors.html">
-                                        <i class="fa fa-hand-sparkles"></i>
-                                        بدهکاران
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a href="income.html">
-                                        <i class="fa-regular fa-sack-dollar" style="font-size: large;"></i>
-                                        درآمد
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- /sidebar menu -->
-                    <!-- /menu footer buttons -->
-
-                    <div class="sidebar-footer hidden-small">
-                        <a
-                        
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title="تنظیمات"
-                        >
-                            <span
-                                class="glyphicon glyphicon-cog"
-                                aria-hidden="true"
-                            ></span>
-                        </a>
-
-                        <a
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title="تمام صفحه"
-                            onclick="toggleFullScreen();"
-                        >
-                            <span
-                                class="glyphicon glyphicon-fullscreen"
-                                aria-hidden="true"
-                            ></span>
-                        </a>
-
-                        <a
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title="قفل"
-                            class="lock_btn"
-                        >
-                            <span
-                                class="glyphicon glyphicon-eye-close"
-                                aria-hidden="true"
-                            ></span>
-                        </a>
-
-                        <a
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title="خروج"
-                            href="login.html"
-                        >
-                            <span
-                                class="glyphicon glyphicon-off"
-                                aria-hidden="true"
-                            ></span>
-                        </a>
-                    </div>
-
-                    <!-- /menu footer buttons -->
-                </div>
+          <form action="console_costs.php" method="POST">
+            <div class="mg-form-group">
+              <label class="mg-label">انتخاب نوع دستگاه / کنسول:</label>
+              <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px;">
+                <label class="mg-radio-card">
+                  <input type="radio" value="ps50" name="optionsRadios" data-title="PS5" onclick="setTitle(this)" checked>
+                  <i class="demo-icon icon-ps50" style="font-size: 22px;"></i>
+                  <span>پلی‌استیشن ۵ (PS5)</span>
+                </label>
+                <label class="mg-radio-card">
+                  <input type="radio" value="ps4" name="optionsRadios" data-title="PS4" onclick="setTitle(this)">
+                  <i class="demo-icon icon-ps4" style="font-size: 22px;"></i>
+                  <span>پلی‌استیشن ۴ (PS4)</span>
+                </label>
+                <label class="mg-radio-card">
+                  <input type="radio" value="computer" name="optionsRadios" data-title="بازی رایانه ای" onclick="setTitle(this)">
+                  <i class="demo-icon icon-computer" style="font-size: 22px;"></i>
+                  <span>سیستم گیمینگ (PC)</span>
+                </label>
+                <label class="mg-radio-card">
+                  <input type="radio" value="xbox" name="optionsRadios" data-title="XBOX" onclick="setTitle(this)">
+                  <i class="demo-icon icon-xbox" style="font-size: 22px;"></i>
+                  <span>ایکس‌باکس (Xbox)</span>
+                </label>
+                <label class="mg-radio-card">
+                  <input type="radio" value="jewelry" name="optionsRadios" data-title="VIP" onclick="setTitle(this)">
+                  <i class="demo-icon icon-jewelry" style="font-size: 22px;"></i>
+                  <span>وی‌آر / VIP</span>
+                </label>
+                <label class="mg-radio-card">
+                  <input type="radio" value="foosball" name="optionsRadios" data-title="فوتبال دستی" onclick="setTitle(this)">
+                  <i class="demo-icon icon-foosball" style="font-size: 22px;"></i>
+                  <span>فوتبال دستی / بیلیارد</span>
+                </label>
+              </div>
+              <input type="hidden" id="selectedTitle" name="optionsRadios_title" value="PS5">
             </div>
 
-            <!-- top navigation -->
-
-            <div class="top_nav hidden-print">
-                <div class="nav_menu">
-                    <nav>
-                        <div class="nav toggle">
-                            <a id="menu_toggle">
-                                <i class="fa fa-bars"></i>
-                            </a>
-                        </div>
-
-                        <ul class="nav navbar-nav navbar-right">
-                            <li class="">
-                                <a
-                                    href="javascript:;"
-                                    class="user-profile dropdown-toggle"
-                                    data-toggle="dropdown"
-                                    aria-expanded="false"
-                                >
-                                    <img
-                                        src="build/images/no-avatar.png"
-                                        alt=""
-                                    >
-
-                                    متروگیم
-
-                                    <span class="fa fa-angle-down"></span>
-                                </a>
-
-                                <ul class="dropdown-menu dropdown-usermenu pull-right">
-                                    <li>
-                                        <a href="login.html">
-                                            <i class="fa fa-sign-out pull-right"></i>
-                                            خروج
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
+            <div class="mg-form-grid" style="margin-top: 16px;">
+              <div class="mg-form-group">
+                <label for="priceForOne" class="mg-label">تعرفه یک نفره (تومان / ساعت)</label>
+                <input type="number" class="form-control mg-input" id="priceForOne" name="priceForOne" placeholder="مثلاً ۵۰,۰۰۰" required>
+              </div>
+              <div class="mg-form-group">
+                <label for="priceForTwo" class="mg-label">تعرفه دو نفره (تومان / ساعت)</label>
+                <input type="number" class="form-control mg-input" id="priceForTwo" name="priceForTwo" placeholder="مثلاً ۷۰,۰۰۰" required>
+              </div>
+              <div class="mg-form-group">
+                <label for="priceForThree" class="mg-label">تعرفه سه نفره (تومان / ساعت)</label>
+                <input type="number" class="form-control mg-input" id="priceForThree" name="priceForThree" placeholder="مثلاً ۹۰,۰۰۰" required>
+              </div>
+              <div class="mg-form-group">
+                <label for="priceForFour" class="mg-label">تعرفه چهار نفره (تومان / ساعت)</label>
+                <input type="number" class="form-control mg-input" id="priceForFour" name="priceForFour" placeholder="مثلاً ۱۱۰,۰۰۰" required>
+              </div>
             </div>
 
-            <!-- /top navigation -->
-            <!-- /header content -->
-            <!-- page content -->
-
-            <div
-                class="right_col"
-                role="main"
-            >
-                <div class="">
-                    <div class="clearfix"></div>
-
-                    <div class="row">
-                        <!-- form input mask -->
-
-                        <div class="col-md-8 col-sm-12 col-xs-12">
-                            <div class="x_panel">
-                                <div class="x_title">
-                                    <h2>افزودن کنسول</h2>
-
-                                    <div class="clearfix"></div>
-                                </div>
-
-                                <div class="x_content">
-                                    <br>
-
-                                    <form
-                                        class="form-horizontal form-label-left"
-                                        action="console_costs.php"
-                                        method="POST"
-                                    >
-                                        <div class="form-group">
-                                            <label
-                                                class="control-label col-md-3 col-sm-3 col-xs-12"
-                                                style="text-align:right;"
-                                            >نوع :</label>
-
-                                            <div class="col-md-9 col-sm- col-xs-9">
-                                                <div class="row">
-                                                    <div class="col-md-2 col-sm-2 col-xs-2">
-                                                        <label>
-                                                            <input
-                                                                type="radio"
-                                                                checked=""
-                                                                value="ps4"
-                                                                id="optionsRadios1"
-                                                                name="optionsRadios"
-                                                                data-title="PS4"
-                                                                onclick="setTitle(this)"
-                                                            ></input>
-
-                                                            <i
-                                                                class="demo-icon icon-ps4"
-                                                                style="font-size: 25px;"
-                                                            ></i>
-                                                        </label>
-                                                    </div>
-
-                                                    <div class="col-md-2 col-sm-2 col-xs-2">
-                                                        <label>
-                                                            <input
-                                                                type="radio"
-                                                                checked=""
-                                                                value="ps50"
-                                                                id="optionsRadios1"
-                                                                name="optionsRadios"
-                                                                data-title="PS5"
-                                                                onclick="setTitle(this)"
-                                                            ></input>
-
-                                                            <i
-                                                                class="demo-icon icon-ps50"
-                                                                style="font-size: 25px;"
-                                                            ></i>
-                                                        </label>
-                                                    </div>
-
-                                                    <div class="col-md-2 col-sm-2 col-xs-2">
-                                                        <label>
-                                                            <input
-                                                                type="radio"
-                                                                checked=""
-                                                                value="computer"
-                                                                id="optionsRadios1"
-                                                                name="optionsRadios"
-                                                                data-title="بازی رایانه ای"
-                                                                onclick="setTitle(this)"
-                                                            ></input>
-
-                                                            <i
-                                                                class="demo-icon icon-computer"
-                                                                style="font-size: 25px;"
-                                                            ></i>
-                                                        </label>
-                                                    </div>
-
-                                                    <div class="col-md-2 col-sm-2 col-xs-2">
-                                                        <label>
-                                                            <input
-                                                                type="radio"
-                                                                checked=""
-                                                                value="xbox"
-                                                                id="optionsRadios1"
-                                                                name="optionsRadios"
-                                                                data-title="XBOX"
-                                                                onclick="setTitle(this)"
-                                                            ></input>
-
-                                                            <i
-                                                                class="demo-icon icon-xbox"
-                                                                style="font-size: 25px;"
-                                                            ></i>
-                                                        </label>
-                                                    </div>
-
-                                                    <div class="col-md-2 col-sm-2 col-xs-2">
-                                                        <label>
-                                                            <input
-                                                                type="radio"
-                                                                checked=""
-                                                                value="jewelry"
-                                                                id="optionsRadios1"
-                                                                name="optionsRadios"
-                                                                data-title="VIP"
-                                                                onclick="setTitle(this)"
-                                                            ></input>
-
-                                                            <i
-                                                                class="demo-icon icon-jewelry"
-                                                                style="font-size: 25px;"
-                                                            ></i>
-                                                        </label>
-                                                    </div>
-
-                                                    <div class="col-md-2 col-sm-2 col-xs-2">
-                                                        <label>
-                                                            <input
-                                                                type="radio"
-                                                                checked=""
-                                                                value="foosball"
-                                                                id="optionsRadios1"
-                                                                name="optionsRadios"
-                                                                data-title="فوتبال دستی"
-                                                                onclick="setTitle(this)"
-                                                            ></input>
-
-                                                            <i
-                                                                class="demo-icon icon-foosball"
-                                                                style="font-size: 25px;"
-                                                            ></i>
-                                                        </label>
-                                                    </div>
-
-                                                    <input
-                                                        type="hidden"
-                                                        id="selectedTitle"
-                                                        name="optionsRadios_title"
-                                                        value=""
-                                                    ></input>
-
-                                                    <!-- ادامه دادن بقیه تصاویر و دکمه‌های رادیویی به همین شکل -->
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div
-                                            class="ln_solid"
-                                            style="width: 50%;margin: 10px auto;"
-                                        ></div>
-
-                                        <!-- قیمت -->
-
-                                        <div class="form-group">
-                                            <label
-                                                class="control-label col-md-3 col-sm-3 col-xs-12"
-                                                style="text-align:right;"
-                                            >قیمت:</label>
-
-                                            <div class="col-md-9 col-sm-9 col-xs-12">
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="input-group input-group-sm">
-                                                            <label
-                                                                class="input-group-addon"
-                                                                for="priceForOne"
-                                                            >یک نفره</label>
-
-                                                            <input
-                                                                type="number"
-                                                                class="form-control"
-                                                                id="priceForOne"
-                                                                name="priceForOne"
-                                                                placeholder="0"
-                                                            ></input>
-
-                                                            <span class="input-group-addon">تومان</span>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-6">
-                                                        <div class="input-group input-group-sm">
-                                                            <label
-                                                                class="input-group-addon"
-                                                                for="priceForTwo"
-                                                            >دونفره</label>
-
-                                                            <input
-                                                                type="number"
-                                                                class="form-control"
-                                                                id="priceForTwo"
-                                                                name="priceForTwo"
-                                                                placeholder="0"
-                                                            ></input>
-
-                                                            <span class="input-group-addon">تومان</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="input-group input-group-sm">
-                                                            <label
-                                                                class="input-group-addon"
-                                                                for="priceForThree"
-                                                            >سه نفره</label>
-
-                                                            <input
-                                                                type="number"
-                                                                class="form-control"
-                                                                id="priceForThree"
-                                                                name="priceForThree"
-                                                                placeholder="0"
-                                                            ></input>
-
-                                                            <span class="input-group-addon">تومان</span>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-6">
-                                                        <div class="input-group input-group-sm">
-                                                            <label
-                                                                class="input-group-addon"
-                                                                for="priceForFour"
-                                                            >چهارنفره</label>
-
-                                                            <input
-                                                                type="number"
-                                                                class="form-control"
-                                                                id="priceForFour"
-                                                                name="priceForFour"
-                                                                placeholder="0"
-                                                            ></input>
-
-                                                            <span class="input-group-addon">تومان</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div
-                                            class="ln_solid"
-                                            style="border: 1px solid #cec8c8; margin: 10px 0;"
-                                        ></div>
-
-                                        <div class="form-group">
-                                            <div class="col-md-9 col-md-offset-3">
-                                                <button
-                                                    type="submit"
-                                                    class="btn btn-success"
-                                                >ثبت</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                    <div id="error-message"></div>
-                                    <script>
-                                        function setTitle(radio) {
-                                            var selectedTitle = radio.getAttribute("data-title");
-                                            document.getElementById("selectedTitle").value = selectedTitle;
-                                        }
-                                    </script>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-12 col-sm-12 col-xs-12">
-                            <div class="x_panel">
-                                <div class="x_content">
-                                    <div class="table-responsive">
-                                        <table
-                                            class="table table-striped jambo_table bulk_action"
-                                            id="consoleTable"
-                                        >
-                                            <thead>
-                                                <tr class="headings">
-                                                    <th class="column-title">ردیف</th>
-
-                                                    <th class="column-title">کنسول</th>
-
-                                                    <th class="column-title">یک نفره</th>
-
-                                                    <th class="column-title">دو نفره</th>
-
-                                                    <th class="column-title">سه نفره</th>
-
-                                                    <th class="column-title">چهار نفره</th>
-
-                                                    <th class="column-title">عملیات</th>
-                                                </tr>
-                                            </thead>
-
-                                            <tbody>
-
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
+            <button type="submit" class="btn btn-success mg-btn mg-btn-emerald">ثبت تعرفه کنسول</button>
+          </form>
+          <div id="error-message" style="margin-top: 10px;"></div>
         </div>
 
-        <!-- /page content -->
-        <!-- footer content -->
-
-        <footer class="hidden-print">
-            <div class="pull-left">
-                <span class="text-right">
-                    تمامی حقوق برای
-
-                    <a
-                        target="_blank"
-                        href="#"
-                    >متروگیم</a>
-
-                    محفوظ است.
-                </span>
-
-                <span class="float-left">
-                    طراحی شده توسط:
-
-                    <a
-                        target="_blank"
-                        href="09153679400"
-                    >
-                        <b>لیندو</b>
-                    </a>
-                </span>
-            </div>
-
-            <div class="clearfix"></div>
-        </footer>
-
-        <!-- /footer content -->
+        <div class="mg-card">
+          <div class="mg-card-header">
+            <h2 class="mg-card-title">لیست کنسول‌ها و تعرفه‌های ثبت‌شده</h2>
+          </div>
+          <div class="mg-table-responsive">
+            <table class="table mg-table" id="consoleTable">
+              <thead>
+                <tr class="headings">
+                  <th class="column-title">ردیف</th>
+                  <th class="column-title">کنسول</th>
+                  <th class="column-title">یک نفره</th>
+                  <th class="column-title">دو نفره</th>
+                  <th class="column-title">سه نفره</th>
+                  <th class="column-title">چهار نفره</th>
+                  <th class="column-title">عملیات</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </main>
     </div>
+  </div>
 
-    <div id="lock_screen">
-        <table>
-            <tr>
-                <td>
-                    <div class="clock"></div>
-
-                    <span class="unlock">
-                        <span class="fa-stack fa-5x">
-                            
-
-                            <i
-                                id="icon_lock"
-                                class="fa fa-lock fa-stack-1x fa-inverse"
-                            ></i>
-                        </span>
-                    </span>
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    <!-- jQuery -->
-    <script src="vendors/jquery/dist/jquery.min.js"></script>
-    <!-- Bootstrap -->
-    <script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
-    <!-- FastClick -->
-    <script src="vendors/fastclick/lib/fastclick.js"></script>
-    <!-- NProgress -->
-    <script src="vendors/nprogress/nprogress.js"></script>
-    <!-- bootstrap-progressbar -->
-    <script src="vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
-    <!-- iCheck -->
-    <script src="vendors/iCheck/icheck.min.js"></script>
-    <!-- bootstrap-daterangepicker -->
-    <script src="vendors/moment/min/moment.min.js"></script>
-    <script src="vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
-    <!-- Chart.js -->
-    
-    <!-- Custom Theme Scripts -->
-    <script src="build/js/custom.min.js"></script>
+  <script>
+    function setTitle(radio) {
+      var selectedTitle = radio.getAttribute("data-title");
+      document.getElementById("selectedTitle").value = selectedTitle;
+    }
+  </script>
+  <script src="vendors/bootstrap-rtl/dist/js/jquery.min.js"></script>
+  <script src="vendors/bootstrap-sass/assets/javascripts/bootstrap.min.js"></script>
+  <script src="JS/console.js"></script>
+  <script type="module" src="JS/dashboard-ui.js"></script>
 </body>
 </html>
