@@ -1,0 +1,9 @@
+{
+  "name": "metrogame",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "node preview.mjs",
+    "start": "node preview.mjs"
+  }
+}
