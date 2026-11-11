@@ -8,27 +8,35 @@ import {
 } from './dashboard-metrics.mjs?v=20261109-3';
 
 const CONSOLE_META = [
-  { key: 'ps4', label: 'پلی‌استیشن ۴', color: '#8B5CF6', dotClass: 'dot-purple' },
-  { key: 'ps50', label: 'پلی‌استیشن ۵', color: '#A78BFA', dotClass: 'dot-indigo' },
-  { key: 'xbox', label: 'ایکس‌باکس', color: '#6D28D9', dotClass: 'dot-purple' },
-  { key: 'computer', label: 'سیستم PC', color: '#10B981', dotClass: 'dot-emerald' },
-  { key: 'jewelry', label: 'وی‌آر / VIP', color: '#F59E0B', dotClass: 'dot-amber' },
-  { key: 'foosball', label: 'فوتبال دستی', color: '#64748B', dotClass: 'dot-indigo' },
+  { key: 'ps4', label: 'پلی‌استیشن ۴', color: '#8B5CF6', lightColor: '#7C3AED', dotClass: 'dot-purple' },
+  { key: 'ps50', label: 'پلی‌استیشن ۵', color: '#A78BFA', lightColor: '#6366F1', dotClass: 'dot-indigo' },
+  { key: 'xbox', label: 'ایکس‌باکس', color: '#6D28D9', lightColor: '#0891B2', dotClass: 'dot-purple' },
+  { key: 'computer', label: 'سیستم PC', color: '#10B981', lightColor: '#059669', dotClass: 'dot-emerald' },
+  { key: 'jewelry', label: 'وی‌آر / VIP', color: '#F59E0B', lightColor: '#D97706', dotClass: 'dot-amber' },
+  { key: 'foosball', label: 'فوتبال دستی', color: '#64748B', lightColor: '#E11D48', dotClass: 'dot-indigo' },
 ];
 
 const BUFFET_META = [
-  { key: 'cold_drink', label: 'نوشیدنی سرد', color: '#8B5CF6', dotClass: 'dot-purple' },
-  { key: 'fastfood', label: 'فست‌فود و ساندویچ', color: '#F59E0B', dotClass: 'dot-amber' },
-  { key: 'snack', label: 'اسنک و تنقلات', color: '#A78BFA', dotClass: 'dot-indigo' },
-  { key: 'hot_drink', label: 'نوشیدنی گرم', color: '#10B981', dotClass: 'dot-emerald' },
-  { key: 'other', label: 'سایر اقلام', color: '#64748B', dotClass: 'dot-indigo' },
+  { key: 'cold_drink', label: 'نوشیدنی سرد', color: '#8B5CF6', lightColor: '#7C3AED', dotClass: 'dot-purple' },
+  { key: 'fastfood', label: 'فست‌فود و ساندویچ', color: '#F59E0B', lightColor: '#D97706', dotClass: 'dot-amber' },
+  { key: 'snack', label: 'اسنک و تنقلات', color: '#A78BFA', lightColor: '#0891B2', dotClass: 'dot-indigo' },
+  { key: 'hot_drink', label: 'نوشیدنی گرم', color: '#10B981', lightColor: '#059669', dotClass: 'dot-emerald' },
+  { key: 'other', label: 'سایر اقلام', color: '#64748B', lightColor: '#6366F1', dotClass: 'dot-indigo' },
 ];
 
 const PAYMENT_META = [
-  { key: 'credit', label: 'کارتخوان (POS)', color: '#8B5CF6', dotClass: 'dot-purple' },
-  { key: 'cash', label: 'دریافتی نقدی', color: '#10B981', dotClass: 'dot-emerald' },
-  { key: 'account', label: 'حساب کاربری', color: '#64748B', dotClass: 'dot-indigo' },
+  { key: 'credit', label: 'کارتخوان (POS)', color: '#8B5CF6', lightColor: '#7C3AED', dotClass: 'dot-purple' },
+  { key: 'cash', label: 'دریافتی نقدی', color: '#10B981', lightColor: '#059669', dotClass: 'dot-emerald' },
+  { key: 'account', label: 'حساب کاربری', color: '#64748B', lightColor: '#0891B2', dotClass: 'dot-indigo' },
 ];
+
+function isLightModeActive() {
+  return document.documentElement.getAttribute('data-theme') === 'light';
+}
+
+function getMetaColor(metaItem) {
+  return isLightModeActive() && metaItem.lightColor ? metaItem.lightColor : metaItem.color;
+}
 
 function setText(id, text) {
   const el = document.getElementById(id);
@@ -303,7 +311,7 @@ function renderTablesAndCharts(report, periodSubtitle) {
       id: c.key,
       label: c.label,
       value: report.totalColumn[c.key] || 0,
-      color: c.color,
+      color: getMetaColor(c),
     })),
   });
 
@@ -349,7 +357,7 @@ function renderTablesAndCharts(report, periodSubtitle) {
       id: b.key,
       label: b.label,
       value: report.totalBuffetColumn[b.key] || 0,
-      color: b.color,
+      color: getMetaColor(b),
     })),
   });
 
@@ -392,10 +400,26 @@ function renderTablesAndCharts(report, periodSubtitle) {
 
   const barsWrap = document.getElementById('paymentMethodBars');
   if (barsWrap) {
+    const light = isLightModeActive();
     const barItems = [
-      { label: 'دستگاه کارتخوان (POS)', amount: report.totalCredit, pct: creditPct, color: '#22D3EE' },
-      { label: 'دریافتی نقدی صندوق', amount: report.totalCash, pct: cashPct, color: '#10B981' },
-      { label: 'کسر از حساب کاربری مشتریان', amount: report.totalAccount, pct: accountPct, color: '#A855F7' },
+      {
+        label: 'دستگاه کارتخوان (POS)',
+        amount: report.totalCredit,
+        pct: creditPct,
+        color: light ? '#0891B2' : '#22D3EE',
+      },
+      {
+        label: 'دریافتی نقدی صندوق',
+        amount: report.totalCash,
+        pct: cashPct,
+        color: light ? '#059669' : '#10B981',
+      },
+      {
+        label: 'کسر از حساب کاربری مشتریان',
+        amount: report.totalAccount,
+        pct: accountPct,
+        color: light ? '#7C3AED' : '#A855F7',
+      },
     ];
     barsWrap.innerHTML = barItems
       .map(
@@ -406,7 +430,7 @@ function renderTablesAndCharts(report, periodSubtitle) {
             <strong>${formatToman(item.amount)} تومان (${toPersianDigits(item.pct)}٪)</strong>
           </div>
           <div class="mg-pay-bar-track">
-            <div class="mg-pay-bar-fill" style="width: ${Math.max(item.amount > 0 ? 5 : 0, item.pct)}%; background: ${item.color}; box-shadow: 0 0 12px ${item.color};"></div>
+            <div class="mg-pay-bar-fill" style="width: ${Math.max(item.amount > 0 ? 5 : 0, item.pct)}%; background: ${item.color}; box-shadow: ${light ? 'none' : `0 0 12px ${item.color}`};"></div>
           </div>
         </div>
       `
@@ -429,7 +453,7 @@ function renderTablesAndCharts(report, periodSubtitle) {
           : p.key === 'cash'
           ? report.totalCash
           : report.totalAccount,
-      color: p.color,
+      color: getMetaColor(p),
     })),
   });
 }
@@ -514,6 +538,7 @@ async function initIncomeDashboard() {
         filterMode,
       });
 
+      lastIncomeState = { report, subtitle };
       renderTablesAndCharts(report, subtitle);
     }
 
@@ -562,6 +587,17 @@ async function initIncomeDashboard() {
   } catch (err) {
     console.error('Income report load error:', err);
   }
+}
+
+let lastIncomeState = null;
+
+if (!window.__mgIncomeThemeListenerBound) {
+  window.__mgIncomeThemeListenerBound = true;
+  window.addEventListener('mg:theme-changed', () => {
+    if (lastIncomeState && document.getElementById('GameIncomeTable')) {
+      renderTablesAndCharts(lastIncomeState.report, lastIncomeState.subtitle);
+    }
+  });
 }
 
 window.renderIncomePage = initIncomeDashboard;

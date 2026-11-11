@@ -147,7 +147,7 @@ const SPA_SECTIONS = {
   console: {
     key: 'console',
     file: 'console.html',
-    script: 'JS/console.js?v=20261110-12',
+    script: 'JS/console.js?v=20261110-15',
     renderFn: 'renderConsolePage',
     navMatch: 'console.html',
     title: 'مدیریت کنسول‌ها',
@@ -158,7 +158,7 @@ const SPA_SECTIONS = {
   buffet: {
     key: 'buffet',
     file: 'buffet.html',
-    script: 'JS/buffet.js?v=20261110-12',
+    script: 'JS/buffet.js?v=20261110-15',
     renderFn: 'renderBuffetPage',
     navMatch: 'buffet.html',
     title: 'مدیریت بوفه و خوراکی‌ها',
@@ -169,7 +169,7 @@ const SPA_SECTIONS = {
   accounts: {
     key: 'accounts',
     file: 'acounts.html',
-    script: 'JS/acounts.js?v=20261110-12',
+    script: 'JS/acounts.js?v=20261110-15',
     renderFn: 'renderAccountsPage',
     navMatch: 'acounts.html',
     title: 'باشگاه مشتریان',
@@ -180,7 +180,7 @@ const SPA_SECTIONS = {
   debtors: {
     key: 'debtors',
     file: 'Debtors.html',
-    script: 'JS/Debtors.js?v=20261110-12',
+    script: 'JS/Debtors.js?v=20261110-15',
     renderFn: 'renderDebtorsPage',
     navMatch: 'Debtors.html',
     title: 'مدیریت حساب بدهکاران',
@@ -191,7 +191,7 @@ const SPA_SECTIONS = {
   income: {
     key: 'income',
     file: 'income.html',
-    script: 'JS/income.js?v=20261110-12',
+    script: 'JS/income.js?v=20261110-15',
     renderFn: 'renderIncomePage',
     navMatch: 'income.html',
     title: 'گزارش جامع درآمد و تحلیل مالی',
@@ -274,6 +274,9 @@ function ensureSpaScriptLoaded(scriptSrc, renderFnName) {
   }
   const p = new Promise((resolve) => {
     const s = document.createElement('script');
+    if (baseName.includes('income.js') || baseName.endsWith('.mjs')) {
+      s.type = 'module';
+    }
     s.src = scriptSrc;
     s.async = true;
     s.onload = () => resolve();
@@ -329,7 +332,7 @@ async function ensureIndexViewsPresent() {
       tablesEl.setAttribute('hidden', '');
       mainEl.insertBefore(tablesEl, document.getElementById('mgDynamicView'));
     }
-    await ensureSpaScriptLoaded('JS/7878.js?v=20261110-12', 'renderTablesWorkspace');
+    await ensureSpaScriptLoaded('JS/7878.js?v=20261110-15', 'renderTablesWorkspace');
     if (typeof window.renderTablesWorkspace === 'function') {
       window.renderTablesWorkspace();
     }
@@ -398,7 +401,7 @@ async function switchSpaSection(targetKey, options = {}) {
   const sec = SPA_SECTIONS[sectionKey];
   currentSpaSectionKey = sectionKey;
 
-  // 1. Update sidebar active state and animate sliding violet pill immediately in-place
+  // 1. Update sidebar active state and animate sliding violet pill immediately on Frame 0
   const activeNavItem = syncSidebarNavActiveState(sectionKey);
   syncSidebarSlidingPill(activeNavItem, { animateStretch: true, commitActive: true });
 
@@ -425,13 +428,15 @@ async function switchSpaSection(targetKey, options = {}) {
     }
   }
 
-  if (options.scrollToTop !== false) {
+  if (options.scrollToTop !== false && window.scrollY > 40) {
     window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
   }
 
-  // 5. Swap main view panes
+  // 5. Swap main view panes without synchronous layout thrashing so sidebar spring animation stays at 60fps
   if (sectionKey === 'overview' || sectionKey === 'tables') {
     await ensureIndexViewsPresent();
+    if (currentSpaSectionKey !== sectionKey) return;
+
     const overviewPane = document.getElementById('mgOverviewView');
     const tablesPane = document.getElementById('mgTablesView');
     const dynPane = document.getElementById('mgDynamicView');
@@ -450,16 +455,17 @@ async function switchSpaSection(targetKey, options = {}) {
       inactivePane.setAttribute('hidden', '');
 
       activePane.removeAttribute('hidden');
-      activePane.classList.remove('is-active-view');
-      void activePane.offsetWidth;
       activePane.classList.add('is-active-view');
     }
 
-    if (sectionKey === 'overview') {
-      loadAndRenderKPIs();
-    }
-    initScrollAndEntranceAnimations();
-    initExclamationTooltips();
+    requestAnimationFrame(() => {
+      if (currentSpaSectionKey !== sectionKey) return;
+      if (sectionKey === 'overview') {
+        loadAndRenderKPIs();
+      }
+      initScrollAndEntranceAnimations();
+      initExclamationTooltips();
+    });
     return;
   }
 
@@ -488,24 +494,23 @@ async function switchSpaSection(targetKey, options = {}) {
   }
 
   dynPane.removeAttribute('hidden');
-  dynPane.classList.remove('is-active-view');
-  void dynPane.offsetWidth;
   dynPane.classList.add('is-active-view');
 
   await ensureSpaScriptLoaded(sec.script, sec.renderFn);
   if (currentSpaSectionKey !== sectionKey) return;
 
-  if (sec.renderFn && typeof window[sec.renderFn] === 'function') {
-    try {
-      window[sec.renderFn]();
-    } catch {
-      // ignore
+  requestAnimationFrame(() => {
+    if (currentSpaSectionKey !== sectionKey) return;
+    if (sec.renderFn && typeof window[sec.renderFn] === 'function') {
+      try {
+        window[sec.renderFn]();
+      } catch {
+        // ignore
+      }
     }
-  }
-
-  initScrollAndEntranceAnimations();
-  initButtonMicroInteractions();
-  initExclamationTooltips();
+    initScrollAndEntranceAnimations();
+    initExclamationTooltips();
+  });
 }
 
 function switchIndexView(targetView, options = {}) {
@@ -1825,6 +1830,7 @@ function initFontSwitcher() {
 
 /* ==========================================================================
    DUAL-THEME SYSTEM (DARK MODE & SOFT LIGHT GAMING DASHBOARD MODE)
+   WITH CIRCULAR REVEAL VIEW-TRANSITION & 3D ICON MORPH ANIMATION
    ========================================================================== */
 const THEME_STORAGE_KEY = 'mg_theme_v1';
 let themeTransitionTimer = null;
@@ -1844,20 +1850,22 @@ function getSavedSiteTheme() {
 
 function buildThemeToggleIconsMarkup() {
   return `
-    <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="5"></circle>
-      <line x1="12" y1="1" x2="12" y2="3"></line>
-      <line x1="12" y1="21" x2="12" y2="23"></line>
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-      <line x1="1" y1="12" x2="3" y2="12"></line>
-      <line x1="21" y1="12" x2="23" y2="12"></line>
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-    </svg>
-    <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-    </svg>
+    <span class="mg-theme-icon-stage" aria-hidden="true">
+      <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      </svg>
+      <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+    </span>
   `;
 }
 
@@ -1871,33 +1879,167 @@ function syncThemeToggleButtons(theme) {
   });
 }
 
-function applySiteTheme(themeKey, options = {}) {
-  const validTheme = themeKey === 'light' ? 'light' : 'dark';
-  const root = document.documentElement;
-
-  if (options.animate && !prefersReducedMotion) {
-    root.classList.add('is-theme-switching');
-    if (themeTransitionTimer) clearTimeout(themeTransitionTimer);
-    themeTransitionTimer = setTimeout(() => {
-      root.classList.remove('is-theme-switching');
-      themeTransitionTimer = null;
-    }, 300);
+function getThemeToggleOrigin(triggerEvent = null) {
+  const btn = document.getElementById('mgThemeToggleBtn') || document.querySelector('.mg-theme-toggle-btn');
+  if (btn) {
+    const rect = btn.getBoundingClientRect();
+    if (rect.width > 0 && rect.height > 0) {
+      return {
+        x: Math.round(rect.left + rect.width / 2),
+        y: Math.round(rect.top + rect.height / 2),
+        btn,
+      };
+    }
   }
+  if (triggerEvent && typeof triggerEvent.clientX === 'number' && triggerEvent.clientX > 0) {
+    return {
+      x: Math.round(triggerEvent.clientX),
+      y: Math.round(triggerEvent.clientY),
+      btn,
+    };
+  }
+  return {
+    x: 64,
+    y: 36,
+    btn,
+  };
+}
 
+function spawnThemeWaveOverlay(x, y, maxRadius, targetTheme) {
+  if (prefersReducedMotion || !document.body) return;
+  let wave = document.getElementById('mgThemeWaveOverlay');
+  if (wave) wave.remove();
+
+  wave = document.createElement('div');
+  wave.id = 'mgThemeWaveOverlay';
+  wave.className = `mg-theme-wave-overlay to-${targetTheme}`;
+  wave.style.setProperty('--wave-x', `${x}px`);
+  wave.style.setProperty('--wave-y', `${y}px`);
+  wave.style.setProperty('--wave-r', `${Math.ceil(maxRadius)}px`);
+  document.body.appendChild(wave);
+
+  if (typeof wave.animate === 'function') {
+    const anim = wave.animate(
+      [
+        {
+          transform: 'translate(-50%, -50%) scale(0.02)',
+          opacity: 0.78,
+        },
+        {
+          transform: 'translate(-50%, -50%) scale(0.65)',
+          opacity: 0.38,
+          offset: 0.6,
+        },
+        {
+          transform: 'translate(-50%, -50%) scale(1.06)',
+          opacity: 0,
+        },
+      ],
+      {
+        duration: 540,
+        easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+        fill: 'forwards',
+      }
+    );
+    anim.onfinish = () => wave.remove();
+  } else {
+    setTimeout(() => wave.remove(), 550);
+  }
+}
+
+function commitThemeDomState(validTheme) {
+  const root = document.documentElement;
   root.setAttribute('data-theme', validTheme);
   try {
     localStorage.setItem(THEME_STORAGE_KEY, validTheme);
   } catch {
     // ignore storage errors
   }
-
   syncThemeToggleButtons(validTheme);
+  try {
+    window.dispatchEvent(new CustomEvent('mg:theme-changed', { detail: { theme: validTheme } }));
+  } catch {
+    // ignore
+  }
 }
 
-function toggleSiteTheme() {
+function applySiteTheme(themeKey, options = {}) {
+  const validTheme = themeKey === 'light' ? 'light' : 'dark';
+  const root = document.documentElement;
+
+  if (!options.animate || prefersReducedMotion) {
+    commitThemeDomState(validTheme);
+    return;
+  }
+
+  const { x, y, btn } = getThemeToggleOrigin(options.event);
+  const maxRadius = Math.hypot(
+    Math.max(x, window.innerWidth - x),
+    Math.max(y, window.innerHeight - y)
+  );
+
+  if (btn) {
+    btn.classList.remove('is-animating-theme');
+    void btn.offsetWidth;
+    btn.classList.add('is-animating-theme');
+    setTimeout(() => btn.classList.remove('is-animating-theme'), 560);
+  }
+
+  root.classList.add('is-theme-switching');
+  if (themeTransitionTimer) clearTimeout(themeTransitionTimer);
+  themeTransitionTimer = setTimeout(() => {
+    root.classList.remove('is-theme-switching');
+    root.classList.remove('is-theme-vt-active');
+    themeTransitionTimer = null;
+  }, 560);
+
+  spawnThemeWaveOverlay(x, y, maxRadius, validTheme);
+
+  if (typeof document.startViewTransition === 'function') {
+    try {
+      root.classList.add('is-theme-vt-active');
+      const transition = document.startViewTransition(() => {
+        commitThemeDomState(validTheme);
+      });
+      transition.ready
+        .then(() => {
+          document.documentElement.animate(
+            {
+              clipPath: [
+                `circle(0px at ${x}px ${y}px)`,
+                `circle(${Math.ceil(maxRadius)}px at ${x}px ${y}px)`,
+              ],
+            },
+            {
+              duration: 500,
+              easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+              pseudoElement: '::view-transition-new(root)',
+            }
+          );
+        })
+        .catch(() => {
+          root.classList.remove('is-theme-vt-active');
+        });
+      transition.finished
+        .then(() => {
+          root.classList.remove('is-theme-vt-active');
+        })
+        .catch(() => {
+          root.classList.remove('is-theme-vt-active');
+        });
+      return;
+    } catch {
+      root.classList.remove('is-theme-vt-active');
+    }
+  }
+
+  commitThemeDomState(validTheme);
+}
+
+function toggleSiteTheme(triggerEvent = null) {
   const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
   const next = current === 'light' ? 'dark' : 'light';
-  applySiteTheme(next, { animate: true });
+  applySiteTheme(next, { animate: true, event: triggerEvent });
 }
 
 function initThemeSwitcher() {
@@ -1926,7 +2068,7 @@ function initThemeSwitcher() {
       toggleBtn.className = 'mg-icon-btn mg-theme-toggle-btn mg-floating-theme-toggle';
       document.body.appendChild(toggleBtn);
     }
-  } else if (!toggleBtn.querySelector('.icon-sun')) {
+  } else if (!toggleBtn.querySelector('.mg-theme-icon-stage')) {
     toggleBtn.innerHTML = buildThemeToggleIconsMarkup();
   }
 
@@ -1934,14 +2076,14 @@ function initThemeSwitcher() {
 
   if (!toggleBtn.dataset.themeBound) {
     toggleBtn.dataset.themeBound = '1';
-    toggleBtn.addEventListener('click', () => {
-      toggleSiteTheme();
+    toggleBtn.addEventListener('click', (e) => {
+      toggleSiteTheme(e);
     });
   }
 }
 
 /* ==========================================================================
-   FLUID SLIDING & STRETCHING ORANGE-RED SIDEBAR INDICATOR + COLLAPSIBLE RAIL
+   FLUID 60FPS SPRING-PHYSICS SIDEBAR INDICATOR + COLLAPSIBLE RAIL
    ========================================================================== */
 function animateHeadingWords(elId, newText) {
   const el = document.getElementById(elId);
@@ -1953,7 +2095,15 @@ function animateHeadingWords(elId, newText) {
 
 let lastPillTop = null;
 let committedPillTop = null;
-let activePillAnim = null;
+const pillSpringState = {
+  currentY: null,
+  targetY: null,
+  velocityY: 0,
+  currentH: 42,
+  targetH: 42,
+  rafId: null,
+  lastTs: 0,
+};
 
 const NAV_ICON_SVGS = {
   overview: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
@@ -1975,6 +2125,58 @@ function buildHamburgerToggleMarkup() {
   `;
 }
 
+function stepPillSpringFrame(ts) {
+  const pill = document.getElementById('mgNavSlidingPill');
+  if (!pill || pillSpringState.targetY === null) {
+    pillSpringState.rafId = null;
+    return;
+  }
+
+  const dt = pillSpringState.lastTs
+    ? Math.min(0.032, Math.max(0.004, (ts - pillSpringState.lastTs) / 1000))
+    : 1 / 60;
+  pillSpringState.lastTs = ts;
+
+  // Critically-damped spring parameters (omega_0 = 21 rad/s -> fast, silky, zero jitter)
+  const stiffness = 440;
+  const damping = 39;
+
+  const disp = pillSpringState.currentY - pillSpringState.targetY;
+  const springForce = -stiffness * disp;
+  const dampingForce = -damping * pillSpringState.velocityY;
+  const accel = springForce + dampingForce;
+
+  pillSpringState.velocityY += accel * dt;
+  pillSpringState.currentY += pillSpringState.velocityY * dt;
+  pillSpringState.currentH += (pillSpringState.targetH - pillSpringState.currentH) * Math.min(1, dt * 22);
+
+  // Subtle organic squash & stretch proportional to instantaneous velocity
+  const speed = Math.abs(pillSpringState.velocityY);
+  const stretchRatio = Math.min(0.14, speed / 2600);
+  const scaleY = 1 + stretchRatio;
+  const scaleX = 1 - stretchRatio * 0.24;
+
+  pill.style.height = `${pillSpringState.currentH.toFixed(1)}px`;
+  pill.style.transform = `translate3d(0, ${pillSpringState.currentY.toFixed(2)}px, 0) scaleX(${scaleX.toFixed(3)}) scaleY(${scaleY.toFixed(3)})`;
+
+  if (
+    Math.abs(pillSpringState.targetY - pillSpringState.currentY) < 0.25 &&
+    Math.abs(pillSpringState.velocityY) < 4 &&
+    Math.abs(pillSpringState.targetH - pillSpringState.currentH) < 0.25
+  ) {
+    pillSpringState.currentY = pillSpringState.targetY;
+    pillSpringState.currentH = pillSpringState.targetH;
+    pillSpringState.velocityY = 0;
+    pillSpringState.rafId = null;
+    pillSpringState.lastTs = 0;
+    pill.style.height = `${pillSpringState.targetH}px`;
+    pill.style.transform = `translate3d(0, ${pillSpringState.targetY}px, 0) scaleX(1) scaleY(1)`;
+    return;
+  }
+
+  pillSpringState.rafId = requestAnimationFrame(stepPillSpringFrame);
+}
+
 function syncSidebarSlidingPill(hoverItem = null, options = {}) {
   const navList = document.querySelector('.mg-nav-list');
   if (!navList) return;
@@ -1988,8 +2190,14 @@ function syncSidebarSlidingPill(hoverItem = null, options = {}) {
     navList.insertBefore(pill, navList.firstChild);
   }
 
+  const allItems = navList.querySelectorAll('.mg-nav-item');
   const activeItem = navList.querySelector('.mg-nav-item.active');
   const target = hoverItem || activeItem;
+
+  allItems.forEach((item) => {
+    item.classList.toggle('is-pill-target', item === target);
+  });
+
   if (!target) {
     pill.style.opacity = '0';
     return;
@@ -2005,28 +2213,24 @@ function syncSidebarSlidingPill(hoverItem = null, options = {}) {
   pill.classList.toggle('is-hover-preview', isHoveringOther);
   navList.classList.toggle('is-pill-elsewhere', isHoveringOther);
   pill.style.opacity = '1';
-  pill.style.height = `${height}px`;
 
-  // Determine real-time starting Y of the indicator (even if mid-flight or transitioning from previous active item)
-  let fromY = lastPillTop;
-  if (options.commitActive && committedPillTop !== null && Math.abs(nextTop - (lastPillTop ?? nextTop)) < 2) {
-    fromY = committedPillTop;
-  } else if (fromY === null) {
+  // Restore previous pill position across full-page navigations if needed
+  if (pillSpringState.currentY === null) {
+    let initialY = nextTop;
     try {
       const savedPrev = sessionStorage.getItem('mg_prev_pill_top');
       if (savedPrev !== null && savedPrev !== '') {
-        fromY = Number(savedPrev);
+        const parsed = Number(savedPrev);
+        if (Number.isFinite(parsed)) {
+          initialY = parsed;
+        }
         sessionStorage.removeItem('mg_prev_pill_top');
       }
     } catch {
       // ignore
     }
-  } else {
-    const navRect = navList.getBoundingClientRect();
-    const pillRect = pill.getBoundingClientRect();
-    if (pillRect.height > 0 && navRect.height > 0) {
-      fromY = pillRect.top - navRect.top + navList.scrollTop;
-    }
+    pillSpringState.currentY = initialY;
+    pillSpringState.currentH = height;
   }
 
   lastPillTop = nextTop;
@@ -2034,70 +2238,30 @@ function syncSidebarSlidingPill(hoverItem = null, options = {}) {
     committedPillTop = activeItem ? activeItem.offsetTop : nextTop;
   }
 
+  pillSpringState.targetY = nextTop;
+  pillSpringState.targetH = height;
+
   if (
     prefersReducedMotion ||
-    fromY === null ||
-    !Number.isFinite(fromY) ||
-    Math.abs(nextTop - fromY) < 2 ||
-    options.instant === true
+    options.instant === true ||
+    (Math.abs(nextTop - pillSpringState.currentY) < 0.5 && Math.abs(pillSpringState.velocityY) < 2)
   ) {
-    if (activePillAnim) {
-      activePillAnim.cancel();
-      activePillAnim = null;
+    if (pillSpringState.rafId) {
+      cancelAnimationFrame(pillSpringState.rafId);
+      pillSpringState.rafId = null;
     }
-    if (typeof pill.getAnimations === 'function') {
-      pill.getAnimations().forEach((anim) => anim.cancel());
-    }
+    pillSpringState.currentY = nextTop;
+    pillSpringState.currentH = height;
+    pillSpringState.velocityY = 0;
+    pillSpringState.lastTs = 0;
+    pill.style.height = `${height}px`;
     pill.style.transform = `translate3d(0, ${nextTop}px, 0) scaleX(1) scaleY(1)`;
     return;
   }
 
-  const deltaY = nextTop - fromY;
-  const dist = Math.abs(deltaY);
-  // Subtle vertical elongation proportional to travel distance (1.14x to 1.38x)
-  const stretchY = Math.min(1.38, 1.14 + (dist / 220) * 0.24);
-  const squashX = Math.max(0.955, 1 - (stretchY - 1) * 0.14);
-  const overshootY = deltaY > 0 ? 1.8 : -1.8;
-
-  if (typeof pill.animate === 'function') {
-    if (activePillAnim) {
-      activePillAnim.cancel();
-    }
-    if (typeof pill.getAnimations === 'function') {
-      pill.getAnimations().forEach((anim) => anim.cancel());
-    }
-    pill.style.transform = `translate3d(0, ${nextTop}px, 0) scaleX(1) scaleY(1)`;
-    activePillAnim = pill.animate(
-      [
-        {
-          transform: `translate3d(0, ${fromY.toFixed(1)}px, 0) scaleX(1) scaleY(1)`,
-          offset: 0,
-        },
-        {
-          transform: `translate3d(0, ${(fromY + deltaY * 0.54).toFixed(1)}px, 0) scaleX(${squashX.toFixed(3)}) scaleY(${stretchY.toFixed(3)})`,
-          offset: 0.44,
-        },
-        {
-          transform: `translate3d(0, ${(nextTop + overshootY).toFixed(1)}px, 0) scaleX(1.008) scaleY(0.972)`,
-          offset: 0.84,
-        },
-        {
-          transform: `translate3d(0, ${nextTop.toFixed(1)}px, 0) scaleX(1) scaleY(1)`,
-          offset: 1,
-        },
-      ],
-      {
-        duration: 310,
-        easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
-        fill: 'none',
-      }
-    );
-    activePillAnim.onfinish = () => {
-      pill.style.transform = `translate3d(0, ${nextTop}px, 0) scaleX(1) scaleY(1)`;
-      activePillAnim = null;
-    };
-  } else {
-    pill.style.transform = `translate3d(0, ${nextTop}px, 0) scaleX(1) scaleY(1)`;
+  if (!pillSpringState.rafId) {
+    pillSpringState.lastTs = 0;
+    pillSpringState.rafId = requestAnimationFrame(stepPillSpringFrame);
   }
 }
 
@@ -2241,7 +2405,7 @@ function initIgnaraSidebarFeatures() {
     quickNewBtn.addEventListener('click', triggerQuickNewAction);
   }
 
-  // 4. Fluid Sliding & Stretching Violet Pill hover, active & click tracking
+  // 4. Fluid 60fps Spring-Physics Violet Pill hover, active & click tracking
   if (navList) {
     const items = Array.from(navList.querySelectorAll('.mg-nav-item'));
     items.forEach((item) => {
@@ -2252,7 +2416,12 @@ function initIgnaraSidebarFeatures() {
       if (link) {
         link.addEventListener('click', () => {
           try {
-            const originTop = committedPillTop !== null ? committedPillTop : lastPillTop;
+            const originTop =
+              pillSpringState.currentY !== null
+                ? pillSpringState.currentY
+                : committedPillTop !== null
+                  ? committedPillTop
+                  : lastPillTop;
             if (originTop !== null) {
               sessionStorage.setItem('mg_prev_pill_top', String(originTop));
             }
