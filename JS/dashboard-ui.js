@@ -147,7 +147,7 @@ const SPA_SECTIONS = {
   console: {
     key: 'console',
     file: 'console.html',
-    script: 'JS/console.js?v=20261110-9',
+    script: 'JS/console.js?v=20261110-12',
     renderFn: 'renderConsolePage',
     navMatch: 'console.html',
     title: 'مدیریت کنسول‌ها',
@@ -158,7 +158,7 @@ const SPA_SECTIONS = {
   buffet: {
     key: 'buffet',
     file: 'buffet.html',
-    script: 'JS/buffet.js?v=20261110-9',
+    script: 'JS/buffet.js?v=20261110-12',
     renderFn: 'renderBuffetPage',
     navMatch: 'buffet.html',
     title: 'مدیریت بوفه و خوراکی‌ها',
@@ -169,7 +169,7 @@ const SPA_SECTIONS = {
   accounts: {
     key: 'accounts',
     file: 'acounts.html',
-    script: 'JS/acounts.js?v=20261110-9',
+    script: 'JS/acounts.js?v=20261110-12',
     renderFn: 'renderAccountsPage',
     navMatch: 'acounts.html',
     title: 'باشگاه مشتریان',
@@ -180,7 +180,7 @@ const SPA_SECTIONS = {
   debtors: {
     key: 'debtors',
     file: 'Debtors.html',
-    script: 'JS/Debtors.js?v=20261110-9',
+    script: 'JS/Debtors.js?v=20261110-12',
     renderFn: 'renderDebtorsPage',
     navMatch: 'Debtors.html',
     title: 'مدیریت حساب بدهکاران',
@@ -191,7 +191,7 @@ const SPA_SECTIONS = {
   income: {
     key: 'income',
     file: 'income.html',
-    script: 'JS/income.js?v=20261110-9',
+    script: 'JS/income.js?v=20261110-12',
     renderFn: 'renderIncomePage',
     navMatch: 'income.html',
     title: 'گزارش جامع درآمد و تحلیل مالی',
@@ -329,7 +329,7 @@ async function ensureIndexViewsPresent() {
       tablesEl.setAttribute('hidden', '');
       mainEl.insertBefore(tablesEl, document.getElementById('mgDynamicView'));
     }
-    await ensureSpaScriptLoaded('JS/7878.js?v=20261110-9', 'renderTablesWorkspace');
+    await ensureSpaScriptLoaded('JS/7878.js?v=20261110-12', 'renderTablesWorkspace');
     if (typeof window.renderTablesWorkspace === 'function') {
       window.renderTablesWorkspace();
     }
@@ -366,18 +366,27 @@ function syncSidebarNavActiveState(sectionKey) {
     if (!a) return;
     const href = (a.getAttribute('href') || '').toLowerCase();
     const dataView = (a.getAttribute('data-nav-view') || '').toLowerCase();
-    const isMatch =
+    const isMatch = Boolean(
       (sectionKey === 'overview' && (dataView === 'overview' || href.includes('#overview'))) ||
-      (sectionKey === 'tables' && (dataView === 'tables' || href.includes('#tables'))) ||
-      (sec.file && href.includes(sec.file.toLowerCase()));
-    li.classList.toggle('active', isMatch);
-    if (isMatch) matchedItem = li;
+        (sectionKey === 'tables' && (dataView === 'tables' || href.includes('#tables'))) ||
+        (Boolean(sec.file) && href.includes(sec.file.toLowerCase()))
+    );
+    if (isMatch && !matchedItem) {
+      li.classList.add('active');
+      matchedItem = li;
+    } else {
+      li.classList.remove('active');
+    }
   });
 
   document.querySelectorAll('.mg-view-switch-btn[data-switch-view]').forEach((btn) => {
     const btnView = btn.getAttribute('data-switch-view');
-    const active = btnView === sectionKey;
-    btn.classList.toggle('active', active);
+    const active = Boolean(btnView === sectionKey);
+    if (active) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
     btn.setAttribute('aria-selected', active ? 'true' : 'false');
   });
 
@@ -1815,6 +1824,123 @@ function initFontSwitcher() {
 }
 
 /* ==========================================================================
+   DUAL-THEME SYSTEM (DARK MODE & SOFT LIGHT GAMING DASHBOARD MODE)
+   ========================================================================== */
+const THEME_STORAGE_KEY = 'mg_theme_v1';
+let themeTransitionTimer = null;
+
+function getSavedSiteTheme() {
+  try {
+    const saved = localStorage.getItem(THEME_STORAGE_KEY);
+    if (saved === 'light' || saved === 'dark') {
+      return saved;
+    }
+  } catch {
+    // ignore storage errors
+  }
+  const currentAttr = document.documentElement.getAttribute('data-theme');
+  return currentAttr === 'light' ? 'light' : 'dark';
+}
+
+function buildThemeToggleIconsMarkup() {
+  return `
+    <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+    <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+    </svg>
+  `;
+}
+
+function syncThemeToggleButtons(theme) {
+  const isLight = theme === 'light';
+  const label = isLight ? 'تغییر به حالت تیره (Dark Mode)' : 'تغییر به حالت روشن (Light Mode)';
+  document.querySelectorAll('#mgThemeToggleBtn, .mg-theme-toggle-btn').forEach((btn) => {
+    btn.setAttribute('aria-label', label);
+    btn.setAttribute('title', label);
+    btn.setAttribute('aria-pressed', isLight ? 'true' : 'false');
+  });
+}
+
+function applySiteTheme(themeKey, options = {}) {
+  const validTheme = themeKey === 'light' ? 'light' : 'dark';
+  const root = document.documentElement;
+
+  if (options.animate && !prefersReducedMotion) {
+    root.classList.add('is-theme-switching');
+    if (themeTransitionTimer) clearTimeout(themeTransitionTimer);
+    themeTransitionTimer = setTimeout(() => {
+      root.classList.remove('is-theme-switching');
+      themeTransitionTimer = null;
+    }, 300);
+  }
+
+  root.setAttribute('data-theme', validTheme);
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, validTheme);
+  } catch {
+    // ignore storage errors
+  }
+
+  syncThemeToggleButtons(validTheme);
+}
+
+function toggleSiteTheme() {
+  const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+  const next = current === 'light' ? 'dark' : 'light';
+  applySiteTheme(next, { animate: true });
+}
+
+function initThemeSwitcher() {
+  const initialTheme = getSavedSiteTheme();
+  applySiteTheme(initialTheme, { animate: false });
+
+  const topbarLeft = document.querySelector('.mg-topbar-left');
+  let toggleBtn = document.getElementById('mgThemeToggleBtn');
+
+  if (!toggleBtn) {
+    toggleBtn = document.createElement('button');
+    toggleBtn.type = 'button';
+    toggleBtn.id = 'mgThemeToggleBtn';
+    toggleBtn.innerHTML = buildThemeToggleIconsMarkup();
+
+    if (topbarLeft) {
+      toggleBtn.className = 'mg-icon-btn mg-theme-toggle-btn';
+      const notifWrap = topbarLeft.querySelector('.mg-notification-wrap');
+      if (notifWrap) {
+        topbarLeft.insertBefore(toggleBtn, notifWrap);
+      } else {
+        topbarLeft.appendChild(toggleBtn);
+      }
+    } else {
+      // Standalone page without topbar (e.g. login.html)
+      toggleBtn.className = 'mg-icon-btn mg-theme-toggle-btn mg-floating-theme-toggle';
+      document.body.appendChild(toggleBtn);
+    }
+  } else if (!toggleBtn.querySelector('.icon-sun')) {
+    toggleBtn.innerHTML = buildThemeToggleIconsMarkup();
+  }
+
+  syncThemeToggleButtons(initialTheme);
+
+  if (!toggleBtn.dataset.themeBound) {
+    toggleBtn.dataset.themeBound = '1';
+    toggleBtn.addEventListener('click', () => {
+      toggleSiteTheme();
+    });
+  }
+}
+
+/* ==========================================================================
    FLUID SLIDING & STRETCHING ORANGE-RED SIDEBAR INDICATOR + COLLAPSIBLE RAIL
    ========================================================================== */
 function animateHeadingWords(elId, newText) {
@@ -1919,6 +2045,9 @@ function syncSidebarSlidingPill(hoverItem = null, options = {}) {
       activePillAnim.cancel();
       activePillAnim = null;
     }
+    if (typeof pill.getAnimations === 'function') {
+      pill.getAnimations().forEach((anim) => anim.cancel());
+    }
     pill.style.transform = `translate3d(0, ${nextTop}px, 0) scaleX(1) scaleY(1)`;
     return;
   }
@@ -1933,6 +2062,9 @@ function syncSidebarSlidingPill(hoverItem = null, options = {}) {
   if (typeof pill.animate === 'function') {
     if (activePillAnim) {
       activePillAnim.cancel();
+    }
+    if (typeof pill.getAnimations === 'function') {
+      pill.getAnimations().forEach((anim) => anim.cancel());
     }
     pill.style.transform = `translate3d(0, ${nextTop}px, 0) scaleX(1) scaleY(1)`;
     activePillAnim = pill.animate(
@@ -1957,7 +2089,7 @@ function syncSidebarSlidingPill(hoverItem = null, options = {}) {
       {
         duration: 310,
         easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
-        fill: 'forwards',
+        fill: 'none',
       }
     );
     activePillAnim.onfinish = () => {
@@ -2127,9 +2259,6 @@ function initIgnaraSidebarFeatures() {
           } catch {
             // ignore
           }
-          items.forEach((li) => li.classList.remove('active'));
-          item.classList.add('active');
-          syncSidebarSlidingPill(item, { animateStretch: true, commitActive: true });
         });
       }
     });
@@ -2204,6 +2333,7 @@ function initCommandPalette() {
     { title: 'باشگاه مشتریان', sub: 'مدیریت لیست مشتریان و اشتراک‌ها', action: () => switchSpaSection('accounts'), kbd: 'G U' },
     { title: 'حساب بدهکاران', sub: 'پیگیری و تسویه حساب‌های دفتری', action: () => switchSpaSection('debtors'), kbd: 'G D' },
     { title: 'گزارش جامع درآمد و تحلیل مالی', sub: 'تفکیک فروش کنسول‌ها، بوفه و روش‌های پرداخت', action: () => switchSpaSection('income'), kbd: 'G I' },
+    { title: 'تغییر پوسته (حالت روشن / حالت تیره)', sub: 'جابه‌جایی آنی بین تم تیره گیمینگ و تم روشن روزانه', action: () => toggleSiteTheme(), kbd: 'T' },
     { title: 'جمع / باز کردن منوی کناری (حالت فشرده)', sub: 'تغییر وضعیت سایدبار بین حالت کامل و آیکونی', action: () => document.getElementById('mgSidebarFoldBtn')?.click(), kbd: '[' },
   ];
 
@@ -2323,6 +2453,7 @@ function initCommandPalette() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  initThemeSwitcher();
   initFontSwitcher();
   initLiveClock();
   initSidebarAndNotifications();

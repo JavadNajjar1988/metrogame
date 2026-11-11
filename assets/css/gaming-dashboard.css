@@ -4563,15 +4563,17 @@ html.is-rail .mg-logout-btn {
   box-shadow: none !important;
 }
 
-/* Keep the selected active item visually distinguishable when hovering another item */
-.mg-nav-list.is-pill-elsewhere .mg-nav-item.active a {
-  background: rgba(139, 92, 246, 0.14) !important;
-  border-color: rgba(139, 92, 246, 0.38) !important;
-  color: #EDE9FE !important;
+/* When hovering another item in the sidebar, keep the non-hovered active item in normal state so only the hovered item is purple */
+.mg-nav-list.is-pill-elsewhere .mg-nav-item.active:not(:hover) a {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  color: #9CA3AF !important;
 }
 
-.mg-nav-list.is-pill-elsewhere .mg-nav-item.active .mg-nav-icon {
-  color: #A78BFA !important;
+.mg-nav-list.is-pill-elsewhere .mg-nav-item.active:not(:hover) .mg-nav-label,
+.mg-nav-list.is-pill-elsewhere .mg-nav-item.active:not(:hover) .mg-nav-icon {
+  color: #9CA3AF !important;
 }
 
 .mg-cmd-list {
@@ -5442,9 +5444,12 @@ input[type="number"]:focus {
   display: none !important;
 }
 
-/* 10. Remove Profile Chip & Clean Up the 3 Table Management Form Cards */
+/* 10. Remove Profile Chip, Header Search & Clean Up the 3 Table Management Form Cards */
 div:nth-of-type(2) > div:nth-of-type(1) > header:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(3),
-.mg-profile-chip {
+.mg-profile-chip,
+.mg-topbar-center,
+#mgTopbarSearchBox,
+.mg-search-box {
   display: none !important;
 }
 
@@ -5687,3 +5692,1215 @@ div:nth-of-type(2) > div:nth-of-type(1) > main:nth-of-type(1) > div#mgTablesView
     grid-column: span 12 !important;
   }
 }
+
+/* ==========================================================================
+   14. THEME TOGGLE BUTTON & SMOOTH THEME TRANSITION SYSTEM
+   ========================================================================== */
+.mg-theme-toggle-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.mg-theme-toggle-btn .mg-theme-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.22s ease;
+}
+
+/* Default (Dark Mode): show Sun icon to switch to Light Mode */
+.mg-theme-toggle-btn .icon-sun {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+.mg-theme-toggle-btn .icon-moon {
+  position: absolute;
+  opacity: 0;
+  transform: rotate(-75deg) scale(0.5);
+}
+
+/* Light Mode: show Moon icon to switch to Dark Mode */
+html[data-theme="light"] .mg-theme-toggle-btn .icon-sun {
+  position: absolute;
+  opacity: 0;
+  transform: rotate(75deg) scale(0.5);
+}
+
+html[data-theme="light"] .mg-theme-toggle-btn .icon-moon {
+  position: static;
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+/* Floating theme toggle fallback on standalone pages without .mg-topbar (e.g., login.html) */
+.mg-floating-theme-toggle {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 900;
+}
+
+/* Smooth Color Transition Window During Active Theme Toggle */
+html.is-theme-switching,
+html.is-theme-switching body,
+html.is-theme-switching .mg-app-shell,
+html.is-theme-switching .mg-main-wrapper,
+html.is-theme-switching .mg-sidebar,
+html.is-theme-switching .mg-topbar,
+html.is-theme-switching .mg-status-strip,
+html.is-theme-switching .mg-card,
+html.is-theme-switching .mg-kpi-card,
+html.is-theme-switching .mg-chart-card,
+html.is-theme-switching .mg-income-card,
+html.is-theme-switching .mg-income-filter-bar,
+html.is-theme-switching .mg-income-chart-panel,
+html.is-theme-switching .mg-mini-station-card,
+html.is-theme-switching .mg-table-responsive,
+html.is-theme-switching .mg-table thead th,
+html.is-theme-switching .mg-table tbody td,
+html.is-theme-switching .mg-input,
+html.is-theme-switching .form-control,
+html.is-theme-switching .mg-radio-card,
+html.is-theme-switching .mg-btn,
+html.is-theme-switching .btn,
+html.is-theme-switching .mg-live-clock,
+html.is-theme-switching .mg-icon-btn,
+html.is-theme-switching .mg-sidebar-new-btn,
+html.is-theme-switching .mg-sidebar-status-box,
+html.is-theme-switching .mg-sidebar-footer {
+  transition:
+    background-color 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.24s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+/* ==========================================================================
+   15. SOFT LIGHT GAMING DASHBOARD THEME (html[data-theme="light"])
+   Palette Foundation:
+   - Main background: #F5F5FA
+   - Primary card background: #FFFFFF
+   - Sidebar background: #F0EFF7
+   - Secondary surface: #F8F7FC
+   - Borders & dividers: #E2E2EB
+   - Primary & Secondary text: #000000 (Pure Black for crisp readability)
+   - Primary accent: #8B5CF6 (hover: #7C3AED)
+   - Soft accent background: #F0E9FF
+   ========================================================================== */
+
+html[data-theme="light"] {
+  color-scheme: light;
+  --bg-canvas: #F5F5FA;
+  --bg-surface: #F8F7FC;
+  --bg-card: #FFFFFF;
+  --bg-card-elevated: #F8F7FC;
+  --bg-input: #F8F7FC;
+
+  --accent-indigo: #8B5CF6;
+  --accent-purple: #8B5CF6;
+  --accent-violet: #8B5CF6;
+  --accent-cyan: #8B5CF6;
+  --accent-cyan-bright: #7C3AED;
+  --accent-emerald: #10B981;
+  --accent-amber: #F59E0B;
+  --accent-crimson: #EF4444;
+  --accent-rose: #EF4444;
+
+  --border-subtle: #E2E2EB;
+  --border-light: rgba(0, 0, 0, 0.08);
+  --border-glow: rgba(139, 92, 246, 0.32);
+  --border-cyan: rgba(139, 92, 246, 0.3);
+
+  --text-primary: #000000;
+  --text-secondary: #000000;
+  --text-muted: #000000;
+
+  --shadow-card: 0 4px 16px rgba(36, 36, 55, 0.045);
+  --shadow-card-hover: 0 8px 24px rgba(36, 36, 55, 0.075);
+}
+
+/* 1. Main Canvas, App Shell & Topbar */
+html[data-theme="light"],
+html[data-theme="light"] body,
+html[data-theme="light"] .mg-app-shell,
+html[data-theme="light"] .mg-main-wrapper {
+  background-color: #F5F5FA !important;
+  background-image: none !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] a:hover,
+html[data-theme="light"] a:focus {
+  color: #000000;
+}
+
+html[data-theme="light"] .mg-topbar {
+  background: rgba(255, 255, 255, 0.94) !important;
+  backdrop-filter: blur(14px) !important;
+  border-bottom: 1px solid #E2E2EB !important;
+  box-shadow: 0 2px 10px rgba(36, 36, 55, 0.03) !important;
+}
+
+html[data-theme="light"] .mg-page-heading h1,
+html[data-theme="light"] #mgTopbarTitle {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] .mg-page-heading p {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-mobile-menu-btn {
+  background: #F8F7FC !important;
+  border: 1px solid #E2E2EB !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-live-clock,
+html[data-theme="light"] .mg-icon-btn {
+  background: #F8F7FC !important;
+  border: 1px solid #E2E2EB !important;
+  color: #000000 !important;
+  box-shadow: 0 1px 3px rgba(36, 36, 55, 0.03) !important;
+}
+
+html[data-theme="light"] .mg-live-clock span,
+html[data-theme="light"] #mgLiveClockText {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-icon-btn:hover {
+  background: #F0E9FF !important;
+  border-color: #C4B5FD !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-notif-count {
+  background: #8B5CF6 !important;
+  color: #FFFFFF !important;
+  border: 1.5px solid #FFFFFF !important;
+}
+
+html[data-theme="light"] .mg-search-icon {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-search-box input {
+  background: #F8F7FC !important;
+  border: 1px solid #E2E2EB !important;
+  color: #000000 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .mg-search-box input::placeholder {
+  color: #3A3A4A !important;
+}
+
+html[data-theme="light"] .mg-search-box input:focus {
+  background: #FFFFFF !important;
+  border-color: #8B5CF6 !important;
+  color: #000000 !important;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.14) !important;
+}
+
+html[data-theme="light"] .mg-status-strip,
+html[data-theme="light"] .mg-income-summary-strip {
+  background: #F8F7FC !important;
+  border-bottom: 1px solid #E2E2EB !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-status-pill,
+html[data-theme="light"] .mg-inc-strip-item {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-status-pill strong,
+html[data-theme="light"] .mg-inc-strip-item strong {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-status-strip a {
+  color: #6D28D9 !important;
+}
+
+html[data-theme="light"] .mg-status-divider {
+  background: #E2E2EB !important;
+}
+
+/* 2. Sidebar Navigation (Soft Lavender-Gray #F0EFF7, Pure Black Inactive Text & Solid Purple Active Item) */
+html[data-theme="light"] .mg-sidebar {
+  background: #F0EFF7 !important;
+  border-left: 1px solid #E2E2EB !important;
+  box-shadow: -4px 0 20px rgba(36, 36, 55, 0.035) !important;
+}
+
+html[data-theme="light"] .mg-brand {
+  border-bottom: 1px solid #E2E2EB !important;
+  background: transparent !important;
+}
+
+html[data-theme="light"] .mg-brand-logo {
+  border: 1px solid #DFDEE9 !important;
+  box-shadow: 0 3px 10px rgba(36, 36, 55, 0.1) !important;
+}
+
+html[data-theme="light"] .mg-brand-title {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-brand-subtitle {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-sidebar-fold-btn {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E2EB !important;
+  color: #000000 !important;
+  box-shadow: 0 1px 3px rgba(36, 36, 55, 0.04) !important;
+}
+
+html[data-theme="light"] .mg-sidebar-fold-btn:hover {
+  background: #F0E9FF !important;
+  border-color: #C4B5FD !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-sidebar-new-btn {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E2EB !important;
+  color: #000000 !important;
+  box-shadow: 0 2px 6px rgba(36, 36, 55, 0.04) !important;
+}
+
+html[data-theme="light"] .mg-sidebar-new-btn .mg-sidebar-new-label {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-sidebar-new-btn:hover {
+  background: #F0E9FF !important;
+  border-color: #C4B5FD !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-sidebar-new-ico {
+  background: #F0E9FF !important;
+  color: #6D28D9 !important;
+}
+
+html[data-theme="light"] .mg-kbd {
+  background: #F0EFF7 !important;
+  border: 1px solid #D5D4E2 !important;
+  color: #000000 !important;
+}
+
+/* Focus Mode Target: div:nth-of-type(2) > aside#mgSidebar:nth-of-type(1) > ul#mgNavList:nth-of-type(1) */
+html[data-theme="light"] div:nth-of-type(2) > aside#mgSidebar:nth-of-type(1) > ul#mgNavList:nth-of-type(1),
+html[data-theme="light"] #mgNavList,
+html[data-theme="light"] .mg-nav-list {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] div:nth-of-type(2) > aside#mgSidebar:nth-of-type(1) > ul#mgNavList:nth-of-type(1) .mg-nav-group-header,
+html[data-theme="light"] div:nth-of-type(2) > aside#mgSidebar:nth-of-type(1) > ul#mgNavList:nth-of-type(1) .mg-nav-group-header span,
+html[data-theme="light"] .mg-nav-group-header,
+html[data-theme="light"] .mg-nav-group-header span,
+html[data-theme="light"] .mg-sidebar-section-label {
+  color: #000000 !important;
+  font-weight: 700 !important;
+}
+
+html[data-theme="light"] .mg-sidebar-section-label::after,
+html[data-theme="light"].is-rail .mg-nav-group-header {
+  background: #E2E2EB !important;
+}
+
+/* Inactive Navigation Items & Non-Hovered Active Item When Hovering Elsewhere: Pure Black Text & Normal Transparent Background */
+html[data-theme="light"] div:nth-of-type(2) > aside#mgSidebar:nth-of-type(1) > ul#mgNavList:nth-of-type(1) .mg-nav-item:not(.active) a,
+html[data-theme="light"] .mg-nav-item:not(.active) a,
+html[data-theme="light"] div:nth-of-type(2) > aside#mgSidebar:nth-of-type(1) > ul#mgNavList:nth-of-type(1).is-pill-elsewhere .mg-nav-item.active:not(:hover) a,
+html[data-theme="light"] .mg-nav-list.is-pill-elsewhere .mg-nav-item.active:not(:hover) a {
+  color: #000000 !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] div:nth-of-type(2) > aside#mgSidebar:nth-of-type(1) > ul#mgNavList:nth-of-type(1) .mg-nav-item:not(.active) .mg-nav-icon,
+html[data-theme="light"] div:nth-of-type(2) > aside#mgSidebar:nth-of-type(1) > ul#mgNavList:nth-of-type(1) .mg-nav-item:not(.active) .mg-nav-label,
+html[data-theme="light"] div:nth-of-type(2) > aside#mgSidebar:nth-of-type(1) > ul#mgNavList:nth-of-type(1) .mg-nav-item:not(.active) a span:not(.mg-nav-badge),
+html[data-theme="light"] .mg-nav-item:not(.active) .mg-nav-icon,
+html[data-theme="light"] .mg-nav-item:not(.active) .mg-nav-label,
+html[data-theme="light"] .mg-nav-item:not(.active) a span:not(.mg-nav-badge),
+html[data-theme="light"] div:nth-of-type(2) > aside#mgSidebar:nth-of-type(1) > ul#mgNavList:nth-of-type(1).is-pill-elsewhere .mg-nav-item.active:not(:hover) .mg-nav-icon,
+html[data-theme="light"] div:nth-of-type(2) > aside#mgSidebar:nth-of-type(1) > ul#mgNavList:nth-of-type(1).is-pill-elsewhere .mg-nav-item.active:not(:hover) .mg-nav-label,
+html[data-theme="light"] div:nth-of-type(2) > aside#mgSidebar:nth-of-type(1) > ul#mgNavList:nth-of-type(1).is-pill-elsewhere .mg-nav-item.active:not(:hover) a span:not(.mg-nav-badge),
+html[data-theme="light"] .mg-nav-list.is-pill-elsewhere .mg-nav-item.active:not(:hover) .mg-nav-icon,
+html[data-theme="light"] .mg-nav-list.is-pill-elsewhere .mg-nav-item.active:not(:hover) .mg-nav-label,
+html[data-theme="light"] .mg-nav-list.is-pill-elsewhere .mg-nav-item.active:not(:hover) a span:not(.mg-nav-badge) {
+  color: #000000 !important;
+}
+
+/* Signature Purple Sliding Indicator (#8B5CF6) */
+html[data-theme="light"] .mg-nav-sliding-pill,
+html[data-theme="light"] .mg-nav-sliding-pill.is-hover-preview {
+  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%) !important;
+  border: 1px solid rgba(124, 58, 237, 0.25) !important;
+  box-shadow: 0 6px 16px -3px rgba(139, 92, 246, 0.34) !important;
+  filter: none !important;
+}
+
+/* Active Item (when not hovering elsewhere) OR Currently Hovered Item: Solid Purple (#8B5CF6) with White Text (#FFFFFF) */
+html[data-theme="light"] div:nth-of-type(2) > aside#mgSidebar:nth-of-type(1) > ul#mgNavList:nth-of-type(1):not(.is-pill-elsewhere) .mg-nav-item.active a,
+html[data-theme="light"] .mg-nav-list:not(.is-pill-elsewhere) .mg-nav-item.active a,
+html[data-theme="light"] div:nth-of-type(2) > aside#mgSidebar:nth-of-type(1) > ul#mgNavList:nth-of-type(1) .mg-nav-item a:hover,
+html[data-theme="light"] .mg-nav-list:has(.mg-nav-sliding-pill) .mg-nav-item a:hover,
+html[data-theme="light"] .mg-nav-item a:hover {
+  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%) !important;
+  border: 1px solid #7C3AED !important;
+  box-shadow: 0 6px 16px -3px rgba(139, 92, 246, 0.34) !important;
+  color: #FFFFFF !important;
+}
+
+html[data-theme="light"] div:nth-of-type(2) > aside#mgSidebar:nth-of-type(1) > ul#mgNavList:nth-of-type(1):not(.is-pill-elsewhere) .mg-nav-item.active .mg-nav-label,
+html[data-theme="light"] div:nth-of-type(2) > aside#mgSidebar:nth-of-type(1) > ul#mgNavList:nth-of-type(1):not(.is-pill-elsewhere) .mg-nav-item.active .mg-nav-icon,
+html[data-theme="light"] div:nth-of-type(2) > aside#mgSidebar:nth-of-type(1) > ul#mgNavList:nth-of-type(1):not(.is-pill-elsewhere) .mg-nav-item.active a span:not(.mg-nav-badge),
+html[data-theme="light"] .mg-nav-list:not(.is-pill-elsewhere) .mg-nav-item.active .mg-nav-label,
+html[data-theme="light"] .mg-nav-list:not(.is-pill-elsewhere) .mg-nav-item.active .mg-nav-icon,
+html[data-theme="light"] .mg-nav-list:not(.is-pill-elsewhere) .mg-nav-item.active a span:not(.mg-nav-badge),
+html[data-theme="light"] div:nth-of-type(2) > aside#mgSidebar:nth-of-type(1) > ul#mgNavList:nth-of-type(1) .mg-nav-item a:hover .mg-nav-label,
+html[data-theme="light"] div:nth-of-type(2) > aside#mgSidebar:nth-of-type(1) > ul#mgNavList:nth-of-type(1) .mg-nav-item a:hover .mg-nav-icon,
+html[data-theme="light"] div:nth-of-type(2) > aside#mgSidebar:nth-of-type(1) > ul#mgNavList:nth-of-type(1) .mg-nav-item a:hover span:not(.mg-nav-badge),
+html[data-theme="light"] .mg-nav-item a:hover .mg-nav-label,
+html[data-theme="light"] .mg-nav-item a:hover .mg-nav-icon,
+html[data-theme="light"] .mg-nav-item a:hover span:not(.mg-nav-badge) {
+  color: #FFFFFF !important;
+}
+
+/* Sidebar Badges */
+html[data-theme="light"] .mg-nav-badge,
+html[data-theme="light"] .mg-nav-list.is-pill-elsewhere .mg-nav-item.active:not(:hover) .mg-nav-badge {
+  background: #DFDCF0 !important;
+  color: #000000 !important;
+  border: 1px solid #C8C4E0 !important;
+}
+
+html[data-theme="light"] .mg-nav-badge.badge-Highlight {
+  background: #E9DFFA !important;
+  color: #000000 !important;
+  border-color: #C4B5FD !important;
+}
+
+html[data-theme="light"] .mg-nav-list:not(.is-pill-elsewhere) .mg-nav-item.active .mg-nav-badge,
+html[data-theme="light"] .mg-nav-item a:hover .mg-nav-badge {
+  background: rgba(255, 255, 255, 0.24) !important;
+  color: #FFFFFF !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+html[data-theme="light"] .mg-nav-dot {
+  background: #8B5CF6 !important;
+  box-shadow: 0 0 0 2px #F0EFF7 !important;
+}
+
+/* Sidebar Footer */
+html[data-theme="light"] .mg-sidebar-footer {
+  background: #EAE8F3 !important;
+  border-top: 1px solid #E2E2EB !important;
+}
+
+html[data-theme="light"] .mg-sidebar-status-box {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E2EB !important;
+  color: #000000 !important;
+  box-shadow: 0 1px 3px rgba(36, 36, 55, 0.03) !important;
+}
+
+html[data-theme="light"] .mg-sidebar-status-box span {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-sidebar-status-box strong {
+  color: #047857 !important;
+}
+
+html[data-theme="light"] .mg-logout-btn {
+  background: rgba(239, 68, 68, 0.1) !important;
+  border: 1px solid rgba(239, 68, 68, 0.28) !important;
+  color: #B91C1C !important;
+}
+
+html[data-theme="light"] .mg-logout-btn:hover {
+  background: #EF4444 !important;
+  border-color: #EF4444 !important;
+  color: #FFFFFF !important;
+}
+
+/* 3. Dashboard Cards, Containers & Operational Panels */
+html[data-theme="light"] .mg-card,
+html[data-theme="light"] .mg-kpi-card,
+html[data-theme="light"] .mg-chart-card,
+html[data-theme="light"] .mg-income-card,
+html[data-theme="light"] .mg-income-filter-bar,
+html[data-theme="light"] .mg-tables-header-banner,
+html[data-theme="light"] .x_panel,
+html[data-theme="light"] div:nth-of-type(2) > div:nth-of-type(1) > main:nth-of-type(1) > div#mgTablesView:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > section:nth-of-type(1),
+html[data-theme="light"] div:nth-of-type(2) > div:nth-of-type(1) > main:nth-of-type(1) > div#mgTablesView:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div#myModal:nth-of-type(2) > div:nth-of-type(1),
+html[data-theme="light"] #mgTablesView section.mg-ops-card,
+html[data-theme="light"] #mgTablesView #ChargeModal > .charge-modal-content,
+html[data-theme="light"] #mgTablesView #myModal > .modal-content {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E2EB !important;
+  box-shadow: 0 4px 16px rgba(36, 36, 55, 0.045) !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-card:hover,
+html[data-theme="light"] .mg-kpi-card:hover,
+html[data-theme="light"] .mg-chart-card:hover,
+html[data-theme="light"] .mg-income-card:hover,
+html[data-theme="light"] #mgTablesView section.mg-ops-card:hover,
+html[data-theme="light"] #mgTablesView #ChargeModal > .charge-modal-content:hover,
+html[data-theme="light"] #mgTablesView #myModal > .modal-content:hover {
+  border-color: #CFCFE0 !important;
+  box-shadow: 0 8px 24px rgba(36, 36, 55, 0.075) !important;
+}
+
+html[data-theme="light"] .mg-card-header,
+html[data-theme="light"] .mg-income-card-head,
+html[data-theme="light"] #mgTablesView .mg-ops-card .mg-card-header,
+html[data-theme="light"] .mg-section-bar {
+  border-bottom: 1px solid #E2E2EB !important;
+}
+
+html[data-theme="light"] .mg-card-title,
+html[data-theme="light"] .mg-section-heading,
+html[data-theme="light"] .mg-tables-banner-title,
+html[data-theme="light"] .invoice h3 {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-card-subtitle,
+html[data-theme="light"] .mg-section-caption,
+html[data-theme="light"] .mg-tables-banner-sub {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-card-tag,
+html[data-theme="light"] .mg-chart-badge {
+  background: #F0E9FF !important;
+  border: 1px solid #D8B4FE !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-header-icon-box,
+html[data-theme="light"] .mg-card-header-icon,
+html[data-theme="light"] .mg-card-header-icon.icon-cyan,
+html[data-theme="light"] .mg-card-header-icon.icon-amber,
+html[data-theme="light"] .mg-card-header-icon.icon-emerald {
+  background: #F0E9FF !important;
+  border: 1px solid #DDD0FE !important;
+  color: #6D28D9 !important;
+  box-shadow: none !important;
+}
+
+/* 4. KPI Cards, Circular Statistics & Donut Charts */
+html[data-theme="light"] .mg-kpi-label {
+  color: #000000 !important;
+  font-weight: 600 !important;
+}
+
+html[data-theme="light"] .mg-kpi-value,
+html[data-theme="light"] .mg-kpi-value span {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] .mg-kpi-unit,
+html[data-theme="light"] .mg-kpi-footer {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-kpi-icon {
+  background: transparent !important;
+  color: #6D28D9 !important;
+}
+
+html[data-theme="light"] .mg-kpi-ring-track,
+html[data-theme="light"] .mg-gauge-track {
+  stroke: #E8E7F2 !important;
+}
+
+html[data-theme="light"] .mg-gauge-inner-ring {
+  fill: #F8F7FC !important;
+  stroke: #E2E2EB !important;
+}
+
+/* Neutral / Inactive Donut Segments in Light Mode */
+html[data-theme="light"] #gaugeAvailableArc,
+html[data-theme="light"] #donutSessSeg1 {
+  stroke: #DCDCE8 !important;
+}
+
+html[data-theme="light"] .mg-chart-title {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-chart-desc {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-gauge-percent {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] .mg-gauge-caption {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-legend-item {
+  background: transparent !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-legend-item .mg-legend-label {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-legend-item strong {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-legend-item:hover,
+html[data-theme="light"] .mg-legend-item.is-active {
+  background: #F0E9FF !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-legend-item:hover .mg-legend-label,
+html[data-theme="light"] .mg-legend-item.is-active .mg-legend-label {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-legend-dot.dot-indigo {
+  background: #64748B !important;
+}
+
+html[data-theme="light"] .mg-mini-bar-track,
+html[data-theme="light"] .mg-income-legend-bar-track,
+html[data-theme="light"] .mg-pay-bar-track {
+  background: #E6E5F0 !important;
+}
+
+/* 5. Overview Active Stations Mini-Cards */
+html[data-theme="light"] .mg-mini-station-card {
+  background: #F8F7FC !important;
+  border: 1px solid #E2E2EB !important;
+  box-shadow: 0 2px 8px rgba(36, 36, 55, 0.03) !important;
+}
+
+html[data-theme="light"] .mg-mini-station-card:hover {
+  background: #FFFFFF !important;
+  border-color: #C4B5FD !important;
+  box-shadow: 0 6px 16px rgba(36, 36, 55, 0.06) !important;
+}
+
+html[data-theme="light"] .mg-mini-station-num strong {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-mini-inline-sub {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-mini-num-badge {
+  background: #F0E9FF !important;
+  border: 1px solid #D8B4FE !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-mini-status-tag.tag-running {
+  background: rgba(16, 185, 129, 0.14) !important;
+  border: 1px solid rgba(16, 185, 129, 0.34) !important;
+  color: #047857 !important;
+}
+
+html[data-theme="light"] .mg-mini-status-tag.tag-waiting {
+  background: rgba(245, 158, 11, 0.16) !important;
+  border: 1px solid rgba(245, 158, 11, 0.38) !important;
+  color: #92400E !important;
+}
+
+html[data-theme="light"] .mg-mini-station-meta {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E2EB !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-mini-station-meta b {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-mini-station-empty,
+html[data-theme="light"] .mg-mini-station-empty p {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-tables-mini-stat {
+  background: #F8F7FC !important;
+  border: 1px solid #E2E2EB !important;
+}
+
+html[data-theme="light"] .mg-tables-mini-stat span {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-tables-mini-stat strong {
+  color: #000000 !important;
+}
+
+/* 6. Forms, Inputs, Dropdowns, Radio Cards & Buttons */
+html[data-theme="light"] label,
+html[data-theme="light"] .mg-label,
+html[data-theme="light"] #mgTablesView .mg-ops-card .mg-label,
+html[data-theme="light"] #mgTablesView .mg-ops-card .mg-label.mg-has-info-bang {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-input,
+html[data-theme="light"] .mg-select,
+html[data-theme="light"] .form-control,
+html[data-theme="light"] select.form-control,
+html[data-theme="light"] input[type="text"],
+html[data-theme="light"] input[type="number"],
+html[data-theme="light"] input[type="password"],
+html[data-theme="light"] input[type="date"] {
+  background-color: #F8F7FC !important;
+  border: 1px solid #E2E2EB !important;
+  color: #000000 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] select.form-control,
+html[data-theme="light"] .mg-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: left 12px center !important;
+  background-size: 13px 13px !important;
+}
+
+html[data-theme="light"] .mg-input::placeholder,
+html[data-theme="light"] .form-control::placeholder {
+  color: #3A3A4A !important;
+}
+
+html[data-theme="light"] .mg-input:focus,
+html[data-theme="light"] .mg-select:focus,
+html[data-theme="light"] .form-control:focus,
+html[data-theme="light"] select.form-control:focus,
+html[data-theme="light"] input[type="text"]:focus,
+html[data-theme="light"] input[type="number"]:focus,
+html[data-theme="light"] input[type="password"]:focus,
+html[data-theme="light"] input[type="date"]:focus {
+  background-color: #FFFFFF !important;
+  border-color: #8B5CF6 !important;
+  color: #000000 !important;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.16) !important;
+}
+
+html[data-theme="light"] .mg-input[disabled],
+html[data-theme="light"] .form-control[disabled] {
+  background-color: #F0EFF7 !important;
+  border-color: #E2E2EB !important;
+  color: #3A3A4A !important;
+  opacity: 0.78 !important;
+}
+
+html[data-theme="light"] select.form-control option,
+html[data-theme="light"] .mg-select option {
+  background: #FFFFFF !important;
+  color: #000000 !important;
+}
+
+/* Radio Cards & Payment Mode Segmented Buttons */
+html[data-theme="light"] .mg-radio-card,
+html[data-theme="light"] .mg-radio-card span,
+html[data-theme="light"] .mg-console-tile,
+html[data-theme="light"] #mgTablesView .mg-payment-modes .mg-radio-card {
+  background: #F8F7FC !important;
+  border: 1px solid #E2E2EB !important;
+  color: #000000 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] #mgTablesView .mg-payment-modes .mg-radio-card span {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-radio-card:hover,
+html[data-theme="light"] .mg-console-tile:hover,
+html[data-theme="light"] #mgTablesView .mg-payment-modes .mg-radio-card:hover {
+  background: #F2F0FA !important;
+  border-color: #C4B5FD !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-radio-card:hover span,
+html[data-theme="light"] #mgTablesView .mg-payment-modes .mg-radio-card:hover span {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-radio-card:has(input:checked),
+html[data-theme="light"] .mg-radio-card.is-selected,
+html[data-theme="light"] .mg-console-tile:has(input:checked),
+html[data-theme="light"] #mgTablesView .mg-payment-modes .mg-radio-card:has(input:checked),
+html[data-theme="light"] #mgTablesView .mg-payment-modes .mg-radio-card.is-selected {
+  background: #F0E9FF !important;
+  border-color: #8B5CF6 !important;
+  color: #000000 !important;
+  box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.25) !important;
+}
+
+html[data-theme="light"] .mg-radio-card:has(input:checked) span,
+html[data-theme="light"] .mg-radio-card.is-selected span,
+html[data-theme="light"] #mgTablesView .mg-payment-modes .mg-radio-card:has(input:checked) span,
+html[data-theme="light"] #mgTablesView .mg-payment-modes .mg-radio-card.is-selected span {
+  background: transparent !important;
+  color: #000000 !important;
+  font-weight: 700 !important;
+}
+
+html[data-theme="light"] .mg-form-subpanel {
+  background: #F8F7FC !important;
+  border: 1px solid #E2E2EB !important;
+}
+
+/* Primary Action Buttons: Solid Purple (#8B5CF6 -> #7C3AED) with White Text */
+html[data-theme="light"] .mg-btn-primary,
+html[data-theme="light"] .mg-btn-emerald,
+html[data-theme="light"] .btn-primary,
+html[data-theme="light"] .btn-success {
+  background: #8B5CF6 !important;
+  border: 1px solid #7C3AED !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 3px 10px rgba(139, 92, 246, 0.22) !important;
+}
+
+html[data-theme="light"] .mg-btn-primary span,
+html[data-theme="light"] .mg-btn-emerald span,
+html[data-theme="light"] .btn-primary span,
+html[data-theme="light"] .btn-success span {
+  color: #FFFFFF !important;
+}
+
+html[data-theme="light"] .mg-btn-primary:hover,
+html[data-theme="light"] .mg-btn-emerald:hover,
+html[data-theme="light"] .btn-primary:hover,
+html[data-theme="light"] .btn-success:hover {
+  background: #7C3AED !important;
+  border-color: #6D28D9 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 5px 14px rgba(124, 58, 237, 0.3) !important;
+}
+
+/* Secondary Action Buttons: Light Neutral Background with Pure Black Text */
+html[data-theme="light"] .mg-btn-cyan,
+html[data-theme="light"] .mg-btn-amber,
+html[data-theme="light"] .btn-info,
+html[data-theme="light"] .btn-warning,
+html[data-theme="light"] .btn-default {
+  background: #F4F3FA !important;
+  border: 1px solid #D5D4E2 !important;
+  color: #000000 !important;
+  box-shadow: 0 1px 2px rgba(36, 36, 55, 0.03) !important;
+}
+
+html[data-theme="light"] .mg-btn-cyan span,
+html[data-theme="light"] .mg-btn-amber span,
+html[data-theme="light"] .btn-info span,
+html[data-theme="light"] .btn-warning span,
+html[data-theme="light"] .btn-default span {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-btn-cyan:hover,
+html[data-theme="light"] .mg-btn-amber:hover,
+html[data-theme="light"] .btn-info:hover,
+html[data-theme="light"] .btn-warning:hover,
+html[data-theme="light"] .btn-default:hover {
+  background: #F0E9FF !important;
+  border-color: #8B5CF6 !important;
+  color: #000000 !important;
+}
+
+/* Destructive Action Buttons: Soft Red Accents */
+html[data-theme="light"] .mg-btn-crimson,
+html[data-theme="light"] .btn-danger {
+  background: rgba(239, 68, 68, 0.1) !important;
+  border: 1px solid rgba(239, 68, 68, 0.28) !important;
+  color: #B91C1C !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .mg-btn-crimson:hover,
+html[data-theme="light"] .btn-danger:hover {
+  background: #EF4444 !important;
+  border-color: #EF4444 !important;
+  color: #FFFFFF !important;
+}
+
+/* Filter Chips & Period Pills */
+html[data-theme="light"] .mg-chip-btn,
+html[data-theme="light"] .mg-filter-btn,
+html[data-theme="light"] .mg-period-pill {
+  background: #F8F7FC !important;
+  border: 1px solid #E2E2EB !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-chip-btn:hover,
+html[data-theme="light"] .mg-filter-btn:hover,
+html[data-theme="light"] .mg-period-pill:hover {
+  background: #F0EFF7 !important;
+  border-color: #C4B5FD !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-chip-btn.active,
+html[data-theme="light"] .mg-filter-btn.active,
+html[data-theme="light"] .mg-period-pill.active {
+  background: #F0E9FF !important;
+  border-color: #8B5CF6 !important;
+  color: #000000 !important;
+  font-weight: 700 !important;
+}
+
+/* 7. Clean High-Contrast Tables & Row Elements (Pure Black Text) */
+html[data-theme="light"] .mg-table-responsive,
+html[data-theme="light"] .table-responsive {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E2EB !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .mg-table,
+html[data-theme="light"] .table {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-table thead th,
+html[data-theme="light"] .table thead th {
+  background: #F8F7FC !important;
+  color: #000000 !important;
+  font-weight: 700 !important;
+  border-bottom: 1px solid #E2E2EB !important;
+}
+
+html[data-theme="light"] .mg-table tbody tr,
+html[data-theme="light"] .table tbody tr {
+  border-bottom: 1px solid #EFEFF6 !important;
+  background: transparent !important;
+}
+
+html[data-theme="light"] .mg-table tbody td,
+html[data-theme="light"] .table tbody td,
+html[data-theme="light"] .mg-table tbody th,
+html[data-theme="light"] .table tbody th {
+  border-top: 1px solid #EFEFF6 !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-table tbody tr:hover,
+html[data-theme="light"] .table tbody tr:hover {
+  background: #F7F5FF !important;
+}
+
+html[data-theme="light"] .mg-row-index {
+  background: #F4F3FA !important;
+  border: 1px solid #E2E2EB !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-station-badge {
+  background: #F0E9FF !important;
+  border: 1px solid #D8B4FE !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-console-cell {
+  background: #F8F7FC !important;
+  border: 1px solid #E2E2EB !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-player-badge {
+  background: #F0E9FF !important;
+  border: 1px solid #DDD0FE !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-pay-mode-tag {
+  background: #F4F3FA !important;
+  border: 1px solid #E2E2EB !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .timer {
+  background: rgba(16, 185, 129, 0.12) !important;
+  border: 1px solid rgba(16, 185, 129, 0.34) !important;
+  color: #047857 !important;
+}
+
+html[data-theme="light"] .timer2 {
+  background: #F0E9FF !important;
+  border: 1px solid #C4B5FD !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-empty-state {
+  color: #000000 !important;
+}
+
+/* 8. Income Report Page (income.html) in Light Mode */
+html[data-theme="light"] .mg-custom-date-box {
+  background: #F8F7FC !important;
+  border: 1px solid #E2E2EB !important;
+}
+
+html[data-theme="light"] .mg-date-sep {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-th-console i {
+  color: #6D28D9 !important;
+  filter: none !important;
+}
+
+html[data-theme="light"] .mg-th-console span {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-pay-method-badge.badge-pos {
+  background: #F0E9FF !important;
+  border: 1px solid #D8B4FE !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-pay-method-badge.badge-cash {
+  background: rgba(16, 185, 129, 0.14) !important;
+  border: 1px solid rgba(16, 185, 129, 0.34) !important;
+  color: #047857 !important;
+}
+
+html[data-theme="light"] .mg-pay-method-badge.badge-account {
+  background: #F4F3FA !important;
+  border: 1px solid #DFDEE9 !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-positive-amount {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-positive-amount small,
+html[data-theme="light"] .mg-total-amount small {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-zero-amount,
+html[data-theme="light"] .mg-zero-amount small {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-total-amount {
+  color: #000000 !important;
+  font-weight: 800 !important;
+}
+
+html[data-theme="light"] .mg-income-total-row td {
+  background: #F8F7FC !important;
+  border-top: 1px solid #E2E2EB !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-grand-total-pill,
+html[data-theme="light"] .mg-grand-total-pill.pill-amber,
+html[data-theme="light"] .mg-grand-total-pill.pill-emerald {
+  background: #F0E9FF !important;
+  border: 1px solid #C4B5FD !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-income-chart-panel,
+html[data-theme="light"] .mg-payment-bars-wrap {
+  background: #F8F7FC !important;
+  border: 1px solid #E2E2EB !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .mg-income-legend-row {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E2EB !important;
+}
+
+html[data-theme="light"] .mg-income-legend-row:hover,
+html[data-theme="light"] .mg-income-legend-row.is-active {
+  background: #F0E9FF !important;
+  border-color: #8B5CF6 !important;
+}
+
+html[data-theme="light"] .mg-income-legend-name,
+html[data-theme="light"] .mg-income-legend-name span,
+html[data-theme="light"] .mg-income-legend-stats strong {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-income-legend-pct {
+  background: #F0E9FF !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-pay-bar-label,
+html[data-theme="light"] .mg-pay-bar-label span {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-pay-bar-label strong {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-pay-pct-tag.tag-emerald {
+  background: rgba(16, 185, 129, 0.14) !important;
+  color: #047857 !important;
+  border-color: rgba(16, 185, 129, 0.34) !important;
+}
+
+html[data-theme="light"] .mg-pay-pct-tag.tag-cyan,
+html[data-theme="light"] .mg-pay-pct-tag.tag-purple {
+  background: #F0E9FF !important;
+  color: #000000 !important;
+  border-color: #D8B4FE !important;
+}
+
+/* 9. Exclamation (!) Tooltips, Popovers, Dropdowns, Modals & Command Palette */
+html[data-theme="light"] .mg-info-bang {
+  background: transparent !important;
+  border: none !important;
+  color: #000000 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .mg-info-bang:hover,
+html[data-theme="light"] .mg-info-bang:focus-visible,
+html[data-theme="light"] .mg-info-bang.is-active {
+  background: transparent !important;
+  border: none !important;
+  color: #6D28D9 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .mg-info-bang-popover {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E2EB !important;
+  color: #000000 !important;
+  box-shadow: 0 10px 28px rgba(36, 36, 55, 0.14) !important;
+}
+
+html[data-theme="light"] .mg-notif-dropdown {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E2EB !important;
+  box-shadow: 0 16px 38px rgba(36, 36, 55, 0.14) !important;
+}
+
+html[data-theme="light"] .mg-notif-header {
+  color: #000000 !important;
+  border-bottom: 1px solid #E2E2EB !important;
+}
+
+html[data-theme="light"] .mg-notif-item,
+html[data-theme="light"] .mg-notif-item strong,
+html[data-theme="light"] .mg-notif-item span {
+  background: #F8F7FC !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-notif-item {
+  border: 1px solid #E2E2EB !important;
+}
+
+html[data-theme="light"] .mg-cmd-backdrop,
+html[data-theme="light"] #errorModal.modal,
+html[data-theme="light"] .mg-sidebar-backdrop {
+  background: rgba(36, 36, 55, 0.34) !important;
+}
+
+html[data-theme="light"] .mg-cmd-dialog {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E2EB !important;
+  box-shadow: 0 24px 54px rgba(36, 36, 55, 0.18) !important;
+}
+
+html[data-theme="light"] .mg-cmd-input-row {
+  border-bottom: 1px solid #E2E2EB !important;
+}
+
+html[data-theme="light"] .mg-cmd-input,
+html[data-theme="light"] .mg-cmd-input:focus {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-cmd-input::placeholder {
+  color: #3A3A4A !important;
+}
+
+html[data-theme="light"] .mg-cmd-item,
+html[data-theme="light"] .mg-cmd-item-meta strong,
+html[data-theme="light"] .mg-cmd-item-meta span,
+html[data-theme="light"] .mg-cmd-empty {
+  color: #000000 !important;
+}
+
+html[data-theme="light"] .mg-cmd-item:hover,
+html[data-theme="light"] .mg-cmd-item.is-selected {
+  background: #F0E9FF !important;
+  border-color: #C4B5FD !important;
+  color: #000000 !important;
+}
+
+html[data-theme="light"] #errorModal .modal-content,
+html[data-theme="light"] #editCustomerModal .customer-modal-content,
+html[data-theme="light"] #debtModal .debt-modal-content,
+html[data-theme="light"] #customerModal .customer-modal-content {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E2EB !important;
+  color: #000000 !important;
+  box-shadow: 0 20px 44px rgba(36, 36, 55, 0.16) !important;
+}
+
+html[data-theme="light"] .mg-toast {
+  background: #FFFFFF !important;
+  border: 1px solid #C4B5FD !important;
+  color: #000000 !important;
+  box-shadow: 0 12px 28px rgba(36, 36, 55, 0.14) !important;
+}
+
+html[data-theme="light"] .mg-rail-tooltip {
+  background: #000000 !important;
+  border: 1px solid #8B5CF6 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25) !important;
+}
+
+html[data-theme="light"] #payable {
+  color: #047857 !important;
+}
+
+
