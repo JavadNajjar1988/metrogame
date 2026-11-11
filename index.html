@@ -14,7 +14,7 @@
   <link href="assets/bootstrap/bootstrap.min.css" rel="stylesheet">
   <link href="assets/bootstrap/bootstrap-rtl.css" rel="stylesheet">
   <link href="fontello/css/my-icon.css" rel="stylesheet">
-  <link href="assets/css/gaming-dashboard.css?v=20261110-5" rel="stylesheet">
+  <link href="assets/css/gaming-dashboard.css?v=20261110-9" rel="stylesheet">
 </head>
 <body>
   <audio id="alarmSound" src="src/alarm.mp3" preload="none"></audio>
@@ -177,14 +177,6 @@
               <ul id="mgNotifList" class="mg-notif-list">
                 <li class="mg-notif-item">در حال بررسی...</li>
               </ul>
-            </div>
-          </div>
-
-          <div class="mg-profile-chip">
-            <img src="src/assets/images/admin_avatar_1794207268017.jpg" alt="مدیر گیم‌نت" class="mg-profile-avatar">
-            <div class="mg-profile-info">
-              <span class="mg-profile-name">مدیر شیفت</span>
-              <span class="mg-profile-role">ادمین</span>
             </div>
           </div>
         </div>
@@ -437,293 +429,194 @@
              VIEW 2: DEDICATED TABLE MANAGEMENT WORKSPACE (بخش میزها)
              ================================================================== -->
         <div id="mgTablesView" class="mg-view-pane" data-view-pane="tables" hidden>
-          <!-- Dedicated Table Management Summary Banner -->
-          <div class="mg-tables-header-banner">
-            <div class="mg-tables-banner-right">
-              <div class="mg-header-icon-box icon-cyan">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="12" rx="2"/><line x1="2" y1="20" x2="22" y2="20"/><line x1="12" y1="16" x2="12" y2="20"/></svg>
-              </div>
-              <div>
-                <h2 class="mg-tables-banner-title">مرکز کنترل میزها، تایمرها و سفارشات ایستگاه‌ها</h2>
-                <p class="mg-tables-banner-sub">ثبت میز جدید، تمدید شارژ سشن‌ها، ثبت سفارش بوفه برای میزها و صدور فاکتور پایان بازی</p>
-              </div>
-            </div>
-            <div class="mg-tables-banner-stats">
-              <div class="mg-tables-mini-stat stat-cyan">
-                <span>میزهای فعال</span>
-                <strong id="tablesBannerActive">۰ میز</strong>
-              </div>
-              <div class="mg-tables-mini-stat stat-emerald">
-                <span>پس‌کرایه</span>
-                <strong id="tablesBannerPostpaid">۰ میز</strong>
-              </div>
-              <div class="mg-tables-mini-stat stat-amber">
-                <span>پیش‌پرداخت</span>
-                <strong id="tablesBannerPrepaid">۰ میز</strong>
-              </div>
-              <div class="mg-tables-mini-stat stat-purple">
-                <span>تایمر روشن</span>
-                <strong id="tablesBannerRunning">۰ سشن</strong>
-              </div>
-              <button type="button" class="btn mg-btn mg-btn-sm" data-switch-view="overview" style="background: rgba(99,102,241,0.18); border: 1px solid rgba(129,140,248,0.45); color: #E0E7FF;">
-                <span>&rarr; بازگشت به پیشخوان</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Section Group 2: Station Control, Charging & Buffet Operations -->
           <div class="mg-section-group">
-            <div class="mg-section-bar">
-              <div class="mg-section-bar-right">
-                <span class="mg-section-accent"></span>
-                <h2 class="mg-section-heading">پنل فرماندهی، شارژ و سفارشات بوفه میزها</h2>
-                <span class="mg-section-caption">— ثبت سشن جدید، تمدید زمان بازی و افزودن خوراکی به فاکتور میز</span>
-              </div>
-            </div>
-
-          <div class="mg-operations-grid">
-            <!-- 4. Table Registration / Control Form -->
-            <section class="mg-card mg-col-5" aria-labelledby="regCardHeading">
-              <div class="mg-card-header">
-                <div class="mg-card-header-main">
-                  <div class="mg-header-icon-box">
-                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-                  </div>
+            <div class="mg-operations-grid">
+              <!-- 1. Table Registration Form -->
+              <section class="mg-card mg-ops-card" aria-labelledby="regCardHeading">
+                <div class="mg-card-header">
                   <div>
-                    <h2 id="regCardHeading" class="mg-card-title">ثبت و راه‌اندازی میز جدید</h2>
+                    <h2 id="regCardHeading" class="mg-card-title">ثبت میز جدید</h2>
                     <p class="mg-card-subtitle">تخصیص کنسول، نوع بازی و حالت پرداخت ایستگاه</p>
                   </div>
                 </div>
-                <span class="mg-card-tag">کنترل میز</span>
-              </div>
 
-              <form action="process.php" method="post" class="mg-card-form">
-                <div class="mg-form-grid">
-                  <div class="mg-form-group">
-                    <label for="tableNumber" class="mg-label">شماره میز / ایستگاه</label>
-                    <input type="text" id="tableNumber" name="table-number" required class="form-control mg-input" placeholder="مثلاً: ۱ یا ۴">
-                  </div>
-
-                  <div class="mg-form-group">
-                    <label for="consoleType" class="mg-label">نوع کنسول / دستگاه</label>
-                    <select class="form-control mg-select" id="consoleType" name="consoleType" required>
-                      <option value="">انتخاب کنسول...</option>
-                      <option value="ps50">پلی‌استیشن ۵ (PS5)</option>
-                      <option value="ps4">پلی‌استیشن ۴ (PS4)</option>
-                      <option value="xbox">ایکس‌باکس (Xbox)</option>
-                      <option value="computer">سیستم گیمینگ (PC)</option>
-                      <option value="pool-table">میز بیلیارد (Billiard)</option>
-                      <option value="foosball">فوتبال دستی</option>
-                      <option value="jewelry">وی‌آر / ویژه (VIP)</option>
-                    </select>
-                  </div>
-
-                  <div class="mg-form-group full-width">
-                    <label class="mg-label">نوع پرداخت میز</label>
-                    <div class="mg-payment-modes">
-                      <label class="mg-radio-card is-selected" for="post-payment">
-                        <input type="radio" name="post-payment" id="post-payment" value="post-payment" checked>
-                        <span>پس‌کرایه (زمان باز)</span>
-                      </label>
-                      <label class="mg-radio-card" for="pre-payment">
-                        <input type="radio" name="pre-payment" id="pre-payment" value="pre-payment">
-                        <span>پیش‌پرداخت (شارژی)</span>
-                      </label>
+                <form action="process.php" method="post" class="mg-card-form">
+                  <div class="mg-form-grid">
+                    <div class="mg-form-group full-width">
+                      <label for="tableNumber" class="mg-label">شماره میز</label>
+                      <input type="text" id="tableNumber" name="table-number" required class="form-control mg-input" placeholder="شماره میز (مثلاً ۱)">
                     </div>
-                  </div>
 
-                  <div class="mg-form-group">
-                    <label for="pre-payment-cost" class="mg-label">مبلغ پیش‌پرداخت (تومان)</label>
-                    <input type="number" id="pre-payment-cost" name="pre-payment-cost" class="form-control mg-input" placeholder="مبلغ به تومان" disabled>
-                    <div class="mg-preset-chips">
-                      <button type="button" class="mg-chip-btn" data-prepay-preset="30000">۳۰,۰۰۰</button>
-                      <button type="button" class="mg-chip-btn" data-prepay-preset="50000">۵۰,۰۰۰</button>
-                      <button type="button" class="mg-chip-btn" data-prepay-preset="100000">۱۰۰,۰۰۰</button>
-                    </div>
-                  </div>
-
-                  <div class="mg-form-group">
-                    <label for="priceType" class="mg-label">نوع بازی / تعداد دسته</label>
-                    <select class="form-control mg-select" id="priceType" name="priceType" required>
-                      <option value="">انتخاب تعرفه بازی...</option>
-                      <option value="one_player_price">یک نفره (تک دسته)</option>
-                      <option value="two_player_price">دو نفره (دو دسته)</option>
-                      <option value="three_player_price">سه نفره (سه دسته)</option>
-                      <option value="four_player_price">چهار نفره (چهار دسته)</option>
-                    </select>
-                    <div class="mg-preset-chips">
-                      <button type="button" class="mg-chip-btn" data-price-preset="one_player_price">تک نفره</button>
-                      <button type="button" class="mg-chip-btn" data-price-preset="two_player_price">دو نفره</button>
-                      <button type="button" class="mg-chip-btn" data-price-preset="four_player_price">چهار نفره</button>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="mg-card-cta-wrap">
-                  <button type="submit" id="startReservationButton" class="btn btn-primary mg-btn mg-btn-primary mg-btn-block">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>
-                    <span>ثبت و افزودن به میزهای فعال</span>
-                  </button>
-                </div>
-              </form>
-            </section>
-
-            <!-- Right Column Pair: 6. Table Charging Section & 7. Buffet Purchase Section -->
-            <div class="mg-col-7">
-              <!-- 6. Table Charging Section -->
-              <div id="ChargeModal" class="charge-modal">
-                <div class="charge-modal-content">
-                  <div class="mg-card-header">
-                    <div class="mg-card-header-main">
-                      <div class="mg-header-icon-box icon-cyan">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                      </div>
-                      <div>
-                        <h3 class="mg-card-title">شارژ مجدد میز</h3>
-                        <p id="chargeFormTitle" class="mg-card-subtitle">افزودن زمان یا مبلغ به سشن میز فعال</p>
-                      </div>
-                    </div>
-                    <span class="mg-card-tag" style="color: #67E8F9; border-color: rgba(6,182,212,0.35); background: rgba(6,182,212,0.12);">شارژ سریع</span>
-                  </div>
-
-                  <form id="chargeForm" class="mg-card-form">
-                    <div class="mg-form-group">
-                      <label for="chargeTableSelect" class="mg-label">انتخاب میز جهت شارژ</label>
-                      <select id="chargeTableSelect" class="form-control mg-select">
-                        <option value="">در حال بارگذاری میزها...</option>
+                    <div class="mg-form-group full-width">
+                      <label for="consoleType" class="mg-label">کنسول بازی</label>
+                      <select class="form-control mg-select" id="consoleType" name="consoleType" required>
+                        <option value="">انتخاب کنسول...</option>
+                        <option value="ps50">پلی‌استیشن ۵ (PS5)</option>
+                        <option value="ps4">پلی‌استیشن ۴ (PS4)</option>
+                        <option value="xbox">ایکس‌باکس (Xbox)</option>
+                        <option value="computer">سیستم گیمینگ (PC)</option>
+                        <option value="pool-table">میز بیلیارد</option>
+                        <option value="foosball">فوتبال دستی</option>
+                        <option value="jewelry">اتاق VIP / VR</option>
                       </select>
                     </div>
 
-                    <div class="mg-form-group">
-                      <label for="chargeAmount" class="mg-label">مبلغ شارژ (تومان)</label>
-                      <input type="number" id="chargeAmount" name="chargeAmount" class="form-control mg-input" placeholder="مثلاً: ۵۰,۰۰۰ تومان">
-                      <div class="mg-preset-chips">
-                        <button type="button" class="mg-chip-btn" data-charge-amount="25000">+۲۵,۰۰۰</button>
-                        <button type="button" class="mg-chip-btn" data-charge-amount="50000">+۵۰,۰۰۰</button>
-                        <button type="button" class="mg-chip-btn" data-charge-amount="100000">+۱۰۰,۰۰۰</button>
+                    <div class="mg-form-group full-width">
+                      <label for="priceType" class="mg-label">تعداد دسته / بازیکن</label>
+                      <select class="form-control mg-select" id="priceType" name="priceType" required>
+                        <option value="">انتخاب تعرفه...</option>
+                        <option value="one_player_price">تک نفره</option>
+                        <option value="two_player_price">دو نفره</option>
+                        <option value="three_player_price">سه نفره</option>
+                        <option value="four_player_price">چهار نفره</option>
+                      </select>
+                    </div>
+
+                    <div class="mg-form-group full-width">
+                      <label class="mg-label">نوع پرداخت</label>
+                      <div class="mg-payment-modes">
+                        <label class="mg-radio-card is-selected" for="post-payment">
+                          <input type="radio" name="post-payment" id="post-payment" value="post-payment" checked>
+                          <span>پس‌کرایه</span>
+                        </label>
+                        <label class="mg-radio-card" for="pre-payment">
+                          <input type="radio" name="pre-payment" id="pre-payment" value="pre-payment">
+                          <span>پیش‌پرداخت</span>
+                        </label>
                       </div>
                     </div>
 
-                    <div class="mg-form-group">
-                      <label for="chargeTime" class="mg-label">زمان اضافه (دقیقه)</label>
-                      <input type="number" id="chargeTime" name="chargeTime" class="form-control mg-input" placeholder="مثلاً: ۳۰ دقیقه">
-                      <div class="mg-preset-chips">
-                        <button type="button" class="mg-chip-btn" data-charge-time="30">۳۰ دقیقه</button>
-                        <button type="button" class="mg-chip-btn" data-charge-time="60">۶۰ دقیقه</button>
-                        <button type="button" class="mg-chip-btn" data-charge-time="90">۹۰ دقیقه</button>
+                    <div class="mg-form-group full-width" id="prepayCostGroup">
+                      <label for="pre-payment-cost" class="mg-label">مبلغ پیش‌پرداخت (تومان)</label>
+                      <input type="number" id="pre-payment-cost" name="pre-payment-cost" class="form-control mg-input" placeholder="مبلغ شارژ اولیه به تومان" disabled>
+                    </div>
+                  </div>
+
+                  <div class="mg-card-cta-wrap">
+                    <button type="submit" id="startReservationButton" class="btn btn-primary mg-btn mg-btn-primary mg-btn-block">
+                      <span>ثبت میز</span>
+                    </button>
+                  </div>
+                </form>
+              </section>
+
+              <!-- 2. Table Charging Section -->
+              <div id="ChargeModal" class="charge-modal mg-ops-card">
+                <div class="charge-modal-content">
+                  <div class="mg-card-header">
+                    <div>
+                      <h3 class="mg-card-title">شارژ میز</h3>
+                      <p id="chargeFormTitle" class="mg-card-subtitle">افزودن زمان یا مبلغ به سشن میز فعال</p>
+                    </div>
+                  </div>
+
+                  <form id="chargeForm" class="mg-card-form">
+                    <div class="mg-form-grid">
+                      <div class="mg-form-group full-width">
+                        <label for="chargeTableSelect" class="mg-label">انتخاب میز</label>
+                        <select id="chargeTableSelect" class="form-control mg-select">
+                          <option value="">انتخاب میز فعال...</option>
+                        </select>
+                      </div>
+
+                      <div class="mg-form-group full-width">
+                        <label for="chargeAmount" class="mg-label">مبلغ شارژ (تومان)</label>
+                        <input type="number" id="chargeAmount" name="chargeAmount" class="form-control mg-input" placeholder="مثلاً ۵۰,۰۰۰">
+                      </div>
+
+                      <div class="mg-form-group full-width">
+                        <label for="chargeTime" class="mg-label">زمان اضافه (دقیقه)</label>
+                        <input type="number" id="chargeTime" name="chargeTime" class="form-control mg-input" placeholder="مثلاً ۳۰">
                       </div>
                     </div>
 
                     <div class="mg-card-cta-wrap">
                       <button type="submit" class="btn btn-info mg-btn mg-btn-cyan mg-btn-block">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                        <span>ثبت شارژ میز</span>
+                        <span>ثبت شارژ</span>
                       </button>
                     </div>
                   </form>
                 </div>
               </div>
 
-              <!-- 7. Buffet Purchase Section -->
-              <div id="myModal" class="modal">
+              <!-- 3. Buffet Purchase Section -->
+              <div id="myModal" class="modal mg-ops-card">
                 <div class="modal-content">
                   <div class="mg-card-header">
-                    <div class="mg-card-header-main">
-                      <div class="mg-header-icon-box icon-amber">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>
-                      </div>
-                      <div>
-                        <h3 class="mg-card-title">خرید از بوفه</h3>
-                        <p id="formTitle" class="mg-card-subtitle">ثبت خوراکی و نوشیدنی روی فاکتور میز</p>
-                      </div>
+                    <div>
+                      <h3 class="mg-card-title">سفارش بوفه</h3>
+                      <p id="formTitle" class="mg-card-subtitle">ثبت خوراکی و نوشیدنی روی فاکتور میز</p>
                     </div>
-                    <span class="mg-card-tag" style="color: #FCD34D; border-color: rgba(245,158,11,0.35); background: rgba(245,158,11,0.12);">بوفه گیم‌نت</span>
                   </div>
 
                   <form id="buyForm" class="mg-card-form">
-                    <div class="mg-form-group">
-                      <label for="buffetTableSelect" class="mg-label">انتخاب میز سفارش‌دهنده</label>
-                      <select id="buffetTableSelect" class="form-control mg-select">
-                        <option value="">در حال بارگذاری میزها...</option>
-                      </select>
-                    </div>
+                    <div class="mg-form-grid">
+                      <div class="mg-form-group full-width">
+                        <label for="buffetTableSelect" class="mg-label">انتخاب میز</label>
+                        <select id="buffetTableSelect" class="form-control mg-select">
+                          <option value="">انتخاب میز فعال...</option>
+                        </select>
+                      </div>
 
-                    <div class="mg-form-group">
-                      <label for="productDropdown" class="mg-label">انتخاب محصول بوفه</label>
-                      <select id="productDropdown" name="product" class="form-control mg-select"></select>
-                    </div>
+                      <div class="mg-form-group full-width">
+                        <label for="productDropdown" class="mg-label">محصول بوفه</label>
+                        <select id="productDropdown" name="product" class="form-control mg-select"></select>
+                      </div>
 
-                    <div class="mg-form-group">
-                      <label for="quantity" class="mg-label">تعداد سفارش</label>
-                      <input type="number" id="quantity" name="quantity" min="1" value="1" class="form-control mg-input">
-                      <div class="mg-preset-chips">
-                        <button type="button" class="mg-chip-btn active" data-buffet-qty="1">۱ عدد</button>
-                        <button type="button" class="mg-chip-btn" data-buffet-qty="2">۲ عدد</button>
-                        <button type="button" class="mg-chip-btn" data-buffet-qty="3">۳ عدد</button>
-                        <button type="button" class="mg-chip-btn" data-buffet-qty="4">۴ عدد</button>
+                      <div class="mg-form-group full-width">
+                        <label for="quantity" class="mg-label">تعداد سفارش</label>
+                        <input type="number" id="quantity" name="quantity" min="1" value="1" class="form-control mg-input">
                       </div>
                     </div>
 
                     <div class="mg-card-cta-wrap">
                       <button type="submit" class="btn btn-warning mg-btn mg-btn-amber mg-btn-block">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-                        <span>ثبت سفارش در فاکتور میز</span>
+                        <span>ثبت سفارش</span>
                       </button>
                     </div>
                   </form>
                 </div>
               </div>
-            </div>
 
-            <!-- 5. Active Tables / Records Table -->
-            <section id="tables-section" class="mg-card mg-col-12" aria-labelledby="activeTablesHeading">
-              <div class="mg-card-header mg-table-toolbar">
-                <div class="mg-card-header-main">
-                  <div class="mg-header-icon-box icon-emerald">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-                  </div>
+              <!-- 4. Active Tables Table -->
+              <section id="tables-section" class="mg-card mg-col-12" aria-labelledby="activeTablesHeading">
+                <div class="mg-card-header mg-table-toolbar">
                   <div>
                     <h2 id="activeTablesHeading" class="mg-card-title">
-                      <span>میزهای فعال و سشن‌های در حال اجرا</span>
-                      <span id="activeTableFilteredCount" class="mg-card-tag">۰ میز فعال</span>
+                      <span>میزهای فعال</span>
+                      <span id="activeTableFilteredCount" class="mg-card-tag">۰ میز</span>
                     </h2>
                     <p class="mg-card-subtitle">مانیتورینگ زنده زمان‌سنج‌ها، ثبت سفارش بوفه، شارژ مجدد و صدور فاکتور پایان بازی</p>
                   </div>
+
+                  <div class="mg-filter-pills" role="group" aria-label="فیلتر جدول میزها">
+                    <button type="button" class="mg-filter-btn active" data-table-filter="all">همه</button>
+                    <button type="button" class="mg-filter-btn" data-table-filter="post-payment">پس‌کرایه</button>
+                    <button type="button" class="mg-filter-btn" data-table-filter="pre-payment">پیش‌پرداخت</button>
+                  </div>
                 </div>
 
-                <div class="mg-filter-pills" role="group" aria-label="فیلتر جدول میزها">
-                  <button type="button" class="mg-filter-btn active" data-table-filter="all">همه میزها</button>
-                  <button type="button" class="mg-filter-btn" data-table-filter="post-payment">پس‌کرایه</button>
-                  <button type="button" class="mg-filter-btn" data-table-filter="pre-payment">پیش‌پرداخت</button>
-                  <button type="button" class="mg-filter-btn" data-table-filter="console">پلی‌استیشن / ایکس‌باکس</button>
-                  <button type="button" class="mg-filter-btn" data-table-filter="other">سیستم PC / بیلیارد</button>
+                <div class="mg-table-responsive">
+                  <table class="table mg-table">
+                    <thead>
+                      <tr>
+                        <th>ردیف</th>
+                        <th>تایمر</th>
+                        <th>میز</th>
+                        <th>تعرفه</th>
+                        <th>کنسول</th>
+                        <th>بوفه</th>
+                        <th>عملیات</th>
+                      </tr>
+                    </thead>
+                    <tbody id="reservationTableBody"></tbody>
+                  </table>
                 </div>
-              </div>
-
-              <div class="mg-table-responsive">
-                <table class="table mg-table">
-                  <thead>
-                    <tr>
-                      <th>ردیف</th>
-                      <th>زمان / تایمر سشن</th>
-                      <th>شماره میز</th>
-                      <th>نوع قیمت / بازی</th>
-                      <th>نوع کنسول</th>
-                      <th>سفارش بوفه</th>
-                      <th>عملیات کنترل میز</th>
-                    </tr>
-                  </thead>
-                  <tbody id="reservationTableBody"></tbody>
-                </table>
-              </div>
-            </section>
-          </div>
+              </section>
+            </div>
           </div>
         </div>
       </main>
-
-      <!-- 5. Super Mario Decorative Pixel-Art Runner Stage -->
-      <div id="mgMarioStage" class="mg-mario-stage" aria-hidden="true"></div>
     </div>
   </div>
 
@@ -737,8 +630,8 @@
 
   <!-- Scripts -->
   <script src="vendors/Flot/jquery.js"></script>
-  <script src="JS/7878.js?v=20261110-3"></script>
+  <script src="JS/7878.js?v=20261110-9"></script>
   <script src="JS/showErrorAlert.js?v=20261109-4"></script>
-  <script type="module" src="JS/dashboard-ui.js?v=20261110-5"></script>
+  <script type="module" src="JS/dashboard-ui.js?v=20261110-9"></script>
 </body>
 </html>

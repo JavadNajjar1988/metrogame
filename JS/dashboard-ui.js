@@ -6,7 +6,6 @@ import {
   computeCircularProgressGeometry,
   computeDonutSegmentsGeometry,
   interpolateCountUp,
-  stepMarioState,
 } from './dashboard-metrics.mjs?v=20261109-3';
 
 const prefersReducedMotion =
@@ -123,55 +122,284 @@ function initButtonMicroInteractions() {
 }
 
 /**
- * Dedicated View Router for index.html:
- * Cleanly separates "خانه (پیشخوان)" (Overview KPIs + Circular Charts + Quick Access)
- * from "میزها" (Table Registration + Recharge + Buffet Order + Active Tables Table).
+ * Universal Instant SPA Section Router:
+ * Switches between all 7 dashboard sections (خانه, میزها, مدیریت کنسول‌ها, مدیریت بوفه,
+ * مشتریان, بدهکاران, گزارش درآمد) instantaneously in-place (<5ms) without a browser
+ * page reload, keeping the sidebar sliding pill animation 100% fluid and unbroken.
  */
-function switchIndexView(targetView, options = {}) {
-  const overviewPane = document.getElementById('mgOverviewView');
-  const tablesPane = document.getElementById('mgTablesView');
-  if (!overviewPane || !tablesPane) return;
+const SPA_SECTIONS = {
+  overview: {
+    key: 'overview',
+    navMatch: '#overview',
+    title: 'پیشخوان',
+    docTitle: 'گیم سنتر | پیشخوان مدیریت میزها و کنسول‌ها',
+    tip: 'مانیتورینگ زنده ظرفیت ایستگاه‌ها، نمودارهای دایره‌ای درآمد، وضعیت تایمرها و خلاصه میزهای فعال',
+    url: 'index.html#overview',
+  },
+  tables: {
+    key: 'tables',
+    navMatch: '#tables-section',
+    title: 'مدیریت میزها',
+    docTitle: 'گیم سنتر | مدیریت میزها',
+    tip: 'ثبت و راه‌اندازی میز جدید، شارژ مجدد سشن‌ها، ثبت سفارش بوفه و مدیریت تایمرها',
+    url: 'index.html#tables-section',
+  },
+  console: {
+    key: 'console',
+    file: 'console.html',
+    script: 'JS/console.js?v=20261110-9',
+    renderFn: 'renderConsolePage',
+    navMatch: 'console.html',
+    title: 'مدیریت کنسول‌ها',
+    docTitle: 'گیم سنتر | مدیریت کنسول‌ها',
+    tip: 'تنظیم تعرفه ساعتی تک‌دسته و چنددسته برای کنسول‌ها، سیستم‌ها و میزهای بازی',
+    url: 'console.html',
+  },
+  buffet: {
+    key: 'buffet',
+    file: 'buffet.html',
+    script: 'JS/buffet.js?v=20261110-9',
+    renderFn: 'renderBuffetPage',
+    navMatch: 'buffet.html',
+    title: 'مدیریت بوفه و خوراکی‌ها',
+    docTitle: 'گیم سنتر | مدیریت بوفه و خوراکی‌ها',
+    tip: 'ثبت محصولات خوراکی، نوشیدنی، قیمت واحد و کنترل لحظه‌ای موجودی انبار بوفه',
+    url: 'buffet.html',
+  },
+  accounts: {
+    key: 'accounts',
+    file: 'acounts.html',
+    script: 'JS/acounts.js?v=20261110-9',
+    renderFn: 'renderAccountsPage',
+    navMatch: 'acounts.html',
+    title: 'باشگاه مشتریان',
+    docTitle: 'گیم سنتر | باشگاه مشتریان',
+    tip: 'ثبت اشتراک اعضای باشگاه، کد اشتراک، شماره تماس و مدیریت حساب‌های مشتریان',
+    url: 'acounts.html',
+  },
+  debtors: {
+    key: 'debtors',
+    file: 'Debtors.html',
+    script: 'JS/Debtors.js?v=20261110-9',
+    renderFn: 'renderDebtorsPage',
+    navMatch: 'Debtors.html',
+    title: 'مدیریت حساب بدهکاران',
+    docTitle: 'گیم سنتر | حساب بدهکاران',
+    tip: 'پیگیری مانده بدهی دفتری مشتریان، ثبت بدهکار جدید و تسویه حساب سریع',
+    url: 'Debtors.html',
+  },
+  income: {
+    key: 'income',
+    file: 'income.html',
+    script: 'JS/income.js?v=20261110-9',
+    renderFn: 'renderIncomePage',
+    navMatch: 'income.html',
+    title: 'گزارش جامع درآمد و تحلیل مالی',
+    docTitle: 'گیم سنتر | گزارش جامع درآمد و تحلیل مالی',
+    tip: 'تحلیل جامع درآمد کنسول‌ها، فروش بوفه، نمودار روش‌های پرداخت و فیلتر بازه زمانی',
+    url: 'income.html',
+  },
+};
 
-  const isTables = targetView === 'tables';
-  const activePane = isTables ? tablesPane : overviewPane;
-  const inactivePane = isTables ? overviewPane : tablesPane;
+const spaTemplateCache = new Map();
+const spaScriptPromises = new Map();
+let currentSpaSectionKey = 'overview';
 
-  inactivePane.classList.remove('is-active-view');
-  inactivePane.setAttribute('hidden', '');
-
-  activePane.removeAttribute('hidden');
-  activePane.classList.remove('is-active-view');
-  void activePane.offsetWidth;
-  activePane.classList.add('is-active-view');
-
-  // Update sidebar active item
-  const navOverview = document.getElementById('navItemOverview');
-  const navTables = document.getElementById('navItemTables');
-  if (navOverview && navTables) {
-    navOverview.classList.toggle('active', !isTables);
-    navTables.classList.toggle('active', isTables);
+function resolveSectionKeyFromHref(href = '') {
+  const clean = String(href || '').trim();
+  const lower = clean.toLowerCase();
+  if (lower.includes('console.html')) return 'console';
+  if (lower.includes('buffet.html')) return 'buffet';
+  if (lower.includes('acounts.html')) return 'accounts';
+  if (lower.includes('debtors.html')) return 'debtors';
+  if (lower.includes('income.html')) return 'income';
+  if (lower.includes('#tables-section') || lower.includes('#tables') || lower === 'tables') {
+    return 'tables';
   }
+  if (lower.includes('#overview') || lower.includes('index.html') || lower === 'overview') {
+    return 'overview';
+  }
+  return null;
+}
 
-  // Update top view-switcher buttons
+function detectInitialSectionKey() {
+  const path = (window.location.pathname || '').toLowerCase();
+  const hash = (window.location.hash || '').toLowerCase();
+  if (path.includes('console.html')) return 'console';
+  if (path.includes('buffet.html')) return 'buffet';
+  if (path.includes('acounts.html')) return 'accounts';
+  if (path.includes('debtors.html')) return 'debtors';
+  if (path.includes('income.html')) return 'income';
+  if (hash === '#tables-section' || hash === '#tables') {
+    try {
+      sessionStorage.removeItem('mg_return_to_tables');
+    } catch {
+      // ignore
+    }
+    return 'tables';
+  }
+  if (hash === '#overview') {
+    try {
+      sessionStorage.removeItem('mg_return_to_tables');
+    } catch {
+      // ignore
+    }
+    return 'overview';
+  }
+  try {
+    if (sessionStorage.getItem('mg_return_to_tables') === '1') {
+      sessionStorage.removeItem('mg_return_to_tables');
+      return 'tables';
+    }
+  } catch {
+    // ignore
+  }
+  return 'overview';
+}
+
+function ensureSpaScriptLoaded(scriptSrc, renderFnName) {
+  if (!scriptSrc) return Promise.resolve();
+  if (renderFnName && typeof window[renderFnName] === 'function') {
+    return Promise.resolve();
+  }
+  const baseName = scriptSrc.split('?')[0].toLowerCase();
+  if (spaScriptPromises.has(baseName)) {
+    return spaScriptPromises.get(baseName);
+  }
+  const existing = Array.from(document.querySelectorAll('script[src]')).find((s) =>
+    (s.getAttribute('src') || '').toLowerCase().includes(baseName)
+  );
+  if (existing && renderFnName && typeof window[renderFnName] === 'function') {
+    return Promise.resolve();
+  }
+  const p = new Promise((resolve) => {
+    const s = document.createElement('script');
+    s.src = scriptSrc;
+    s.async = true;
+    s.onload = () => resolve();
+    s.onerror = () => resolve();
+    document.body.appendChild(s);
+  });
+  spaScriptPromises.set(baseName, p);
+  return p;
+}
+
+async function fetchSectionMainHtml(sectionKey) {
+  if (spaTemplateCache.has(sectionKey)) {
+    return spaTemplateCache.get(sectionKey);
+  }
+  const sec = SPA_SECTIONS[sectionKey];
+  if (!sec || !sec.file) return '';
+  try {
+    const res = await fetch(sec.file, { cache: 'force-cache' });
+    if (!res.ok) return '';
+    const html = await res.text();
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const mainEl = doc.querySelector('main.mg-content');
+    const inner = mainEl ? mainEl.innerHTML : '';
+    if (inner) {
+      spaTemplateCache.set(sectionKey, inner);
+    }
+    return inner;
+  } catch {
+    return '';
+  }
+}
+
+async function ensureIndexViewsPresent() {
+  if (document.getElementById('mgOverviewView') && document.getElementById('mgTablesView')) {
+    return true;
+  }
+  const mainEl = document.querySelector('main.mg-content');
+  if (!mainEl) return false;
+  try {
+    const res = await fetch('index.html', { cache: 'force-cache' });
+    if (!res.ok) return false;
+    const html = await res.text();
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const overviewEl = doc.getElementById('mgOverviewView');
+    const tablesEl = doc.getElementById('mgTablesView');
+    if (overviewEl && !document.getElementById('mgOverviewView')) {
+      overviewEl.classList.remove('is-active-view');
+      overviewEl.setAttribute('hidden', '');
+      mainEl.insertBefore(overviewEl, mainEl.firstChild);
+    }
+    if (tablesEl && !document.getElementById('mgTablesView')) {
+      tablesEl.classList.remove('is-active-view');
+      tablesEl.setAttribute('hidden', '');
+      mainEl.insertBefore(tablesEl, document.getElementById('mgDynamicView'));
+    }
+    await ensureSpaScriptLoaded('JS/7878.js?v=20261110-9', 'renderTablesWorkspace');
+    if (typeof window.renderTablesWorkspace === 'function') {
+      window.renderTablesWorkspace();
+    }
+    initQuickPresets();
+    initTableSearchAndFilter();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function getOrCreateDynamicViewPane() {
+  const mainEl = document.querySelector('main.mg-content');
+  if (!mainEl) return null;
+  let dyn = document.getElementById('mgDynamicView');
+  if (!dyn) {
+    dyn = document.createElement('div');
+    dyn.id = 'mgDynamicView';
+    dyn.className = 'mg-view-pane';
+    dyn.setAttribute('hidden', '');
+    mainEl.appendChild(dyn);
+  }
+  return dyn;
+}
+
+function syncSidebarNavActiveState(sectionKey) {
+  const sec = SPA_SECTIONS[sectionKey] || SPA_SECTIONS.overview;
+  const navList = document.querySelector('.mg-nav-list');
+  if (!navList) return null;
+
+  let matchedItem = null;
+  navList.querySelectorAll('.mg-nav-item').forEach((li) => {
+    const a = li.querySelector('a');
+    if (!a) return;
+    const href = (a.getAttribute('href') || '').toLowerCase();
+    const dataView = (a.getAttribute('data-nav-view') || '').toLowerCase();
+    const isMatch =
+      (sectionKey === 'overview' && (dataView === 'overview' || href.includes('#overview'))) ||
+      (sectionKey === 'tables' && (dataView === 'tables' || href.includes('#tables'))) ||
+      (sec.file && href.includes(sec.file.toLowerCase()));
+    li.classList.toggle('active', isMatch);
+    if (isMatch) matchedItem = li;
+  });
+
   document.querySelectorAll('.mg-view-switch-btn[data-switch-view]').forEach((btn) => {
     const btnView = btn.getAttribute('data-switch-view');
-    const active = btnView === (isTables ? 'tables' : 'overview');
+    const active = btnView === sectionKey;
     btn.classList.toggle('active', active);
     btn.setAttribute('aria-selected', active ? 'true' : 'false');
   });
 
-  // Update Topbar Heading with concise minimal title
-  if (isTables) {
-    setText('mgTopbarTitle', 'مدیریت میزها');
-  } else {
-    setText('mgTopbarTitle', 'پیشخوان');
+  return matchedItem;
+}
+
+async function switchSpaSection(targetKey, options = {}) {
+  const sectionKey = SPA_SECTIONS[targetKey] ? targetKey : 'overview';
+  const sec = SPA_SECTIONS[sectionKey];
+  currentSpaSectionKey = sectionKey;
+
+  // 1. Update sidebar active state and animate sliding violet pill immediately in-place
+  const activeNavItem = syncSidebarNavActiveState(sectionKey);
+  syncSidebarSlidingPill(activeNavItem, { animateStretch: true, commitActive: true });
+
+  // 2. Update topbar title & browser document title immediately
+  setText('mgTopbarTitle', sec.title);
+  if (sec.docTitle) {
+    document.title = sec.docTitle;
   }
 
-  requestAnimationFrame(() => {
-    syncSidebarSlidingPill(null, { animateStretch: true });
-  });
-
-  // Close mobile sidebar if open
+  // 3. Close mobile sidebar if open
   const sidebar = document.getElementById('mgSidebar');
   const backdrop = document.getElementById('sidebarBackdrop');
   if (sidebar && sidebar.classList.contains('open')) {
@@ -179,92 +407,202 @@ function switchIndexView(targetView, options = {}) {
     if (backdrop) backdrop.classList.remove('open');
   }
 
+  // 4. Update URL history without triggering a page reload
   if (options.updateHistory !== false) {
-    const targetHash = isTables ? '#tables-section' : '#overview';
-    if (window.location.hash !== targetHash) {
-      try {
-        history.replaceState(null, '', targetHash);
-      } catch {
-        window.location.hash = targetHash;
-      }
+    try {
+      history.pushState({ spaSection: sectionKey }, sec.docTitle || '', sec.url);
+    } catch {
+      // ignore
     }
   }
 
   if (options.scrollToTop !== false) {
     window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
   }
+
+  // 5. Swap main view panes
+  if (sectionKey === 'overview' || sectionKey === 'tables') {
+    await ensureIndexViewsPresent();
+    const overviewPane = document.getElementById('mgOverviewView');
+    const tablesPane = document.getElementById('mgTablesView');
+    const dynPane = document.getElementById('mgDynamicView');
+
+    if (dynPane) {
+      dynPane.classList.remove('is-active-view');
+      dynPane.setAttribute('hidden', '');
+    }
+
+    if (overviewPane && tablesPane) {
+      const isTables = sectionKey === 'tables';
+      const activePane = isTables ? tablesPane : overviewPane;
+      const inactivePane = isTables ? overviewPane : tablesPane;
+
+      inactivePane.classList.remove('is-active-view');
+      inactivePane.setAttribute('hidden', '');
+
+      activePane.removeAttribute('hidden');
+      activePane.classList.remove('is-active-view');
+      void activePane.offsetWidth;
+      activePane.classList.add('is-active-view');
+    }
+
+    if (sectionKey === 'overview') {
+      loadAndRenderKPIs();
+    }
+    initScrollAndEntranceAnimations();
+    initExclamationTooltips();
+    return;
+  }
+
+  // Management sub-section ('console', 'buffet', 'accounts', 'debtors', 'income')
+  const overviewPane = document.getElementById('mgOverviewView');
+  const tablesPane = document.getElementById('mgTablesView');
+  if (overviewPane) {
+    overviewPane.classList.remove('is-active-view');
+    overviewPane.setAttribute('hidden', '');
+  }
+  if (tablesPane) {
+    tablesPane.classList.remove('is-active-view');
+    tablesPane.setAttribute('hidden', '');
+  }
+
+  const dynPane = getOrCreateDynamicViewPane();
+  if (!dynPane) return;
+
+  if (dynPane.getAttribute('data-spa-section') !== sectionKey) {
+    const html = await fetchSectionMainHtml(sectionKey);
+    if (currentSpaSectionKey !== sectionKey) return;
+    if (html) {
+      dynPane.innerHTML = html;
+      dynPane.setAttribute('data-spa-section', sectionKey);
+    }
+  }
+
+  dynPane.removeAttribute('hidden');
+  dynPane.classList.remove('is-active-view');
+  void dynPane.offsetWidth;
+  dynPane.classList.add('is-active-view');
+
+  await ensureSpaScriptLoaded(sec.script, sec.renderFn);
+  if (currentSpaSectionKey !== sectionKey) return;
+
+  if (sec.renderFn && typeof window[sec.renderFn] === 'function') {
+    try {
+      window[sec.renderFn]();
+    } catch {
+      // ignore
+    }
+  }
+
+  initScrollAndEntranceAnimations();
+  initButtonMicroInteractions();
+  initExclamationTooltips();
+}
+
+function switchIndexView(targetView, options = {}) {
+  const key = targetView === 'tables' ? 'tables' : 'overview';
+  return switchSpaSection(key, options);
+}
+
+function prefetchAllSpaSections() {
+  const runPrefetch = () => {
+    Object.values(SPA_SECTIONS).forEach((sec) => {
+      if (sec.file && !spaTemplateCache.has(sec.key)) {
+        fetchSectionMainHtml(sec.key);
+      }
+      if (sec.script) {
+        ensureSpaScriptLoaded(sec.script, sec.renderFn);
+      }
+    });
+    if (!document.getElementById('mgOverviewView')) {
+      ensureIndexViewsPresent();
+    }
+  };
+  if (typeof window.requestIdleCallback === 'function') {
+    window.requestIdleCallback(runPrefetch, { timeout: 600 });
+  } else {
+    setTimeout(runPrefetch, 120);
+  }
 }
 
 function initIndexViewRouter() {
-  const overviewPane = document.getElementById('mgOverviewView');
-  const tablesPane = document.getElementById('mgTablesView');
-  if (!overviewPane || !tablesPane) return;
+  const mainEl = document.querySelector('main.mg-content');
+  if (!mainEl) return;
 
-  function resolveInitialView() {
-    const hash = (window.location.hash || '').toLowerCase();
-    if (hash === '#tables-section' || hash === '#tables') {
-      try {
-        sessionStorage.removeItem('mg_return_to_tables');
-      } catch {
-        // Ignore
-      }
-      return 'tables';
+  const initialKey = detectInitialSectionKey();
+  currentSpaSectionKey = initialKey;
+
+  // If page loaded directly on a secondary HTML file (e.g., console.html), wrap its initial <main> content into #mgDynamicView
+  if (!document.getElementById('mgOverviewView') && initialKey !== 'overview' && initialKey !== 'tables') {
+    let dynPane = document.getElementById('mgDynamicView');
+    if (!dynPane) {
+      const initialHtml = mainEl.innerHTML;
+      spaTemplateCache.set(initialKey, initialHtml);
+      dynPane = document.createElement('div');
+      dynPane.id = 'mgDynamicView';
+      dynPane.className = 'mg-view-pane is-active-view';
+      dynPane.setAttribute('data-spa-section', initialKey);
+      dynPane.innerHTML = initialHtml;
+      mainEl.innerHTML = '';
+      mainEl.appendChild(dynPane);
     }
-    if (hash === '#overview') {
-      try {
-        sessionStorage.removeItem('mg_return_to_tables');
-      } catch {
-        // Ignore
-      }
-      return 'overview';
-    }
-    try {
-      if (sessionStorage.getItem('mg_return_to_tables') === '1') {
-        sessionStorage.removeItem('mg_return_to_tables');
-        return 'tables';
-      }
-    } catch {
-      // Ignore
-    }
-    return 'overview';
+    syncSidebarNavActiveState(initialKey);
+    setText('mgTopbarTitle', SPA_SECTIONS[initialKey]?.title || 'پیشخوان');
+    requestAnimationFrame(() => {
+      syncSidebarSlidingPill(null, { instant: true, commitActive: true });
+    });
+  } else {
+    switchSpaSection(initialKey, { updateHistory: false, scrollToTop: false });
   }
 
-  // Apply initial view immediately
-  const initialView = resolveInitialView();
-  switchIndexView(initialView, { updateHistory: initialView === 'tables', scrollToTop: false });
-
-  // Bind clicks on sidebar view items & switch buttons
+  // Intercept clicks on all sidebar navigation links & view switch buttons for instant SPA switching
   document.addEventListener('click', (e) => {
-    const trigger = e.target.closest('[data-nav-view], [data-switch-view]');
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+      return;
+    }
+    const trigger = e.target.closest('[data-nav-view], [data-switch-view], .mg-nav-item a');
     if (!trigger) return;
-    const targetView =
+
+    const explicitView =
       trigger.getAttribute('data-nav-view') || trigger.getAttribute('data-switch-view');
-    if (targetView === 'overview' || targetView === 'tables') {
-      e.preventDefault();
-      switchIndexView(targetView, { updateHistory: true, scrollToTop: true });
+    const href = trigger.getAttribute('href') || '';
+    const targetKey = resolveSectionKeyFromHref(explicitView || href);
+    if (!targetKey) return;
+
+    e.preventDefault();
+    switchSpaSection(targetKey, { updateHistory: true, scrollToTop: true }).then(() => {
       const focusTable = trigger.getAttribute('data-focus-table');
-      if (focusTable && targetView === 'tables') {
+      if (focusTable && targetKey === 'tables') {
         setTimeout(() => {
           const tableCard = document.getElementById('tables-section');
           if (tableCard) {
-            tableCard.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
+            tableCard.scrollIntoView({
+              behavior: prefersReducedMotion ? 'auto' : 'smooth',
+              block: 'start',
+            });
           }
-        }, 120);
+        }, 80);
       }
-    }
+    });
   });
 
-  // Listen to hash changes (e.g., browser back/forward or external hash links)
+  // Support browser back/forward navigation seamlessly
+  window.addEventListener('popstate', (e) => {
+    const stateKey = e.state && e.state.spaSection;
+    const key = stateKey || detectInitialSectionKey();
+    switchSpaSection(key, { updateHistory: false, scrollToTop: true });
+  });
+
   window.addEventListener('hashchange', () => {
     const hash = (window.location.hash || '').toLowerCase();
     if (hash === '#tables-section' || hash === '#tables') {
-      switchIndexView('tables', { updateHistory: false, scrollToTop: true });
-    } else if (hash === '#overview' || hash === '') {
-      switchIndexView('overview', { updateHistory: false, scrollToTop: true });
+      switchSpaSection('tables', { updateHistory: false, scrollToTop: true });
+    } else if (hash === '#overview') {
+      switchSpaSection('overview', { updateHistory: false, scrollToTop: true });
     }
   });
 
-  // Preserve 'tables' view across form submissions & AJAX reloads in میزها
+  // Preserve 'tables' view across form submissions in میزها
   const regForm = document.querySelector('form[action="process.php"]');
   if (regForm) {
     regForm.addEventListener('submit', () => {
@@ -287,6 +625,9 @@ function initIndexViewRouter() {
       });
     }
   });
+
+  // Pre-fetch all section templates and scripts so every switch is <5ms
+  prefetchAllSpaSections();
 }
 
 /**
@@ -320,18 +661,6 @@ function initSidebarAndNotifications() {
     backdrop.addEventListener('click', () => {
       sidebar.classList.remove('open');
       backdrop.classList.remove('open');
-    });
-  }
-
-  // Instant visual feedback on sidebar navigation list
-  const navList = sidebar ? sidebar.querySelector('.mg-nav-list') : null;
-  if (navList) {
-    const links = Array.from(navList.querySelectorAll('.mg-nav-item a'));
-    links.forEach((link) => {
-      link.addEventListener('pointerdown', () => {
-        navList.querySelectorAll('.mg-nav-item').forEach((li) => li.classList.remove('active'));
-        link.closest('.mg-nav-item')?.classList.add('active');
-      });
     });
   }
 
@@ -1112,201 +1441,358 @@ async function loadAndRenderKPIs() {
 }
 
 /**
- * 5. Super Mario Decorative Pixel-Art Animation
- * Authentic 16x16 pixel-art SVG sprite character with 4 frames (walk-1, walk-2, walk-3, jump),
- * retro warp pipes, question blocks, and coin pop-ups along the bottom edge of the dashboard.
+ * 5. Universal Exclamation (!) Tooltip System for All Field Labels, Cards, Charts & Headers
+ * Hides inline muted descriptions across all pages and reveals them via an interactive '!' badge
+ * on mouse hover (desktop) or finger hold/touch (mobile/tablet).
  */
-function buildMarioSpriteSvg() {
-  // Colors: Red (#EF4444), Blue (#2563EB), Skin (#FBBF24), Brown (#78350F), Gold (#FDE047)
-  const headAndTorso = `
-    <!-- Cap -->
-    <rect x="4" y="1" width="6" height="1" fill="#EF4444"/>
-    <rect x="3" y="2" width="9" height="1" fill="#EF4444"/>
-    <!-- Hair, Face & Moustache -->
-    <rect x="3" y="3" width="3" height="1" fill="#78350F"/>
-    <rect x="6" y="3" width="4" height="1" fill="#FBBF24"/>
-    <rect x="10" y="3" width="1" height="1" fill="#1E293B"/>
-    <rect x="2" y="4" width="2" height="2" fill="#78350F"/>
-    <rect x="4" y="4" width="1" height="1" fill="#FBBF24"/>
-    <rect x="5" y="4" width="1" height="1" fill="#78350F"/>
-    <rect x="6" y="4" width="5" height="1" fill="#FBBF24"/>
-    <rect x="11" y="4" width="2" height="1" fill="#FBBF24"/>
-    <rect x="4" y="5" width="5" height="1" fill="#FBBF24"/>
-    <rect x="9" y="5" width="4" height="1" fill="#78350F"/>
-    <rect x="4" y="6" width="7" height="1" fill="#FBBF24"/>
-    <!-- Shirt & Overalls Torso -->
-    <rect x="3" y="7" width="8" height="3" fill="#EF4444"/>
-    <rect x="5" y="7" width="1" height="4" fill="#2563EB"/>
-    <rect x="8" y="7" width="1" height="4" fill="#2563EB"/>
-    <rect x="4" y="9" width="6" height="3" fill="#2563EB"/>
-    <rect x="5" y="9" width="1" height="1" fill="#FDE047"/>
-    <rect x="8" y="9" width="1" height="1" fill="#FDE047"/>
-  `;
+const FIELD_HELP_DICTIONARY = {
+  tableNumber: 'شماره میز یا ایستگاه بازی را وارد کنید (مثلاً ۱ تا ۱۲)',
+  consoleType: 'نوع کنسول یا دستگاه متصل به این ایستگاه را انتخاب کنید',
+  'pre-payment-cost': 'در حالت پیش‌پرداخت، مبلغ شارژ اولیه میز را به تومان وارد یا از دکمه‌های آماده انتخاب کنید',
+  priceType: 'تعرفه محاسبه قیمت بر اساس تعداد بازیکنان و دسته‌های فعال',
+  chargeTableSelect: 'میز فعالی که قصد تمدید زمان یا افزایش اعتبار آن را دارید انتخاب کنید',
+  chargeAmount: 'مبلغ شارژ اضافه به تومان (به صورت خودکار به زمان بازی تبدیل می‌شود)',
+  chargeTime: 'مدت زمان دلخواه به دقیقه جهت افزودن مستقیم به تایمر میز',
+  buffetTableSelect: 'میز فعالی که سفارش خوراکی یا نوشیدنی برای آن ثبت می‌شود',
+  productDropdown: 'خوراکی یا نوشیدنی مورد نظر را از لیست موجودی بوفه انتخاب کنید',
+  quantity: 'تعداد اقلام سفارشی برای درج در فاکتور بوفه میز',
+  priceForOne: 'نرخ یک ساعت بازی تک‌نفره (تک دسته) به تومان',
+  priceForTwo: 'نرخ یک ساعت بازی دونفره (دو دسته) به تومان',
+  priceForThree: 'نرخ یک ساعت بازی سه‌نفره (سه دسته) به تومان',
+  priceForFour: 'نرخ یک ساعت بازی چهارنفره (چهار دسته) به تومان',
+  'title-tag': 'نام کامل خوراکی یا نوشیدنی جهت نمایش در منوی بوفه',
+  unitPrice: 'قیمت فروش هر واحد از این محصول به تومان',
+  costomerName: 'نام و نام خانوادگی مشتری جهت ثبت در باشگاه و صدور کد اشتراک',
+  acountCharge: 'مبلغ اعتبار اولیه کیف پول مشتری به تومان',
+  editAcountCharge: 'مبلغی که به موجودی فعلی حساب مشتری اضافه می‌شود (به تومان)',
+  debtName: 'نام کامل مشتری بدهکار جهت ثبت فاکتور در فهرست حساب‌های دفتری',
+  customerId: 'کد اشتراک عضو باشگاه مشتریان جهت کسر مبلغ فاکتور از کیف پول',
+  loginUsername: 'نام کاربری اختصاصی مدیر شیفت یا ادمین سیستم',
+  loginPassword: 'گذرواژه امنیتی جهت ورود به پنل مدیریت گیم‌نت',
+};
 
-  return `
-    <svg class="mg-mario-svg" viewBox="0 0 16 16" shape-rendering="crispEdges" aria-hidden="true">
-      <!-- Frame 0: Walk Stride 1 -->
-      <g class="mg-mario-frame frame-0">
-        ${headAndTorso}
-        <rect x="2" y="8" width="2" height="2" fill="#FBBF24"/>
-        <rect x="10" y="8" width="2" height="2" fill="#FBBF24"/>
-        <rect x="3" y="12" width="3" height="2" fill="#2563EB"/>
-        <rect x="8" y="12" width="3" height="2" fill="#2563EB"/>
-        <rect x="2" y="14" width="4" height="2" fill="#78350F"/>
-        <rect x="8" y="14" width="4" height="2" fill="#78350F"/>
-      </g>
-      <!-- Frame 1: Walk Mid-Stride -->
-      <g class="mg-mario-frame frame-1">
-        ${headAndTorso}
-        <rect x="3" y="8" width="2" height="2" fill="#FBBF24"/>
-        <rect x="9" y="8" width="2" height="2" fill="#FBBF24"/>
-        <rect x="5" y="12" width="4" height="2" fill="#2563EB"/>
-        <rect x="4" y="14" width="5" height="2" fill="#78350F"/>
-      </g>
-      <!-- Frame 2: Walk Extended Stride -->
-      <g class="mg-mario-frame frame-2">
-        ${headAndTorso}
-        <rect x="1" y="7" width="2" height="2" fill="#FBBF24"/>
-        <rect x="11" y="8" width="2" height="2" fill="#FBBF24"/>
-        <rect x="2" y="12" width="3" height="2" fill="#2563EB"/>
-        <rect x="9" y="11" width="3" height="2" fill="#2563EB"/>
-        <rect x="1" y="14" width="4" height="2" fill="#78350F"/>
-        <rect x="10" y="13" width="4" height="2" fill="#78350F"/>
-      </g>
-      <!-- Frame 3: Classic Jump Pose (One Arm Raised) -->
-      <g class="mg-mario-frame frame-3">
-        ${headAndTorso}
-        <rect x="11" y="5" width="2" height="3" fill="#FBBF24"/>
-        <rect x="1" y="8" width="2" height="2" fill="#FBBF24"/>
-        <rect x="2" y="11" width="3" height="2" fill="#2563EB"/>
-        <rect x="9" y="11" width="4" height="2" fill="#2563EB"/>
-        <rect x="1" y="13" width="3" height="2" fill="#78350F"/>
-        <rect x="11" y="12" width="3" height="2" fill="#78350F"/>
-      </g>
-    </svg>
-  `;
+const LABEL_TEXT_HELP_FALLBACKS = [
+  { match: 'نوع پرداخت', tip: 'پس‌کرایه برای محاسبه زمان باز تا پایان بازی و پیش‌پرداخت برای شارژ اولیه محدود است' },
+  { match: 'انتخاب نوع دستگاه', tip: 'کنسول یا دستگاه مورد نظر را برای تعریف یا ویرایش تعرفه ساعتی انتخاب کنید' },
+  { match: 'دسته‌بندی خوراکی', tip: 'گروه محصول را جهت تفکیک در منو و گزارش‌های مالی بوفه انتخاب کنید' },
+];
+
+const CARD_TITLE_HELP_FALLBACKS = [
+  { match: 'میزهای فعال', tip: 'نمای سریع ایستگاه‌های در حال کار و وضعیت لحظه‌ای تایمرها' },
+  { match: 'لیست محصولات موجود در بوفه', tip: 'فهرست تمامی خوراکی‌ها و نوشیدنی‌های ثبت‌شده همراه با قیمت واحد و امکان حذف' },
+  { match: 'لیست کنسول‌ها و تعرفه‌های ثبت‌شده', tip: 'جدول نرخ‌های ساعتی تعریف‌شده برای هر کنسول از یک تا چهار بازیکن' },
+  { match: 'لیست مشتریان و اعتبار باقیمانده', tip: 'فهرست اعضای باشگاه مشتریان، کد اشتراک و موجودی کیف پول هر عضو' },
+  { match: 'فاکتور تسویه میز', tip: 'ریز کارکرد زمان بازی و سفارش‌های بوفه میز جهت تسویه نهایی' },
+];
+
+function createInfoBangButton(getTipTextFn) {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'mg-info-bang';
+  btn.setAttribute('aria-label', 'مشاهده توضیحات راهنما');
+  btn.innerHTML = `<span class="mg-info-bang-mark" aria-hidden="true">!</span>`;
+  btn._getTipText = getTipTextFn;
+  return btn;
 }
 
-function initSuperMarioRunner() {
-  let stage = document.getElementById('mgMarioStage');
-  if (!stage) {
-    const mainWrapper = document.querySelector('.mg-main-wrapper');
-    if (!mainWrapper) return;
-    stage = document.createElement('div');
-    stage.id = 'mgMarioStage';
-    stage.className = 'mg-mario-stage';
-    stage.setAttribute('aria-hidden', 'true');
-    mainWrapper.appendChild(stage);
+function attachBangToTarget(targetEl, getTipTextFn) {
+  if (!targetEl || targetEl.querySelector(':scope > .mg-info-bang')) return null;
+  const btn = createInfoBangButton(getTipTextFn);
+  targetEl.classList.add('mg-has-info-bang');
+  targetEl.appendChild(btn);
+  return btn;
+}
+
+function initExclamationTooltips() {
+  // Remove any leftover Mario stage element if present
+  document.querySelectorAll('#mgMarioStage, .mg-mario-stage').forEach((el) => el.remove());
+
+  // 1. Create global floating tooltip popover
+  let popover = document.getElementById('mgInfoBangPopover');
+  if (!popover) {
+    popover = document.createElement('div');
+    popover.id = 'mgInfoBangPopover';
+    popover.className = 'mg-info-bang-popover';
+    popover.setAttribute('role', 'tooltip');
+    popover.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(popover);
   }
 
-  stage.innerHTML = `
-    <div class="mg-mario-track" id="mgMarioTrack">
-      <!-- Left Retro Warp Pipe -->
-      <div class="mg-mario-pipe pipe-left" title="پورتال رترو">
-        <div class="mg-pipe-rim"></div>
-        <div class="mg-pipe-body"></div>
-      </div>
+  let activeBtn = null;
+  let touchHideTimer = null;
 
-      <!-- Decorative Floating Pixel Question Blocks & Coins -->
-      <div class="mg-mario-qblock qblock-1" data-qblock="1"><span>?</span><i class="mg-mario-coin"></i></div>
-      <div class="mg-mario-qblock qblock-2" data-qblock="2"><span>?</span><i class="mg-mario-coin"></i></div>
-      <div class="mg-mario-qblock qblock-3" data-qblock="3"><span>?</span><i class="mg-mario-coin"></i></div>
+  function showBangTooltip(btn) {
+    if (!btn || typeof btn._getTipText !== 'function') return;
+    if (touchHideTimer) {
+      clearTimeout(touchHideTimer);
+      touchHideTimer = null;
+    }
+    const text = (btn._getTipText() || '').replace(/^—\s*/, '').trim();
+    if (!text) return;
 
-      <!-- Super Mario Pixel Character -->
-      <div class="mg-mario-actor frame-idx-0" id="mgMarioActor">
-        <div class="mg-mario-sprite-flip" id="mgMarioFlip">
-          ${buildMarioSpriteSvg()}
-        </div>
-        <div class="mg-mario-shadow" id="mgMarioShadow"></div>
-      </div>
+    activeBtn = btn;
+    btn.classList.add('is-active');
+    popover.textContent = text;
+    popover.classList.add('is-visible');
+    popover.setAttribute('aria-hidden', 'false');
 
-      <!-- Right Retro Warp Pipe -->
-      <div class="mg-mario-pipe pipe-right" title="پورتال رترو">
-        <div class="mg-pipe-rim"></div>
-        <div class="mg-pipe-body"></div>
-      </div>
+    const rect = btn.getBoundingClientRect();
+    const popRect = popover.getBoundingClientRect();
+    const margin = 10;
 
-      <!-- Luminous Pixel Ground Strip -->
-      <div class="mg-mario-ground"></div>
-    </div>
-  `;
+    let top = rect.top - popRect.height - 10;
+    let placeBelow = false;
+    if (top < margin) {
+      top = rect.bottom + 10;
+      placeBelow = true;
+    }
+    popover.classList.toggle('is-below', placeBelow);
 
-  const track = document.getElementById('mgMarioTrack');
-  const actor = document.getElementById('mgMarioActor');
-  const flipEl = document.getElementById('mgMarioFlip');
-  const shadowEl = document.getElementById('mgMarioShadow');
-  const qblocks = Array.from(stage.querySelectorAll('.mg-mario-qblock'));
+    let left = rect.left + rect.width / 2 - popRect.width / 2;
+    if (left < margin) left = margin;
+    if (left + popRect.width > window.innerWidth - margin) {
+      left = Math.max(margin, window.innerWidth - popRect.width - margin);
+    }
 
-  if (!track || !actor || !flipEl) return;
+    popover.style.top = `${Math.round(top)}px`;
+    popover.style.left = `${Math.round(left)}px`;
+  }
 
-  let state = {
-    x: 56,
-    y: 0,
-    minX: 48,
-    maxX: Math.max(180, track.clientWidth - 76),
-    direction: 1,
-    speed: 46,
-    walkCycleTime: 0,
-    timeSinceLastJump: 1.4,
-    isJumping: false,
-    jumpProgress: 0,
-    jumpDuration: 0.62,
-    jumpHeight: 16,
-    jumpInterval: 5.2,
-    frameIndex: 0,
-  };
+  function hideBangTooltip(immediate = false) {
+    if (touchHideTimer) {
+      clearTimeout(touchHideTimer);
+      touchHideTimer = null;
+    }
+    const doHide = () => {
+      if (activeBtn) {
+        activeBtn.classList.remove('is-active');
+        activeBtn = null;
+      }
+      popover.classList.remove('is-visible');
+      popover.setAttribute('aria-hidden', 'true');
+    };
+    if (immediate) {
+      doHide();
+    } else {
+      touchHideTimer = setTimeout(doHide, 90);
+    }
+  }
 
-  window.addEventListener('resize', () => {
-    state.maxX = Math.max(140, track.clientWidth - 76);
-    if (state.x > state.maxX) state.x = state.maxX;
+  // Bind global Mouse Hover, Focus, and Touch Hold events once
+  if (!window.__mgBangGlobalBound) {
+    window.__mgBangGlobalBound = true;
+
+    document.addEventListener('mouseover', (e) => {
+      const btn = e.target.closest('.mg-info-bang');
+      if (btn) {
+        showBangTooltip(btn);
+      }
+    });
+
+    document.addEventListener('mouseout', (e) => {
+      const btn = e.target.closest('.mg-info-bang');
+      if (btn && !btn.contains(e.relatedTarget)) {
+        hideBangTooltip(false);
+      }
+    });
+
+    document.addEventListener('focusin', (e) => {
+      const btn = e.target.closest('.mg-info-bang');
+      if (btn) showBangTooltip(btn);
+    });
+
+    document.addEventListener('focusout', (e) => {
+      const btn = e.target.closest('.mg-info-bang');
+      if (btn) hideBangTooltip(true);
+    });
+
+    // Prevent label activation when clicking/holding on '!' inside a <label>
+    document.addEventListener(
+      'click',
+      (e) => {
+        const btn = e.target.closest('.mg-info-bang');
+        if (btn) {
+          e.preventDefault();
+          e.stopPropagation();
+          showBangTooltip(btn);
+        } else if (activeBtn) {
+          hideBangTooltip(true);
+        }
+      },
+      true
+    );
+
+    // Touch hold support for mobile/tablet devices
+    document.addEventListener(
+      'touchstart',
+      (e) => {
+        const btn = e.target.closest('.mg-info-bang');
+        if (btn) {
+          e.stopPropagation();
+          showBangTooltip(btn);
+        } else if (activeBtn) {
+          hideBangTooltip(true);
+        }
+      },
+      { passive: true }
+    );
+
+    document.addEventListener(
+      'touchend',
+      (e) => {
+        const btn = e.target.closest('.mg-info-bang');
+        if (btn) {
+          if (touchHideTimer) clearTimeout(touchHideTimer);
+          touchHideTimer = setTimeout(() => hideBangTooltip(true), 1200);
+        }
+      },
+      { passive: true }
+    );
+
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (activeBtn) hideBangTooltip(true);
+      },
+      { passive: true }
+    );
+  }
+
+  // 2. Convert Page Topbar Headings (.mg-page-heading)
+  document.querySelectorAll('.mg-page-heading').forEach((headingBox) => {
+    const h1 = headingBox.querySelector('h1');
+    const p = headingBox.querySelector('p');
+    if (p) {
+      p.classList.add('mg-hint-source-hidden');
+    }
+    if (h1 && h1.id === 'mgTopbarTitle') {
+      // Place '!' as sibling inside .mg-page-heading so setText('mgTopbarTitle') never overwrites it
+      if (!headingBox.querySelector(':scope > .mg-info-bang')) {
+        headingBox.classList.add('mg-has-info-bang-row');
+        const btn = createInfoBangButton(() => {
+          const sec = SPA_SECTIONS[currentSpaSectionKey];
+          return (sec && sec.tip) || (p && p.textContent) || SPA_SECTIONS.overview.tip;
+        });
+        headingBox.appendChild(btn);
+      }
+    } else if (p && h1) {
+      attachBangToTarget(h1, () => p.textContent);
+    }
   });
 
-  if (prefersReducedMotion) {
-    actor.style.transform = `translate3d(120px, 0px, 0)`;
-    return;
-  }
+  // 3. Convert KPI Card Footers (.mg-kpi-card)
+  document.querySelectorAll('.mg-kpi-card').forEach((card) => {
+    const label = card.querySelector('.mg-kpi-label');
+    const footer = card.querySelector('.mg-kpi-footer');
+    if (label && footer) {
+      footer.classList.add('mg-hint-source-hidden');
+      attachBangToTarget(label, () => footer.textContent);
+    }
+  });
 
-  let lastTs = performance.now();
+  // 4. Convert Circular Donut Chart Descriptions (.mg-chart-card & .mg-income-chart-panel)
+  document.querySelectorAll('.mg-chart-card').forEach((card) => {
+    const title = card.querySelector('.mg-chart-title');
+    const desc = card.querySelector('.mg-chart-desc');
+    if (title && desc) {
+      desc.classList.add('mg-hint-source-hidden');
+      attachBangToTarget(title, () => desc.textContent);
+    }
+  });
 
-  function loop(now) {
-    const dt = (now - lastTs) / 1000;
-    lastTs = now;
+  document.querySelectorAll('.mg-income-donut-header').forEach((header) => {
+    const badge = header.querySelector('.mg-chart-badge');
+    const hint = header.querySelector('.mg-income-donut-hint');
+    if (badge && hint) {
+      hint.classList.add('mg-hint-source-hidden');
+      attachBangToTarget(badge, () => hint.textContent);
+    }
+  });
 
-    if (!document.hidden) {
-      state.maxX = Math.max(140, track.clientWidth - 76);
-      state = stepMarioState(state, dt);
+  // 5. Convert Tables Banner & Section Captions (.mg-tables-banner-sub & .mg-section-caption)
+  document.querySelectorAll('.mg-tables-header-banner').forEach((banner) => {
+    const title = banner.querySelector('.mg-tables-banner-title');
+    const sub = banner.querySelector('.mg-tables-banner-sub');
+    if (title && sub) {
+      sub.classList.add('mg-hint-source-hidden');
+      attachBangToTarget(title, () => sub.textContent);
+    }
+  });
 
-      // Update position & direction with GPU-accelerated translate3d
-      actor.style.transform = `translate3d(${state.x}px, ${state.y}px, 0)`;
-      flipEl.style.transform = `scaleX(${state.direction})`;
-      actor.className = `mg-mario-actor frame-idx-${state.frameIndex}`;
+  document.querySelectorAll('.mg-section-bar').forEach((bar) => {
+    const heading = bar.querySelector('.mg-section-heading');
+    const caption = bar.querySelector('.mg-section-caption');
+    if (heading && caption) {
+      caption.classList.add('mg-hint-source-hidden');
+      attachBangToTarget(heading, () => caption.textContent);
+    }
+  });
 
-      if (shadowEl) {
-        const shadowScale = state.isJumping ? Math.max(0.45, 1 + state.y / 48) : 1;
-        shadowEl.style.transform = `scaleX(${shadowScale.toFixed(2)})`;
-        shadowEl.style.opacity = String((shadowScale * 0.65).toFixed(2));
-      }
+  // 6. Convert All Card Subtitles (.mg-card-subtitle) & Remaining Card Titles
+  document.querySelectorAll('.mg-card-subtitle').forEach((sub) => {
+    sub.classList.add('mg-hint-source-hidden');
+    const container = sub.parentElement;
+    const title =
+      (container && container.querySelector('.mg-card-title')) ||
+      sub.closest('.mg-card-header, .mg-income-filter-bar')?.querySelector('.mg-card-title');
+    if (title) {
+      attachBangToTarget(title, () => sub.textContent);
+    }
+  });
 
-      // Check if Mario jumped near any Question Block to trigger a playful block bump + coin pop
-      if (state.isJumping && state.jumpProgress > 0.35 && state.jumpProgress < 0.62) {
-        const trackRect = track.getBoundingClientRect();
-        const marioCenterX = state.x + 16;
-        qblocks.forEach((qb) => {
-          if (qb.classList.contains('hit')) return;
-          const qbRect = qb.getBoundingClientRect();
-          const qbCenterX = qbRect.left - trackRect.left + qbRect.width / 2;
-          if (Math.abs(marioCenterX - qbCenterX) < 38) {
-            qb.classList.add('hit');
-            setTimeout(() => qb.classList.remove('hit'), 750);
-          }
-        });
+  document.querySelectorAll('.mg-card-title').forEach((title) => {
+    if (title.querySelector('.mg-info-bang')) return;
+    const text = title.textContent.trim();
+    const found = CARD_TITLE_HELP_FALLBACKS.find((item) => text.includes(item.match));
+    if (found) {
+      attachBangToTarget(title, () => found.tip);
+    }
+  });
+
+  // 7. Add '!' Tooltip to Every Form Field Label (.mg-form-group .mg-label) Across All Pages
+  document.querySelectorAll('.mg-form-group .mg-label, .mg-label').forEach((label) => {
+    if (label.querySelector('.mg-info-bang')) return;
+    const forId = label.getAttribute('for') || '';
+    const group = label.closest('.mg-form-group');
+    const control =
+      (forId && document.getElementById(forId)) ||
+      (group && group.querySelector('input, select, textarea'));
+    const controlId = (control && control.id) || forId;
+
+    let tipText = FIELD_HELP_DICTIONARY[controlId] || '';
+    if (!tipText) {
+      const rawLabel = label.textContent.trim();
+      const matched = LABEL_TEXT_HELP_FALLBACKS.find((f) => rawLabel.includes(f.match));
+      if (matched) {
+        tipText = matched.tip;
+      } else if (control && control.getAttribute('placeholder')) {
+        tipText = `راهنما: ${control.getAttribute('placeholder')}`;
+      } else {
+        tipText = `تکمیل یا انتخاب مقدار برای فیلد «${rawLabel.replace(/[:：]/g, '')}»`;
       }
     }
 
-    requestAnimationFrame(loop);
+    attachBangToTarget(label, () => tipText);
+  });
+
+  // 8. Invoice Payment Section & Login Subtitle
+  const invoicePayHeading = document.querySelector('.invoice h3');
+  if (invoicePayHeading) {
+    const helperP = invoicePayHeading.parentElement?.querySelector('p');
+    if (helperP) {
+      helperP.classList.add('mg-hint-source-hidden');
+      attachBangToTarget(invoicePayHeading, () => helperP.textContent);
+    }
   }
 
-  requestAnimationFrame(loop);
+  const loginCard = document.querySelector('main.mg-card h1');
+  if (loginCard) {
+    const loginSub = loginCard.parentElement?.querySelector('p');
+    if (loginSub) {
+      loginSub.classList.add('mg-hint-source-hidden');
+      attachBangToTarget(loginCard, () => loginSub.textContent);
+    }
+  }
 }
 
 /* ==========================================================================
@@ -1340,6 +1826,7 @@ function animateHeadingWords(elId, newText) {
 }
 
 let lastPillTop = null;
+let committedPillTop = null;
 let activePillAnim = null;
 
 const NAV_ICON_SVGS = {
@@ -1385,16 +1872,20 @@ function syncSidebarSlidingPill(hoverItem = null, options = {}) {
   const link = target.querySelector('a') || target;
   const nextTop = target.offsetTop;
   const height = link.offsetHeight || 44;
-  const isHoveringOther = Boolean(hoverItem && activeItem && hoverItem !== activeItem);
+  const isHoveringOther = Boolean(
+    hoverItem && activeItem && hoverItem !== activeItem && !options.commitActive
+  );
 
   pill.classList.toggle('is-hover-preview', isHoveringOther);
   navList.classList.toggle('is-pill-elsewhere', isHoveringOther);
   pill.style.opacity = '1';
   pill.style.height = `${height}px`;
 
-  // Determine real-time current Y of the indicator (even if mid-flight!)
+  // Determine real-time starting Y of the indicator (even if mid-flight or transitioning from previous active item)
   let fromY = lastPillTop;
-  if (fromY === null) {
+  if (options.commitActive && committedPillTop !== null && Math.abs(nextTop - (lastPillTop ?? nextTop)) < 2) {
+    fromY = committedPillTop;
+  } else if (fromY === null) {
     try {
       const savedPrev = sessionStorage.getItem('mg_prev_pill_top');
       if (savedPrev !== null && savedPrev !== '') {
@@ -1413,6 +1904,9 @@ function syncSidebarSlidingPill(hoverItem = null, options = {}) {
   }
 
   lastPillTop = nextTop;
+  if (!hoverItem || options.commitActive || target === activeItem) {
+    committedPillTop = activeItem ? activeItem.offsetTop : nextTop;
+  }
 
   if (
     prefersReducedMotion ||
@@ -1431,7 +1925,7 @@ function syncSidebarSlidingPill(hoverItem = null, options = {}) {
 
   const deltaY = nextTop - fromY;
   const dist = Math.abs(deltaY);
-  // Subtle vertical elongation proportional to travel distance (1.15x to 1.38x)
+  // Subtle vertical elongation proportional to travel distance (1.14x to 1.38x)
   const stretchY = Math.min(1.38, 1.14 + (dist / 220) * 0.24);
   const squashX = Math.max(0.955, 1 - (stretchY - 1) * 0.14);
   const overshootY = deltaY > 0 ? 1.8 : -1.8;
@@ -1476,9 +1970,7 @@ function syncSidebarSlidingPill(hoverItem = null, options = {}) {
 }
 
 function triggerQuickNewAction() {
-  const isIndex = Boolean(document.getElementById('mgTablesView'));
-  if (isIndex) {
-    switchIndexView('tables', { updateHistory: true, scrollToTop: true });
+  switchSpaSection('tables', { updateHistory: true, scrollToTop: true }).then(() => {
     setTimeout(() => {
       const inputNum = document.getElementById('InputNumber');
       if (inputNum) {
@@ -1490,10 +1982,8 @@ function triggerQuickNewAction() {
           card.classList.add('mg-flash-pulse');
         }
       }
-    }, 180);
-  } else {
-    window.location.href = 'index.html#tables-section';
-  }
+    }, 120);
+  });
 }
 
 function initIgnaraSidebarFeatures() {
@@ -1619,7 +2109,7 @@ function initIgnaraSidebarFeatures() {
     quickNewBtn.addEventListener('click', triggerQuickNewAction);
   }
 
-  // 4. Fluid Sliding & Stretching Orange-Red Pill hover, active & click tracking
+  // 4. Fluid Sliding & Stretching Violet Pill hover, active & click tracking
   if (navList) {
     const items = Array.from(navList.querySelectorAll('.mg-nav-item'));
     items.forEach((item) => {
@@ -1630,22 +2120,23 @@ function initIgnaraSidebarFeatures() {
       if (link) {
         link.addEventListener('click', () => {
           try {
-            if (lastPillTop !== null) {
-              sessionStorage.setItem('mg_prev_pill_top', String(lastPillTop));
+            const originTop = committedPillTop !== null ? committedPillTop : lastPillTop;
+            if (originTop !== null) {
+              sessionStorage.setItem('mg_prev_pill_top', String(originTop));
             }
           } catch {
             // ignore
           }
           items.forEach((li) => li.classList.remove('active'));
           item.classList.add('active');
-          syncSidebarSlidingPill(item, { animateStretch: true });
+          syncSidebarSlidingPill(item, { animateStretch: true, commitActive: true });
         });
       }
     });
     navList.addEventListener('mouseleave', () => {
       syncSidebarSlidingPill(null, { animateStretch: true });
     });
-    requestAnimationFrame(() => syncSidebarSlidingPill(null, { animateStretch: true }));
+    requestAnimationFrame(() => syncSidebarSlidingPill(null, { animateStretch: true, commitActive: true }));
     window.addEventListener('resize', () => syncSidebarSlidingPill(null, { instant: true }));
   }
 
@@ -1705,14 +2196,14 @@ function initCommandPalette() {
   if (document.getElementById('mgCmdModal')) return;
 
   const commands = [
-    { title: 'خانه (پیشخوان و آمار لحظه‌ای)', sub: 'نمای کلی سالن، نمودارهای دایره‌ای و سکوی راندمان', action: () => (document.getElementById('mgOverviewView') ? switchIndexView('overview') : (window.location.href = 'index.html#overview')), kbd: 'G H' },
-    { title: 'مدیریت میزها و تایمر سشن‌ها', sub: 'ثبت میز، شارژ مجدد، سفارش بوفه و فاکتور میزها', action: () => (document.getElementById('mgTablesView') ? switchIndexView('tables') : (window.location.href = 'index.html#tables-section')), kbd: 'G T' },
+    { title: 'خانه (پیشخوان و آمار لحظه‌ای)', sub: 'نمای کلی سالن، نمودارهای دایره‌ای و خلاصه میزهای فعال', action: () => switchSpaSection('overview'), kbd: 'G H' },
+    { title: 'مدیریت میزها و تایمر سشن‌ها', sub: 'ثبت میز، شارژ مجدد، سفارش بوفه و فاکتور میزها', action: () => switchSpaSection('tables'), kbd: 'G T' },
     { title: 'ثبت سریع میز جدید', sub: 'پرش مستقیم به فرم راه‌اندازی ایستگاه جدید', action: () => triggerQuickNewAction(), kbd: 'N' },
-    { title: 'مدیریت کنسول‌ها و تعرفه ساعتی', sub: 'تنظیم قیمت ساعتی PS5، PS4، سیستم PC و بیلیارد', action: () => (window.location.href = 'console.html'), kbd: 'G C' },
-    { title: 'مدیریت بوفه و خوراکی‌ها', sub: 'افزودن محصول جدید به بوفه و بروزرسانی موجودی', action: () => (window.location.href = 'buffet.html'), kbd: 'G B' },
-    { title: 'باشگاه مشتریان', sub: 'مدیریت لیست مشتریان و اشتراک‌ها', action: () => (window.location.href = 'acounts.html'), kbd: 'G U' },
-    { title: 'حساب بدهکاران', sub: 'پیگیری و تسویه حساب‌های دفتری', action: () => (window.location.href = 'Debtors.html'), kbd: 'G D' },
-    { title: 'گزارش جامع درآمد و تحلیل مالی', sub: 'تفکیک فروش کنسول‌ها، بوفه و روش‌های پرداخت', action: () => (window.location.href = 'income.html'), kbd: 'G I' },
+    { title: 'مدیریت کنسول‌ها و تعرفه ساعتی', sub: 'تنظیم قیمت ساعتی PS5، PS4، سیستم PC و بیلیارد', action: () => switchSpaSection('console'), kbd: 'G C' },
+    { title: 'مدیریت بوفه و خوراکی‌ها', sub: 'افزودن محصول جدید به بوفه و بروزرسانی موجودی', action: () => switchSpaSection('buffet'), kbd: 'G B' },
+    { title: 'باشگاه مشتریان', sub: 'مدیریت لیست مشتریان و اشتراک‌ها', action: () => switchSpaSection('accounts'), kbd: 'G U' },
+    { title: 'حساب بدهکاران', sub: 'پیگیری و تسویه حساب‌های دفتری', action: () => switchSpaSection('debtors'), kbd: 'G D' },
+    { title: 'گزارش جامع درآمد و تحلیل مالی', sub: 'تفکیک فروش کنسول‌ها، بوفه و روش‌های پرداخت', action: () => switchSpaSection('income'), kbd: 'G I' },
     { title: 'جمع / باز کردن منوی کناری (حالت فشرده)', sub: 'تغییر وضعیت سایدبار بین حالت کامل و آیکونی', action: () => document.getElementById('mgSidebarFoldBtn')?.click(), kbd: '[' },
   ];
 
@@ -1842,7 +2333,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initTableSearchAndFilter();
   initButtonMicroInteractions();
   initScrollAndEntranceAnimations();
-  initSuperMarioRunner();
+  initExclamationTooltips();
   animateHeadingWords('mgTopbarTitle');
   loadAndRenderKPIs();
 });

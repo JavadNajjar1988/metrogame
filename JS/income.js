@@ -435,12 +435,28 @@ function renderTablesAndCharts(report, periodSubtitle) {
 }
 
 async function initIncomeDashboard() {
+  if (!document.getElementById('GameIncomeTable')) return;
   try {
+    let cachedBundle = null;
+    try {
+      const raw = sessionStorage.getItem('mg_bundle_v1');
+      if (raw) cachedBundle = JSON.parse(raw);
+    } catch {
+      cachedBundle = null;
+    }
+
+    const fetchOrCached = (key, url) => {
+      if (cachedBundle && cachedBundle[key]) {
+        return Promise.resolve(cachedBundle[key]);
+      }
+      return fetch(url).then((r) => (r.ok ? r.json() : [])).catch(() => []);
+    };
+
     const [calRes, creditRes, cashRes, customerRes] = await Promise.all([
-      fetch('./Calender.json').then((r) => (r.ok ? r.json() : [])),
-      fetch('./creditpay.json').then((r) => (r.ok ? r.json() : [])),
-      fetch('./cashPay.json').then((r) => (r.ok ? r.json() : [])),
-      fetch('./customerPay.json').then((r) => (r.ok ? r.json() : [])),
+      fetch('./Calender.json').then((r) => (r.ok ? r.json() : [])).catch(() => []),
+      fetchOrCached('creditpay.json', './creditpay.json'),
+      fetchOrCached('cashPay.json', './cashPay.json'),
+      fetchOrCached('customerPay.json', './customerPay.json'),
     ]);
 
     const savedStart = calRes?.[0]?.start || '2023-11-21T00:00:00+03:30';
@@ -548,4 +564,10 @@ async function initIncomeDashboard() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', initIncomeDashboard);
+window.renderIncomePage = initIncomeDashboard;
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initIncomeDashboard);
+} else {
+  initIncomeDashboard();
+}

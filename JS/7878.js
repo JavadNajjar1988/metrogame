@@ -3,18 +3,24 @@ window.convertToPersian = function convertToPersian(number) {
   return String(number ?? '').replace(/\d/g, (digit) => persianDigits[Number(digit)]);
 };
 
-$(document).ready(function () {
+window.renderTablesWorkspace = function renderTablesWorkspace() {
   // Bind post-payment vs pre-payment radio toggle
   const postRadio = document.getElementById('post-payment');
   const preRadio = document.getElementById('pre-payment');
   const preCostInput = document.getElementById('pre-payment-cost');
+  const prepayCostGroup = document.getElementById('prepayCostGroup');
 
-  if (postRadio && preRadio && preCostInput) {
+  if (postRadio && preRadio && preCostInput && !postRadio.dataset.bound) {
+    postRadio.dataset.bound = 'true';
+    if (prepayCostGroup && postRadio.checked) {
+      prepayCostGroup.style.display = 'none';
+    }
     postRadio.addEventListener('change', function () {
       if (this.checked) {
         preRadio.checked = false;
         preCostInput.disabled = true;
         preCostInput.value = '';
+        if (prepayCostGroup) prepayCostGroup.style.display = 'none';
         postRadio.closest('.mg-radio-card')?.classList.add('is-selected');
         preRadio.closest('.mg-radio-card')?.classList.remove('is-selected');
       }
@@ -23,6 +29,7 @@ $(document).ready(function () {
       if (this.checked) {
         postRadio.checked = false;
         preCostInput.disabled = false;
+        if (prepayCostGroup) prepayCostGroup.style.display = '';
         preCostInput.focus();
         preRadio.closest('.mg-radio-card')?.classList.add('is-selected');
         postRadio.closest('.mg-radio-card')?.classList.remove('is-selected');
@@ -633,4 +640,7 @@ $(document).ready(function () {
         }
       });
     });
-});
+};
+
+$(document).ready(window.renderTablesWorkspace);
+
