@@ -1,56 +1,60 @@
-  // تابعی برای درخواست اطلاعات از فایل JSON و نمایش آنها در جدول
-  function loadData() {
-  
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", "products.json", true);
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            var data = JSON.parse(xhr.responseText);
+function renderBuffetTable(data) {
+  if (!Array.isArray(data)) return;
+  const tableBody = document.querySelector('#buffetTable tbody');
+  if (!tableBody) return;
+  tableBody.innerHTML = '';
 
-            var tableBody = document.querySelector("#buffetTable tbody");
-            tableBody.innerHTML = ""; // پاک کردن داده‌های قبلی در جدول
-            
-            for (var i = 0; i < data.length; i++) {
-                const productId = data[i].productCode;
-                var row = document.createElement("tr");
-                var formattedPrice = parseFloat(data[i].unitPrice).toLocaleString("fa-IR");
-                // اعداد فارسی شده به جای قیمت واحد
-                row.innerHTML = `
-                    <td>${data[i].productCode}</td>
-                    <td><i class="fa-light ${data[i].iconName}" style="font-size: 25px;" title="${data[i].title}"></i></td>
-                    <td>${data[i].title}</td>
-                    <td>${formattedPrice} تومان</td>
-                    <td><button class="btn btn-danger btn-xs" data-product-id="${productId}" onclick="deleteProduct(this)"><i class="fa fa-trash-o"></i> حذف</button></td>
-                `;
-                tableBody.appendChild(row);
-            }
-        }
-    };
-    xhr.send();
+  for (let i = 0; i < data.length; i++) {
+    const productId = data[i].productCode;
+    const row = document.createElement('tr');
+    const formattedPrice = parseFloat(data[i].unitPrice).toLocaleString('fa-IR');
+    row.innerHTML = `
+      <td>${data[i].productCode}</td>
+      <td><i class="fa-light ${data[i].iconName}" style="font-size: 25px;" title="${data[i].title}"></i></td>
+      <td>${data[i].title}</td>
+      <td>${formattedPrice} تومان</td>
+      <td><button class="btn btn-danger btn-xs" data-product-id="${productId}" onclick="deleteProduct(this)"><i class="fa fa-trash-o"></i> حذف</button></td>
+    `;
+    tableBody.appendChild(row);
+  }
 }
 
-    
-            // فراخوانی تابع loadData برای بارگیری اطلاعات از فایل JSON
-            loadData();
-            
+function loadData() {
+  try {
+    const cachedBundle = sessionStorage.getItem('mg_bundle_v1');
+    if (cachedBundle) {
+      const parsed = JSON.parse(cachedBundle);
+      if (parsed && Array.isArray(parsed['products.json'])) {
+        renderBuffetTable(parsed['products.json']);
+      }
+    }
+  } catch {
+    // ignore cache error
+  }
 
-            // تابعی برای حذف ردیف انتخاب شده از جدول
-            function deleteRow(button) {
-                var row = button.parentNode.parentNode;
-                row.parentNode.removeChild(row);
-            }
+  fetch('products.json')
+    .then((r) => (r.ok ? r.json() : []))
+    .then((data) => {
+      renderBuffetTable(data);
+    })
+    .catch(() => {});
+}
 
+window.renderBuffetPage = loadData;
+loadData();
 
+window.deleteRow = function deleteRow(button) {
+  const row = button.closest('tr');
+  if (row) row.remove();
+};
 
-
-            function deleteProduct(button) {
-                const productId = button.dataset.productId;
-              $.ajax({
-                url: 'delete_product.php',
-                type: 'POST',
-                data: {id: productId}
-              })
-              .done(function() {
-                location.reload();              })
-            }
-           
+window.deleteProduct = function deleteProduct(button) {
+  const productId = button.dataset.productId;
+  const row = button.closest('tr');
+  if (row) row.remove();
+  fetch('delete_product.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `id=${encodeURIComponent(productId)}`,
+  }).catch(() => {});
+};

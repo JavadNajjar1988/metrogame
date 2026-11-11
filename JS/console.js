@@ -1,15 +1,17 @@
 let data = {};
 
-fetch('data.json')
-.then(response => response.json())
-.then(jsonData => {
-  data = jsonData; // ذخیره داده‌های JSON در متغیر گلوبال
-  const tableBody = document.getElementById('consoleTable').getElementsByTagName('tbody')[0];
+function renderConsoleTable(jsonData) {
+  if (!jsonData || !jsonData.consoles) return;
+  data = jsonData;
+  const tableEl = document.getElementById('consoleTable');
+  if (!tableEl) return;
+  const tableBody = tableEl.getElementsByTagName('tbody')[0];
+  if (!tableBody) return;
+  tableBody.innerHTML = '';
   let rowNumber = 1;
 
-  // پردازش داده‌های JSON و ایجاد ردیف‌های جدول
   for (const key in data.consoles) {
-    if (data.consoles.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(data.consoles, key)) {
       const consoleData = data.consoles[key];
       const newRow = tableBody.insertRow();
       const cell1 = newRow.insertCell(0);
@@ -20,54 +22,80 @@ fetch('data.json')
       const cell6 = newRow.insertCell(5);
       const cell7 = newRow.insertCell(6);
 
-      cell1.innerHTML = rowNumber.toLocaleString('fa-IR'); // تغییر شماره ردیف به فارسی
+      cell1.innerHTML = rowNumber.toLocaleString('fa-IR');
       cell2.innerHTML = `<i class="demo-icon icon-${consoleData.name.toLowerCase()}" style="font-size: 30px;"></i>`;
-     
-      // ...
-// ...
-cell3.innerHTML = consoleData.one_player_price !== null ? parseFloat(consoleData.one_player_price).toLocaleString('fa-IR') + ' تومان' : '';
-cell4.innerHTML = consoleData.two_player_price !== null ? parseFloat(consoleData.two_player_price).toLocaleString('fa-IR') + ' تومان' : '';
-cell5.innerHTML = consoleData.three_player_price !== null ? parseFloat(consoleData.three_player_price).toLocaleString('fa-IR') + ' تومان' : '';
-cell6.innerHTML = consoleData.four_player_price !== null ? parseFloat(consoleData.four_player_price).toLocaleString('fa-IR') + ' تومان' : '';
-// ...
-
-// ...
-
+      cell3.innerHTML =
+        consoleData.one_player_price !== null
+          ? parseFloat(consoleData.one_player_price).toLocaleString('fa-IR') + ' تومان'
+          : '';
+      cell4.innerHTML =
+        consoleData.two_player_price !== null
+          ? parseFloat(consoleData.two_player_price).toLocaleString('fa-IR') + ' تومان'
+          : '';
+      cell5.innerHTML =
+        consoleData.three_player_price !== null
+          ? parseFloat(consoleData.three_player_price).toLocaleString('fa-IR') + ' تومان'
+          : '';
+      cell6.innerHTML =
+        consoleData.four_player_price !== null
+          ? parseFloat(consoleData.four_player_price).toLocaleString('fa-IR') + ' تومان'
+          : '';
       cell7.innerHTML = `
-       
         <button class="btn btn-danger btn-xs delete-button" data-console-id="${consoleData.name}">
-<i class="fa fa-trash-o"></i> حذف
-</button>
-
-
+          <i class="fa fa-trash-o"></i> حذف
+        </button>
       `;
-
       rowNumber++;
     }
   }
-})
-.catch(error => console.error('خطا در دریافت و پردازش داده: ', error));
-document.addEventListener('click', function (event) {
-if (event.target.classList.contains('delete-button')) {
-  const consoleId = event.target.getAttribute('data-console-id');
-
-// انجام عملیات حذف از جدول HTML
-    const rowToRemove = event.target.closest('tr');
-    if (rowToRemove) {
-      rowToRemove.remove();
-    }
-
-  // ایجاد درخواست با fetch API
-  fetch('./delete_console.php', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: `consoleId=${consoleId}`,
-  })
-  .then(response => response.text())
-  .then(result => {
-  })
-  .catch(error => console.error('خطا در ارسال درخواست: ', error));
 }
-});
+
+window.setTitle = function setTitle(radio) {
+  const selectedTitle = radio.getAttribute('data-title');
+  const titleInput = document.getElementById('selectedTitle');
+  if (titleInput && selectedTitle) titleInput.value = selectedTitle;
+};
+
+window.renderConsolePage = function renderConsolePage() {
+  try {
+    const cachedBundle = sessionStorage.getItem('mg_bundle_v1');
+    if (cachedBundle) {
+      const parsed = JSON.parse(cachedBundle);
+      if (parsed && parsed['data.json']) {
+        renderConsoleTable(parsed['data.json']);
+      }
+    }
+  } catch {
+    // ignore cache error
+  }
+
+  fetch('data.json')
+    .then((response) => response.json())
+    .then((jsonData) => {
+      renderConsoleTable(jsonData);
+    })
+    .catch((error) => console.error('خطا در دریافت و پردازش داده: ', error));
+};
+
+window.renderConsolePage();
+
+if (!window.__mgConsoleDeleteBound) {
+  window.__mgConsoleDeleteBound = true;
+  document.addEventListener('click', function (event) {
+    const btn = event.target.closest('.delete-button');
+    if (btn && btn.hasAttribute('data-console-id')) {
+      const consoleId = btn.getAttribute('data-console-id');
+      const rowToRemove = btn.closest('tr');
+      if (rowToRemove) {
+        rowToRemove.remove();
+      }
+      fetch('./delete_console.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `consoleId=${consoleId}`,
+      }).catch((error) => console.error('خطا در ارسال درخواست: ', error));
+    }
+  });
+}

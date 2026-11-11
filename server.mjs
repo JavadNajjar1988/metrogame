@@ -82,6 +82,47 @@ const server = createServer(async (request, response) => {
       return json(response, 405, { error: 'روش درخواست مجاز نیست.' });
     }
 
+    if (file === 'bundle.json') {
+      const [
+        data,
+        reservations,
+        products,
+        clickTime,
+        finishTime,
+        buffet_temporary,
+        cashPay,
+        creditpay,
+        customerPay,
+        debtpay,
+        customer_data,
+      ] = await Promise.all([
+        readData('data.json'),
+        readData('reservations.json'),
+        readData('products.json'),
+        readData('clickTime.json'),
+        readData('finishTime.json'),
+        readData('buffet_temporary.json'),
+        readData('cashPay.json'),
+        readData('creditpay.json'),
+        readData('customerPay.json'),
+        readData('debtpay.json'),
+        readData('customer_data.json'),
+      ]);
+      return json(response, 200, {
+        'data.json': data,
+        'reservations.json': reservations,
+        'products.json': products,
+        'clickTime.json': clickTime,
+        'finishTime.json': finishTime,
+        'buffet_temporary.json': buffet_temporary,
+        'cashPay.json': cashPay,
+        'creditpay.json': creditpay,
+        'customerPay.json': customerPay,
+        'debtpay.json': debtpay,
+        'customer_data.json': customer_data,
+      });
+    }
+
     if (isDataFile(file)) return json(response, 200, await readData(file));
 
     const type = types[extname(file)];
@@ -100,7 +141,7 @@ const server = createServer(async (request, response) => {
     response.writeHead(200, {
       'Content-Type': type,
       'Content-Length': String(content.byteLength),
-      'Cache-Control': isAsset ? 'public, max-age=3600' : 'no-cache',
+      'Cache-Control': isAsset ? 'public, max-age=86400' : 'no-cache',
     });
     if (request.method === 'HEAD') {
       response.end();

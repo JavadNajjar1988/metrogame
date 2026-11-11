@@ -5,18 +5,19 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>گزارش درآمد و آمار مالی | پنل مدیریت گیم‌نت متروگیم</title>
+  <meta name="description" content="گزارش جامع مالی و تحلیل درآمد گیم‌نت متروگیم به تفکیک کنسول‌های بازی، فروش بوفه و روش‌های پرداخت.">
   <link rel="icon" href="src/assets/images/metrogame_emblem_1794207267121.jpg" type="image/jpeg">
   <link href="assets/bootstrap/bootstrap.min.css" rel="stylesheet">
   <link href="assets/bootstrap/bootstrap-rtl.css" rel="stylesheet">
   <link href="fontello/css/my-icon.css" rel="stylesheet">
-  <link href="assets/css/daterangepicker.css" rel="stylesheet">
-  <link href="assets/css/datepicker-theme.css" rel="stylesheet">
-  <link href="assets/css/gaming-dashboard.css" rel="stylesheet">
+  <link href="assets/css/gaming-dashboard.css?v=20261110-4" rel="stylesheet">
 </head>
 <body>
   <div id="sidebarBackdrop" class="mg-sidebar-backdrop"></div>
+
   <div class="mg-app-shell">
-    <aside id="mgSidebar" class="mg-sidebar">
+    <!-- Sidebar Navigation -->
+    <aside id="mgSidebar" class="mg-sidebar" aria-label="منوی اصلی مدیریت">
       <div class="mg-brand">
         <img src="src/assets/images/metrogame_emblem_1794207267121.jpg" alt="لوگوی گیم‌نت متروگیم" class="mg-brand-logo">
         <div class="mg-brand-text">
@@ -24,145 +25,489 @@
           <span class="mg-brand-subtitle">مرکز فرماندهی گیم‌نت</span>
         </div>
       </div>
+
       <div class="mg-sidebar-section-label">بخش‌های مدیریتی</div>
       <ul class="mg-nav-list">
-        <li class="mg-nav-item"><a href="index.html"><span>خانه (پیشخوان)</span></a></li>
-        <li class="mg-nav-item"><a href="index.html#tables-section"><span>میزها</span><span id="navTablesBadge" class="mg-nav-badge">۰</span></a></li>
-        <li class="mg-nav-item"><a href="console.html"><span>مدیریت کنسول‌ها</span><span id="navConsolesBadge" class="mg-nav-badge">۰</span></a></li>
-        <li class="mg-nav-item"><a href="buffet.html"><span>مدیریت بوفه</span></a></li>
-        <li class="mg-nav-item"><a href="acounts.html"><span>مشتریان</span><span id="navCustomersBadge" class="mg-nav-badge">۰</span></a></li>
-        <li class="mg-nav-item"><a href="Debtors.html"><span>بدهکاران</span><span id="navDebtorsBadge" class="mg-nav-badge">۰</span></a></li>
-        <li class="mg-nav-item active"><a href="income.html"><span>گزارش درآمد</span></a></li>
+        <li class="mg-nav-item">
+          <a href="index.html">
+            <span class="mg-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </span>
+            <span>خانه (پیشخوان)</span>
+          </a>
+        </li>
+        <li class="mg-nav-item">
+          <a href="index.html#tables-section">
+            <span class="mg-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="12" rx="2"/><line x1="2" y1="20" x2="22" y2="20"/><line x1="12" y1="16" x2="12" y2="20"/></svg>
+            </span>
+            <span>میزها</span>
+            <span id="navTablesBadge" class="mg-nav-badge badge-Highlight">۰</span>
+          </a>
+        </li>
+        <li class="mg-nav-item">
+          <a href="console.html">
+            <span class="mg-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><rect x="2" y="6" width="20" height="12" rx="4"/></svg>
+            </span>
+            <span>مدیریت کنسول‌ها</span>
+            <span id="navConsolesBadge" class="mg-nav-badge">۰</span>
+          </a>
+        </li>
+        <li class="mg-nav-item">
+          <a href="buffet.html">
+            <span class="mg-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+            </span>
+            <span>مدیریت بوفه</span>
+          </a>
+        </li>
+        <li class="mg-nav-item">
+          <a href="acounts.html">
+            <span class="mg-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </span>
+            <span>مشتریان</span>
+            <span id="navCustomersBadge" class="mg-nav-badge">۰</span>
+          </a>
+        </li>
+        <li class="mg-nav-item">
+          <a href="Debtors.html">
+            <span class="mg-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            </span>
+            <span>بدهکاران</span>
+            <span id="navDebtorsBadge" class="mg-nav-badge">۰</span>
+          </a>
+        </li>
+        <li class="mg-nav-item active">
+          <a href="income.html">
+            <span class="mg-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            </span>
+            <span>گزارش درآمد</span>
+          </a>
+        </li>
       </ul>
+
       <div class="mg-sidebar-footer">
-        <a href="login.html" class="mg-logout-btn"><span>خروج از پنل</span></a>
+        <div class="mg-sidebar-status-box">
+          <span><span class="mg-status-dot"></span>سرور محلی متروگیم</span>
+          <strong style="color: #34D399;">متصل</strong>
+        </div>
+        <a href="login.html" class="mg-logout-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span>خروج از پنل</span>
+        </a>
       </div>
     </aside>
 
+    <!-- Main Wrapper -->
     <div class="mg-main-wrapper">
+      <!-- Top Bar -->
       <header class="mg-topbar">
         <div class="mg-topbar-right">
-          <button type="button" id="mobileMenuBtn" class="mg-mobile-menu-btn" aria-label="باز کردن منو">☰</button>
+          <button type="button" id="mobileMenuBtn" class="mg-mobile-menu-btn" aria-label="باز کردن منو">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
           <div class="mg-page-heading">
-            <h1>گزارش جامع درآمد و تحلیل مالی</h1>
-            <p>تفکیک درآمد کنسول‌ها، فروش بوفه، پرداخت‌های نقدی، کارتخوان و حساب کاربری</p>
+            <h1>
+              <span>گزارش جامع درآمد و تحلیل مالی</span>
+              <span class="mg-card-tag tag-emerald">آمار زنده مالی</span>
+            </h1>
+            <p>تفکیک دقیق درآمد کنسول‌های بازی، فروش بوفه و روش‌های تسویه (کارتخوان، نقدی و حساب کاربری)</p>
           </div>
         </div>
+
         <div class="mg-topbar-left">
-          <div class="mg-live-clock"><span id="mgLiveClockText">ساعت سیستم</span></div>
+          <div class="mg-live-clock" title="زمان سیستم">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#22D3EE" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span id="mgLiveClockText">ساعت سیستم</span>
+          </div>
+
+          <div class="mg-notification-wrap">
+            <button type="button" id="mgNotifBtn" class="mg-icon-btn" aria-label="اعلان‌های سیستم">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span id="mgNotifCount" class="mg-notif-count">۳</span>
+            </button>
+            <div id="mgNotifDropdown" class="mg-notif-dropdown">
+              <div class="mg-notif-header">
+                <span>وضعیت مالی و سشن‌ها</span>
+                <span style="color: #22D3EE; font-size: 11px;">زنده</span>
+              </div>
+              <ul id="mgNotifList" class="mg-notif-list">
+                <li class="mg-notif-item">تمامی تراکنش‌های مالی همگام‌سازی شدند.</li>
+              </ul>
+            </div>
+          </div>
+
           <div class="mg-profile-chip">
             <img src="src/assets/images/admin_avatar_1794207268017.jpg" alt="مدیر گیم‌نت" class="mg-profile-avatar">
             <div class="mg-profile-info">
               <span class="mg-profile-name">مدیر شیفت</span>
-              <span class="mg-profile-role">ادمین</span>
+              <span class="mg-profile-role">دسترسی کامل ادمین</span>
             </div>
           </div>
         </div>
       </header>
 
+      <!-- Financial Summary Strip -->
+      <div class="mg-status-strip">
+        <div class="mg-status-strip-items">
+          <span class="mg-status-pill">
+            <span class="mg-status-dot"></span>
+            کل درآمد دوره: <strong id="incStripTotal">۱,۷۶۷,۷۱۹ تومان</strong>
+          </span>
+          <span class="mg-status-divider"></span>
+          <span class="mg-status-pill">
+            سهم کنسول‌های بازی: <strong id="incStripGame">۱,۳۶۱,۵۴۹ تومان</strong>
+          </span>
+          <span class="mg-status-divider"></span>
+          <span class="mg-status-pill">
+            سهم بوفه و خوراکی: <strong id="incStripBuffet">۴۰۶,۱۷۰ تومان</strong>
+          </span>
+          <span class="mg-status-divider"></span>
+          <span class="mg-status-pill">
+            تعداد فاکتورهای تسویه‌شده: <strong id="incStripCount">۳۹ فاکتور</strong>
+          </span>
+        </div>
+        <div>
+          <a href="invoice.html" style="color: #67E8F9; font-weight: 700;">مشاهده صورت‌حساب میزهای فعال &larr;</a>
+        </div>
+      </div>
+
+      <!-- Main Content -->
       <main class="mg-content">
-        <div class="mg-card">
-          <div class="mg-card-header mg-table-toolbar">
-            <div>
-              <h2 class="mg-card-title">فیلتر بازه زمانی گزارش</h2>
-              <p id="tableTitle" class="mg-card-subtitle">نمایش آمار کلی تراکنش‌های ثبت‌شده</p>
+        <!-- Section 1: Filter Command Bar & 4 Financial KPI Cards -->
+        <div class="mg-section-group">
+          <div class="mg-income-filter-bar">
+            <div class="mg-income-filter-right">
+              <div class="mg-card-header-icon icon-cyan">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
+              <div>
+                <h2 class="mg-card-title">فیلتر بازه زمانی و دوره گزارش مالی</h2>
+                <p id="tableTitle" class="mg-card-subtitle">نمایش جامع کلیه تراکنش‌های ثبت‌شده گیم‌نت</p>
+              </div>
             </div>
-            <div style="min-width: 260px;">
-              <input type="text" class="form-control mg-input" id="datarangepicker" placeholder="انتخاب بازه زمانی گزارش...">
+
+            <div class="mg-income-filter-controls">
+              <div class="mg-filter-group" role="group" aria-label="انتخاب سریع بازه زمانی">
+                <button type="button" class="mg-filter-btn active" data-income-filter="all">همه تراکنش‌ها (جامع)</button>
+                <button type="button" class="mg-filter-btn" data-income-filter="saved">بازه ذخیره‌شده تقویم</button>
+                <button type="button" class="mg-filter-btn" data-income-filter="nov2023">آبان و آذر ۱۴۰۲</button>
+                <button type="button" class="mg-filter-btn" data-income-filter="today">شیفت امروز</button>
+              </div>
+
+              <div class="mg-custom-date-box">
+                <input type="date" id="incomeStartDate" class="mg-input mg-date-input" aria-label="از تاریخ" value="2023-11-18">
+                <span class="mg-date-sep">تا</span>
+                <input type="date" id="incomeEndDate" class="mg-input mg-date-input" aria-label="تا تاریخ" value="2026-11-09">
+                <button type="button" id="applyCustomDateBtn" class="mg-btn mg-btn-cyan mg-btn-sm">
+                  <span>اعمال بازه</span>
+                </button>
+              </div>
             </div>
           </div>
 
-          <div class="row" style="margin-bottom: 24px;">
-            <div class="col-md-8">
+          <!-- 4 Financial KPI Cards with Animated Circular Progress Rings -->
+          <section aria-label="شاخص‌های کلیدی مالی" class="mg-income-kpi-grid">
+            <!-- KPI 1: Total Gross Income -->
+            <article class="mg-kpi-card kpi-emerald mg-stagger-item" style="--stagger-idx: 1;">
+              <div class="mg-kpi-top">
+                <div>
+                  <p class="mg-kpi-label">کل درآمد ناخالص دوره</p>
+                  <h3 class="mg-kpi-value">
+                    <span id="incKpiTotal">۱,۷۶۷,۷۱۹</span>
+                    <span class="mg-kpi-unit">تومان</span>
+                  </h3>
+                </div>
+                <div class="mg-kpi-ring-wrap" title="تحقق ۱۰۰٪ درآمد دوره">
+                  <svg class="mg-kpi-ring-svg" viewBox="0 0 48 48" aria-hidden="true">
+                    <circle class="mg-kpi-ring-track" cx="24" cy="24" r="20"></circle>
+                    <circle id="incRingTotal" class="mg-kpi-ring-bar ring-emerald" cx="24" cy="24" r="20" stroke-dasharray="125.66" stroke-dashoffset="0"></circle>
+                  </svg>
+                  <div class="mg-kpi-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                  </div>
+                </div>
+              </div>
+              <div class="mg-kpi-footer">
+                <span id="incKpiTotalSub">مجموع ۳۹ تراکنش ثبت‌شده در سیستم</span>
+              </div>
+            </article>
+
+            <!-- KPI 2: Console / Game Revenue -->
+            <article class="mg-kpi-card kpi-cyan mg-stagger-item" style="--stagger-idx: 2;">
+              <div class="mg-kpi-top">
+                <div>
+                  <p class="mg-kpi-label">درآمد سشن‌های کنسول و بازی</p>
+                  <h3 class="mg-kpi-value">
+                    <span id="incKpiGame">۱,۳۶۱,۵۴۹</span>
+                    <span class="mg-kpi-unit">تومان</span>
+                  </h3>
+                </div>
+                <div class="mg-kpi-ring-wrap" title="سهم بازی از کل درآمد">
+                  <svg class="mg-kpi-ring-svg" viewBox="0 0 48 48" aria-hidden="true">
+                    <circle class="mg-kpi-ring-track" cx="24" cy="24" r="20"></circle>
+                    <circle id="incRingGame" class="mg-kpi-ring-bar ring-cyan" cx="24" cy="24" r="20" stroke-dasharray="125.66" stroke-dashoffset="28.9"></circle>
+                  </svg>
+                  <div class="mg-kpi-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="4"/><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/></svg>
+                  </div>
+                </div>
+              </div>
+              <div class="mg-kpi-footer">
+                <span id="incKpiGameSub">۷۷٪ از کل درآمد · پیشتاز: پلی‌استیشن ۴</span>
+              </div>
+            </article>
+
+            <!-- KPI 3: Buffet Sales Revenue -->
+            <article class="mg-kpi-card kpi-amber mg-stagger-item" style="--stagger-idx: 3;">
+              <div class="mg-kpi-top">
+                <div>
+                  <p class="mg-kpi-label">درآمد فروش بوفه و خوراکی</p>
+                  <h3 class="mg-kpi-value">
+                    <span id="incKpiBuffet">۴۰۶,۱۷۰</span>
+                    <span class="mg-kpi-unit">تومان</span>
+                  </h3>
+                </div>
+                <div class="mg-kpi-ring-wrap" title="سهم بوفه از کل درآمد">
+                  <svg class="mg-kpi-ring-svg" viewBox="0 0 48 48" aria-hidden="true">
+                    <circle class="mg-kpi-ring-track" cx="24" cy="24" r="20"></circle>
+                    <circle id="incRingBuffet" class="mg-kpi-ring-bar ring-amber" cx="24" cy="24" r="20" stroke-dasharray="125.66" stroke-dashoffset="96.76"></circle>
+                  </svg>
+                  <div class="mg-kpi-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>
+                  </div>
+                </div>
+              </div>
+              <div class="mg-kpi-footer">
+                <span id="incKpiBuffetSub">۲۳٪ از کل درآمد · پرفروش: نوشیدنی سرد</span>
+              </div>
+            </article>
+
+            <!-- KPI 4: Dominant Payment Method (POS / Cash / Account) -->
+            <article class="mg-kpi-card kpi-purple mg-stagger-item" style="--stagger-idx: 4;">
+              <div class="mg-kpi-top">
+                <div>
+                  <p class="mg-kpi-label">تراکنش‌های کارتخوان (POS)</p>
+                  <h3 class="mg-kpi-value">
+                    <span id="incKpiPos">۱,۳۲۱,۹۸۸</span>
+                    <span class="mg-kpi-unit">تومان</span>
+                  </h3>
+                </div>
+                <div class="mg-kpi-ring-wrap" title="سهم کارتخوان از کل دریافتی‌ها">
+                  <svg class="mg-kpi-ring-svg" viewBox="0 0 48 48" aria-hidden="true">
+                    <circle class="mg-kpi-ring-track" cx="24" cy="24" r="20"></circle>
+                    <circle id="incRingPos" class="mg-kpi-ring-bar ring-purple" cx="24" cy="24" r="20" stroke-dasharray="125.66" stroke-dashoffset="31.4"></circle>
+                  </svg>
+                  <div class="mg-kpi-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                  </div>
+                </div>
+              </div>
+              <div class="mg-kpi-footer">
+                <span id="incKpiPosSub">نقدی: ۲۷۴,۰۶۱ ت · حساب کاربری: ۲۰۸,۰۰۰ ت</span>
+              </div>
+            </article>
+          </section>
+        </div>
+
+        <!-- Section 2: Console Game Income Table & Interactive Neon Donut Chart -->
+        <section class="mg-card card-cyan" aria-label="تحلیل درآمد کنسول‌های بازی">
+          <div class="mg-card-header">
+            <div class="mg-card-header-right">
+              <div class="mg-card-header-icon icon-cyan">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="4"/><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/></svg>
+              </div>
+              <div>
+                <h2 class="mg-card-title">صورت‌حساب و تحلیل درآمد کنسول‌های بازی</h2>
+                <p class="mg-card-subtitle">تفکیک درآمد هر ایستگاه و کنسول بر پایه روش تسویه (کارتخوان، نقدی و حساب کاربری)</p>
+              </div>
+            </div>
+            <span class="mg-card-tag tag-cyan" id="gameSectionTotalTag">جمع کل بازی: ۱,۳۶۱,۵۴۹ تومان</span>
+          </div>
+
+          <div class="mg-income-split-grid">
+            <div class="mg-income-table-col">
               <div class="mg-table-responsive">
-                <table class="table mg-table" id="GameIncomeTable">
+                <table class="table mg-table mg-income-matrix-table" id="GameIncomeTable">
                   <thead>
-                    <tr>
-                      <th colspan="8" style="text-align: center;">صورت‌حساب درآمد کنسول‌های بازی</th>
-                    </tr>
                     <tr class="headings">
-                      <th class="column-title">نوع درآمد</th>
-                      <th class="column-title"><i class="demo-icon icon-ps4" style="font-size: 22px;" title="PS4"></i></th>
-                      <th class="column-title"><i class="demo-icon icon-ps50" style="font-size: 22px;" title="PS5"></i></th>
-                      <th class="column-title"><i class="demo-icon icon-computer" style="font-size: 22px;" title="PC"></i></th>
-                      <th class="column-title"><i class="demo-icon icon-xbox" style="font-size: 22px;" title="XBOX"></i></th>
-                      <th class="column-title"><i class="demo-icon icon-jewelry" style="font-size: 22px;" title="VIP"></i></th>
-                      <th class="column-title"><i class="demo-icon icon-foosball" style="font-size: 22px;" title="فوتبال دستی"></i></th>
-                      <th class="column-title">کل حساب</th>
+                      <th class="column-title">روش تسویه</th>
+                      <th class="column-title">
+                        <div class="mg-th-console"><i class="demo-icon icon-ps4"></i><span>پلی‌استیشن ۴</span></div>
+                      </th>
+                      <th class="column-title">
+                        <div class="mg-th-console"><i class="demo-icon icon-ps50"></i><span>پلی‌استیشن ۵</span></div>
+                      </th>
+                      <th class="column-title">
+                        <div class="mg-th-console"><i class="demo-icon icon-computer"></i><span>سیستم PC</span></div>
+                      </th>
+                      <th class="column-title">
+                        <div class="mg-th-console"><i class="demo-icon icon-xbox"></i><span>ایکس‌باکس</span></div>
+                      </th>
+                      <th class="column-title">
+                        <div class="mg-th-console"><i class="demo-icon icon-jewelry"></i><span>وی‌آر / VIP</span></div>
+                      </th>
+                      <th class="column-title">
+                        <div class="mg-th-console"><i class="demo-icon icon-foosball"></i><span>فوتبال دستی</span></div>
+                      </th>
+                      <th class="column-title">کل حساب کنسول</th>
                     </tr>
                   </thead>
                   <tbody></tbody>
                 </table>
               </div>
             </div>
-            <div class="col-md-4" style="display: flex; align-items: center; justify-content: center;">
-              <canvas id="gameChart" style="max-height: 240px;"></canvas>
+
+            <!-- Interactive Neon Donut Chart Panel for Consoles -->
+            <div class="mg-income-chart-panel">
+              <div class="mg-income-donut-header">
+                <span class="mg-chart-badge">نمودار حلقه‌ای سهم کنسول‌ها</span>
+                <span class="mg-income-donut-hint">هاور روی قطعات برای جزئیات</span>
+              </div>
+              <div class="mg-income-donut-body">
+                <div class="mg-circular-gauge mg-gauge-lg" role="img" aria-label="نمودار دونات درآمد کنسول‌ها">
+                  <svg class="mg-gauge-svg mg-gauge-svg-lg" viewBox="0 0 140 140" id="gameDonutSvg">
+                    <circle class="mg-gauge-track" cx="70" cy="70" r="54"></circle>
+                    <circle class="mg-gauge-inner-ring" cx="70" cy="70" r="41"></circle>
+                  </svg>
+                  <div class="mg-gauge-center">
+                    <span id="gameDonutCenterVal" class="mg-gauge-percent">۹۳٪</span>
+                    <span id="gameDonutCenterLabel" class="mg-gauge-caption">پلی‌استیشن ۴</span>
+                  </div>
+                </div>
+                <div class="mg-income-donut-legend" id="gameDonutLegend"></div>
+              </div>
             </div>
           </div>
+        </section>
 
-          <div class="row" style="margin-bottom: 24px;">
-            <div class="col-md-8">
+        <!-- Section 3: Buffet Income Table & Interactive Neon Donut Chart -->
+        <section class="mg-card card-amber" aria-label="تحلیل درآمد فروش بوفه">
+          <div class="mg-card-header">
+            <div class="mg-card-header-right">
+              <div class="mg-card-header-icon icon-amber">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+              </div>
+              <div>
+                <h2 class="mg-card-title">صورت‌حساب و تحلیل فروش بوفه و خوراکی</h2>
+                <p class="mg-card-subtitle">تفکیک درآمد دسته‌بندی‌های بوفه (نوشیدنی سرد، نوشیدنی گرم، اسنک، فست‌فود و سایر)</p>
+              </div>
+            </div>
+            <span class="mg-card-tag tag-amber" id="buffetSectionTotalTag">جمع کل بوفه: ۴۰۶,۱۷۰ تومان</span>
+          </div>
+
+          <div class="mg-income-split-grid">
+            <div class="mg-income-table-col">
               <div class="mg-table-responsive">
-                <table class="table mg-table" id="BuffetIncomeTable">
+                <table class="table mg-table mg-income-matrix-table" id="BuffetIncomeTable">
                   <thead>
-                    <tr>
-                      <th colspan="7" style="text-align: center;">صورت‌حساب فروش بوفه</th>
-                    </tr>
                     <tr class="headings">
-                      <th class="column-title">نوع درآمد</th>
+                      <th class="column-title">روش تسویه</th>
                       <th class="column-title">نوشیدنی سرد</th>
                       <th class="column-title">نوشیدنی گرم</th>
-                      <th class="column-title">اسنک</th>
-                      <th class="column-title">فست‌فود</th>
-                      <th class="column-title">سایر</th>
-                      <th class="column-title">کل حساب</th>
+                      <th class="column-title">اسنک و تنقلات</th>
+                      <th class="column-title">فست‌فود و ساندویچ</th>
+                      <th class="column-title">سایر اقلام</th>
+                      <th class="column-title">کل حساب بوفه</th>
                     </tr>
                   </thead>
                   <tbody></tbody>
                 </table>
               </div>
             </div>
-            <div class="col-md-4" style="display: flex; align-items: center; justify-content: center;">
-              <canvas id="buffetChart" style="max-height: 240px;"></canvas>
+
+            <!-- Interactive Neon Donut Chart Panel for Buffet -->
+            <div class="mg-income-chart-panel">
+              <div class="mg-income-donut-header">
+                <span class="mg-chart-badge badge-emerald">نمودار حلقه‌ای دسته‌بندی بوفه</span>
+                <span class="mg-income-donut-hint">هاور روی قطعات برای جزئیات</span>
+              </div>
+              <div class="mg-income-donut-body">
+                <div class="mg-circular-gauge mg-gauge-lg" role="img" aria-label="نمودار دونات فروش بوفه">
+                  <svg class="mg-gauge-svg mg-gauge-svg-lg" viewBox="0 0 140 140" id="buffetDonutSvg">
+                    <circle class="mg-gauge-track" cx="70" cy="70" r="54"></circle>
+                    <circle class="mg-gauge-inner-ring" cx="70" cy="70" r="41"></circle>
+                  </svg>
+                  <div class="mg-gauge-center">
+                    <span id="buffetDonutCenterVal" class="mg-gauge-percent">۵۸٪</span>
+                    <span id="buffetDonutCenterLabel" class="mg-gauge-caption">نوشیدنی سرد</span>
+                  </div>
+                </div>
+                <div class="mg-income-donut-legend" id="buffetDonutLegend"></div>
+              </div>
             </div>
+          </div>
+        </section>
+
+        <!-- Section 4: Total Income Aggregation by Payment Method (Table + Bar Comparison + Donut Chart) -->
+        <section class="mg-card card-emerald" aria-label="تجمیع کل درآمد بر اساس روش پرداخت">
+          <div class="mg-card-header">
+            <div class="mg-card-header-right">
+              <div class="mg-card-header-icon icon-emerald">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+              </div>
+              <div>
+                <h2 class="mg-card-title">تجمیع کل درآمد بر اساس روش پرداخت</h2>
+                <p class="mg-card-subtitle">مقایسه سهم دریافتی‌های نقدی، دستگاه کارتخوان (POS) و کسر از شارژ حساب کاربری مشتریان</p>
+              </div>
+            </div>
+            <span class="mg-card-tag tag-emerald" id="totalSectionIncomeTag">تجمیع کل: ۱,۷۶۷,۷۱۹ تومان</span>
           </div>
 
-          <div class="row">
-            <div class="col-md-8">
+          <div class="mg-income-split-grid">
+            <div class="mg-income-table-col">
               <div class="mg-table-responsive">
-                <table class="table mg-table" id="IncomeTable">
+                <table class="table mg-table mg-income-matrix-table" id="IncomeTable">
                   <thead>
-                    <tr>
-                      <th colspan="4" style="text-align: center;">تجمیع کل درآمد بر اساس روش پرداخت</th>
-                    </tr>
                     <tr class="headings">
-                      <th class="column-title">نقدی</th>
-                      <th class="column-title">کارتخوان</th>
-                      <th class="column-title">حساب کاربری</th>
-                      <th class="column-title">کل حساب</th>
+                      <th class="column-title">دریافتی نقدی</th>
+                      <th class="column-title">دستگاه کارتخوان (POS)</th>
+                      <th class="column-title">حساب کاربری مشتریان</th>
+                      <th class="column-title">مجموع کل درآمد</th>
                     </tr>
                   </thead>
                   <tbody></tbody>
                 </table>
               </div>
+
+              <!-- Animated Neon Horizontal Bar Comparison for Payment Methods -->
+              <div class="mg-payment-bars-wrap" id="paymentMethodBars"></div>
             </div>
-            <div class="col-md-4" style="display: flex; align-items: center; justify-content: center;">
-              <canvas id="totalChart" style="max-height: 240px;"></canvas>
+
+            <!-- Interactive Neon Donut Chart Panel for Payment Methods -->
+            <div class="mg-income-chart-panel">
+              <div class="mg-income-donut-header">
+                <span class="mg-chart-badge badge-purple">سهم روش‌های تسویه</span>
+                <span class="mg-income-donut-hint">تفکیک کل دریافتی</span>
+              </div>
+              <div class="mg-income-donut-body">
+                <div class="mg-circular-gauge mg-gauge-lg" role="img" aria-label="نمودار دونات روش‌های پرداخت">
+                  <svg class="mg-gauge-svg mg-gauge-svg-lg" viewBox="0 0 140 140" id="paymentDonutSvg">
+                    <circle class="mg-gauge-track" cx="70" cy="70" r="54"></circle>
+                    <circle class="mg-gauge-inner-ring" cx="70" cy="70" r="41"></circle>
+                  </svg>
+                  <div class="mg-gauge-center">
+                    <span id="paymentDonutCenterVal" class="mg-gauge-percent">۷۴٪</span>
+                    <span id="paymentDonutCenterLabel" class="mg-gauge-caption">کارتخوان</span>
+                  </div>
+                </div>
+                <div class="mg-income-donut-legend" id="paymentDonutLegend"></div>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
       </main>
+
+      <!-- Decorative Super Mario Pixel Stage -->
+      <div id="mgMarioStage" class="mg-mario-stage" aria-hidden="true"></div>
     </div>
   </div>
 
-  <script src="vendors/Chart.js/dist/Chart.min.js"></script>
-  <script src="vendors/bootstrap-rtl/dist/js/jquery.min.js"></script>
-  <script src="vendors/bootstrap-sass/assets/javascripts/bootstrap.min.js"></script>
-  <script src="assets/js/moment.min.js"></script>
-  <script src="assets/js/moment-jalaali.js"></script>
-  <script src="assets/js/daterangepicker-fa-ex.js"></script>
-  <script src="JS/income.js"></script>
-  <script src="JS/Calender.js"></script>
-  <script type="module" src="JS/dashboard-ui.js"></script>
+  <script type="module" src="JS/income.js?v=20261110-4"></script>
+  <script type="module" src="JS/dashboard-ui.js?v=20261110-4"></script>
 </body>
 </html>

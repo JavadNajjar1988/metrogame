@@ -357,3 +357,136 @@ export function stepMarioState(state, dtSeconds = 0.016) {
   };
 }
 
+/**
+ * Computes complete financial report tables, KPIs, and chart segments for income.html.
+ * Safely handles malformed Buffet fields and supports both 'all' and date-range filtering.
+ * @param {object} params
+ * @returns {object}
+ */
+export function computeIncomeReportMetrics({
+  creditPay = [],
+  cashPay = [],
+  customerPay = [],
+  startDate = null,
+  endDate = null,
+  filterMode = 'all',
+} = {}) {
+  const safeCredit = Array.isArray(creditPay) ? creditPay : [];
+  const safeCash = Array.isArray(cashPay) ? cashPay : [];
+  const safeCustomer = Array.isArray(customerPay) ? customerPay : [];
+
+  const startMs = startDate ? Date.parse(startDate) : NaN;
+  const endMs = endDate ? Date.parse(endDate) : NaN;
+  const useDateFilter =
+    filterMode === 'range' && Number.isFinite(startMs) && Number.isFinite(endMs);
+
+  function isEntryInRange(paydate) {
+    if (!useDateFilter) return true;
+    if (!paydate) return false;
+    const itemMs = Date.parse(paydate);
+    if (!Number.isFinite(itemMs)) return false;
+    return itemMs >= startMs && itemMs <= endMs;
+  }
+
+  const consoleKeys = ['ps4', 'ps50', 'computer', 'xbox', 'jewelry', 'foosball'];
+  const buffetKeys = ['cold_drink', 'hot_drink', 'snack', 'fastfood', 'other'];
+  const paymentTypes = ['کارتخوان', 'نقدی', 'حساب کاربری'];
+
+  const rowData = {};
+  const rowBuffetData = {};
+  for (const pt of paymentTypes) {
+    rowData[pt] = { ps4: 0, ps50: 0, computer: 0, xbox: 0, jewelry: 0, foosball: 0, totalItem: 0 };
+    rowBuffetData[pt] = {
+      cold_drink: 0,
+      hot_drink: 0,
+      snack: 0,
+      fastfood: 0,
+      other: 0,
+      totalBuffetItem: 0,
+    };
+  }
+
+  const totalColumn = {
+    ps4: 0,
+    ps50: 0,
+    computer: 0,
+    xbox: 0,
+    jewelry: 0,
+    foosball: 0,
+    totalItem: 0,
+  };
+  const totalBuffetColumn = {
+    cold_drink: 0,
+    hot_drink: 0,
+    snack: 0,
+    fastfood: 0,
+    other: 0,
+    totalBuffetItem: 0,
+  };
+
+  let totalIncome = 0;
+  let transactionsCount = 0;
+
+  function processDataset(list, paymentLabel) {
+    for (const item of list) {
+      if (!item || !isEntryInRange(item.paydate)) continue;
+      // Skip dummy corrupt records like paydate === "85" when filtering by range, or safely parse
+      if (String(item.paydate).trim() === '85') continue;
+
+      transactionsCount++;
+      const cType = consoleKeys.includes(item.consoleType) ? item.consoleType : 'ps4';
+      const gAmount = Math.max(0, parseInt(item.gameTotal, 10) || 0);
+
+      rowData[paymentLabel][cType] += gAmount;
+      rowData[paymentLabel].totalItem += gAmount;
+      totalColumn[cType] += gAmount;
+      totalColumn.totalItem += gAmount;
+      totalIncome += gAmount;
+
+      if (Array.isArray(item.Buffet)) {
+        for (const buffetItem of item.Buffet) {
+          if (Array.isArray(buffetItem) && buffetItem.length >= 2) {
+            const bType = buffetKeys.includes(buffetItem[0]) ? buffetItem[0] : 'other';
+            const bAmount = Math.max(0, parseInt(buffetItem[1], 10) || 0);
+            rowBuffetData[paymentLabel][bType] += bAmount;
+            rowBuffetData[paymentLabel].totalBuffetItem += bAmount;
+            totalBuffetColumn[bType] += bAmount;
+            totalBuffetColumn.totalBuffetItem += bAmount;
+            totalIncome += bAmount;
+          }
+        }
+      }
+    }
+  }
+
+  processDataset(safeCredit, 'کارتخوان');
+  processDataset(safeCash, 'نقدی');
+  processDataset(safeCustomer, 'حساب کاربری');
+
+  const totalCredit =
+    rowData['کارتخوان'].totalItem + rowBuffetData['کارتخوان'].totalBuffetItem;
+  const totalCash = rowData['نقدی'].totalItem + rowBuffetData['نقدی'].totalBuffetItem;
+  const totalAccount =
+    rowData['حساب کاربری'].totalItem + rowBuffetData['حساب کاربری'].totalBuffetItem;
+
+  const gameSharePercent =
+    totalIncome > 0 ? Math.round((totalColumn.totalItem / totalIncome) * 100) : 0;
+  const buffetSharePercent =
+    totalIncome > 0 ? Math.round((totalBuffetColumn.totalBuffetItem / totalIncome) * 100) : 0;
+
+  return {
+    rowData,
+    totalColumn,
+    rowBuffetData,
+    totalBuffetColumn,
+    totalCredit,
+    totalCash,
+    totalAccount,
+    totalIncome,
+    transactionsCount,
+    gameSharePercent,
+    buffetSharePercent,
+  };
+}
+
+

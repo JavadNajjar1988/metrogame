@@ -72,11 +72,34 @@ $(document).ready(function () {
     setTimeout(() => card.classList.remove('card-highlight'), 1800);
   }
 
+  const getBundleMap = () => {
+    if (!window.__mgBundlePromise) {
+      window.__mgBundlePromise = fetch('./bundle.json')
+        .then((r) => (r.ok ? r.json() : null))
+        .then((bundle) => {
+          if (bundle && typeof bundle === 'object') {
+            try {
+              sessionStorage.setItem('mg_bundle_v1', JSON.stringify(bundle));
+            } catch {
+              // ignore storage quota errors
+            }
+          }
+          return bundle;
+        })
+        .catch(() => null);
+    }
+    return window.__mgBundlePromise;
+  };
+
   const fetchSharedJson = (url, fallback) => {
+    const cleanKey = String(url).replace(/^\.\//, '');
     window.__mgJsonPromises = window.__mgJsonPromises || {};
     if (!window.__mgJsonPromises[url]) {
-      window.__mgJsonPromises[url] = fetch(url)
-        .then((r) => (r.ok ? r.json() : fallback))
+      window.__mgJsonPromises[url] = getBundleMap()
+        .then((bundle) => {
+          if (bundle && cleanKey in bundle) return bundle[cleanKey];
+          return fetch(url).then((r) => (r.ok ? r.json() : fallback));
+        })
         .catch(() => fallback);
     }
     return window.__mgJsonPromises[url];

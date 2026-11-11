@@ -14,83 +14,113 @@
   <link href="assets/bootstrap/bootstrap.min.css" rel="stylesheet">
   <link href="assets/bootstrap/bootstrap-rtl.css" rel="stylesheet">
   <link href="fontello/css/my-icon.css" rel="stylesheet">
-  <link href="assets/css/gaming-dashboard.css" rel="stylesheet">
+  <link href="assets/css/gaming-dashboard.css?v=20261110-5" rel="stylesheet">
 </head>
 <body>
   <audio id="alarmSound" src="src/alarm.mp3" preload="none"></audio>
   <div id="sidebarBackdrop" class="mg-sidebar-backdrop"></div>
 
   <div class="mg-app-shell">
-    <!-- 2. Sidebar Navigation -->
+    <!-- 2. Sidebar Navigation (Ignara-Inspired Collapsible Rail, Sliding Pill & Daily Ring) -->
     <aside id="mgSidebar" class="mg-sidebar" aria-label="منوی اصلی مدیریت">
       <div class="mg-brand">
-        <img src="src/assets/images/metrogame_emblem_1794207267121.jpg" alt="لوگوی گیم‌نت متروگیم" class="mg-brand-logo">
-        <div class="mg-brand-text">
-          <h2 class="mg-brand-title">متروگیم پنل</h2>
-          <span class="mg-brand-subtitle">مرکز فرماندهی گیم‌نت</span>
-        </div>
+        <a href="#overview" data-nav-view="overview" class="mg-brand-link" title="متروگیم پنل — پیشخوان">
+          <img src="src/assets/images/metrogame_emblem_1794207267121.jpg" alt="لوگوی گیم‌نت متروگیم" class="mg-brand-logo">
+          <div class="mg-brand-text">
+            <h2 class="mg-brand-title">متروگیم پنل</h2>
+            <span class="mg-brand-subtitle">مرکز فرماندهی گیم‌نت</span>
+          </div>
+        </a>
+        <button type="button" id="mgSidebarFoldBtn" class="mg-sidebar-fold-btn" aria-label="جمع کردن منوی کناری" title="جمع / باز کردن منو [">
+          <span class="mg-hamburger-box" aria-hidden="true">
+            <span class="mg-hm-bar bar-1"></span>
+            <span class="mg-hm-bar bar-2"></span>
+            <span class="mg-hm-bar bar-3"></span>
+          </span>
+        </button>
       </div>
 
-      <div class="mg-sidebar-section-label">بخش‌های مدیریتی</div>
-      <ul class="mg-nav-list">
-        <li class="mg-nav-item active">
-          <a href="index.html">
+      <div class="mg-sidebar-new-wrap">
+        <button type="button" id="mgSidebarQuickNew" class="mg-sidebar-new-btn" data-rail-tip="ثبت سریع میز جدید (N)">
+          <span class="mg-sidebar-new-ico">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </span>
+          <span class="mg-sidebar-new-label">ثبت سریع میز جدید</span>
+          <kbd class="mg-kbd">N</kbd>
+        </button>
+      </div>
+
+      <ul class="mg-nav-list" id="mgNavList">
+        <div id="mgNavSlidingPill" class="mg-nav-sliding-pill" aria-hidden="true"></div>
+
+        <li class="mg-nav-group-header" role="presentation">
+          <span>عملیات سالن</span>
+        </li>
+        <li id="navItemOverview" class="mg-nav-item active">
+          <a href="#overview" data-nav-view="overview" data-rail-tip="خانه (پیشخوان)">
             <span class="mg-nav-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             </span>
-            <span>خانه (پیشخوان)</span>
+            <span class="mg-nav-label">خانه (پیشخوان)</span>
           </a>
         </li>
-        <li class="mg-nav-item">
-          <a href="#tables-section">
+        <li id="navItemTables" class="mg-nav-item">
+          <a href="#tables-section" data-nav-view="tables" data-rail-tip="مدیریت میزها">
             <span class="mg-nav-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="12" rx="2"/><line x1="2" y1="20" x2="22" y2="20"/><line x1="12" y1="16" x2="12" y2="20"/></svg>
+              <i class="mg-nav-dot"></i>
             </span>
-            <span>میزها</span>
+            <span class="mg-nav-label">میزها</span>
             <span id="navTablesBadge" class="mg-nav-badge badge-Highlight">۰</span>
           </a>
         </li>
         <li class="mg-nav-item">
-          <a href="console.html">
+          <a href="console.html" data-rail-tip="مدیریت کنسول‌ها">
             <span class="mg-nav-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><rect x="2" y="6" width="20" height="12" rx="4"/></svg>
+              <i class="mg-nav-dot"></i>
             </span>
-            <span>مدیریت کنسول‌ها</span>
+            <span class="mg-nav-label">مدیریت کنسول‌ها</span>
             <span id="navConsolesBadge" class="mg-nav-badge">۰</span>
           </a>
         </li>
         <li class="mg-nav-item">
-          <a href="buffet.html">
+          <a href="buffet.html" data-rail-tip="مدیریت بوفه">
             <span class="mg-nav-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
             </span>
-            <span>مدیریت بوفه</span>
+            <span class="mg-nav-label">مدیریت بوفه</span>
           </a>
         </li>
+
+        <li class="mg-nav-group-header" role="presentation">
+          <span>امور مالی و باشگاه</span>
+        </li>
         <li class="mg-nav-item">
-          <a href="acounts.html">
+          <a href="acounts.html" data-rail-tip="باشگاه مشتریان">
             <span class="mg-nav-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <i class="mg-nav-dot"></i>
             </span>
-            <span>مشتریان</span>
+            <span class="mg-nav-label">مشتریان</span>
             <span id="navCustomersBadge" class="mg-nav-badge">۰</span>
           </a>
         </li>
         <li class="mg-nav-item">
-          <a href="Debtors.html">
+          <a href="Debtors.html" data-rail-tip="حساب بدهکاران">
             <span class="mg-nav-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
             </span>
-            <span>بدهکاران</span>
+            <span class="mg-nav-label">بدهکاران</span>
             <span id="navDebtorsBadge" class="mg-nav-badge">۰</span>
           </a>
         </li>
         <li class="mg-nav-item">
-          <a href="income.html">
+          <a href="income.html" data-rail-tip="گزارش درآمد">
             <span class="mg-nav-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
             </span>
-            <span>گزارش درآمد</span>
+            <span class="mg-nav-label">گزارش درآمد</span>
           </a>
         </li>
       </ul>
@@ -98,11 +128,11 @@
       <div class="mg-sidebar-footer">
         <div class="mg-sidebar-status-box">
           <span><span class="mg-status-dot"></span>سرور محلی متروگیم</span>
-          <strong style="color: #34D399;">متصل</strong>
+          <strong style="color: #10B981;">متصل</strong>
         </div>
-        <a href="login.html" class="mg-logout-btn">
+        <a href="login.html" class="mg-logout-btn" data-rail-tip="خروج از پنل">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-          <span>خروج از پنل</span>
+          <span class="mg-logout-label">خروج از پنل</span>
         </a>
       </div>
     </aside>
@@ -116,27 +146,23 @@
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
           </button>
           <div class="mg-page-heading">
-            <h1>
-              <span>مدیریت میزها و ایستگاه‌ها</span>
-              <span class="mg-card-tag">شیفت فعال</span>
-            </h1>
-            <p>کنترل لحظه‌ای سشن‌های PS5، PS4، سیستم‌های PC، میزهای بیلیارد و سفارش‌های بوفه</p>
+            <h1 id="mgTopbarTitle">پیشخوان</h1>
           </div>
         </div>
 
         <div class="mg-topbar-center">
-          <div class="mg-search-box">
+          <div class="mg-search-box" id="mgTopbarSearchBox">
             <span class="mg-search-icon">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             </span>
-            <input type="text" id="dashboardSearch" placeholder="جستجوی سریع شماره میز، نوع کنسول (PS5، PS4، بیلیارد) یا حالت بازی...">
+            <input type="text" id="dashboardSearch" placeholder="جستجوی میز یا کنسول...">
           </div>
         </div>
 
         <div class="mg-topbar-left">
           <div class="mg-live-clock" title="زمان سیستم">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#22D3EE" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <span id="mgLiveClockText">در حال بارگذاری ساعت...</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span id="mgLiveClockText">ساعت سیستم</span>
           </div>
 
           <div class="mg-notification-wrap">
@@ -146,11 +172,10 @@
             </button>
             <div id="mgNotifDropdown" class="mg-notif-dropdown">
               <div class="mg-notif-header">
-                <span>وضعیت سشن‌ها و اعلان‌ها</span>
-                <span style="color: #22D3EE; font-size: 11px;">زنده</span>
+                <span>اعلان‌ها</span>
               </div>
               <ul id="mgNotifList" class="mg-notif-list">
-                <li class="mg-notif-item">در حال بررسی وضعیت میزها...</li>
+                <li class="mg-notif-item">در حال بررسی...</li>
               </ul>
             </div>
           </div>
@@ -159,49 +184,19 @@
             <img src="src/assets/images/admin_avatar_1794207268017.jpg" alt="مدیر گیم‌نت" class="mg-profile-avatar">
             <div class="mg-profile-info">
               <span class="mg-profile-name">مدیر شیفت</span>
-              <span class="mg-profile-role">دسترسی کامل ادمین</span>
+              <span class="mg-profile-role">ادمین</span>
             </div>
           </div>
         </div>
       </header>
 
-      <!-- Subtle Summary Status Strip -->
-      <div class="mg-status-strip">
-        <div class="mg-status-strip-items">
-          <span class="mg-status-pill">
-            <span class="mg-status-dot"></span>
-            میزهای فعال: <strong id="statusStripActiveTables">۰</strong>
-          </span>
-          <span class="mg-status-divider"></span>
-          <span class="mg-status-pill">
-            ایستگاه‌های آماده پذیرش: <strong id="statusStripFreeStations">۰</strong>
-          </span>
-          <span class="mg-status-divider"></span>
-          <span class="mg-status-pill">
-            ضریب اشغال سالن: <strong id="statusStripOccupancy">۰٪</strong>
-          </span>
-          <span class="mg-status-divider"></span>
-          <span class="mg-status-pill">
-            سفارش‌های باز بوفه: <strong id="statusStripOpenBuffet">۰ تومان</strong>
-          </span>
-        </div>
-        <div>
-          <a href="invoice.html" style="color: #67E8F9; font-weight: 700;">مشاهده صورت‌حساب و تسویه &larr;</a>
-        </div>
-      </div>
-
       <!-- 3. Main Management Content -->
       <main class="mg-content">
-        <!-- Section Group 1: 8. Dashboard Summary Widgets (5 KPI Cards) -->
-        <div class="mg-section-group">
-          <div class="mg-section-bar">
-            <div class="mg-section-bar-right">
-              <span class="mg-section-accent"></span>
-              <h2 class="mg-section-heading">شاخص‌های کلیدی و وضعیت لحظه‌ای سالن</h2>
-              <span class="mg-section-caption">— بروزرسانی خودکار از داده‌های گیم‌نت</span>
-            </div>
-          </div>
-
+        <!-- ==================================================================
+             VIEW 1: MINIMAL OVERVIEW DASHBOARD (پیشخوان)
+             ================================================================== -->
+        <div id="mgOverviewView" class="mg-view-pane is-active-view" data-view-pane="overview">
+          <div class="mg-section-group">
           <section aria-label="خلاصه وضعیت گیم‌نت" class="mg-kpi-grid">
             <!-- KPI 1: Number of active tables -->
             <article class="mg-kpi-card mg-stagger-item" style="--stagger-idx: 1;">
@@ -278,36 +273,11 @@
               </div>
             </article>
 
-            <!-- KPI 4: Current active sessions -->
-            <article class="mg-kpi-card kpi-purple mg-stagger-item" style="--stagger-idx: 4;">
+            <!-- KPI 4: Buffet sales summary -->
+            <article class="mg-kpi-card kpi-amber mg-stagger-item" style="--stagger-idx: 4;">
               <div class="mg-kpi-top">
                 <div>
-                  <p class="mg-kpi-label">سشن‌های در حال اجرا</p>
-                  <h3 class="mg-kpi-value">
-                    <span id="kpiActiveSessions" data-countup="true">۰</span>
-                    <span class="mg-kpi-unit">تایمر روشن</span>
-                  </h3>
-                </div>
-                <div class="mg-kpi-ring-wrap" title="نسبت تایمرهای روشن به میزهای فعال">
-                  <svg class="mg-kpi-ring-svg" viewBox="0 0 48 48" aria-hidden="true">
-                    <circle class="mg-kpi-ring-track" cx="24" cy="24" r="20"></circle>
-                    <circle id="kpiRingSessions" class="mg-kpi-ring-bar ring-purple" cx="24" cy="24" r="20" stroke-dasharray="125.66" stroke-dashoffset="125.66"></circle>
-                  </svg>
-                  <div class="mg-kpi-icon">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                  </div>
-                </div>
-              </div>
-              <div class="mg-kpi-footer">
-                <span id="kpiSessionsSub">آماده شروع زمان‌سنج</span>
-              </div>
-            </article>
-
-            <!-- KPI 5: Buffet sales summary -->
-            <article class="mg-kpi-card kpi-amber mg-stagger-item" style="--stagger-idx: 5;">
-              <div class="mg-kpi-top">
-                <div>
-                  <p class="mg-kpi-label">خلاصه فروش بوفه</p>
+                  <p class="mg-kpi-label">فروش بوفه</p>
                   <h3 class="mg-kpi-value">
                     <span id="kpiBuffetRevenue" data-countup="true">۰</span>
                     <span class="mg-kpi-unit">تومان</span>
@@ -330,39 +300,44 @@
           </section>
 
           <!-- Animated Circular Progress & Interactive Donut Charts Strip -->
-          <section aria-label="نمودارهای حلقه‌ای و تحلیل زنده" class="mg-charts-grid mg-reveal">
+          <section aria-label="نمودارهای حلقه‌ای و تحلیل زنده" class="mg-charts-grid">
             <!-- Chart 1: Circular Progress Chart (Occupancy & Station Utilization) -->
             <article class="mg-chart-card chart-cyan" id="chartOccupancyCard">
               <div class="mg-chart-info">
-                <div class="mg-chart-badge">ظرفیت زنده سالن</div>
-                <h3 class="mg-chart-title">ضریب اشغال ایستگاه‌ها</h3>
+                <h3 class="mg-chart-title">ظرفیت ایستگاه‌ها</h3>
                 <p class="mg-chart-desc" id="chartOccupancyDesc">۲ ایستگاه مشغول از ۱۲ ایستگاه فعال</p>
                 <div class="mg-chart-legend">
                   <div class="mg-legend-item" data-highlight-ring="occupied">
-                    <span class="mg-legend-dot dot-cyan"></span>
-                    <span class="mg-legend-label">ایستگاه مشغول:</span>
-                    <strong id="legendOccupiedCount">۲ میز</strong>
+                    <div class="mg-legend-row-main">
+                      <span class="mg-legend-dot dot-cyan"></span>
+                      <span class="mg-legend-label">مشغول</span>
+                      <strong id="legendOccupiedCount">۲ میز (۱۷٪)</strong>
+                    </div>
                   </div>
                   <div class="mg-legend-item" data-highlight-ring="free">
-                    <span class="mg-legend-dot dot-slate"></span>
-                    <span class="mg-legend-label">آماده پذیرش:</span>
-                    <strong id="legendFreeCount">۱۰ میز</strong>
+                    <div class="mg-legend-row-main">
+                      <span class="mg-legend-dot dot-indigo"></span>
+                      <span class="mg-legend-label">آزاد</span>
+                      <strong id="legendFreeCount">۱۰ میز (۸۳٪)</strong>
+                    </div>
                   </div>
                 </div>
               </div>
               <div class="mg-circular-gauge" role="img" aria-label="نمودار حلقه‌ای ضریب اشغال سالن">
-                <svg class="mg-gauge-svg" viewBox="0 0 120 120">
+                <svg class="mg-gauge-svg" viewBox="0 0 132 132" id="occupancyDonutSvg">
                   <defs>
                     <linearGradient id="gradCyanIndigo" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#22D3EE" />
-                      <stop offset="100%" stop-color="#6366F1" />
+                      <stop offset="0%" stop-color="#8B5CF6" />
+                      <stop offset="100%" stop-color="#6D28D9" />
                     </linearGradient>
                   </defs>
-                  <circle class="mg-gauge-track" cx="60" cy="60" r="46"></circle>
-                  <circle id="gaugeOccupancyArc" class="mg-gauge-progress stroke-cyan" cx="60" cy="60" r="46" stroke="url(#gradCyanIndigo)" stroke-dasharray="289.03" stroke-dashoffset="289.03"></circle>
+                  <circle class="mg-gauge-track" cx="66" cy="66" r="50"></circle>
+                  <circle class="mg-gauge-inner-ring" cx="66" cy="66" r="37"></circle>
+                  <circle id="gaugeAvailableArc" class="mg-donut-segment seg-indigo" cx="66" cy="66" r="50" stroke="rgba(156, 163, 175, 0.22)" stroke-dasharray="260.75 53.41" stroke-dashoffset="-53.41"></circle>
+                  <circle id="gaugeOccupancyArc" class="mg-gauge-progress stroke-cyan" cx="66" cy="66" r="50" stroke="url(#gradCyanIndigo)" stroke-dasharray="314.16" stroke-dashoffset="260.75"></circle>
                 </svg>
                 <div class="mg-gauge-center">
-                  <span id="gaugeOccupancyPercent" class="mg-gauge-percent">۰٪</span>
+                  <span id="gaugeOccupancyPercent" class="mg-gauge-percent">۱۷٪</span>
                   <span id="gaugeOccupancySub" class="mg-gauge-caption">اشغال سالن</span>
                 </div>
               </div>
@@ -371,30 +346,34 @@
             <!-- Chart 2: Interactive Multi-Segment Donut Chart (Revenue Share: Game vs Buffet) -->
             <article class="mg-chart-card chart-emerald" id="chartRevenueDonutCard">
               <div class="mg-chart-info">
-                <div class="mg-chart-badge badge-emerald">تفکیک منابع درآمد</div>
-                <h3 class="mg-chart-title">سهم درآمد کنسول و بوفه</h3>
+                <h3 class="mg-chart-title">تفکیک درآمد</h3>
                 <p class="mg-chart-desc" id="chartRevenueDesc">مجموع کل: ۱,۸۵۷,۷۱۹ تومان</p>
                 <div class="mg-chart-legend" id="revenueDonutLegend">
                   <div class="mg-legend-item" data-donut-target="revenue" data-segment-index="0">
-                    <span class="mg-legend-dot dot-emerald"></span>
-                    <span class="mg-legend-label">سشن‌های بازی:</span>
-                    <strong id="legendGameRev">۰ تومان (۰٪)</strong>
+                    <div class="mg-legend-row-main">
+                      <span class="mg-legend-dot dot-emerald"></span>
+                      <span class="mg-legend-label">بازی</span>
+                      <strong id="legendGameRev">۱,۴۵۱,۵۴۹ ت (۷۸٪)</strong>
+                    </div>
                   </div>
                   <div class="mg-legend-item" data-donut-target="revenue" data-segment-index="1">
-                    <span class="mg-legend-dot dot-amber"></span>
-                    <span class="mg-legend-label">فروش بوفه:</span>
-                    <strong id="legendBuffetRev">۰ تومان (۰٪)</strong>
+                    <div class="mg-legend-row-main">
+                      <span class="mg-legend-dot dot-amber"></span>
+                      <span class="mg-legend-label">بوفه</span>
+                      <strong id="legendBuffetRev">۴۰۶,۱۷۰ ت (۲۲٪)</strong>
+                    </div>
                   </div>
                 </div>
               </div>
               <div class="mg-circular-gauge" role="img" aria-label="نمودار دونات سهم درآمد بازی و بوفه">
-                <svg class="mg-gauge-svg" viewBox="0 0 120 120" id="revenueDonutSvg">
-                  <circle class="mg-gauge-track" cx="60" cy="60" r="46"></circle>
-                  <circle id="donutRevSeg0" class="mg-donut-segment seg-emerald" data-segment-index="0" cx="60" cy="60" r="46" stroke="#10B981" stroke-dasharray="0 289.03" stroke-dashoffset="0"></circle>
-                  <circle id="donutRevSeg1" class="mg-donut-segment seg-amber" data-segment-index="1" cx="60" cy="60" r="46" stroke="#F59E0B" stroke-dasharray="0 289.03" stroke-dashoffset="0"></circle>
+                <svg class="mg-gauge-svg" viewBox="0 0 132 132" id="revenueDonutSvg">
+                  <circle class="mg-gauge-track" cx="66" cy="66" r="50"></circle>
+                  <circle class="mg-gauge-inner-ring" cx="66" cy="66" r="37"></circle>
+                  <circle id="donutRevSeg0" class="mg-donut-segment seg-emerald" data-segment-index="0" cx="66" cy="66" r="50" stroke="#10B981" stroke-dasharray="245.04 69.12" stroke-dashoffset="0"></circle>
+                  <circle id="donutRevSeg1" class="mg-donut-segment seg-amber" data-segment-index="1" cx="66" cy="66" r="50" stroke="#F59E0B" stroke-dasharray="69.12 245.04" stroke-dashoffset="-245.04"></circle>
                 </svg>
                 <div class="mg-gauge-center">
-                  <span id="donutRevCenterValue" class="mg-gauge-percent">۰٪</span>
+                  <span id="donutRevCenterValue" class="mg-gauge-percent">۷۸٪</span>
                   <span id="donutRevCenterLabel" class="mg-gauge-caption">سهم بازی</span>
                 </div>
               </div>
@@ -403,46 +382,104 @@
             <!-- Chart 3: Interactive Multi-Segment Donut Chart (Active Timers & Payment Mode Mix) -->
             <article class="mg-chart-card chart-purple" id="chartSessionsDonutCard">
               <div class="mg-chart-info">
-                <div class="mg-chart-badge badge-purple">مانیتورینگ زمان‌سنج‌ها</div>
-                <h3 class="mg-chart-title">وضعیت سشن‌ها و تایمرها</h3>
-                <p class="mg-chart-desc" id="chartSessionsDesc">نسبت تایمرهای روشن و آماده استارت</p>
+                <h3 class="mg-chart-title">وضعیت تایمرها</h3>
+                <p class="mg-chart-desc" id="chartSessionsDesc">۱ تایمر در حال اجرا از ۲ میز ثبت‌شده</p>
                 <div class="mg-chart-legend" id="sessionsDonutLegend">
                   <div class="mg-legend-item" data-donut-target="sessions" data-segment-index="0">
-                    <span class="mg-legend-dot dot-purple"></span>
-                    <span class="mg-legend-label">تایمر در حال اجرا:</span>
-                    <strong id="legendRunningSessions">۰ سشن</strong>
+                    <div class="mg-legend-row-main">
+                      <span class="mg-legend-dot dot-purple"></span>
+                      <span class="mg-legend-label">در حال اجرا</span>
+                      <strong id="legendRunningSessions">۱ سشن (۵۰٪)</strong>
+                    </div>
                   </div>
                   <div class="mg-legend-item" data-donut-target="sessions" data-segment-index="1">
-                    <span class="mg-legend-dot dot-cyan"></span>
-                    <span class="mg-legend-label">آماده استارت:</span>
-                    <strong id="legendWaitingSessions">۰ سشن</strong>
+                    <div class="mg-legend-row-main">
+                      <span class="mg-legend-dot dot-indigo"></span>
+                      <span class="mg-legend-label">آماده استارت</span>
+                      <strong id="legendWaitingSessions">۱ سشن (۵۰٪)</strong>
+                    </div>
                   </div>
                 </div>
               </div>
               <div class="mg-circular-gauge" role="img" aria-label="نمودار دونات وضعیت تایمرهای سشن">
-                <svg class="mg-gauge-svg" viewBox="0 0 120 120" id="sessionsDonutSvg">
-                  <circle class="mg-gauge-track" cx="60" cy="60" r="46"></circle>
-                  <circle id="donutSessSeg0" class="mg-donut-segment seg-purple" data-segment-index="0" cx="60" cy="60" r="46" stroke="#A855F7" stroke-dasharray="0 289.03" stroke-dashoffset="0"></circle>
-                  <circle id="donutSessSeg1" class="mg-donut-segment seg-cyan" data-segment-index="1" cx="60" cy="60" r="46" stroke="#22D3EE" stroke-dasharray="0 289.03" stroke-dashoffset="0"></circle>
+                <svg class="mg-gauge-svg" viewBox="0 0 132 132" id="sessionsDonutSvg">
+                  <circle class="mg-gauge-track" cx="66" cy="66" r="50"></circle>
+                  <circle class="mg-gauge-inner-ring" cx="66" cy="66" r="37"></circle>
+                  <circle id="donutSessSeg0" class="mg-donut-segment seg-purple" data-segment-index="0" cx="66" cy="66" r="50" stroke="#8B5CF6" stroke-dasharray="157.08 157.08" stroke-dashoffset="0"></circle>
+                  <circle id="donutSessSeg1" class="mg-donut-segment seg-cyan" data-segment-index="1" cx="66" cy="66" r="50" stroke="#4B5563" stroke-dasharray="157.08 157.08" stroke-dashoffset="-157.08"></circle>
                 </svg>
                 <div class="mg-gauge-center">
-                  <span id="donutSessCenterValue" class="mg-gauge-percent">۰٪</span>
+                  <span id="donutSessCenterValue" class="mg-gauge-percent">۵۰٪</span>
                   <span id="donutSessCenterLabel" class="mg-gauge-caption">تایمر فعال</span>
                 </div>
               </div>
             </article>
           </section>
+
+          <!-- Active Stations Live Snapshot Card -->
+          <section class="mg-card mg-overview-stations-card" aria-label="میزهای فعال در حال حاضر">
+            <div class="mg-card-header">
+              <div>
+                <h3 class="mg-card-title">میزهای فعال</h3>
+              </div>
+              <button type="button" class="btn mg-btn mg-btn-primary mg-btn-sm" data-switch-view="tables">
+                <span>مدیریت میزها &larr;</span>
+              </button>
+            </div>
+            <div id="overviewMiniTablesList" class="mg-mini-stations-grid">
+              <!-- Populated dynamically by dashboard-ui.js -->
+            </div>
+          </section>
+          </div>
         </div>
 
-        <!-- Section Group 2: Station Control, Charging & Buffet Operations -->
-        <div class="mg-section-group">
-          <div class="mg-section-bar">
-            <div class="mg-section-bar-right">
-              <span class="mg-section-accent"></span>
-              <h2 class="mg-section-heading">پنل فرماندهی، شارژ و سفارشات بوفه</h2>
-              <span class="mg-section-caption">— ثبت سشن جدید، تمدید زمان بازی و افزودن خوراکی به فاکتور میز</span>
+        <!-- ==================================================================
+             VIEW 2: DEDICATED TABLE MANAGEMENT WORKSPACE (بخش میزها)
+             ================================================================== -->
+        <div id="mgTablesView" class="mg-view-pane" data-view-pane="tables" hidden>
+          <!-- Dedicated Table Management Summary Banner -->
+          <div class="mg-tables-header-banner">
+            <div class="mg-tables-banner-right">
+              <div class="mg-header-icon-box icon-cyan">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="12" rx="2"/><line x1="2" y1="20" x2="22" y2="20"/><line x1="12" y1="16" x2="12" y2="20"/></svg>
+              </div>
+              <div>
+                <h2 class="mg-tables-banner-title">مرکز کنترل میزها، تایمرها و سفارشات ایستگاه‌ها</h2>
+                <p class="mg-tables-banner-sub">ثبت میز جدید، تمدید شارژ سشن‌ها، ثبت سفارش بوفه برای میزها و صدور فاکتور پایان بازی</p>
+              </div>
+            </div>
+            <div class="mg-tables-banner-stats">
+              <div class="mg-tables-mini-stat stat-cyan">
+                <span>میزهای فعال</span>
+                <strong id="tablesBannerActive">۰ میز</strong>
+              </div>
+              <div class="mg-tables-mini-stat stat-emerald">
+                <span>پس‌کرایه</span>
+                <strong id="tablesBannerPostpaid">۰ میز</strong>
+              </div>
+              <div class="mg-tables-mini-stat stat-amber">
+                <span>پیش‌پرداخت</span>
+                <strong id="tablesBannerPrepaid">۰ میز</strong>
+              </div>
+              <div class="mg-tables-mini-stat stat-purple">
+                <span>تایمر روشن</span>
+                <strong id="tablesBannerRunning">۰ سشن</strong>
+              </div>
+              <button type="button" class="btn mg-btn mg-btn-sm" data-switch-view="overview" style="background: rgba(99,102,241,0.18); border: 1px solid rgba(129,140,248,0.45); color: #E0E7FF;">
+                <span>&rarr; بازگشت به پیشخوان</span>
+              </button>
             </div>
           </div>
+
+          <!-- Section Group 2: Station Control, Charging & Buffet Operations -->
+          <div class="mg-section-group">
+            <div class="mg-section-bar">
+              <div class="mg-section-bar-right">
+                <span class="mg-section-accent"></span>
+                <h2 class="mg-section-heading">پنل فرماندهی، شارژ و سفارشات بوفه میزها</h2>
+                <span class="mg-section-caption">— ثبت سشن جدید، تمدید زمان بازی و افزودن خوراکی به فاکتور میز</span>
+              </div>
+            </div>
 
           <div class="mg-operations-grid">
             <!-- 4. Table Registration / Control Form -->
@@ -681,6 +718,7 @@
               </div>
             </section>
           </div>
+          </div>
         </div>
       </main>
 
@@ -698,10 +736,9 @@
   </div>
 
   <!-- Scripts -->
-  <script src="vendors/bootstrap-rtl/dist/js/jquery.min.js"></script>
-  <script src="vendors/bootstrap-sass/assets/javascripts/bootstrap.min.js"></script>
-  <script src="JS/7878.js"></script>
-  <script src="JS/showErrorAlert.js"></script>
-  <script type="module" src="JS/dashboard-ui.js"></script>
+  <script src="vendors/Flot/jquery.js"></script>
+  <script src="JS/7878.js?v=20261110-3"></script>
+  <script src="JS/showErrorAlert.js?v=20261109-4"></script>
+  <script type="module" src="JS/dashboard-ui.js?v=20261110-5"></script>
 </body>
 </html>

@@ -1,391 +1,551 @@
+import {
+  toPersianDigits,
+  formatToman,
+  computeCircularProgressGeometry,
+  computeDonutSegmentsGeometry,
+  interpolateCountUp,
+  computeIncomeReportMetrics,
+} from './dashboard-metrics.mjs?v=20261109-3';
 
-const options = {
-  day: "numeric",
-  month: "numeric",
-  year: "numeric"
-};
+const CONSOLE_META = [
+  { key: 'ps4', label: 'پلی‌استیشن ۴', color: '#8B5CF6', dotClass: 'dot-purple' },
+  { key: 'ps50', label: 'پلی‌استیشن ۵', color: '#A78BFA', dotClass: 'dot-indigo' },
+  { key: 'xbox', label: 'ایکس‌باکس', color: '#6D28D9', dotClass: 'dot-purple' },
+  { key: 'computer', label: 'سیستم PC', color: '#10B981', dotClass: 'dot-emerald' },
+  { key: 'jewelry', label: 'وی‌آر / VIP', color: '#F59E0B', dotClass: 'dot-amber' },
+  { key: 'foosball', label: 'فوتبال دستی', color: '#64748B', dotClass: 'dot-indigo' },
+];
 
-fetch('./Calender.json')
-  .then(response => response.json())
-  .then(jsonData => {
-    const today = new Date();
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayFormatted = yesterday.toLocaleString('fa-IR', options);
-    const start = new Date(jsonData[0].start).toLocaleString('fa-IR', options);
-    const end = new Date(jsonData[0].end).toLocaleString('fa-IR', options);
-    var tableHeader = document.getElementById('tableTitle');
-    
-      if (start == today.toLocaleString('fa-IR', options)) {
-        tableHeader.innerHTML = `
-          <h2>میزان درآمد :</h2>
-          <h2>
-            امروز 
-          </h2>
-        `;
-      } else if (start == yesterdayFormatted) {
-        tableHeader.innerHTML = `
-          <h2>میزان درآمد :</h2>
-          <h2>
-            دیروز
-          </h2>
-        `;
-      } else {
-        tableHeader.innerHTML = `
-          <h2>میزان درآمد از</h2>
-          <h2>
-            ${start} تا ${end}
-          </h2>
-        `;
-      }
-   
+const BUFFET_META = [
+  { key: 'cold_drink', label: 'نوشیدنی سرد', color: '#8B5CF6', dotClass: 'dot-purple' },
+  { key: 'fastfood', label: 'فست‌فود و ساندویچ', color: '#F59E0B', dotClass: 'dot-amber' },
+  { key: 'snack', label: 'اسنک و تنقلات', color: '#A78BFA', dotClass: 'dot-indigo' },
+  { key: 'hot_drink', label: 'نوشیدنی گرم', color: '#10B981', dotClass: 'dot-emerald' },
+  { key: 'other', label: 'سایر اقلام', color: '#64748B', dotClass: 'dot-indigo' },
+];
 
+const PAYMENT_META = [
+  { key: 'credit', label: 'کارتخوان (POS)', color: '#8B5CF6', dotClass: 'dot-purple' },
+  { key: 'cash', label: 'دریافتی نقدی', color: '#10B981', dotClass: 'dot-emerald' },
+  { key: 'account', label: 'حساب کاربری', color: '#64748B', dotClass: 'dot-indigo' },
+];
 
-  const start_Date = new Date(jsonData[0].start); 
-  const end_Date = new Date(jsonData[0].end);
-console.log(end_Date);
-    function isInDateRange(date) {
-      const itemDate = new Date(date);
-      const startDate = start_Date;
-      const endDate = end_Date;
+function setText(id, text) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = text;
+}
 
-      return itemDate >= startDate && itemDate <= endDate;
+function animateNumber(id, targetValue, options = {}) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const target = Math.max(0, Math.round(Number(targetValue) || 0));
+  const duration = options.duration ?? 950;
+  const suffix = options.suffix ?? '';
+  const useCommas = options.useCommas ?? true;
+
+  const prev = Number(el.getAttribute('data-val') || 0);
+  el.setAttribute('data-val', String(target));
+
+  const format = (v) => `${useCommas ? formatToman(v) : toPersianDigits(v)}${suffix}`;
+  if (prev === target) {
+    el.textContent = format(target);
+    return;
+  }
+
+  const start = performance.now();
+  function step(now) {
+    const t = Math.min(1, (now - start) / duration);
+    const cur = interpolateCountUp(prev, target, t);
+    el.textContent = format(cur);
+    if (t < 1) {
+      requestAnimationFrame(step);
+    } else {
+      el.textContent = format(target);
     }
-    console.log(isInDateRange(today));
-   
-Promise.all([
+  }
+  requestAnimationFrame(step);
+}
 
-    fetch('./creditpay.json'),
-    fetch('./cashPay.json'), 
-    fetch('./customerPay.json')
-])
-.then(responses => Promise.all(responses.map(r => r.json())))
-.then(data => {
-    const credit = data[0];
-    const cash = data[1];
-    const customer = data[2];
-    let totalCash = 0;
-    let totalCredit = 0; 
-    let totalAccount = 0;
-    let totalIncome = 0;
-    const tableBody = document.getElementById('GameIncomeTable').getElementsByTagName('tbody')[0];
-    const tableBuffetBody = document.getElementById('BuffetIncomeTable').getElementsByTagName('tbody')[0];
-    const IncomeBody = document.getElementById('IncomeTable').getElementsByTagName('tbody')[0];
-    const rowData = {
-        'کارتخوان': { ps4: 0, ps50: 0, computer: 0, xbox: 0, jewelry: 0, foosball: 0, totalItem: 0 },
-        'نقدی': { ps4: 0, ps50: 0, computer: 0, xbox: 0, jewelry: 0, foosball: 0, totalItem: 0 },
-        'حساب کاربری': { ps4: 0, ps50: 0, computer: 0, xbox: 0, jewelry: 0, foosball: 0, totalItem: 0 }
-    };
-    const rowBuffetData = {
-        'کارتخوان': { cold_drink: 0, hot_drink: 0, snack: 0, fastfood: 0, other: 0,  totalBuffetItem: 0 },
-        'نقدی': { cold_drink: 0, hot_drink: 0, snack: 0, fastfood: 0, other: 0, totalBuffetItem: 0 },
-        'حساب کاربری': { cold_drink: 0, hot_drink: 0, snack: 0, fastfood: 0, other: 0,  totalBuffetItem: 0 }
-    };
-    const totalColumn = {
-        ps4: 0, ps50: 0, computer: 0, xbox: 0, jewelry: 0, foosball: 0, totalItem: 0
-    };
-    const totalBuffetColumn = {
-        cold_drink: 0, hot_drink: 0, snack: 0, fastfood: 0, other: 0,  totalBuffetItem: 0 
-   };
+function animateKpiRing(id, percent) {
+  const circle = document.getElementById(id);
+  if (!circle) return;
+  const geom = computeCircularProgressGeometry(Math.max(10, percent), 20);
+  circle.setAttribute('stroke-dasharray', String(geom.circumference));
+  requestAnimationFrame(() => {
+    circle.style.strokeDashoffset = String(geom.dashOffset);
+  });
+}
 
-    const updateRowData = (type, consoleType, amount) => {
-        rowData[type][consoleType] += parseInt(amount);
-        rowData[type]['totalItem'] += parseInt(amount);
-        totalColumn[consoleType] += parseInt(amount);
-        totalColumn['totalItem'] += parseInt(amount);
-        totalIncome += parseInt(amount);
+function formatPaymentBadge(type) {
+  if (type === 'کارتخوان') {
+    return `<span class="mg-pay-method-badge badge-pos"><span class="mg-legend-dot dot-purple"></span>کارتخوان (POS)</span>`;
+  }
+  if (type === 'نقدی') {
+    return `<span class="mg-pay-method-badge badge-cash"><span class="mg-legend-dot dot-emerald"></span>دریافتی نقدی</span>`;
+  }
+  return `<span class="mg-pay-method-badge badge-account"><span class="mg-legend-dot dot-indigo"></span>حساب کاربری</span>`;
+}
+
+function formatAmountCell(amount, isTotal = false) {
+  const num = Number(amount) || 0;
+  if (num <= 0) {
+    return `<span class="mg-zero-amount">۰ <small>تومان</small></span>`;
+  }
+  return `<span class="${isTotal ? 'mg-total-amount' : 'mg-positive-amount'}">${formatToman(num)} <small>تومان</small></span>`;
+}
+
+/**
+ * Renders an interactive SVG multi-segment donut chart and its interactive legend.
+ */
+function renderInteractiveDonut({
+  svgId,
+  legendId,
+  centerValId,
+  centerLabelId,
+  items,
+  emptyLabel = 'بدون تراکنش',
+}) {
+  const svg = document.getElementById(svgId);
+  const legend = document.getElementById(legendId);
+  if (!svg || !legend) return;
+
+  // Remove old dynamic segment circles
+  svg.querySelectorAll('.mg-donut-segment').forEach((c) => c.remove());
+  legend.innerHTML = '';
+
+  const radius = 54;
+  const geom = computeDonutSegmentsGeometry(items, radius);
+  const nonZeroSegments = geom.segments.filter((s) => s.value > 0);
+  const activeSegments = nonZeroSegments.length > 0 ? nonZeroSegments : geom.segments.slice(0, 1);
+
+  // Pick dominant segment for default center readout
+  const sortedByVal = [...geom.segments].sort((a, b) => b.value - a.value);
+  const topSeg = sortedByVal[0] || { percent: 0, label: emptyLabel, value: 0 };
+
+  if (geom.total <= 0) {
+    setText(centerValId, '۰٪');
+    setText(centerLabelId, emptyLabel);
+  } else {
+    animateNumber(centerValId, topSeg.percent, { useCommas: false, suffix: '٪', duration: 900 });
+    setText(centerLabelId, topSeg.label);
+  }
+
+  const createdCircles = [];
+
+  activeSegments.forEach((seg, idx) => {
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', '70');
+    circle.setAttribute('cy', '70');
+    circle.setAttribute('r', String(radius));
+    circle.setAttribute('class', 'mg-donut-segment');
+    circle.setAttribute('stroke', geom.total > 0 ? seg.color : 'rgba(156, 163, 175, 0.2)');
+    const finalDashArray = geom.total > 0 ? seg.dashArray : `${geom.circumference} 0`;
+    circle.setAttribute('stroke-dasharray', finalDashArray);
+    circle.setAttribute('stroke-dashoffset', String(seg.dashOffset));
+    circle.style.strokeDasharray = finalDashArray;
+    circle.style.strokeDashoffset = String(seg.dashOffset);
+    circle.style.filter = 'none';
+    svg.appendChild(circle);
+    createdCircles.push({ circle, seg, idx });
+  });
+
+  // Render full legend rows with mini progress bars and Toman values
+  const legendEls = [];
+  geom.segments.forEach((seg) => {
+    const row = document.createElement('div');
+    row.className = `mg-income-legend-row ${seg.value > 0 ? 'has-value' : 'is-zero'}`;
+    row.innerHTML = `
+      <div class="mg-income-legend-top">
+        <span class="mg-income-legend-name">
+          <span class="mg-legend-dot" style="background:${seg.color};"></span>
+          <span>${seg.label}</span>
+        </span>
+        <span class="mg-income-legend-stats">
+          <strong>${formatToman(seg.value)} ت</strong>
+          <span class="mg-income-legend-pct">${toPersianDigits(seg.percent)}٪</span>
+        </span>
+      </div>
+      <div class="mg-income-legend-bar-track">
+        <div class="mg-income-legend-bar-fill" style="width: ${ Math.max(seg.value > 0 ? 6 : 0, seg.percent) }%; background: ${seg.color};"></div>
+      </div>
+    `;
+    legend.appendChild(row);
+    legendEls.push({ row, seg });
+  });
+
+  function highlightByKey(key) {
+    createdCircles.forEach(({ circle, seg }) => {
+      const match = seg.id === key;
+      circle.classList.toggle('is-active-segment', match);
+      circle.classList.toggle('is-dimmed-segment', !match);
+    });
+    legendEls.forEach(({ row, seg }) => {
+      row.classList.toggle('is-active', seg.id === key);
+    });
+    const target = geom.segments.find((s) => s.id === key);
+    if (target) {
+      setText(centerValId, `${toPersianDigits(target.percent)}٪`);
+      setText(centerLabelId, target.label);
+    }
+  }
+
+  function resetHighlight() {
+    createdCircles.forEach(({ circle }) => {
+      circle.classList.remove('is-active-segment', 'is-dimmed-segment');
+    });
+    legendEls.forEach(({ row }) => row.classList.remove('is-active'));
+    if (geom.total <= 0) {
+      setText(centerValId, '۰٪');
+      setText(centerLabelId, emptyLabel);
+    } else {
+      setText(centerValId, `${toPersianDigits(topSeg.percent)}٪`);
+      setText(centerLabelId, topSeg.label);
+    }
+  }
+
+  createdCircles.forEach(({ circle, seg }) => {
+    circle.addEventListener('mouseenter', () => highlightByKey(seg.id));
+    circle.addEventListener('mouseleave', resetHighlight);
+  });
+
+  legendEls.forEach(({ row, seg }) => {
+    row.addEventListener('mouseenter', () => highlightByKey(seg.id));
+    row.addEventListener('mouseleave', resetHighlight);
+  });
+}
+
+function renderTablesAndCharts(report, periodSubtitle) {
+  setText('tableTitle', periodSubtitle);
+
+  // Update Top Strip
+  setText('incStripTotal', `${formatToman(report.totalIncome)} تومان`);
+  setText('incStripGame', `${formatToman(report.totalColumn.totalItem)} تومان`);
+  setText('incStripBuffet', `${formatToman(report.totalBuffetColumn.totalBuffetItem)} تومان`);
+  setText('incStripCount', `${toPersianDigits(report.transactionsCount)} فاکتور`);
+
+  // Update Section Header Tags
+  setText('gameSectionTotalTag', `جمع کل بازی: ${formatToman(report.totalColumn.totalItem)} تومان`);
+  setText('buffetSectionTotalTag', `جمع کل بوفه: ${formatToman(report.totalBuffetColumn.totalBuffetItem)} تومان`);
+  setText('totalSectionIncomeTag', `تجمیع کل: ${formatToman(report.totalIncome)} تومان`);
+
+  // Update 4 Financial KPI Cards
+  animateNumber('incKpiTotal', report.totalIncome);
+  setText(
+    'incKpiTotalSub',
+    `مجموع ${toPersianDigits(report.transactionsCount)} تراکنش ثبت‌شده در دوره انتخابی`
+  );
+  animateKpiRing('incRingTotal', report.totalIncome > 0 ? 100 : 12);
+
+  animateNumber('incKpiGame', report.totalColumn.totalItem);
+  setText(
+    'incKpiGameSub',
+    `${toPersianDigits(report.gameSharePercent)}٪ از کل درآمد · پیشتاز: پلی‌استیشن ۴`
+  );
+  animateKpiRing('incRingGame', report.gameSharePercent);
+
+  animateNumber('incKpiBuffet', report.totalBuffetColumn.totalBuffetItem);
+  setText(
+    'incKpiBuffetSub',
+    `${toPersianDigits(report.buffetSharePercent)}٪ از کل درآمد · پرفروش: نوشیدنی سرد`
+  );
+  animateKpiRing('incRingBuffet', report.buffetSharePercent);
+
+  const posShare =
+    report.totalIncome > 0 ? Math.round((report.totalCredit / report.totalIncome) * 100) : 0;
+  animateNumber('incKpiPos', report.totalCredit);
+  setText(
+    'incKpiPosSub',
+    `نقدی: ${formatToman(report.totalCash)} ت · حساب کاربری: ${formatToman(report.totalAccount)} ت`
+  );
+  animateKpiRing('incRingPos', posShare);
+
+  // 1. Populate #GameIncomeTable
+  const gameTbody = document.querySelector('#GameIncomeTable tbody');
+  if (gameTbody) {
+    gameTbody.innerHTML = '';
+    for (const type of ['کارتخوان', 'نقدی', 'حساب کاربری']) {
+      const r = report.rowData[type];
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${formatPaymentBadge(type)}</td>
+        <td>${formatAmountCell(r.ps4)}</td>
+        <td>${formatAmountCell(r.ps50)}</td>
+        <td>${formatAmountCell(r.computer)}</td>
+        <td>${formatAmountCell(r.xbox)}</td>
+        <td>${formatAmountCell(r.jewelry)}</td>
+        <td>${formatAmountCell(r.foosball)}</td>
+        <td>${formatAmountCell(r.totalItem, true)}</td>
+      `;
+      gameTbody.appendChild(tr);
+    }
+    const totalTr = document.createElement('tr');
+    totalTr.className = 'mg-income-total-row';
+    totalTr.innerHTML = `
+      <td><strong>جمع کل کنسول‌ها</strong></td>
+      <td>${formatAmountCell(report.totalColumn.ps4, true)}</td>
+      <td>${formatAmountCell(report.totalColumn.ps50, true)}</td>
+      <td>${formatAmountCell(report.totalColumn.computer, true)}</td>
+      <td>${formatAmountCell(report.totalColumn.xbox, true)}</td>
+      <td>${formatAmountCell(report.totalColumn.jewelry, true)}</td>
+      <td>${formatAmountCell(report.totalColumn.foosball, true)}</td>
+      <td><span class="mg-grand-total-pill">${formatToman(report.totalColumn.totalItem)} تومان</span></td>
+    `;
+    gameTbody.appendChild(totalTr);
+  }
+
+  // Render Game Console Donut
+  renderInteractiveDonut({
+    svgId: 'gameDonutSvg',
+    legendId: 'gameDonutLegend',
+    centerValId: 'gameDonutCenterVal',
+    centerLabelId: 'gameDonutCenterLabel',
+    items: CONSOLE_META.map((c) => ({
+      id: c.key,
+      label: c.label,
+      value: report.totalColumn[c.key] || 0,
+      color: c.color,
+    })),
+  });
+
+  // 2. Populate #BuffetIncomeTable
+  const buffetTbody = document.querySelector('#BuffetIncomeTable tbody');
+  if (buffetTbody) {
+    buffetTbody.innerHTML = '';
+    for (const type of ['کارتخوان', 'نقدی', 'حساب کاربری']) {
+      const r = report.rowBuffetData[type];
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${formatPaymentBadge(type)}</td>
+        <td>${formatAmountCell(r.cold_drink)}</td>
+        <td>${formatAmountCell(r.hot_drink)}</td>
+        <td>${formatAmountCell(r.snack)}</td>
+        <td>${formatAmountCell(r.fastfood)}</td>
+        <td>${formatAmountCell(r.other)}</td>
+        <td>${formatAmountCell(r.totalBuffetItem, true)}</td>
+      `;
+      buffetTbody.appendChild(tr);
+    }
+    const totalBuffetTr = document.createElement('tr');
+    totalBuffetTr.className = 'mg-income-total-row';
+    totalBuffetTr.innerHTML = `
+      <td><strong>جمع کل بوفه</strong></td>
+      <td>${formatAmountCell(report.totalBuffetColumn.cold_drink, true)}</td>
+      <td>${formatAmountCell(report.totalBuffetColumn.hot_drink, true)}</td>
+      <td>${formatAmountCell(report.totalBuffetColumn.snack, true)}</td>
+      <td>${formatAmountCell(report.totalBuffetColumn.fastfood, true)}</td>
+      <td>${formatAmountCell(report.totalBuffetColumn.other, true)}</td>
+      <td><span class="mg-grand-total-pill pill-amber">${formatToman(report.totalBuffetColumn.totalBuffetItem)} تومان</span></td>
+    `;
+    buffetTbody.appendChild(totalBuffetTr);
+  }
+
+  // Render Buffet Donut
+  renderInteractiveDonut({
+    svgId: 'buffetDonutSvg',
+    legendId: 'buffetDonutLegend',
+    centerValId: 'buffetDonutCenterVal',
+    centerLabelId: 'buffetDonutCenterLabel',
+    items: BUFFET_META.map((b) => ({
+      id: b.key,
+      label: b.label,
+      value: report.totalBuffetColumn[b.key] || 0,
+      color: b.color,
+    })),
+  });
+
+  // 3. Populate #IncomeTable & Horizontal Comparison Bars
+  const incomeTbody = document.querySelector('#IncomeTable tbody');
+  const cashPct =
+    report.totalIncome > 0 ? Math.round((report.totalCash / report.totalIncome) * 100) : 0;
+  const creditPct =
+    report.totalIncome > 0 ? Math.round((report.totalCredit / report.totalIncome) * 100) : 0;
+  const accountPct =
+    report.totalIncome > 0 ? Math.round((report.totalAccount / report.totalIncome) * 100) : 0;
+
+  if (incomeTbody) {
+    incomeTbody.innerHTML = `
+      <tr class="mg-income-total-row">
+        <td>
+          <div class="mg-pay-summary-cell">
+            ${formatAmountCell(report.totalCash, true)}
+            <span class="mg-pay-pct-tag tag-emerald">${toPersianDigits(cashPct)}٪ از کل</span>
+          </div>
+        </td>
+        <td>
+          <div class="mg-pay-summary-cell">
+            ${formatAmountCell(report.totalCredit, true)}
+            <span class="mg-pay-pct-tag tag-cyan">${toPersianDigits(creditPct)}٪ از کل</span>
+          </div>
+        </td>
+        <td>
+          <div class="mg-pay-summary-cell">
+            ${formatAmountCell(report.totalAccount, true)}
+            <span class="mg-pay-pct-tag tag-purple">${toPersianDigits(accountPct)}٪ از کل</span>
+          </div>
+        </td>
+        <td>
+          <span class="mg-grand-total-pill pill-emerald">${formatToman(report.totalIncome)} تومان</span>
+        </td>
+      </tr>
+    `;
+  }
+
+  const barsWrap = document.getElementById('paymentMethodBars');
+  if (barsWrap) {
+    const barItems = [
+      { label: 'دستگاه کارتخوان (POS)', amount: report.totalCredit, pct: creditPct, color: '#22D3EE' },
+      { label: 'دریافتی نقدی صندوق', amount: report.totalCash, pct: cashPct, color: '#10B981' },
+      { label: 'کسر از حساب کاربری مشتریان', amount: report.totalAccount, pct: accountPct, color: '#A855F7' },
+    ];
+    barsWrap.innerHTML = barItems
+      .map(
+        (item) => `
+        <div class="mg-pay-bar-item">
+          <div class="mg-pay-bar-label">
+            <span>${item.label}</span>
+            <strong>${formatToman(item.amount)} تومان (${toPersianDigits(item.pct)}٪)</strong>
+          </div>
+          <div class="mg-pay-bar-track">
+            <div class="mg-pay-bar-fill" style="width: ${Math.max(item.amount > 0 ? 5 : 0, item.pct)}%; background: ${item.color}; box-shadow: 0 0 12px ${item.color};"></div>
+          </div>
+        </div>
+      `
+      )
+      .join('');
+  }
+
+  // Render Payment Method Donut
+  renderInteractiveDonut({
+    svgId: 'paymentDonutSvg',
+    legendId: 'paymentDonutLegend',
+    centerValId: 'paymentDonutCenterVal',
+    centerLabelId: 'paymentDonutCenterLabel',
+    items: PAYMENT_META.map((p) => ({
+      id: p.key,
+      label: p.label,
+      value:
+        p.key === 'credit'
+          ? report.totalCredit
+          : p.key === 'cash'
+          ? report.totalCash
+          : report.totalAccount,
+      color: p.color,
+    })),
+  });
+}
+
+async function initIncomeDashboard() {
+  try {
+    const [calRes, creditRes, cashRes, customerRes] = await Promise.all([
+      fetch('./Calender.json').then((r) => (r.ok ? r.json() : [])),
+      fetch('./creditpay.json').then((r) => (r.ok ? r.json() : [])),
+      fetch('./cashPay.json').then((r) => (r.ok ? r.json() : [])),
+      fetch('./customerPay.json').then((r) => (r.ok ? r.json() : [])),
+    ]);
+
+    const savedStart = calRes?.[0]?.start || '2023-11-21T00:00:00+03:30';
+    const savedEnd = calRes?.[0]?.end || '2023-11-21T23:59:59+03:30';
+
+    const formatFaDate = (iso) => {
+      try {
+        return new Date(iso).toLocaleDateString('fa-IR', {
+          year: 'numeric',
+          month: 'numeric',
+          day: 'numeric',
+        });
+      } catch {
+        return '';
+      }
     };
-    const updateBuffetRowData = (type, itemType, amount) => {
-        rowBuffetData[type][itemType] += parseInt(amount);
-        rowBuffetData[type]['totalBuffetItem'] += parseInt(amount);
-        totalBuffetColumn[itemType] +=parseInt(amount);
-        totalBuffetColumn['totalBuffetItem'] += parseInt(amount);
-        totalIncome += parseInt(amount);
+
+    function applyFilterMode(mode, customStart = null, customEnd = null) {
+      let filterMode = 'all';
+      let startDate = null;
+      let endDate = null;
+      let subtitle = 'نمایش جامع کلیه تراکنش‌های ثبت‌شده گیم‌نت (همه دوره‌ها)';
+
+      if (mode === 'saved') {
+        filterMode = 'range';
+        startDate = savedStart;
+        endDate = savedEnd;
+        subtitle = `بازه ذخیره‌شده تقویم: از ${formatFaDate(savedStart)} تا ${formatFaDate(savedEnd)}`;
+      } else if (mode === 'nov2023') {
+        filterMode = 'range';
+        startDate = '2023-11-01T00:00:00+03:30';
+        endDate = '2023-11-30T23:59:59+03:30';
+        subtitle = `گزارش تراکنش‌های آبان و آذر ۱۴۰۲ (${formatFaDate(startDate)} تا ${formatFaDate(endDate)})`;
+      } else if (mode === 'today') {
+        filterMode = 'range';
+        const now = new Date();
+        const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+        const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+        startDate = startOfDay.toISOString();
+        endDate = endOfDay.toISOString();
+        subtitle = `گزارش تراکنش‌های شیفت امروز (${formatFaDate(startDate)})`;
+      } else if (mode === 'custom' && customStart && customEnd) {
+        filterMode = 'range';
+        startDate = `${customStart}T00:00:00`;
+        endDate = `${customEnd}T23:59:59`;
+        subtitle = `بازه انتخابی: از ${formatFaDate(startDate)} تا ${formatFaDate(endDate)}`;
       }
-  
-    credit.forEach(item => {
-     
-      if(item.Buffet==0){
-        item.Buffet =[["cold_drink","0"]];
-      }
-        if (isInDateRange(item.paydate)) {
-            updateRowData('کارتخوان', item.consoleType, item.gameTotal);
-            const buffet = item.Buffet;
-            
-            buffet.forEach(buffetItem => {
-              updateBuffetRowData(
-                'کارتخوان', 
-                buffetItem[0], 
-                buffetItem[1], );
-            })
-        };
+
+      const report = computeIncomeReportMetrics({
+        creditPay: creditRes,
+        cashPay: cashRes,
+        customerPay: customerRes,
+        startDate,
+        endDate,
+        filterMode,
       });
-    cash.forEach(item => {
-      if(item.Buffet==0){
-        item.Buffet =[["cold_drink","0"]];
-      }
-        if (isInDateRange(item.paydate)) {
-            updateRowData('نقدی', item.consoleType, item.gameTotal);
-            const buffet = item.Buffet;
-           if(buffet) {
-             buffet.forEach(buffetItem => {
-              updateBuffetRowData(
-                'نقدی', 
-                buffetItem[0], 
-                buffetItem[1], );
-            })
-           }
-           
-        };
+
+      renderTablesAndCharts(report, subtitle);
+    }
+
+    // Default to 'all' so all 3 tables and all 3 donut charts show rich, complete data immediately
+    applyFilterMode('all');
+
+    // Bind Filter Preset Buttons
+    const filterBtns = document.querySelectorAll('[data-income-filter]');
+    filterBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        const mode = btn.getAttribute('data-income-filter') || 'all';
+        applyFilterMode(mode);
+      });
     });
-   
 
-    customer.forEach(item => {
-      if(item.Buffet==0){
-        item.Buffet =[["cold_drink","0"]];
-      }
-        if (isInDateRange(item.paydate)) {
-            updateRowData('حساب کاربری', item.consoleType, item.gameTotal);
-            const buffet = item.Buffet;
-            
-            buffet.forEach(buffetItem => {
-              updateBuffetRowData(
-                'حساب کاربری', 
-                buffetItem[0], 
-                buffetItem[1], );
-            })
-        };
-    });
-    
+    // Bind Custom Date Range Apply Button & Persist to Calender.php
+    const applyBtn = document.getElementById('applyCustomDateBtn');
+    const startInput = document.getElementById('incomeStartDate');
+    const endInput = document.getElementById('incomeEndDate');
 
-    // درج اطلاعات به جدول
-    for (const type in rowData) {
-        const row = tableBody.insertRow();
-        row.insertCell(0).innerHTML = type;
-        row.insertCell(1).innerHTML = (rowData[type]['ps4']).toLocaleString('fa-IR') + ' تومان' ;
-        row.insertCell(2).innerHTML = (rowData[type]['ps50']).toLocaleString('fa-IR') + ' تومان';
-        row.insertCell(3).innerHTML = (rowData[type]['computer']).toLocaleString('fa-IR') + ' تومان';
-        row.insertCell(4).innerHTML = (rowData[type]['xbox']).toLocaleString('fa-IR') + ' تومان';
-        row.insertCell(5).innerHTML = (rowData[type]['jewelry']).toLocaleString('fa-IR') + ' تومان';
-        row.insertCell(6).innerHTML = (rowData[type]['foosball']).toLocaleString('fa-IR') + ' تومان';
-        row.insertCell(7).innerHTML = (rowData[type]['totalItem']).toLocaleString('fa-IR') + ' تومان';
-        if(type === 'نقدی') {
-            totalCash += (rowData[type]['totalItem']); 
-          }
-          
-          if(type === 'کارتخوان') {
-            totalCredit += (rowData[type]['totalItem']);
-          } 
-          if(type === 'حساب کاربری') {
-            totalAccount += (rowData[type]['totalItem']);
-          } 
-    };
-    const totalRow = tableBody.insertRow();
-    totalRow.insertCell(0).innerHTML = 'جمع کل';
-    totalRow.insertCell(1).innerHTML = totalColumn['ps4'].toLocaleString('fa-IR') + ' تومان';
-    totalRow.insertCell(2).innerHTML = totalColumn['ps50'].toLocaleString('fa-IR') + ' تومان';
-    totalRow.insertCell(3).innerHTML = totalColumn['computer'].toLocaleString('fa-IR') + ' تومان';
-    totalRow.insertCell(4).innerHTML = totalColumn['xbox'].toLocaleString('fa-IR') + ' تومان';
-    totalRow.insertCell(5).innerHTML = totalColumn['jewelry'].toLocaleString('fa-IR') + ' تومان';
-    totalRow.insertCell(6).innerHTML = totalColumn['foosball'].toLocaleString('fa-IR') + ' تومان';
-    totalRow.insertCell(7).innerHTML = totalColumn['totalItem'].toLocaleString('fa-IR') + ' تومان';
+    if (applyBtn && startInput && endInput) {
+      applyBtn.addEventListener('click', async () => {
+        const sVal = startInput.value;
+        const eVal = endInput.value;
+        if (!sVal || !eVal) return;
 
-    const ctx2 = document.getElementById('gameChart');        
-    new Chart(ctx2, {
-      type: 'doughnut',
-      data: {
-        labels: [' PS4', 'PS5', 'PC', 'XBOX', 'VIP', 'فوتبال دستی'],
-        datasets: [{
-          label: ' درآمد کنسول ',
-          data: [totalColumn['ps4'], totalColumn['ps50'],totalColumn['computer'],totalColumn['xbox'],totalColumn['jewelry'],totalColumn['foosball']],
-          backgroundColor: [
-            '#06B6D4',
-            '#6366F1',
-            '#EC4899',
-            '#8B5CF6',
-            '#F59E0B',
-            '#10B981'
-          ],
-          borderColor: '#090D1A',
-          borderWidth: 2,
-          hoverOffset: 10
-        }]
-      },
-      options: {
-        cutout: '66%',
-        animation: {
-          animateRotate: true,
-          animateScale: true,
-          duration: 1350,
-          easing: 'easeOutQuart'
-        },
-        scales: {
-          y: {
-            display: false,
-            beginAtZero: true
-          }
-        },
-        plugins: {
-            legend: {
-                labels: {
-                    color: '#E2E8F0',
-                    font: {
-                        size: 11,
-                        family: 'Yekan',
-                    }
-                },
-            }
+        filterBtns.forEach((b) => b.classList.remove('active'));
+        applyFilterMode('custom', sVal, eVal);
+
+        try {
+          const form = new URLSearchParams();
+          form.set('start', `${sVal}T00:00:00+03:30`);
+          form.set('end', `${eVal}T23:59:59+03:30`);
+          await fetch('./Calender.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: form.toString(),
+          });
+        } catch {
+          // Non-fatal
         }
+      });
     }
-    
-    });
-    
-    for (const type in rowBuffetData) {
-        const row = tableBuffetBody.insertRow();
-        row.insertCell(0).innerHTML = type;
-        row.insertCell(1).innerHTML = (rowBuffetData[type]['cold_drink']).toLocaleString('fa-IR') + ' تومان';
-        row.insertCell(2).innerHTML = (rowBuffetData[type]['hot_drink']).toLocaleString('fa-IR') + ' تومان';
-        row.insertCell(3).innerHTML = (rowBuffetData[type]['snack']).toLocaleString('fa-IR') + ' تومان';
-        row.insertCell(4).innerHTML = (rowBuffetData[type]['fastfood']).toLocaleString('fa-IR') + ' تومان';
-        row.insertCell(5).innerHTML = (rowBuffetData[type]['other']).toLocaleString('fa-IR') + ' تومان';
-        row.insertCell(6).innerHTML = (rowBuffetData[type]['totalBuffetItem']).toLocaleString('fa-IR') + ' تومان';
-        if(type === 'نقدی') {
-            totalCash += (rowBuffetData[type]['totalBuffetItem']); 
-          }
-          
-          if(type === 'کارتخوان') {
-            totalCredit += (rowBuffetData[type]['totalBuffetItem']);
-          } 
-          if(type === 'حساب کاربری') {
-            totalAccount += (rowBuffetData[type]['totalBuffetItem']);
-          } 
-    }
-    const totalBuffetRow = tableBuffetBody.insertRow();
-totalBuffetRow.insertCell(0).innerHTML = 'جمع کل';
-totalBuffetRow.insertCell(1).innerHTML = totalBuffetColumn['cold_drink'].toLocaleString('fa-IR') + ' تومان';
-totalBuffetRow.insertCell(2).innerHTML = totalBuffetColumn['hot_drink'].toLocaleString('fa-IR') + ' تومان';
-totalBuffetRow.insertCell(3).innerHTML = totalBuffetColumn['snack'].toLocaleString('fa-IR') + ' تومان';
-totalBuffetRow.insertCell(4).innerHTML = totalBuffetColumn['fastfood'].toLocaleString('fa-IR') + ' تومان';
-totalBuffetRow.insertCell(5).innerHTML = totalBuffetColumn['other'].toLocaleString('fa-IR') + ' تومان';
-totalBuffetRow.insertCell(6).innerHTML = totalBuffetColumn['totalBuffetItem'].toLocaleString('fa-IR') + ' تومان';
-
-
-
-const ctx1 = document.getElementById('buffetChart');        
-new Chart(ctx1, {
-  type: 'doughnut',
-  data: {
-    labels: [' نوشیدنی سرد', 'نوشیدنی گرم', 'اسنک ','فست فود', 'سایر '],
-    datasets: [{
-      label: ' درآمد بوفه',
-      data: [totalBuffetColumn['cold_drink'], totalBuffetColumn['hot_drink'],  totalBuffetColumn['snack'],totalBuffetColumn['fastfood'],totalBuffetColumn['other']],
-      backgroundColor: [
-        '#F43F5E',
-        '#06B6D4',
-        '#F59E0B',
-        '#8B5CF6',
-        '#10B981'
-      ],
-      borderColor: '#090D1A',
-      borderWidth: 2,
-      hoverOffset: 10
-    }]
-  },
-  options: {
-    cutout: '66%',
-    animation: {
-      animateRotate: true,
-      animateScale: true,
-      duration: 1350,
-      easing: 'easeOutQuart'
-    },
-    scales: {
-      y: {
-        display: false,
-        beginAtZero: true
-      }
-    },
-    plugins: {
-        legend: {
-            labels: {
-                color: '#E2E8F0',
-                font: {
-                    size: 11,
-                    family: 'Yekan',
-                }
-            }
-        }
-    }
+  } catch (err) {
+    console.error('Income report load error:', err);
+  }
 }
 
-});
-    // درج اطلاعات به جدول درآمد
-const incomeRow = IncomeBody.insertRow();
-incomeRow.insertCell(0).innerHTML = totalCash.toLocaleString('fa-IR') + ' تومان';
-incomeRow.insertCell(1).innerHTML = totalCredit.toLocaleString('fa-IR') + ' تومان'; 
-incomeRow.insertCell(2).innerHTML = totalAccount.toLocaleString('fa-IR') + ' تومان'; 
-incomeRow.insertCell(3).innerHTML = totalIncome.toLocaleString('fa-IR') + ' تومان';
-
- 
-
-const ctx = document.getElementById('totalChart');        
-new Chart(ctx, {
-  type: 'bar',
-  data: {
-    labels: ['نقدی', 'کارتخوان', 'حساب کاربری'],
-    datasets: [{
-      label: 'درآمد',
-      data: [totalCash, totalCredit, totalAccount],
-      backgroundColor: [
-        'rgba(16, 185, 129, 0.35)',
-        'rgba(6, 182, 212, 0.35)',
-        'rgba(139, 92, 246, 0.35)'
-      ],
-      borderColor: [
-        '#10B981',
-        '#22D3EE',
-        '#A855F7'],
-      borderWidth: 1.5,
-      borderRadius: 6
-    }]
-  },
-  options: {
-    animation: {
-      duration: 1250,
-      easing: 'easeOutQuart'
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: {
-          color: '#94A3B8',
-          font: {
-            family: 'Yekan',
-          }
-        }
-      },
-      x: {
-        ticks: {
-          color: '#CBD5E1',
-          font: {
-            family: 'Yekan',
-          }
-        }
-      }
-    },
-    plugins: {
-        legend: {
-            labels: {
-                color: '#E2E8F0',
-                font: {
-                    size: 11,
-                    family: 'Yekan',
-                }
-            },
-        }
-    }
-}
-
-});
-});
-});
+document.addEventListener('DOMContentLoaded', initIncomeDashboard);

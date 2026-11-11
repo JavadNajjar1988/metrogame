@@ -1,0 +1,15 @@
+{
+  "lockfileVersion": 2,
+  "configVersion": 1,
+  "workspaces": {
+    "": {
+      "name": "metrogame",
+      "dependencies": {
+        "vazirmatn": "^33.0.3",
+      },
+    },
+  },
+  "packages": {
+    "vazirmatn": ["vazirmatn@33.0.3", "", {}, "sha512-fbjNc0CMjazZpIegWzz9OHGzI1APFboT+x7ZecXlUCtDe/nkyx7gtCTZnWS/+eeXG7fbfXymCPKJI8EsnM3iqw=="],
+  }
+}

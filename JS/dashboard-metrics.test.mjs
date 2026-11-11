@@ -11,6 +11,7 @@ import {
   computeDonutSegmentsGeometry,
   interpolateCountUp,
   stepMarioState,
+  computeIncomeReportMetrics,
 } from './dashboard-metrics.mjs';
 
 test('toPersianDigits converts ASCII digits to Persian numerals', () => {
@@ -122,4 +123,35 @@ test('interpolateCountUp and stepMarioState handle easing, boundary turn-around,
   assert.equal(jumped.frameIndex, 3);
   assert.ok(jumped.y < 0);
 });
+
+test('computeIncomeReportMetrics aggregates consoles, buffet categories, and payment types safely', () => {
+  const report = computeIncomeReportMetrics({
+    creditPay: [
+      { gameTotal: '45000', Buffet: [['cold_drink', '25000']], consoleType: 'ps4', paydate: 'Tuesday, November 21, 2023' },
+      { gameTotal: '45000', Buffet: '85', consoleType: 'ps4', paydate: '85' },
+    ],
+    cashPay: [
+      { gameTotal: '30000', Buffet: [['snack', '10000']], consoleType: 'ps50', paydate: 'Wed Nov 22 2023 10:05:15 GMT+0330' },
+    ],
+    customerPay: [
+      { gameTotal: '25000', Buffet: [['fastfood', '20000']], consoleType: 'xbox', paydate: 'Monday, 11/20/2023' },
+    ],
+    filterMode: 'all',
+  });
+
+  assert.equal(report.totalColumn.ps4, 45000);
+  assert.equal(report.totalColumn.ps50, 30000);
+  assert.equal(report.totalColumn.xbox, 25000);
+  assert.equal(report.totalColumn.totalItem, 100000);
+  assert.equal(report.totalBuffetColumn.cold_drink, 25000);
+  assert.equal(report.totalBuffetColumn.snack, 10000);
+  assert.equal(report.totalBuffetColumn.fastfood, 20000);
+  assert.equal(report.totalBuffetColumn.totalBuffetItem, 55000);
+  assert.equal(report.totalCredit, 70000);
+  assert.equal(report.totalCash, 40000);
+  assert.equal(report.totalAccount, 45000);
+  assert.equal(report.totalIncome, 155000);
+  assert.equal(report.transactionsCount, 3);
+});
+
 
