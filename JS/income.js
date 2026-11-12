@@ -8,26 +8,26 @@ import {
 } from './dashboard-metrics.mjs?v=20261109-3';
 
 const CONSOLE_META = [
-  { key: 'ps4', label: 'پلی‌استیشن ۴', color: '#8B5CF6', lightColor: '#7C3AED', dotClass: 'dot-purple' },
-  { key: 'ps50', label: 'پلی‌استیشن ۵', color: '#A78BFA', lightColor: '#6366F1', dotClass: 'dot-indigo' },
-  { key: 'xbox', label: 'ایکس‌باکس', color: '#6D28D9', lightColor: '#0891B2', dotClass: 'dot-purple' },
-  { key: 'computer', label: 'سیستم PC', color: '#10B981', lightColor: '#059669', dotClass: 'dot-emerald' },
-  { key: 'jewelry', label: 'وی‌آر / VIP', color: '#F59E0B', lightColor: '#D97706', dotClass: 'dot-amber' },
-  { key: 'foosball', label: 'فوتبال دستی', color: '#64748B', lightColor: '#E11D48', dotClass: 'dot-indigo' },
+  { key: 'ps4', label: 'پلی‌استیشن ۴', color: '#8B5CF6', lightColor: '#6D28D9', dotClass: 'dot-purple' },
+  { key: 'ps50', label: 'پلی‌استیشن ۵', color: '#A78BFA', lightColor: '#4F46E5', dotClass: 'dot-indigo' },
+  { key: 'xbox', label: 'ایکس‌باکس', color: '#6D28D9', lightColor: '#8B5CF6', dotClass: 'dot-purple' },
+  { key: 'computer', label: 'سیستم PC', color: '#10B981', lightColor: '#0D9488', dotClass: 'dot-emerald' },
+  { key: 'jewelry', label: 'وی‌آر / VIP', color: '#F59E0B', lightColor: '#6366F1', dotClass: 'dot-indigo' },
+  { key: 'foosball', label: 'فوتبال دستی', color: '#64748B', lightColor: '#64748B', dotClass: 'dot-slate' },
 ];
 
 const BUFFET_META = [
-  { key: 'cold_drink', label: 'نوشیدنی سرد', color: '#8B5CF6', lightColor: '#7C3AED', dotClass: 'dot-purple' },
-  { key: 'fastfood', label: 'فست‌فود و ساندویچ', color: '#F59E0B', lightColor: '#D97706', dotClass: 'dot-amber' },
-  { key: 'snack', label: 'اسنک و تنقلات', color: '#A78BFA', lightColor: '#0891B2', dotClass: 'dot-indigo' },
-  { key: 'hot_drink', label: 'نوشیدنی گرم', color: '#10B981', lightColor: '#059669', dotClass: 'dot-emerald' },
-  { key: 'other', label: 'سایر اقلام', color: '#64748B', lightColor: '#6366F1', dotClass: 'dot-indigo' },
+  { key: 'cold_drink', label: 'نوشیدنی سرد', color: '#8B5CF6', lightColor: '#6D28D9', dotClass: 'dot-purple' },
+  { key: 'fastfood', label: 'فست‌فود و ساندویچ', color: '#F59E0B', lightColor: '#4F46E5', dotClass: 'dot-indigo' },
+  { key: 'snack', label: 'اسنک و تنقلات', color: '#A78BFA', lightColor: '#8B5CF6', dotClass: 'dot-purple' },
+  { key: 'hot_drink', label: 'نوشیدنی گرم', color: '#10B981', lightColor: '#0D9488', dotClass: 'dot-emerald' },
+  { key: 'other', label: 'سایر اقلام', color: '#64748B', lightColor: '#64748B', dotClass: 'dot-slate' },
 ];
 
 const PAYMENT_META = [
-  { key: 'credit', label: 'کارتخوان (POS)', color: '#8B5CF6', lightColor: '#7C3AED', dotClass: 'dot-purple' },
-  { key: 'cash', label: 'دریافتی نقدی', color: '#10B981', lightColor: '#059669', dotClass: 'dot-emerald' },
-  { key: 'account', label: 'حساب کاربری', color: '#64748B', lightColor: '#0891B2', dotClass: 'dot-indigo' },
+  { key: 'credit', label: 'کارتخوان (POS)', color: '#8B5CF6', lightColor: '#6D28D9', dotClass: 'dot-purple' },
+  { key: 'cash', label: 'دریافتی نقدی', color: '#10B981', lightColor: '#0D9488', dotClass: 'dot-emerald' },
+  { key: 'account', label: 'حساب کاربری', color: '#64748B', lightColor: '#4F46E5', dotClass: 'dot-indigo' },
 ];
 
 function isLightModeActive() {
@@ -406,19 +406,19 @@ function renderTablesAndCharts(report, periodSubtitle) {
         label: 'دستگاه کارتخوان (POS)',
         amount: report.totalCredit,
         pct: creditPct,
-        color: light ? '#0891B2' : '#22D3EE',
+        color: light ? '#6D28D9' : '#22D3EE',
       },
       {
         label: 'دریافتی نقدی صندوق',
         amount: report.totalCash,
         pct: cashPct,
-        color: light ? '#059669' : '#10B981',
+        color: light ? '#0D9488' : '#10B981',
       },
       {
         label: 'کسر از حساب کاربری مشتریان',
         amount: report.totalAccount,
         pct: accountPct,
-        color: light ? '#7C3AED' : '#A855F7',
+        color: light ? '#4F46E5' : '#A855F7',
       },
     ];
     barsWrap.innerHTML = barItems

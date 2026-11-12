@@ -100,7 +100,15 @@ function initButtonMicroInteractions() {
     const btn = e.target.closest(
       '.mg-btn, .btn, .mg-chip-btn, .mg-filter-btn, .mg-icon-btn, .mg-logout-btn, .mg-radio-card'
     );
-    if (!btn || btn.disabled || prefersReducedMotion) return;
+    if (
+      !btn ||
+      btn.disabled ||
+      btn.id === 'mgNotifBtn' ||
+      btn.closest('.mg-device-radio-grid') ||
+      prefersReducedMotion
+    ) {
+      return;
+    }
 
     const rect = btn.getBoundingClientRect();
     const size = Math.max(rect.width, rect.height) * 1.75;
@@ -132,7 +140,7 @@ const SPA_SECTIONS = {
     key: 'overview',
     navMatch: '#overview',
     title: 'پیشخوان',
-    docTitle: 'گیم سنتر | پیشخوان مدیریت میزها و کنسول‌ها',
+    docTitle: 'Game District | پیشخوان مدیریت میزها و کنسول‌ها',
     tip: 'مانیتورینگ زنده ظرفیت ایستگاه‌ها، نمودارهای دایره‌ای درآمد، وضعیت تایمرها و خلاصه میزهای فعال',
     url: 'index.html#overview',
   },
@@ -140,62 +148,62 @@ const SPA_SECTIONS = {
     key: 'tables',
     navMatch: '#tables-section',
     title: 'مدیریت میزها',
-    docTitle: 'گیم سنتر | مدیریت میزها',
+    docTitle: 'Game District | مدیریت میزها',
     tip: 'ثبت و راه‌اندازی میز جدید، شارژ مجدد سشن‌ها، ثبت سفارش بوفه و مدیریت تایمرها',
     url: 'index.html#tables-section',
   },
   console: {
     key: 'console',
-    file: 'console.html',
-    script: 'JS/console.js?v=20261110-15',
+    file: 'console.html?v=20261110-20',
+    script: 'JS/console.js?v=20261110-20',
     renderFn: 'renderConsolePage',
     navMatch: 'console.html',
     title: 'مدیریت کنسول‌ها',
-    docTitle: 'گیم سنتر | مدیریت کنسول‌ها',
+    docTitle: 'Game District | مدیریت کنسول‌ها',
     tip: 'تنظیم تعرفه ساعتی تک‌دسته و چنددسته برای کنسول‌ها، سیستم‌ها و میزهای بازی',
     url: 'console.html',
   },
   buffet: {
     key: 'buffet',
-    file: 'buffet.html',
-    script: 'JS/buffet.js?v=20261110-15',
+    file: 'buffet.html?v=20261110-20',
+    script: 'JS/buffet.js?v=20261110-20',
     renderFn: 'renderBuffetPage',
     navMatch: 'buffet.html',
     title: 'مدیریت بوفه و خوراکی‌ها',
-    docTitle: 'گیم سنتر | مدیریت بوفه و خوراکی‌ها',
+    docTitle: 'Game District | مدیریت بوفه و خوراکی‌ها',
     tip: 'ثبت محصولات خوراکی، نوشیدنی، قیمت واحد و کنترل لحظه‌ای موجودی انبار بوفه',
     url: 'buffet.html',
   },
   accounts: {
     key: 'accounts',
-    file: 'acounts.html',
-    script: 'JS/acounts.js?v=20261110-15',
+    file: 'acounts.html?v=20261110-20',
+    script: 'JS/acounts.js?v=20261110-20',
     renderFn: 'renderAccountsPage',
     navMatch: 'acounts.html',
     title: 'باشگاه مشتریان',
-    docTitle: 'گیم سنتر | باشگاه مشتریان',
+    docTitle: 'Game District | باشگاه مشتریان',
     tip: 'ثبت اشتراک اعضای باشگاه، کد اشتراک، شماره تماس و مدیریت حساب‌های مشتریان',
     url: 'acounts.html',
   },
   debtors: {
     key: 'debtors',
-    file: 'Debtors.html',
-    script: 'JS/Debtors.js?v=20261110-15',
+    file: 'Debtors.html?v=20261110-20',
+    script: 'JS/Debtors.js?v=20261110-20',
     renderFn: 'renderDebtorsPage',
     navMatch: 'Debtors.html',
     title: 'مدیریت حساب بدهکاران',
-    docTitle: 'گیم سنتر | حساب بدهکاران',
+    docTitle: 'Game District | حساب بدهکاران',
     tip: 'پیگیری مانده بدهی دفتری مشتریان، ثبت بدهکار جدید و تسویه حساب سریع',
     url: 'Debtors.html',
   },
   income: {
     key: 'income',
-    file: 'income.html',
-    script: 'JS/income.js?v=20261110-15',
+    file: 'income.html?v=20261110-20',
+    script: 'JS/income.js?v=20261110-20',
     renderFn: 'renderIncomePage',
     navMatch: 'income.html',
     title: 'گزارش جامع درآمد و تحلیل مالی',
-    docTitle: 'گیم سنتر | گزارش جامع درآمد و تحلیل مالی',
+    docTitle: 'Game District | گزارش جامع درآمد و تحلیل مالی',
     tip: 'تحلیل جامع درآمد کنسول‌ها، فروش بوفه، نمودار روش‌های پرداخت و فیلتر بازه زمانی',
     url: 'income.html',
   },
@@ -294,7 +302,7 @@ async function fetchSectionMainHtml(sectionKey) {
   const sec = SPA_SECTIONS[sectionKey];
   if (!sec || !sec.file) return '';
   try {
-    const res = await fetch(sec.file, { cache: 'force-cache' });
+    const res = await fetch(sec.file, { cache: 'no-store' });
     if (!res.ok) return '';
     const html = await res.text();
     const doc = new DOMParser().parseFromString(html, 'text/html');
@@ -316,7 +324,7 @@ async function ensureIndexViewsPresent() {
   const mainEl = document.querySelector('main.mg-content');
   if (!mainEl) return false;
   try {
-    const res = await fetch('index.html', { cache: 'force-cache' });
+    const res = await fetch('index.html?v=20261110-20', { cache: 'no-store' });
     if (!res.ok) return false;
     const html = await res.text();
     const doc = new DOMParser().parseFromString(html, 'text/html');
@@ -332,7 +340,7 @@ async function ensureIndexViewsPresent() {
       tablesEl.setAttribute('hidden', '');
       mainEl.insertBefore(tablesEl, document.getElementById('mgDynamicView'));
     }
-    await ensureSpaScriptLoaded('JS/7878.js?v=20261110-15', 'renderTablesWorkspace');
+    await ensureSpaScriptLoaded('JS/7878.js?v=20261110-20', 'renderTablesWorkspace');
     if (typeof window.renderTablesWorkspace === 'function') {
       window.renderTablesWorkspace();
     }
@@ -430,6 +438,12 @@ async function switchSpaSection(targetKey, options = {}) {
 
   if (options.scrollToTop !== false && window.scrollY > 40) {
     window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+  }
+
+  const invoiceCard = document.querySelector('.mg-invoice-card');
+  if (invoiceCard) {
+    invoiceCard.setAttribute('hidden', '');
+    invoiceCard.style.display = 'none';
   }
 
   // 5. Swap main view panes without synchronous layout thrashing so sidebar spring animation stays at 60fps
@@ -543,30 +557,41 @@ function initIndexViewRouter() {
   const mainEl = document.querySelector('main.mg-content');
   if (!mainEl) return;
 
-  const initialKey = detectInitialSectionKey();
-  currentSpaSectionKey = initialKey;
+  const path = (window.location.pathname || '').toLowerCase();
+  const isInvoicePage = path.includes('invoice.html') || Boolean(document.getElementById('mgInvoiceSection'));
 
-  // If page loaded directly on a secondary HTML file (e.g., console.html), wrap its initial <main> content into #mgDynamicView
-  if (!document.getElementById('mgOverviewView') && initialKey !== 'overview' && initialKey !== 'tables') {
-    let dynPane = document.getElementById('mgDynamicView');
-    if (!dynPane) {
-      const initialHtml = mainEl.innerHTML;
-      spaTemplateCache.set(initialKey, initialHtml);
-      dynPane = document.createElement('div');
-      dynPane.id = 'mgDynamicView';
-      dynPane.className = 'mg-view-pane is-active-view';
-      dynPane.setAttribute('data-spa-section', initialKey);
-      dynPane.innerHTML = initialHtml;
-      mainEl.innerHTML = '';
-      mainEl.appendChild(dynPane);
-    }
-    syncSidebarNavActiveState(initialKey);
-    setText('mgTopbarTitle', SPA_SECTIONS[initialKey]?.title || 'پیشخوان');
+  if (isInvoicePage) {
+    currentSpaSectionKey = 'tables';
+    syncSidebarNavActiveState('tables');
     requestAnimationFrame(() => {
       syncSidebarSlidingPill(null, { instant: true, commitActive: true });
     });
   } else {
-    switchSpaSection(initialKey, { updateHistory: false, scrollToTop: false });
+    const initialKey = detectInitialSectionKey();
+    currentSpaSectionKey = initialKey;
+
+    // If page loaded directly on a secondary HTML file (e.g., console.html), wrap its initial <main> content into #mgDynamicView
+    if (!document.getElementById('mgOverviewView') && initialKey !== 'overview' && initialKey !== 'tables') {
+      let dynPane = document.getElementById('mgDynamicView');
+      if (!dynPane) {
+        const initialHtml = mainEl.innerHTML;
+        spaTemplateCache.set(initialKey, initialHtml);
+        dynPane = document.createElement('div');
+        dynPane.id = 'mgDynamicView';
+        dynPane.className = 'mg-view-pane is-active-view';
+        dynPane.setAttribute('data-spa-section', initialKey);
+        dynPane.innerHTML = initialHtml;
+        mainEl.innerHTML = '';
+        mainEl.appendChild(dynPane);
+      }
+      syncSidebarNavActiveState(initialKey);
+      setText('mgTopbarTitle', SPA_SECTIONS[initialKey]?.title || 'پیشخوان');
+      requestAnimationFrame(() => {
+        syncSidebarSlidingPill(null, { instant: true, commitActive: true });
+      });
+    } else {
+      switchSpaSection(initialKey, { updateHistory: false, scrollToTop: false });
+    }
   }
 
   // Intercept clicks on all sidebar navigation links & view switch buttons for instant SPA switching

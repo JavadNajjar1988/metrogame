@@ -5903,88 +5903,87 @@ html.is-theme-switching:not(.is-theme-vt-active) .mg-sidebar-footer {
 
 html[data-theme="light"] {
   color-scheme: light;
-  --ombria-bg: #EAE8F6;
+  --ombria-bg: #ECEBF4;
   --ombria-veil:
-    radial-gradient(circle at 12% 10%, rgba(139, 92, 246, 0.15) 0%, transparent 46%),
-    radial-gradient(circle at 88% 14%, rgba(6, 182, 212, 0.11) 0%, transparent 44%),
-    radial-gradient(circle at 52% 92%, rgba(16, 185, 129, 0.08) 0%, transparent 48%),
-    linear-gradient(180deg, rgba(249, 248, 255, 0.78) 0%, rgba(234, 231, 248, 0.88) 100%);
-  --ombria-sheet: rgba(241, 239, 252, 0.80);
-  --ombria-card: rgba(251, 250, 255, 0.84);
-  --ombria-card-2: rgba(255, 255, 255, 0.68);
-  --ombria-card-3: rgba(255, 255, 255, 0.94);
-  --ombria-panel: rgba(249, 248, 255, 0.95);
-  --ombria-well: rgba(109, 40, 217, 0.06);
+    radial-gradient(circle at 14% 10%, rgba(109, 40, 217, 0.09) 0%, transparent 48%),
+    radial-gradient(circle at 86% 16%, rgba(79, 70, 229, 0.06) 0%, transparent 46%),
+    linear-gradient(180deg, rgba(250, 249, 255, 0.84) 0%, rgba(236, 235, 244, 0.92) 100%);
+  --ombria-sheet: rgba(243, 242, 250, 0.84);
+  --ombria-card: rgba(252, 251, 255, 0.88);
+  --ombria-card-2: rgba(255, 255, 255, 0.74);
+  --ombria-card-3: rgba(255, 255, 255, 0.95);
+  --ombria-panel: rgba(250, 249, 255, 0.96);
+  --ombria-well: rgba(91, 33, 182, 0.05);
 
   --ombria-ink: #141224;
-  --ombria-ink-2: #262340;
-  --ombria-muted: #4E4970;
+  --ombria-ink-2: #26233E;
+  --ombria-muted: #524D70;
 
-  --ombria-line: rgba(109, 40, 217, 0.12);
-  --ombria-line-2: rgba(109, 40, 217, 0.22);
-  --ombria-rim: rgba(124, 58, 237, 0.16);
+  --ombria-line: rgba(91, 33, 182, 0.11);
+  --ombria-line-2: rgba(91, 33, 182, 0.20);
+  --ombria-rim: rgba(109, 40, 217, 0.14);
 
-  --ombria-glass-hi: rgba(255, 255, 255, 0.68);
-  --ombria-glass-rim: rgba(255, 255, 255, 0.84);
-  --ombria-glass-top: rgba(255, 255, 255, 0.97);
+  --ombria-glass-hi: rgba(255, 255, 255, 0.72);
+  --ombria-glass-rim: rgba(255, 255, 255, 0.86);
+  --ombria-glass-top: rgba(255, 255, 255, 0.98);
 
-  --ombria-shadow-sm: 0 2px 6px rgba(67, 36, 145, 0.06), 0 1px 2px rgba(20, 18, 36, 0.04);
-  --ombria-shadow: 0 2px 6px rgba(67, 36, 145, 0.05), 0 18px 40px -24px rgba(76, 29, 149, 0.22);
-  --ombria-shadow-lg: 0 4px 12px rgba(67, 36, 145, 0.10), 0 32px 68px -24px rgba(76, 29, 149, 0.30);
+  --ombria-shadow-sm: 0 2px 6px rgba(46, 26, 94, 0.05), 0 1px 2px rgba(20, 18, 36, 0.04);
+  --ombria-shadow: 0 2px 6px rgba(46, 26, 94, 0.04), 0 18px 40px -24px rgba(59, 24, 119, 0.18);
+  --ombria-shadow-lg: 0 4px 12px rgba(46, 26, 94, 0.08), 0 32px 68px -24px rgba(59, 24, 119, 0.24);
 
-  /* Complementary Gaming Club Accent Tokens (Daylight twin of Dark Mode #8B5CF6) */
-  --ombria-accent: #7C3AED;
-  --ombria-accent-from: #8B5CF6;
-  --ombria-accent-to: #6D28D9;
+  /* Composed Gaming Club Accent Tokens (Dignified Royal Violet & Deep Indigo) */
+  --ombria-accent: #6D28D9;
+  --ombria-accent-from: #7C3AED;
+  --ombria-accent-to: #5B21B6;
   --ombria-accent-ink: #FFFFFF;
-  --ombria-accent-hi: #6D28D9;
-  --ombria-accent-soft: rgba(139, 92, 246, 0.13);
+  --ombria-accent-hi: #5B21B6;
+  --ombria-accent-soft: rgba(109, 40, 217, 0.10);
   --ombria-accent-soft-solid: #EDE9FE;
-  --ombria-accent-glow: rgba(124, 58, 237, 0.38);
+  --ombria-accent-glow: rgba(109, 40, 217, 0.30);
 
-  --ombria-good: #059669;
-  --ombria-good-soft: rgba(16, 185, 129, 0.14);
-  --ombria-warn: #D97706;
-  --ombria-warn-soft: rgba(245, 158, 11, 0.16);
-  --ombria-bad: #E11D48;
-  --ombria-bad-soft: rgba(244, 63, 94, 0.13);
-  --ombria-info: #0891B2;
-  --ombria-info-soft: rgba(6, 182, 212, 0.13);
+  --ombria-good: #0D9488;
+  --ombria-good-soft: rgba(13, 148, 136, 0.10);
+  --ombria-warn: #5B21B6;
+  --ombria-warn-soft: rgba(109, 40, 217, 0.09);
+  --ombria-bad: #BE123C;
+  --ombria-bad-soft: rgba(190, 18, 60, 0.10);
+  --ombria-info: #4338CA;
+  --ombria-info-soft: rgba(79, 70, 229, 0.09);
 
-  /* Map legacy dashboard variables to Gaming Light Mode tokens */
-  --bg-canvas: #EAE8F6;
-  --bg-surface: #F1EFFB;
-  --bg-card: #FAF9FF;
+  /* Map legacy dashboard variables to Composed Gaming Light Mode tokens */
+  --bg-canvas: #ECEBF4;
+  --bg-surface: #F3F2FA;
+  --bg-card: #FBFaff;
   --bg-card-elevated: #FFFFFF;
-  --bg-input: rgba(255, 255, 255, 0.72);
+  --bg-input: rgba(255, 255, 255, 0.78);
 
-  --accent-indigo: #7C3AED;
-  --accent-purple: #8B5CF6;
-  --accent-violet: #7C3AED;
-  --accent-cyan: #0891B2;
-  --accent-cyan-bright: #06B6D4;
-  --accent-emerald: #059669;
-  --accent-amber: #D97706;
-  --accent-crimson: #E11D48;
-  --accent-rose: #E11D48;
+  --accent-indigo: #4F46E5;
+  --accent-purple: #6D28D9;
+  --accent-violet: #6D28D9;
+  --accent-cyan: #4F46E5;
+  --accent-cyan-bright: #6366F1;
+  --accent-emerald: #0D9488;
+  --accent-amber: #5B21B6;
+  --accent-crimson: #BE123C;
+  --accent-rose: #BE123C;
 
-  --border-subtle: rgba(109, 40, 217, 0.12);
-  --border-light: rgba(109, 40, 217, 0.08);
-  --border-glow: rgba(124, 58, 237, 0.28);
-  --border-cyan: rgba(8, 145, 178, 0.26);
+  --border-subtle: rgba(91, 33, 182, 0.11);
+  --border-light: rgba(91, 33, 182, 0.07);
+  --border-glow: rgba(109, 40, 217, 0.24);
+  --border-cyan: rgba(79, 70, 229, 0.22);
 
   --text-primary: #141224;
-  --text-secondary: #262340;
-  --text-muted: #4E4970;
+  --text-secondary: #26233E;
+  --text-muted: #524D70;
 
   --shadow-card: var(--ombria-shadow);
-  --shadow-card-hover: 0 4px 12px rgba(76, 29, 149, 0.08), 0 22px 46px -22px rgba(109, 40, 217, 0.28);
+  --shadow-card-hover: 0 4px 12px rgba(59, 24, 119, 0.06), 0 22px 46px -22px rgba(91, 33, 182, 0.22);
 }
 
 /* 1. Main Canvas, Frosted Gaming Veil, App Shell & Topbar */
 html[data-theme="light"],
 html[data-theme="light"] body {
-  background-color: #EAE8F6 !important;
+  background-color: #ECEBF4 !important;
   background-image: var(--ombria-veil) !important;
   background-attachment: fixed !important;
   color: #141224 !important;
@@ -5998,19 +5997,19 @@ html[data-theme="light"] .mg-main-wrapper {
 
 html[data-theme="light"] a:hover,
 html[data-theme="light"] a:focus {
-  color: #6D28D9;
+  color: #5B21B6;
 }
 
 html[data-theme="light"] .mg-topbar {
   background:
-    linear-gradient(165deg, var(--ombria-glass-hi), rgba(237, 233, 254, 0.35) 52%),
+    linear-gradient(165deg, var(--ombria-glass-hi), rgba(240, 238, 250, 0.42) 52%),
     var(--ombria-sheet) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(130%) !important;
-  backdrop-filter: blur(24px) saturate(130%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(125%) !important;
+  backdrop-filter: blur(24px) saturate(125%) !important;
   border-bottom: 1px solid var(--ombria-line) !important;
   box-shadow:
     inset 0 -1px 0 var(--ombria-glass-rim),
-    0 4px 18px -8px rgba(76, 29, 149, 0.10) !important;
+    0 4px 18px -8px rgba(59, 24, 119, 0.08) !important;
 }
 
 html[data-theme="light"] .mg-page-heading h1,
@@ -6020,7 +6019,7 @@ html[data-theme="light"] #mgTopbarTitle {
 }
 
 html[data-theme="light"] .mg-page-heading p {
-  color: #4E4970 !important;
+  color: #524D70 !important;
 }
 
 html[data-theme="light"] .mg-mobile-menu-btn,
@@ -6035,7 +6034,7 @@ html[data-theme="light"] .mg-icon-btn {
 }
 
 html[data-theme="light"] .mg-live-clock svg {
-  stroke: #7C3AED !important;
+  stroke: #6D28D9 !important;
 }
 
 html[data-theme="light"] .mg-live-clock span,
@@ -6045,29 +6044,30 @@ html[data-theme="light"] #mgLiveClockText {
 
 html[data-theme="light"] .mg-icon-btn:hover {
   background: #F5F3FF !important;
-  border-color: rgba(124, 58, 237, 0.34) !important;
-  color: #6D28D9 !important;
+  border-color: rgba(109, 40, 217, 0.30) !important;
+  color: #5B21B6 !important;
 }
 
+/* Notification badge matches Dark Mode's signature Royal Violet instead of loud pink-red */
 html[data-theme="light"] .mg-notif-count {
-  background: linear-gradient(135deg, #F43F5E 0%, #E11D48 100%) !important;
+  background: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%) !important;
   color: #FFFFFF !important;
   border: 2px solid #F5F3FF !important;
-  box-shadow: 0 3px 8px rgba(225, 29, 72, 0.35) !important;
+  box-shadow: 0 3px 8px rgba(91, 33, 182, 0.28) !important;
 }
 
 html[data-theme="light"] .mg-status-strip,
 html[data-theme="light"] .mg-income-summary-strip {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.56), rgba(241, 238, 253, 0.72)) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(125%) !important;
-  backdrop-filter: blur(18px) saturate(125%) !important;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.64), rgba(243, 241, 251, 0.78)) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(120%) !important;
+  backdrop-filter: blur(18px) saturate(120%) !important;
   border-bottom: 1px solid var(--ombria-line) !important;
-  color: #262340 !important;
+  color: #26233E !important;
 }
 
 html[data-theme="light"] .mg-status-pill,
 html[data-theme="light"] .mg-inc-strip-item {
-  color: #4E4970 !important;
+  color: #524D70 !important;
 }
 
 html[data-theme="light"] .mg-status-pill strong,
@@ -6076,7 +6076,7 @@ html[data-theme="light"] .mg-inc-strip-item strong {
 }
 
 html[data-theme="light"] .mg-status-strip a {
-  color: #6D28D9 !important;
+  color: #5B21B6 !important;
   font-weight: 700 !important;
 }
 
@@ -6084,7 +6084,7 @@ html[data-theme="light"] .mg-status-divider {
   background: var(--ombria-line-2) !important;
 }
 
-/* Segmented View Switcher in Status Strip (Frosted Glass + Royal Violet Active Pill) */
+/* Segmented View Switcher in Status Strip */
 html[data-theme="light"] .mg-view-switcher {
   background: var(--ombria-card-2) !important;
   border: 1px solid var(--ombria-line) !important;
@@ -6092,33 +6092,33 @@ html[data-theme="light"] .mg-view-switcher {
 }
 
 html[data-theme="light"] .mg-view-switch-btn {
-  color: #4E4970 !important;
+  color: #524D70 !important;
   background: transparent !important;
 }
 
 html[data-theme="light"] .mg-view-switch-btn:hover {
-  color: #6D28D9 !important;
+  color: #5B21B6 !important;
 }
 
 html[data-theme="light"] .mg-view-switch-btn.active {
-  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 55%, #6D28D9 100%) !important;
+  background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 55%, #5B21B6 100%) !important;
   color: #FFFFFF !important;
   border-color: transparent !important;
-  box-shadow: 0 4px 12px -2px rgba(124, 58, 237, 0.42) !important;
+  box-shadow: 0 4px 12px -2px rgba(91, 33, 182, 0.34) !important;
 }
 
-/* 2. Sidebar Navigation (Ombria Frosted Lavender-Glass Sheet + Gaming Royal Violet Active Pill) */
+/* 2. Sidebar Navigation (Ombria Frosted Glass Sheet + Dignified Royal Violet Active Pill) */
 html[data-theme="light"] .mg-sidebar {
   background:
-    linear-gradient(165deg, var(--ombria-glass-hi), rgba(237, 233, 254, 0.42) 50%),
+    linear-gradient(165deg, var(--ombria-glass-hi), rgba(240, 238, 250, 0.45) 50%),
     var(--ombria-sheet) !important;
-  -webkit-backdrop-filter: blur(26px) saturate(135%) !important;
-  backdrop-filter: blur(26px) saturate(135%) !important;
+  -webkit-backdrop-filter: blur(26px) saturate(125%) !important;
+  backdrop-filter: blur(26px) saturate(125%) !important;
   border-left: 1px solid var(--ombria-line) !important;
   box-shadow:
     inset 1px 0 0 var(--ombria-glass-rim),
     inset 0 1px 0 var(--ombria-glass-top),
-    -10px 0 32px -16px rgba(76, 29, 149, 0.16) !important;
+    -10px 0 32px -16px rgba(59, 24, 119, 0.12) !important;
 }
 
 html[data-theme="light"] .mg-brand {
@@ -6127,9 +6127,9 @@ html[data-theme="light"] .mg-brand {
 }
 
 html[data-theme="light"] .mg-brand-logo {
-  background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%) !important;
-  border: 1px solid rgba(124, 58, 237, 0.32) !important;
-  box-shadow: 0 6px 16px -6px rgba(124, 58, 237, 0.45) !important;
+  background: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%) !important;
+  border: 1px solid rgba(109, 40, 217, 0.28) !important;
+  box-shadow: 0 6px 16px -6px rgba(91, 33, 182, 0.36) !important;
 }
 
 html[data-theme="light"] .mg-brand-title {
@@ -6137,26 +6137,26 @@ html[data-theme="light"] .mg-brand-title {
 }
 
 html[data-theme="light"] .mg-brand-subtitle {
-  color: #6D28D9 !important;
+  color: #5B21B6 !important;
   font-weight: 600 !important;
 }
 
 html[data-theme="light"] .mg-sidebar-fold-btn {
-  background: rgba(139, 92, 246, 0.08) !important;
-  border: 1px solid rgba(124, 58, 237, 0.18) !important;
-  color: #262340 !important;
+  background: rgba(109, 40, 217, 0.06) !important;
+  border: 1px solid rgba(109, 40, 217, 0.15) !important;
+  color: #26233E !important;
   box-shadow: none !important;
 }
 
 html[data-theme="light"] .mg-sidebar-fold-btn:hover {
   background: #EDE9FE !important;
-  border-color: rgba(124, 58, 237, 0.35) !important;
-  color: #6D28D9 !important;
+  border-color: rgba(109, 40, 217, 0.30) !important;
+  color: #5B21B6 !important;
 }
 
 html[data-theme="light"] .mg-sidebar-new-btn {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(237, 233, 254, 0.72)) !important;
-  border: 1px solid rgba(124, 58, 237, 0.22) !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(242, 240, 252, 0.78)) !important;
+  border: 1px solid rgba(109, 40, 217, 0.18) !important;
   color: #141224 !important;
   box-shadow:
     inset 0 0 0 1px var(--ombria-glass-rim),
@@ -6169,23 +6169,23 @@ html[data-theme="light"] .mg-sidebar-new-btn .mg-sidebar-new-label {
 }
 
 html[data-theme="light"] .mg-sidebar-new-btn:hover {
-  background: linear-gradient(135deg, #FFFFFF, #EDE9FE) !important;
-  border-color: #8B5CF6 !important;
-  color: #5B21B6 !important;
+  background: linear-gradient(135deg, #FFFFFF, #F3F0FF) !important;
+  border-color: #6D28D9 !important;
+  color: #4C1D95 !important;
   box-shadow:
     inset 0 0 0 1px #FFFFFF,
-    0 8px 20px -8px rgba(124, 58, 237, 0.28) !important;
+    0 8px 20px -8px rgba(91, 33, 182, 0.22) !important;
 }
 
 html[data-theme="light"] .mg-sidebar-new-ico {
-  background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%) !important;
+  background: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%) !important;
   color: #FFFFFF !important;
-  box-shadow: 0 3px 8px rgba(124, 58, 237, 0.32) !important;
+  box-shadow: 0 3px 8px rgba(91, 33, 182, 0.26) !important;
 }
 
 html[data-theme="light"] .mg-kbd {
-  background: rgba(139, 92, 246, 0.10) !important;
-  border: 1px solid rgba(124, 58, 237, 0.22) !important;
+  background: rgba(109, 40, 217, 0.08) !important;
+  border: 1px solid rgba(109, 40, 217, 0.18) !important;
   color: #5B21B6 !important;
   box-shadow: none !important;
 }
@@ -6202,7 +6202,7 @@ html[data-theme="light"] div:nth-of-type(2) > aside#mgSidebar:nth-of-type(1) > u
 html[data-theme="light"] .mg-nav-group-header,
 html[data-theme="light"] .mg-nav-group-header span,
 html[data-theme="light"] .mg-sidebar-section-label {
-  color: #5B21B6 !important;
+  color: #524D70 !important;
   font-weight: 700 !important;
 }
 
@@ -6217,7 +6217,7 @@ html[data-theme="light"] .mg-nav-item:not(.active) a,
 html[data-theme="light"] div:nth-of-type(2) > aside#mgSidebar:nth-of-type(1) > ul#mgNavList:nth-of-type(1).is-pill-elsewhere .mg-nav-item.active:not(:hover) a,
 html[data-theme="light"] .mg-nav-list.is-pill-elsewhere .mg-nav-item.active:not(:hover) a,
 html[data-theme="light"] .mg-nav-list:has(.mg-nav-sliding-pill) .mg-nav-item:not(.is-pill-target) a {
-  color: #262340 !important;
+  color: #26233E !important;
   background: transparent !important;
   border-color: transparent !important;
   box-shadow: none !important;
@@ -6238,17 +6238,17 @@ html[data-theme="light"] .mg-nav-list.is-pill-elsewhere .mg-nav-item.active:not(
 html[data-theme="light"] .mg-nav-list:has(.mg-nav-sliding-pill) .mg-nav-item:not(.is-pill-target) .mg-nav-icon,
 html[data-theme="light"] .mg-nav-list:has(.mg-nav-sliding-pill) .mg-nav-item:not(.is-pill-target) .mg-nav-label,
 html[data-theme="light"] .mg-nav-list:has(.mg-nav-sliding-pill) .mg-nav-item:not(.is-pill-target) a span:not(.mg-nav-badge) {
-  color: #262340 !important;
+  color: #26233E !important;
 }
 
-/* Signature MetroGame Royal Violet-Indigo Sliding Indicator (Complements Dark Mode #8B5CF6) */
+/* Signature MetroGame Royal Violet-Indigo Sliding Indicator */
 html[data-theme="light"] .mg-nav-sliding-pill,
 html[data-theme="light"] .mg-nav-sliding-pill.is-hover-preview {
-  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 52%, #6D28D9 100%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.28) !important;
+  background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 52%, #5B21B6 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.24) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.35),
-    0 10px 24px -8px rgba(124, 58, 237, 0.48) !important;
+    inset 0 1px 0 rgba(255, 255, 255, 0.30),
+    0 10px 24px -8px rgba(91, 33, 182, 0.40) !important;
   filter: none !important;
 }
 
@@ -6267,9 +6267,9 @@ html[data-theme="light"] .mg-nav-list:has(.mg-nav-sliding-pill) .mg-nav-item a:h
 /* Fallback Royal Violet Background ONLY if .mg-nav-sliding-pill is not present */
 html[data-theme="light"] .mg-nav-list:not(:has(.mg-nav-sliding-pill)):not(.is-pill-elsewhere) .mg-nav-item.active a,
 html[data-theme="light"] .mg-nav-list:not(:has(.mg-nav-sliding-pill)) .mg-nav-item a:hover {
-  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 52%, #6D28D9 100%) !important;
-  border: 1px solid #6D28D9 !important;
-  box-shadow: 0 10px 24px -8px rgba(124, 58, 237, 0.45) !important;
+  background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 52%, #5B21B6 100%) !important;
+  border: 1px solid #5B21B6 !important;
+  box-shadow: 0 10px 24px -8px rgba(91, 33, 182, 0.38) !important;
   color: #FFFFFF !important;
 }
 
@@ -6304,16 +6304,11 @@ html[data-theme="light"] .mg-nav-item a:hover span:not(.mg-nav-badge) {
 /* Sidebar Badges */
 html[data-theme="light"] .mg-nav-badge,
 html[data-theme="light"] .mg-nav-list.is-pill-elsewhere .mg-nav-item.active:not(:hover) .mg-nav-badge,
-html[data-theme="light"] .mg-nav-list:has(.mg-nav-sliding-pill) .mg-nav-item:not(.is-pill-target) .mg-nav-badge {
-  background: rgba(139, 92, 246, 0.12) !important;
-  color: #5B21B6 !important;
-  border: 1px solid rgba(124, 58, 237, 0.22) !important;
-}
-
+html[data-theme="light"] .mg-nav-list:has(.mg-nav-sliding-pill) .mg-nav-item:not(.is-pill-target) .mg-nav-badge,
 html[data-theme="light"] .mg-nav-badge.badge-Highlight {
-  background: rgba(6, 182, 212, 0.14) !important;
-  color: #0E7490 !important;
-  border-color: rgba(8, 145, 178, 0.28) !important;
+  background: rgba(109, 40, 217, 0.09) !important;
+  color: #5B21B6 !important;
+  border: 1px solid rgba(109, 40, 217, 0.18) !important;
 }
 
 html[data-theme="light"] .mg-nav-list .mg-nav-item.is-pill-target .mg-nav-badge,
@@ -6325,8 +6320,8 @@ html[data-theme="light"] .mg-nav-item a:hover .mg-nav-badge {
 }
 
 html[data-theme="light"] .mg-nav-dot {
-  background: #10B981 !important;
-  box-shadow: 0 0 0 2px #F1EFFB !important;
+  background: #0D9488 !important;
+  box-shadow: 0 0 0 2px #F3F2FA !important;
 }
 
 /* Sidebar Footer */
@@ -6346,27 +6341,27 @@ html[data-theme="light"] .mg-sidebar-status-box {
 }
 
 html[data-theme="light"] .mg-sidebar-status-box span {
-  color: #4E4970 !important;
+  color: #524D70 !important;
 }
 
 html[data-theme="light"] .mg-sidebar-status-box strong {
-  color: #059669 !important;
+  color: #0D9488 !important;
 }
 
 html[data-theme="light"] .mg-logout-btn {
   background: var(--ombria-bad-soft) !important;
-  border: 1px solid rgba(225, 29, 72, 0.26) !important;
-  color: #BE123C !important;
+  border: 1px solid rgba(190, 18, 60, 0.22) !important;
+  color: #9F1239 !important;
 }
 
 html[data-theme="light"] .mg-logout-btn:hover {
-  background: linear-gradient(135deg, #F43F5E 0%, #E11D48 100%) !important;
-  border-color: #E11D48 !important;
+  background: linear-gradient(135deg, #E11D48 0%, #BE123C 100%) !important;
+  border-color: #BE123C !important;
   color: #FFFFFF !important;
-  box-shadow: 0 6px 16px -4px rgba(225, 29, 72, 0.38) !important;
+  box-shadow: 0 6px 16px -4px rgba(190, 18, 60, 0.32) !important;
 }
 
-/* 3. Dashboard Cards, Frosted Glass Containers & Operational Panels */
+/* 3. Dashboard Cards, Unified Frosted Glass Containers & Operational Panels */
 html[data-theme="light"] .mg-card,
 html[data-theme="light"] .mg-chart-card,
 html[data-theme="light"] .mg-income-card,
@@ -6379,10 +6374,10 @@ html[data-theme="light"] #mgTablesView section.mg-ops-card,
 html[data-theme="light"] #mgTablesView #ChargeModal > .charge-modal-content,
 html[data-theme="light"] #mgTablesView #myModal > .modal-content {
   background:
-    linear-gradient(135deg, var(--ombria-glass-hi), rgba(237, 233, 254, 0.28) 58%),
+    linear-gradient(135deg, var(--ombria-glass-hi), rgba(242, 240, 252, 0.32) 58%),
     var(--ombria-card) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(125%) !important;
-  backdrop-filter: blur(22px) saturate(125%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(120%) !important;
+  backdrop-filter: blur(22px) saturate(120%) !important;
   border: 1px solid var(--ombria-line) !important;
   box-shadow:
     inset 0 0 0 1px var(--ombria-glass-rim),
@@ -6391,52 +6386,23 @@ html[data-theme="light"] #mgTablesView #myModal > .modal-content {
   color: #141224 !important;
 }
 
-/* Gaming Club Tinted Frosted-Glass KPI Cards (Complements Dark Mode Neon Accents) */
-html[data-theme="light"] .mg-kpi-card {
+/* Unified Frosted-Glass KPI Cards (Eliminates rainbow pastel card backgrounds while preserving gaming glass depth) */
+html[data-theme="light"] .mg-kpi-card,
+html[data-theme="light"] .mg-kpi-card.kpi-cyan,
+html[data-theme="light"] .mg-kpi-card.kpi-emerald,
+html[data-theme="light"] .mg-kpi-card.kpi-amber,
+html[data-theme="light"] .mg-kpi-card.kpi-purple {
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.84) 0%, rgba(237, 233, 254, 0.85) 100%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.90) 0%, rgba(243, 241, 252, 0.88) 100%),
     var(--ombria-card) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(130%) !important;
-  backdrop-filter: blur(22px) saturate(130%) !important;
-  border: 1px solid rgba(124, 58, 237, 0.18) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(122%) !important;
+  backdrop-filter: blur(22px) saturate(122%) !important;
+  border: 1px solid rgba(91, 33, 182, 0.13) !important;
   box-shadow:
     inset 0 0 0 1px var(--ombria-glass-rim),
     inset 1px 1px 0 var(--ombria-glass-top),
-    0 10px 26px -14px rgba(124, 58, 237, 0.18) !important;
+    var(--ombria-shadow) !important;
   color: #141224 !important;
-}
-
-html[data-theme="light"] .mg-kpi-card.kpi-cyan {
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.84) 0%, rgba(224, 242, 254, 0.86) 100%),
-    var(--ombria-card) !important;
-  border-color: rgba(8, 145, 178, 0.20) !important;
-  box-shadow:
-    inset 0 0 0 1px var(--ombria-glass-rim),
-    inset 1px 1px 0 var(--ombria-glass-top),
-    0 10px 26px -14px rgba(8, 145, 178, 0.18) !important;
-}
-
-html[data-theme="light"] .mg-kpi-card.kpi-emerald {
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.84) 0%, rgba(209, 250, 229, 0.84) 100%),
-    var(--ombria-card) !important;
-  border-color: rgba(5, 150, 105, 0.20) !important;
-  box-shadow:
-    inset 0 0 0 1px var(--ombria-glass-rim),
-    inset 1px 1px 0 var(--ombria-glass-top),
-    0 10px 26px -14px rgba(5, 150, 105, 0.18) !important;
-}
-
-html[data-theme="light"] .mg-kpi-card.kpi-amber {
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.84) 0%, rgba(254, 243, 199, 0.86) 100%),
-    var(--ombria-card) !important;
-  border-color: rgba(217, 119, 6, 0.22) !important;
-  box-shadow:
-    inset 0 0 0 1px var(--ombria-glass-rim),
-    inset 1px 1px 0 var(--ombria-glass-top),
-    0 10px 26px -14px rgba(217, 119, 6, 0.18) !important;
 }
 
 html[data-theme="light"] .mg-card:hover,
@@ -6446,11 +6412,11 @@ html[data-theme="light"] .mg-income-card:hover,
 html[data-theme="light"] #mgTablesView section.mg-ops-card:hover,
 html[data-theme="light"] #mgTablesView #ChargeModal > .charge-modal-content:hover,
 html[data-theme="light"] #mgTablesView #myModal > .modal-content:hover {
-  border-color: rgba(124, 58, 237, 0.28) !important;
+  border-color: rgba(109, 40, 217, 0.24) !important;
   box-shadow:
     inset 0 0 0 1px var(--ombria-glass-top),
-    0 4px 12px rgba(76, 29, 149, 0.08),
-    0 22px 44px -22px rgba(109, 40, 217, 0.28) !important;
+    0 4px 12px rgba(59, 24, 119, 0.06),
+    0 22px 44px -22px rgba(91, 33, 182, 0.22) !important;
 }
 
 html[data-theme="light"] .mg-card-header,
@@ -6461,7 +6427,7 @@ html[data-theme="light"] .mg-section-bar {
 }
 
 html[data-theme="light"] .mg-section-accent {
-  background: linear-gradient(180deg, #8B5CF6 0%, #6D28D9 100%) !important;
+  background: linear-gradient(180deg, #7C3AED 0%, #5B21B6 100%) !important;
 }
 
 html[data-theme="light"] .mg-card-title,
@@ -6474,45 +6440,36 @@ html[data-theme="light"] .invoice h3 {
 html[data-theme="light"] .mg-card-subtitle,
 html[data-theme="light"] .mg-section-caption,
 html[data-theme="light"] .mg-tables-banner-sub {
-  color: #4E4970 !important;
+  color: #524D70 !important;
 }
 
 html[data-theme="light"] .mg-card-tag,
-html[data-theme="light"] .mg-chart-badge {
-  background: rgba(139, 92, 246, 0.11) !important;
-  border: 1px solid rgba(124, 58, 237, 0.22) !important;
+html[data-theme="light"] .mg-chart-badge,
+html[data-theme="light"] .mg-chart-badge.badge-emerald,
+html[data-theme="light"] .mg-chart-badge.badge-purple {
+  background: rgba(109, 40, 217, 0.08) !important;
+  border: 1px solid rgba(109, 40, 217, 0.18) !important;
   color: #5B21B6 !important;
 }
 
+/* Unified Composed Violet-Indigo Header Icon Boxes */
 html[data-theme="light"] .mg-header-icon-box,
-html[data-theme="light"] .mg-card-header-icon {
-  background: rgba(139, 92, 246, 0.12) !important;
-  border: 1px solid rgba(124, 58, 237, 0.22) !important;
-  color: #6D28D9 !important;
+html[data-theme="light"] .mg-header-icon-box.icon-cyan,
+html[data-theme="light"] .mg-header-icon-box.icon-amber,
+html[data-theme="light"] .mg-header-icon-box.icon-emerald,
+html[data-theme="light"] .mg-card-header-icon,
+html[data-theme="light"] .mg-card-header-icon.icon-cyan,
+html[data-theme="light"] .mg-card-header-icon.icon-amber,
+html[data-theme="light"] .mg-card-header-icon.icon-emerald {
+  background: rgba(109, 40, 217, 0.08) !important;
+  border: 1px solid rgba(109, 40, 217, 0.18) !important;
+  color: #5B21B6 !important;
   box-shadow: inset 0 1px 0 var(--ombria-glass-rim) !important;
 }
 
-html[data-theme="light"] .mg-card-header-icon.icon-cyan {
-  background: rgba(6, 182, 212, 0.13) !important;
-  border-color: rgba(8, 145, 178, 0.24) !important;
-  color: #0891B2 !important;
-}
-
-html[data-theme="light"] .mg-card-header-icon.icon-emerald {
-  background: rgba(16, 185, 129, 0.13) !important;
-  border-color: rgba(5, 150, 105, 0.24) !important;
-  color: #059669 !important;
-}
-
-html[data-theme="light"] .mg-card-header-icon.icon-amber {
-  background: rgba(245, 158, 11, 0.14) !important;
-  border-color: rgba(217, 119, 6, 0.26) !important;
-  color: #D97706 !important;
-}
-
-/* 4. KPI Cards, Circular Statistics & Donut Charts (Vibrant Daylight Gaming Palette) */
+/* 4. KPI Cards, Circular Statistics & Donut Charts (Composed Royal Violet & Indigo Palette) */
 html[data-theme="light"] .mg-kpi-label {
-  color: #4E4970 !important;
+  color: #524D70 !important;
   font-weight: 600 !important;
 }
 
@@ -6524,71 +6481,65 @@ html[data-theme="light"] .mg-kpi-value span {
 
 html[data-theme="light"] .mg-kpi-unit,
 html[data-theme="light"] .mg-kpi-footer {
-  color: #4E4970 !important;
+  color: #524D70 !important;
 }
 
-html[data-theme="light"] .mg-kpi-icon {
+html[data-theme="light"] .mg-kpi-icon,
+html[data-theme="light"] .mg-kpi-card.kpi-amber .mg-kpi-icon {
   background: transparent !important;
-  color: #7C3AED !important;
+  color: #6D28D9 !important;
 }
 
 html[data-theme="light"] .mg-kpi-card.kpi-cyan .mg-kpi-icon {
-  color: #0891B2 !important;
+  color: #4F46E5 !important;
 }
 
 html[data-theme="light"] .mg-kpi-card.kpi-emerald .mg-kpi-icon {
-  color: #059669 !important;
-}
-
-html[data-theme="light"] .mg-kpi-card.kpi-amber .mg-kpi-icon {
-  color: #D97706 !important;
+  color: #0D9488 !important;
 }
 
 html[data-theme="light"] .mg-kpi-ring-track,
 html[data-theme="light"] .mg-gauge-track {
-  stroke: rgba(124, 58, 237, 0.12) !important;
+  stroke: rgba(109, 40, 217, 0.11) !important;
 }
 
 html[data-theme="light"] .mg-gauge-inner-ring {
-  fill: rgba(255, 255, 255, 0.65) !important;
-  stroke: rgba(124, 58, 237, 0.10) !important;
+  fill: rgba(255, 255, 255, 0.72) !important;
+  stroke: rgba(109, 40, 217, 0.10) !important;
 }
 
 html[data-theme="light"] .mg-kpi-ring-bar,
 html[data-theme="light"] .mg-kpi-ring-bar.ring-indigo,
-html[data-theme="light"] .mg-kpi-ring-bar.ring-purple {
-  stroke: #7C3AED !important;
+html[data-theme="light"] .mg-kpi-ring-bar.ring-purple,
+html[data-theme="light"] .mg-kpi-ring-bar.ring-amber {
+  stroke: #6D28D9 !important;
 }
 
 html[data-theme="light"] .mg-kpi-ring-bar.ring-cyan {
-  stroke: #0891B2 !important;
+  stroke: #4F46E5 !important;
 }
 
 html[data-theme="light"] .mg-kpi-ring-bar.ring-emerald {
-  stroke: #059669 !important;
+  stroke: #0D9488 !important;
 }
 
-html[data-theme="light"] .mg-kpi-ring-bar.ring-amber {
-  stroke: #D97706 !important;
-}
-
-/* Gaming Club Donut Chart Segments in Light Mode */
+/* Gaming Club Donut Chart Segments in Light Mode (Harmonious Violet, Indigo & Teal) */
 html[data-theme="light"] #gaugeOccupancyArc,
 html[data-theme="light"] #donutSessSeg0 {
-  stroke: #7C3AED !important;
+  stroke: #6D28D9 !important;
 }
 
 html[data-theme="light"] #donutRevSeg0 {
-  stroke: #059669 !important;
+  stroke: #6D28D9 !important;
 }
 
 html[data-theme="light"] #donutRevSeg1 {
-  stroke: #D97706 !important;
+  stroke: #4F46E5 !important;
 }
 
 html[data-theme="light"] #gaugeAvailableArc,
 html[data-theme="light"] #donutSessSeg1 {
-  stroke: rgba(124, 58, 237, 0.15) !important;
+  stroke: rgba(109, 40, 217, 0.14) !important;
 }
 
 html[data-theme="light"] .mg-chart-title {
@@ -6596,7 +6547,7 @@ html[data-theme="light"] .mg-chart-title {
 }
 
 html[data-theme="light"] .mg-chart-desc {
-  color: #4E4970 !important;
+  color: #524D70 !important;
 }
 
 html[data-theme="light"] .mg-gauge-percent {
@@ -6605,7 +6556,7 @@ html[data-theme="light"] .mg-gauge-percent {
 }
 
 html[data-theme="light"] .mg-gauge-caption {
-  color: #4E4970 !important;
+  color: #524D70 !important;
 }
 
 html[data-theme="light"] .mg-legend-item {
@@ -6614,7 +6565,7 @@ html[data-theme="light"] .mg-legend-item {
 }
 
 html[data-theme="light"] .mg-legend-item .mg-legend-label {
-  color: #4E4970 !important;
+  color: #524D70 !important;
 }
 
 html[data-theme="light"] .mg-legend-item strong {
@@ -6632,46 +6583,42 @@ html[data-theme="light"] .mg-legend-item.is-active .mg-legend-label {
   color: #5B21B6 !important;
 }
 
-html[data-theme="light"] .mg-legend-dot.dot-purple {
-  background: #7C3AED !important;
+html[data-theme="light"] .mg-legend-dot.dot-purple,
+html[data-theme="light"] .mg-legend-dot.dot-amber {
+  background: #6D28D9 !important;
 }
 
-html[data-theme="light"] .mg-legend-dot.dot-cyan {
-  background: #0891B2 !important;
-}
-
+html[data-theme="light"] .mg-legend-dot.dot-cyan,
 html[data-theme="light"] .mg-legend-dot.dot-indigo {
-  background: #6366F1 !important;
+  background: #4F46E5 !important;
 }
 
 html[data-theme="light"] .mg-legend-dot.dot-emerald {
-  background: #059669 !important;
+  background: #0D9488 !important;
 }
 
-html[data-theme="light"] .mg-legend-dot.dot-amber {
-  background: #D97706 !important;
+html[data-theme="light"] .mg-legend-dot.dot-slate {
+  background: #64748B !important;
 }
 
 html[data-theme="light"] .mg-mini-bar-track,
 html[data-theme="light"] .mg-income-legend-bar-track,
 html[data-theme="light"] .mg-pay-bar-track {
-  background: rgba(124, 58, 237, 0.10) !important;
+  background: rgba(109, 40, 217, 0.10) !important;
 }
 
-html[data-theme="light"] .mg-mini-bar-fill.fill-purple {
-  background: linear-gradient(90deg, #8B5CF6, #6D28D9) !important;
+html[data-theme="light"] .mg-mini-bar-fill.fill-purple,
+html[data-theme="light"] .mg-mini-bar-fill.fill-amber {
+  background: linear-gradient(90deg, #7C3AED, #5B21B6) !important;
 }
 
-html[data-theme="light"] .mg-mini-bar-fill.fill-cyan {
-  background: linear-gradient(90deg, #06B6D4, #0891B2) !important;
+html[data-theme="light"] .mg-mini-bar-fill.fill-cyan,
+html[data-theme="light"] .mg-mini-bar-fill.fill-indigo {
+  background: linear-gradient(90deg, #6366F1, #4338CA) !important;
 }
 
 html[data-theme="light"] .mg-mini-bar-fill.fill-emerald {
-  background: linear-gradient(90deg, #10B981, #059669) !important;
-}
-
-html[data-theme="light"] .mg-mini-bar-fill.fill-amber {
-  background: linear-gradient(90deg, #F59E0B, #D97706) !important;
+  background: linear-gradient(90deg, #14B8A6, #0D9488) !important;
 }
 
 /* 5. Overview Active Stations Mini-Cards */
@@ -6683,7 +6630,7 @@ html[data-theme="light"] .mg-mini-station-card {
 
 html[data-theme="light"] .mg-mini-station-card:hover {
   background: var(--ombria-card-3) !important;
-  border-color: rgba(124, 58, 237, 0.30) !important;
+  border-color: rgba(109, 40, 217, 0.26) !important;
   box-shadow: var(--ombria-shadow) !important;
 }
 
@@ -6692,32 +6639,32 @@ html[data-theme="light"] .mg-mini-station-num strong {
 }
 
 html[data-theme="light"] .mg-mini-inline-sub {
-  color: #4E4970 !important;
+  color: #524D70 !important;
 }
 
 html[data-theme="light"] .mg-mini-num-badge {
-  background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%) !important;
-  border: 1px solid #6D28D9 !important;
+  background: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%) !important;
+  border: 1px solid #5B21B6 !important;
   color: #FFFFFF !important;
-  box-shadow: 0 3px 10px -2px rgba(124, 58, 237, 0.35) !important;
+  box-shadow: 0 3px 10px -2px rgba(91, 33, 182, 0.30) !important;
 }
 
 html[data-theme="light"] .mg-mini-status-tag.tag-running {
   background: var(--ombria-good-soft) !important;
-  border: 1px solid rgba(5, 150, 105, 0.28) !important;
-  color: #059669 !important;
+  border: 1px solid rgba(13, 148, 136, 0.24) !important;
+  color: #0F766E !important;
 }
 
 html[data-theme="light"] .mg-mini-status-tag.tag-waiting {
-  background: var(--ombria-warn-soft) !important;
-  border: 1px solid rgba(217, 119, 6, 0.28) !important;
-  color: #B45309 !important;
+  background: rgba(109, 40, 217, 0.08) !important;
+  border: 1px solid rgba(109, 40, 217, 0.20) !important;
+  color: #5B21B6 !important;
 }
 
 html[data-theme="light"] .mg-mini-station-meta {
   background: var(--ombria-card-3) !important;
   border: 1px solid var(--ombria-line) !important;
-  color: #4E4970 !important;
+  color: #524D70 !important;
 }
 
 html[data-theme="light"] .mg-mini-station-meta b {
@@ -6726,7 +6673,7 @@ html[data-theme="light"] .mg-mini-station-meta b {
 
 html[data-theme="light"] .mg-mini-station-empty,
 html[data-theme="light"] .mg-mini-station-empty p {
-  color: #4E4970 !important;
+  color: #524D70 !important;
 }
 
 html[data-theme="light"] .mg-tables-mini-stat {
@@ -6735,7 +6682,7 @@ html[data-theme="light"] .mg-tables-mini-stat {
 }
 
 html[data-theme="light"] .mg-tables-mini-stat span {
-  color: #4E4970 !important;
+  color: #524D70 !important;
 }
 
 html[data-theme="light"] .mg-tables-mini-stat strong {
@@ -6747,7 +6694,7 @@ html[data-theme="light"] label,
 html[data-theme="light"] .mg-label,
 html[data-theme="light"] #mgTablesView .mg-ops-card .mg-label,
 html[data-theme="light"] #mgTablesView .mg-ops-card .mg-label.mg-has-info-bang {
-  color: #262340 !important;
+  color: #26233E !important;
 }
 
 html[data-theme="light"] .mg-input,
@@ -6759,7 +6706,7 @@ html[data-theme="light"] input[type="number"],
 html[data-theme="light"] input[type="password"],
 html[data-theme="light"] input[type="date"] {
   background-color: var(--ombria-card-2) !important;
-  border: 1px solid rgba(109, 40, 217, 0.18) !important;
+  border: 1px solid rgba(91, 33, 182, 0.16) !important;
   color: #141224 !important;
   box-shadow: inset 0 1px 0 var(--ombria-glass-rim) !important;
 }
@@ -6786,16 +6733,16 @@ html[data-theme="light"] input[type="number"]:focus,
 html[data-theme="light"] input[type="password"]:focus,
 html[data-theme="light"] input[type="date"]:focus {
   background-color: #FFFFFF !important;
-  border-color: #7C3AED !important;
+  border-color: #6D28D9 !important;
   color: #141224 !important;
   box-shadow:
-    inset 0 0 0 1px #7C3AED,
-    0 0 0 4px rgba(139, 92, 246, 0.16) !important;
+    inset 0 0 0 1px #6D28D9,
+    0 0 0 4px rgba(109, 40, 217, 0.14) !important;
 }
 
 html[data-theme="light"] .mg-input[disabled],
 html[data-theme="light"] .form-control[disabled] {
-  background-color: rgba(109, 40, 217, 0.05) !important;
+  background-color: rgba(91, 33, 182, 0.04) !important;
   border-color: var(--ombria-line) !important;
   color: #6E6894 !important;
   opacity: 0.72 !important;
@@ -6812,22 +6759,22 @@ html[data-theme="light"] .mg-radio-card,
 html[data-theme="light"] .mg-console-tile,
 html[data-theme="light"] #mgTablesView .mg-payment-modes .mg-radio-card {
   background: var(--ombria-card-2) !important;
-  border: 1px solid rgba(109, 40, 217, 0.18) !important;
-  color: #262340 !important;
+  border: 1px solid rgba(91, 33, 182, 0.15) !important;
+  color: #26233E !important;
   box-shadow: inset 0 1px 0 var(--ombria-glass-rim) !important;
 }
 
 html[data-theme="light"] .mg-radio-card span,
 html[data-theme="light"] #mgTablesView .mg-payment-modes .mg-radio-card span {
   background: transparent !important;
-  color: #262340 !important;
+  color: #26233E !important;
 }
 
 html[data-theme="light"] .mg-radio-card:hover,
 html[data-theme="light"] .mg-console-tile:hover,
 html[data-theme="light"] #mgTablesView .mg-payment-modes .mg-radio-card:hover {
   background: #F5F3FF !important;
-  border-color: rgba(124, 58, 237, 0.38) !important;
+  border-color: rgba(109, 40, 217, 0.34) !important;
   color: #5B21B6 !important;
 }
 
@@ -6841,10 +6788,10 @@ html[data-theme="light"] .mg-radio-card.is-selected,
 html[data-theme="light"] .mg-console-tile:has(input:checked),
 html[data-theme="light"] #mgTablesView .mg-payment-modes .mg-radio-card:has(input:checked),
 html[data-theme="light"] #mgTablesView .mg-payment-modes .mg-radio-card.is-selected {
-  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 55%, #6D28D9 100%) !important;
-  border-color: #6D28D9 !important;
+  background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 55%, #5B21B6 100%) !important;
+  border-color: #5B21B6 !important;
   color: #FFFFFF !important;
-  box-shadow: 0 6px 16px -4px rgba(124, 58, 237, 0.42) !important;
+  box-shadow: 0 6px 16px -4px rgba(91, 33, 182, 0.35) !important;
 }
 
 html[data-theme="light"] .mg-radio-card:has(input:checked) span,
@@ -6861,134 +6808,90 @@ html[data-theme="light"] .mg-form-subpanel {
   border: 1px solid var(--ombria-line) !important;
 }
 
-/* Primary Gaming Action Buttons: Royal Violet Gradient */
+/* Primary Gaming Action Buttons (Unified Royal Violet like Dark Mode) */
 html[data-theme="light"] .mg-btn-primary,
-html[data-theme="light"] .btn-primary {
-  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 55%, #6D28D9 100%) !important;
-  border: 1px solid #6D28D9 !important;
-  color: #FFFFFF !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.28),
-    0 8px 20px -6px rgba(124, 58, 237, 0.42) !important;
-}
-
-html[data-theme="light"] .mg-btn-primary span,
-html[data-theme="light"] .btn-primary span {
-  color: #FFFFFF !important;
-}
-
-html[data-theme="light"] .mg-btn-primary:hover,
-html[data-theme="light"] .btn-primary:hover {
-  background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 55%, #5B21B6 100%) !important;
-  border-color: #5B21B6 !important;
-  color: #FFFFFF !important;
-  box-shadow: 0 10px 24px -6px rgba(109, 40, 217, 0.52) !important;
-}
-
-/* Emerald Gaming Action Buttons: Vibrant Neon-Mint Emerald */
 html[data-theme="light"] .mg-btn-emerald,
+html[data-theme="light"] .btn-primary,
 html[data-theme="light"] .btn-success {
-  background: linear-gradient(135deg, #10B981 0%, #059669 100%) !important;
-  border: 1px solid #047857 !important;
+  background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 55%, #5B21B6 100%) !important;
+  border: 1px solid #5B21B6 !important;
   color: #FFFFFF !important;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.26),
-    0 8px 18px -6px rgba(5, 150, 105, 0.38) !important;
+    0 8px 20px -6px rgba(91, 33, 182, 0.36) !important;
 }
 
+html[data-theme="light"] .mg-btn-primary span,
 html[data-theme="light"] .mg-btn-emerald span,
+html[data-theme="light"] .btn-primary span,
 html[data-theme="light"] .btn-success span {
   color: #FFFFFF !important;
 }
 
+html[data-theme="light"] .mg-btn-primary:hover,
 html[data-theme="light"] .mg-btn-emerald:hover,
+html[data-theme="light"] .btn-primary:hover,
 html[data-theme="light"] .btn-success:hover {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
-  border-color: #065F46 !important;
+  background: linear-gradient(135deg, #6D28D9 0%, #5B21B6 55%, #4C1D95 100%) !important;
+  border-color: #4C1D95 !important;
   color: #FFFFFF !important;
-  box-shadow: 0 10px 22px -6px rgba(5, 150, 105, 0.48) !important;
+  box-shadow: 0 10px 24px -6px rgba(76, 29, 149, 0.45) !important;
 }
 
-/* Secondary Gaming Action Buttons: Cyber Cyan & Gaming Amber */
+/* Secondary Gaming Action Buttons: Composed Frosted Slate-Violet Surface (Mirrors Dark Mode #232330) */
 html[data-theme="light"] .mg-btn-cyan,
-html[data-theme="light"] .btn-info {
-  background: rgba(6, 182, 212, 0.12) !important;
-  border: 1px solid rgba(8, 145, 178, 0.28) !important;
-  color: #0E7490 !important;
+html[data-theme="light"] .mg-btn-amber,
+html[data-theme="light"] .btn-info,
+html[data-theme="light"] .btn-warning,
+html[data-theme="light"] .btn-default {
+  background: rgba(109, 40, 217, 0.07) !important;
+  border: 1px solid rgba(109, 40, 217, 0.20) !important;
+  color: #4C1D95 !important;
   box-shadow: inset 0 1px 0 var(--ombria-glass-rim) !important;
 }
 
 html[data-theme="light"] .mg-btn-cyan span,
-html[data-theme="light"] .btn-info span {
-  color: #0E7490 !important;
+html[data-theme="light"] .mg-btn-amber span,
+html[data-theme="light"] .btn-info span,
+html[data-theme="light"] .btn-warning span,
+html[data-theme="light"] .btn-default span {
+  color: #4C1D95 !important;
 }
 
 html[data-theme="light"] .mg-btn-cyan:hover,
-html[data-theme="light"] .btn-info:hover {
-  background: linear-gradient(135deg, #06B6D4 0%, #0891B2 100%) !important;
-  border-color: #0891B2 !important;
+html[data-theme="light"] .mg-btn-amber:hover,
+html[data-theme="light"] .btn-info:hover,
+html[data-theme="light"] .btn-warning:hover,
+html[data-theme="light"] .btn-default:hover {
+  background: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%) !important;
+  border-color: #5B21B6 !important;
   color: #FFFFFF !important;
-  box-shadow: 0 6px 16px -4px rgba(8, 145, 178, 0.38) !important;
+  box-shadow: 0 6px 16px -4px rgba(91, 33, 182, 0.32) !important;
 }
 
 html[data-theme="light"] .mg-btn-cyan:hover span,
-html[data-theme="light"] .btn-info:hover span {
-  color: #FFFFFF !important;
-}
-
-html[data-theme="light"] .mg-btn-amber,
-html[data-theme="light"] .btn-warning {
-  background: rgba(245, 158, 11, 0.14) !important;
-  border: 1px solid rgba(217, 119, 6, 0.30) !important;
-  color: #B45309 !important;
-  box-shadow: inset 0 1px 0 var(--ombria-glass-rim) !important;
-}
-
-html[data-theme="light"] .mg-btn-amber span,
-html[data-theme="light"] .btn-warning span {
-  color: #B45309 !important;
-}
-
-html[data-theme="light"] .mg-btn-amber:hover,
-html[data-theme="light"] .btn-warning:hover {
-  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%) !important;
-  border-color: #D97706 !important;
-  color: #FFFFFF !important;
-  box-shadow: 0 6px 16px -4px rgba(217, 119, 6, 0.38) !important;
-}
-
 html[data-theme="light"] .mg-btn-amber:hover span,
-html[data-theme="light"] .btn-warning:hover span {
+html[data-theme="light"] .btn-info:hover span,
+html[data-theme="light"] .btn-warning:hover span,
+html[data-theme="light"] .btn-default:hover span {
   color: #FFFFFF !important;
 }
 
-html[data-theme="light"] .btn-default {
-  background: var(--ombria-card-2) !important;
-  border: 1px solid var(--ombria-line-2) !important;
-  color: #262340 !important;
-}
-
-html[data-theme="light"] .btn-default:hover {
-  background: #F5F3FF !important;
-  border-color: #7C3AED !important;
-  color: #5B21B6 !important;
-}
-
-/* Destructive Action Buttons: Crimson Rose */
+/* Destructive Action Buttons: Restrained Crimson Rose */
 html[data-theme="light"] .mg-btn-crimson,
 html[data-theme="light"] .btn-danger {
   background: var(--ombria-bad-soft) !important;
-  border: 1px solid rgba(225, 29, 72, 0.28) !important;
-  color: #BE123C !important;
+  border: 1px solid rgba(190, 18, 60, 0.24) !important;
+  color: #9F1239 !important;
   box-shadow: none !important;
 }
 
 html[data-theme="light"] .mg-btn-crimson:hover,
 html[data-theme="light"] .btn-danger:hover {
-  background: linear-gradient(135deg, #F43F5E 0%, #E11D48 100%) !important;
-  border-color: #E11D48 !important;
+  background: linear-gradient(135deg, #E11D48 0%, #BE123C 100%) !important;
+  border-color: #BE123C !important;
   color: #FFFFFF !important;
-  box-shadow: 0 6px 16px -4px rgba(225, 29, 72, 0.38) !important;
+  box-shadow: 0 6px 16px -4px rgba(190, 18, 60, 0.34) !important;
 }
 
 /* Filter Chips & Period Pills */
@@ -6997,31 +6900,31 @@ html[data-theme="light"] .mg-filter-btn,
 html[data-theme="light"] .mg-period-pill {
   background: var(--ombria-card-2) !important;
   border: 1px solid var(--ombria-line) !important;
-  color: #4E4970 !important;
+  color: #524D70 !important;
 }
 
 html[data-theme="light"] .mg-chip-btn:hover,
 html[data-theme="light"] .mg-filter-btn:hover,
 html[data-theme="light"] .mg-period-pill:hover {
   background: #F5F3FF !important;
-  border-color: rgba(124, 58, 237, 0.32) !important;
+  border-color: rgba(109, 40, 217, 0.28) !important;
   color: #5B21B6 !important;
 }
 
 html[data-theme="light"] .mg-chip-btn.active,
 html[data-theme="light"] .mg-filter-btn.active,
 html[data-theme="light"] .mg-period-pill.active {
-  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 55%, #6D28D9 100%) !important;
-  border-color: #6D28D9 !important;
+  background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 55%, #5B21B6 100%) !important;
+  border-color: #5B21B6 !important;
   color: #FFFFFF !important;
   font-weight: 700 !important;
-  box-shadow: 0 4px 12px -3px rgba(124, 58, 237, 0.38) !important;
+  box-shadow: 0 4px 12px -3px rgba(91, 33, 182, 0.34) !important;
 }
 
 /* 7. Clean High-Contrast Tables & Row Elements */
 html[data-theme="light"] .mg-table-responsive,
 html[data-theme="light"] .table-responsive {
-  background: rgba(255, 255, 255, 0.62) !important;
+  background: rgba(255, 255, 255, 0.68) !important;
   border: 1px solid var(--ombria-line) !important;
   box-shadow: inset 0 1px 0 var(--ombria-glass-rim) !important;
 }
@@ -7033,8 +6936,8 @@ html[data-theme="light"] .table {
 
 html[data-theme="light"] .mg-table thead th,
 html[data-theme="light"] .table thead th {
-  background: rgba(139, 92, 246, 0.06) !important;
-  color: #4E4970 !important;
+  background: rgba(109, 40, 217, 0.05) !important;
+  color: #524D70 !important;
   font-weight: 700 !important;
   border-bottom: 1px solid var(--ombria-line) !important;
 }
@@ -7055,20 +6958,20 @@ html[data-theme="light"] .table tbody th {
 
 html[data-theme="light"] .mg-table tbody tr:hover,
 html[data-theme="light"] .table tbody tr:hover {
-  background: rgba(237, 233, 254, 0.55) !important;
+  background: rgba(237, 233, 254, 0.48) !important;
 }
 
 html[data-theme="light"] .mg-row-index {
-  background: rgba(139, 92, 246, 0.10) !important;
-  border: 1px solid rgba(124, 58, 237, 0.20) !important;
+  background: rgba(109, 40, 217, 0.08) !important;
+  border: 1px solid rgba(109, 40, 217, 0.16) !important;
   color: #5B21B6 !important;
 }
 
 html[data-theme="light"] .mg-station-badge {
-  background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%) !important;
-  border: 1px solid #6D28D9 !important;
+  background: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%) !important;
+  border: 1px solid #5B21B6 !important;
   color: #FFFFFF !important;
-  box-shadow: 0 3px 10px -2px rgba(124, 58, 237, 0.34) !important;
+  box-shadow: 0 3px 10px -2px rgba(91, 33, 182, 0.28) !important;
 }
 
 html[data-theme="light"] .mg-console-cell {
@@ -7078,45 +6981,45 @@ html[data-theme="light"] .mg-console-cell {
 }
 
 html[data-theme="light"] .mg-player-badge {
-  background: var(--ombria-info-soft) !important;
-  border: 1px solid rgba(8, 145, 178, 0.24) !important;
-  color: #0E7490 !important;
+  background: rgba(79, 70, 229, 0.08) !important;
+  border: 1px solid rgba(79, 70, 229, 0.18) !important;
+  color: #4338CA !important;
 }
 
 html[data-theme="light"] .mg-pay-mode-tag {
-  background: rgba(139, 92, 246, 0.10) !important;
-  border: 1px solid rgba(124, 58, 237, 0.20) !important;
+  background: rgba(109, 40, 217, 0.08) !important;
+  border: 1px solid rgba(109, 40, 217, 0.18) !important;
   color: #5B21B6 !important;
 }
 
 html[data-theme="light"] .timer {
   background: var(--ombria-good-soft) !important;
-  border: 1px solid rgba(5, 150, 105, 0.28) !important;
-  color: #059669 !important;
+  border: 1px solid rgba(13, 148, 136, 0.24) !important;
+  color: #0F766E !important;
 }
 
 html[data-theme="light"] .timer2 {
-  background: rgba(139, 92, 246, 0.10) !important;
-  border: 1px solid rgba(124, 58, 237, 0.24) !important;
+  background: rgba(109, 40, 217, 0.08) !important;
+  border: 1px solid rgba(109, 40, 217, 0.20) !important;
   color: #5B21B6 !important;
 }
 
 html[data-theme="light"] .mg-empty-state {
-  color: #4E4970 !important;
+  color: #524D70 !important;
 }
 
-/* 8. Income Report Page (income.html) in Gaming Light Mode */
+/* 8. Income Report Page (income.html) in Composed Gaming Light Mode */
 html[data-theme="light"] .mg-custom-date-box {
   background: var(--ombria-card-2) !important;
   border: 1px solid var(--ombria-line) !important;
 }
 
 html[data-theme="light"] .mg-date-sep {
-  color: #4E4970 !important;
+  color: #524D70 !important;
 }
 
 html[data-theme="light"] .mg-th-console i {
-  color: #7C3AED !important;
+  color: #6D28D9 !important;
   filter: none !important;
 }
 
@@ -7125,21 +7028,21 @@ html[data-theme="light"] .mg-th-console span {
 }
 
 html[data-theme="light"] .mg-pay-method-badge.badge-pos {
-  background: rgba(139, 92, 246, 0.12) !important;
-  border: 1px solid rgba(124, 58, 237, 0.26) !important;
+  background: rgba(109, 40, 217, 0.09) !important;
+  border: 1px solid rgba(109, 40, 217, 0.20) !important;
   color: #5B21B6 !important;
 }
 
 html[data-theme="light"] .mg-pay-method-badge.badge-cash {
   background: var(--ombria-good-soft) !important;
-  border: 1px solid rgba(5, 150, 105, 0.28) !important;
-  color: #059669 !important;
+  border: 1px solid rgba(13, 148, 136, 0.24) !important;
+  color: #0F766E !important;
 }
 
 html[data-theme="light"] .mg-pay-method-badge.badge-account {
-  background: var(--ombria-info-soft) !important;
-  border: 1px solid rgba(8, 145, 178, 0.26) !important;
-  color: #0E7490 !important;
+  background: rgba(79, 70, 229, 0.08) !important;
+  border: 1px solid rgba(79, 70, 229, 0.20) !important;
+  color: #4338CA !important;
 }
 
 html[data-theme="light"] .mg-positive-amount {
@@ -7148,7 +7051,7 @@ html[data-theme="light"] .mg-positive-amount {
 
 html[data-theme="light"] .mg-positive-amount small,
 html[data-theme="light"] .mg-total-amount small {
-  color: #4E4970 !important;
+  color: #524D70 !important;
 }
 
 html[data-theme="light"] .mg-zero-amount,
@@ -7162,30 +7065,19 @@ html[data-theme="light"] .mg-total-amount {
 }
 
 html[data-theme="light"] .mg-income-total-row td {
-  background: rgba(139, 92, 246, 0.06) !important;
+  background: rgba(109, 40, 217, 0.05) !important;
   border-top: 1px solid var(--ombria-line-2) !important;
   color: #141224 !important;
 }
 
-html[data-theme="light"] .mg-grand-total-pill {
-  background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%) !important;
-  border: 1px solid #6D28D9 !important;
-  color: #FFFFFF !important;
-  box-shadow: 0 4px 12px -3px rgba(124, 58, 237, 0.38) !important;
-}
-
-html[data-theme="light"] .mg-grand-total-pill.pill-amber {
-  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%) !important;
-  border-color: #D97706 !important;
-  color: #FFFFFF !important;
-  box-shadow: 0 4px 12px -3px rgba(217, 119, 6, 0.35) !important;
-}
-
+/* Unified Deep Royal Violet Grand Total Pills (No competing orange/green pills) */
+html[data-theme="light"] .mg-grand-total-pill,
+html[data-theme="light"] .mg-grand-total-pill.pill-amber,
 html[data-theme="light"] .mg-grand-total-pill.pill-emerald {
-  background: linear-gradient(135deg, #10B981 0%, #059669 100%) !important;
-  border-color: #059669 !important;
+  background: linear-gradient(135deg, #6D28D9 0%, #5B21B6 100%) !important;
+  border: 1px solid #4C1D95 !important;
   color: #FFFFFF !important;
-  box-shadow: 0 4px 12px -3px rgba(5, 150, 105, 0.35) !important;
+  box-shadow: 0 4px 12px -3px rgba(91, 33, 182, 0.32) !important;
 }
 
 html[data-theme="light"] .mg-income-chart-panel,
@@ -7203,7 +7095,7 @@ html[data-theme="light"] .mg-income-legend-row {
 html[data-theme="light"] .mg-income-legend-row:hover,
 html[data-theme="light"] .mg-income-legend-row.is-active {
   background: #F5F3FF !important;
-  border-color: #7C3AED !important;
+  border-color: #6D28D9 !important;
 }
 
 html[data-theme="light"] .mg-income-legend-name,
@@ -7213,13 +7105,13 @@ html[data-theme="light"] .mg-income-legend-stats strong {
 }
 
 html[data-theme="light"] .mg-income-legend-pct {
-  background: rgba(139, 92, 246, 0.12) !important;
+  background: rgba(109, 40, 217, 0.09) !important;
   color: #5B21B6 !important;
 }
 
 html[data-theme="light"] .mg-pay-bar-label,
 html[data-theme="light"] .mg-pay-bar-label span {
-  color: #262340 !important;
+  color: #26233E !important;
 }
 
 html[data-theme="light"] .mg-pay-bar-label strong {
@@ -7228,20 +7120,20 @@ html[data-theme="light"] .mg-pay-bar-label strong {
 
 html[data-theme="light"] .mg-pay-pct-tag.tag-emerald {
   background: var(--ombria-good-soft) !important;
-  color: #059669 !important;
-  border-color: rgba(5, 150, 105, 0.28) !important;
+  color: #0F766E !important;
+  border-color: rgba(13, 148, 136, 0.22) !important;
 }
 
 html[data-theme="light"] .mg-pay-pct-tag.tag-cyan {
-  background: var(--ombria-info-soft) !important;
-  color: #0891B2 !important;
-  border-color: rgba(8, 145, 178, 0.28) !important;
+  background: rgba(79, 70, 229, 0.08) !important;
+  color: #4338CA !important;
+  border-color: rgba(79, 70, 229, 0.20) !important;
 }
 
 html[data-theme="light"] .mg-pay-pct-tag.tag-purple {
-  background: rgba(139, 92, 246, 0.12) !important;
-  color: #6D28D9 !important;
-  border-color: rgba(124, 58, 237, 0.28) !important;
+  background: rgba(109, 40, 217, 0.09) !important;
+  color: #5B21B6 !important;
+  border-color: rgba(109, 40, 217, 0.22) !important;
 }
 
 /* 9. Exclamation (!) Tooltips, Popovers, Dropdowns, Modals & Command Palette */
@@ -7361,6 +7253,1094 @@ html[data-theme="light"] #payable {
   color: #059669 !important;
 }
 
+/* ==========================================================================
+   16. FOCUS MODE PRECISION SYMMETRY & ALIGNMENT OVERRIDES
+   Targets:
+   - Selector 1: div:nth-of-type(2) > div:nth-of-type(1) > main:nth-of-type(1) > div#mgDynamicView:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2)
+   - Selector 2: div:nth-of-type(2) > div:nth-of-type(1) > main:nth-of-type(1) > div#mgDynamicView:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(3)
+   - Selector 3: div:nth-of-type(2) > div:nth-of-type(1) > main:nth-of-type(1) > div#mgDynamicView:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(4) > div:nth-of-type(1)
+   - Selector 4: div:nth-of-type(2) > div:nth-of-type(1) > header:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > button#mgNotifBtn:nth-of-type(1)
+   ========================================================================== */
 
+/* --- SELECTOR 4: Topbar Left & Notification Button (#mgNotifBtn) Symmetry --- */
+.mg-topbar-left,
+header.mg-topbar > div:nth-of-type(2) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 10px !important;
+  height: 40px !important;
+}
 
+.mg-live-clock {
+  height: 40px !important;
+  min-height: 40px !important;
+  padding: 0 14px !important;
+  border-radius: 10px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  line-height: 1 !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+}
+
+.mg-live-clock svg {
+  width: 16px !important;
+  height: 16px !important;
+  flex-shrink: 0 !important;
+  display: block !important;
+}
+
+.mg-notification-wrap,
+header.mg-topbar > div:nth-of-type(2) > div:nth-of-type(2) {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 40px !important;
+  height: 40px !important;
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+div:nth-of-type(2) > div:nth-of-type(1) > header:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > button#mgNotifBtn:nth-of-type(1),
+button#mgNotifBtn,
+button#mgThemeToggleBtn,
+.mg-topbar-left .mg-icon-btn {
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  min-height: 40px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 10px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  box-sizing: border-box !important;
+  flex-shrink: 0 !important;
+  line-height: 1 !important;
+  vertical-align: middle !important;
+}
+
+/* Fix clipping of #mgNotifCount badge caused by .mg-icon-btn { overflow: hidden } */
+div:nth-of-type(2) > div:nth-of-type(1) > header:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > button#mgNotifBtn:nth-of-type(1),
+button#mgNotifBtn {
+  overflow: visible !important;
+}
+
+div:nth-of-type(2) > div:nth-of-type(1) > header:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > button#mgNotifBtn:nth-of-type(1) > svg,
+button#mgNotifBtn > svg {
+  width: 18px !important;
+  height: 18px !important;
+  display: block !important;
+  margin: 0 auto !important;
+  flex-shrink: 0 !important;
+  pointer-events: none !important;
+}
+
+div:nth-of-type(2) > div:nth-of-type(1) > header:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > button#mgNotifBtn:nth-of-type(1) > .mg-notif-count,
+#mgNotifCount,
+.mg-notif-count {
+  position: absolute !important;
+  top: -5px !important;
+  left: -5px !important;
+  min-width: 20px !important;
+  height: 20px !important;
+  padding: 0 5px !important;
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 10.5px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  z-index: 6 !important;
+  pointer-events: none !important;
+  box-sizing: border-box !important;
+}
+
+/* --- SELECTORS 1, 2, 3: Dynamic View (#mgDynamicView) Symmetry & Full-Width Alignment --- */
+div:nth-of-type(2) > div:nth-of-type(1) > main:nth-of-type(1) > div#mgDynamicView:nth-of-type(3) > div:nth-of-type(1),
+div:nth-of-type(2) > div:nth-of-type(1) > main:nth-of-type(1) > div#mgDynamicView:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2),
+div:nth-of-type(2) > div:nth-of-type(1) > main:nth-of-type(1) > div#mgDynamicView:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(3),
+div:nth-of-type(2) > div:nth-of-type(1) > main:nth-of-type(1) > div#mgDynamicView:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(4),
+div:nth-of-type(2) > div:nth-of-type(1) > main:nth-of-type(1) > div#mgDynamicView:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(4) > div:nth-of-type(1) {
+  width: 100% !important;
+  max-width: 100% !important;
+  float: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box !important;
+}
+
+div:nth-of-type(2) > div:nth-of-type(1) > main:nth-of-type(1) > div#mgDynamicView:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) table,
+div:nth-of-type(2) > div:nth-of-type(1) > main:nth-of-type(1) > div#mgDynamicView:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(3) table,
+div:nth-of-type(2) > div:nth-of-type(1) > main:nth-of-type(1) > div#mgDynamicView:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(4) > div:nth-of-type(1) table {
+  width: 100% !important;
+  max-width: 100% !important;
+  table-layout: fixed !important;
+  margin: 0 !important;
+}
+
+/* Income Filter Bar Symmetry */
+.mg-income-filter-bar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
+  padding: 18px 24px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mg-income-filter-right {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.mg-income-filter-controls {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  flex-wrap: wrap !important;
+  gap: 10px !important;
+}
+
+.mg-filter-group {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 4px !important;
+  height: 40px !important;
+  border-radius: 10px !important;
+  background: rgba(15, 23, 42, 0.55) !important;
+  border: 1px solid rgba(148, 163, 184, 0.16) !important;
+  box-sizing: border-box !important;
+}
+
+html[data-theme="light"] .mg-filter-group {
+  background: var(--ombria-card-2) !important;
+  border: 1px solid var(--ombria-line) !important;
+}
+
+.mg-filter-group .mg-filter-btn {
+  height: 30px !important;
+  padding: 0 12px !important;
+  border-radius: 7px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+.mg-custom-date-box {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 4px 8px !important;
+  height: 40px !important;
+  border-radius: 10px !important;
+  box-sizing: border-box !important;
+}
+
+.mg-custom-date-box .mg-date-input {
+  width: 128px !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  padding: 0 8px !important;
+  border-radius: 7px !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  text-align: center !important;
+}
+
+.mg-custom-date-box .mg-btn-sm {
+  height: 30px !important;
+  min-height: 30px !important;
+  padding: 0 14px !important;
+  border-radius: 7px !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Income KPI 4-Card Grid Symmetry */
+.mg-income-kpi-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+  width: 100% !important;
+  align-items: stretch !important;
+}
+
+.mg-income-kpi-grid > .mg-kpi-card {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  padding: 18px 20px !important;
+  box-sizing: border-box !important;
+}
+
+.mg-income-kpi-grid .mg-kpi-top {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  width: 100% !important;
+}
+
+/* Income Split Grid (Table + Donut Chart) Symmetry & Flush Alignment */
+.mg-income-split-grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.72fr) minmax(320px, 1fr) !important;
+  gap: 20px !important;
+  align-items: stretch !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mg-income-table-col {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: stretch !important;
+  gap: 14px !important;
+  min-width: 0 !important;
+  height: 100% !important;
+}
+
+.mg-income-table-col > .mg-table-responsive {
+  flex: 1 1 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: stretch !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.mg-income-matrix-table {
+  width: 100% !important;
+  height: 100% !important;
+  flex: 1 1 auto !important;
+  table-layout: fixed !important;
+  border-collapse: collapse !important;
+}
+
+.mg-income-matrix-table thead th,
+.mg-income-matrix-table tbody td {
+  text-align: center !important;
+  vertical-align: middle !important;
+  padding: 12px 10px !important;
+  box-sizing: border-box !important;
+}
+
+#GameIncomeTable thead th:first-child,
+#GameIncomeTable tbody td:first-child,
+#BuffetIncomeTable thead th:first-child,
+#BuffetIncomeTable tbody td:first-child {
+  width: 132px !important;
+}
+
+#GameIncomeTable thead th:last-child,
+#GameIncomeTable tbody td:last-child,
+#BuffetIncomeTable thead th:last-child,
+#BuffetIncomeTable tbody td:last-child {
+  width: 142px !important;
+}
+
+.mg-pay-method-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 106px !important;
+  padding: 5px 10px !important;
+  border-radius: 8px !important;
+  text-align: center !important;
+}
+
+/* Donut Chart Panel & 2-Column Symmetrical Legend Grid */
+.mg-income-chart-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  gap: 14px !important;
+  padding: 18px !important;
+  height: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mg-income-donut-body {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 14px !important;
+  width: 100% !important;
+  flex: 1 1 auto !important;
+}
+
+.mg-income-donut-legend {
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+}
+
+/* When a donut legend has an odd number of items (5 in Buffet, 3 in Payment), span the last item across both columns for 100% symmetry */
+.mg-income-donut-legend > .mg-income-legend-row:last-child:nth-child(odd) {
+  grid-column: span 2 !important;
+}
+
+/* Console, Buffet, Accounts & Debtors Forms and Tables Symmetry inside #mgDynamicView */
+#mgDynamicView .mg-card {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+#mgDynamicView .mg-card-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  width: 100% !important;
+}
+
+#mgDynamicView .mg-form-group > div:has(> .mg-radio-card),
+.mg-console-tariff-form .mg-device-radio-grid,
+div:nth-of-type(2) > div:nth-of-type(1) > main:nth-of-type(1) > div#mgDynamicView:nth-of-type(3) > div:nth-of-type(1) > form:nth-of-type(1) .mg-form-group > div {
+  position: relative !important;
+  isolation: isolate !important;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)) !important;
+  gap: 12px !important;
+  width: 100% !important;
+}
+
+#mgDynamicView .mg-radio-card,
+.mg-console-tariff-form .mg-radio-card,
+div:nth-of-type(2) > div:nth-of-type(1) > main:nth-of-type(1) > div#mgDynamicView:nth-of-type(3) > div:nth-of-type(1) > form:nth-of-type(1) .mg-radio-card {
+  position: relative !important;
+  z-index: 1 !important;
+  width: 100% !important;
+  min-height: 48px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  box-sizing: border-box !important;
+  user-select: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  transition:
+    color 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.18s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+/* 2D GPU-Accelerated Sliding Pill for Console Device Type Radio Buttons */
+.mg-radio-sliding-pill {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: auto !important;
+  bottom: auto !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+  border-radius: 10px !important;
+  opacity: 0;
+  will-change: transform, width, height !important;
+  transform-origin: center center !important;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.24) 0%, rgba(99, 102, 241, 0.18) 100%) !important;
+  border: 1.5px solid #8B5CF6 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 8px 22px -6px rgba(139, 92, 246, 0.38) !important;
+  transition:
+    opacity 0.2s ease,
+    background 0.28s ease,
+    border-color 0.28s ease,
+    box-shadow 0.28s ease !important;
+}
+
+html[data-theme="light"] .mg-radio-sliding-pill {
+  background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 55%, #5B21B6 100%) !important;
+  border: 1px solid #5B21B6 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    0 10px 24px -6px rgba(91, 33, 182, 0.40) !important;
+}
+
+/* When .mg-radio-sliding-pill is present, keep the active card background transparent so the sliding pill renders the purple box without snapping */
+.mg-device-radio-grid:has(.mg-radio-sliding-pill) .mg-radio-card:has(input:checked),
+.mg-device-radio-grid:has(.mg-radio-sliding-pill) .mg-radio-card.is-selected,
+.mg-device-radio-grid:has(.mg-radio-sliding-pill) .mg-radio-card.is-pill-target,
+html[data-theme="light"] .mg-device-radio-grid:has(.mg-radio-sliding-pill) .mg-radio-card:has(input:checked),
+html[data-theme="light"] .mg-device-radio-grid:has(.mg-radio-sliding-pill) .mg-radio-card.is-selected,
+html[data-theme="light"] .mg-device-radio-grid:has(.mg-radio-sliding-pill) .mg-radio-card.is-pill-target {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Unselected cards inside the sliding pill grid: subtle frosted slot + smooth hover lift */
+.mg-device-radio-grid:has(.mg-radio-sliding-pill) .mg-radio-card:not(.is-pill-target):not(:has(input:checked)) {
+  background: rgba(24, 24, 34, 0.68) !important;
+  border: 1px solid rgba(139, 92, 246, 0.16) !important;
+}
+
+.mg-device-radio-grid:has(.mg-radio-sliding-pill) .mg-radio-card:not(.is-pill-target):not(:has(input:checked)):hover {
+  background: rgba(139, 92, 246, 0.09) !important;
+  border-color: rgba(139, 92, 246, 0.38) !important;
+}
+
+html[data-theme="light"] .mg-device-radio-grid:has(.mg-radio-sliding-pill) .mg-radio-card:not(.is-pill-target):not(:has(input:checked)) {
+  background: rgba(255, 255, 255, 0.66) !important;
+  border: 1px solid rgba(91, 33, 182, 0.14) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85) !important;
+}
+
+html[data-theme="light"] .mg-device-radio-grid:has(.mg-radio-sliding-pill) .mg-radio-card:not(.is-pill-target):not(:has(input:checked)):hover {
+  background: rgba(109, 40, 217, 0.06) !important;
+  border-color: rgba(109, 40, 217, 0.32) !important;
+}
+
+/* Prevent font-weight layout jitter and animate icon & radio dot smoothly */
+.mg-device-radio-grid .mg-radio-card span,
+html[data-theme="light"] .mg-device-radio-grid .mg-radio-card span,
+html[data-theme="light"] .mg-device-radio-grid .mg-radio-card:has(input:checked) span,
+html[data-theme="light"] .mg-device-radio-grid .mg-radio-card.is-selected span {
+  font-weight: 600 !important;
+  transition: color 0.22s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+.mg-device-radio-grid .mg-radio-card i.demo-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition:
+    transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1),
+    color 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.22s ease !important;
+}
+
+.mg-device-radio-grid .mg-radio-card:hover:not(.is-pill-target) i.demo-icon {
+  transform: scale(1.07) translateY(-1px) !important;
+}
+
+.mg-device-radio-grid .mg-radio-card.is-pill-target i.demo-icon,
+.mg-device-radio-grid .mg-radio-card:has(input:checked) i.demo-icon {
+  transform: scale(1.14) translateY(-1px) !important;
+}
+
+html[data-theme="light"] .mg-device-radio-grid .mg-radio-card.is-pill-target,
+html[data-theme="light"] .mg-device-radio-grid .mg-radio-card.is-pill-target span,
+html[data-theme="light"] .mg-device-radio-grid .mg-radio-card.is-pill-target i.demo-icon,
+html[data-theme="light"] .mg-device-radio-grid .mg-radio-card:has(input:checked),
+html[data-theme="light"] .mg-device-radio-grid .mg-radio-card:has(input:checked) span,
+html[data-theme="light"] .mg-device-radio-grid .mg-radio-card:has(input:checked) i.demo-icon {
+  color: #FFFFFF !important;
+}
+
+html[data-theme="light"] .mg-device-radio-grid .mg-radio-card.is-pill-target input[type="radio"],
+html[data-theme="light"] .mg-device-radio-grid .mg-radio-card:has(input:checked) input[type="radio"] {
+  accent-color: #FFFFFF !important;
+}
+
+.mg-device-radio-grid .mg-radio-card:active {
+  transform: scale(0.98) !important;
+}
+
+#mgDynamicView .mg-form-grid {
+  align-items: end !important;
+  gap: 16px !important;
+  width: 100% !important;
+}
+
+#mgDynamicView .mg-form-grid .mg-form-group {
+  margin-bottom: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-end !important;
+  height: 100% !important;
+}
+
+#consoleTable,
+#buffetTable,
+#customerTable,
+#debtorsTable {
+  width: 100% !important;
+  table-layout: fixed !important;
+}
+
+#consoleTable thead th,
+#consoleTable tbody td,
+#buffetTable thead th,
+#buffetTable tbody td,
+#customerTable thead th,
+#customerTable tbody td,
+#debtorsTable thead th,
+#debtorsTable tbody td {
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+@media (max-width: 1200px) {
+  .mg-income-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  .mg-income-split-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 680px) {
+  .mg-income-kpi-grid,
+  .mg-income-donut-legend {
+    grid-template-columns: 1fr !important;
+  }
+  .mg-income-donut-legend > .mg-income-legend-row:last-child:nth-child(odd) {
+    grid-column: span 1 !important;
+  }
+}
+
+/* ==========================================================================
+   Invoice Status Summary Strip, Print Preview Modal & Official @media print
+   ========================================================================== */
+div:nth-of-type(2) > div:nth-of-type(1) > main:nth-of-type(1) > div:nth-of-type(2),
+.mg-invoice-card {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+div:nth-of-type(2) > div:nth-of-type(1) > main:nth-of-type(1) > div:nth-of-type(2) > section:nth-of-type(1) > div:nth-of-type(5) > button:nth-of-type(1),
+#printInvoiceBtn.mg-print-invoice-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  min-height: 42px !important;
+  padding: 9px 18px !important;
+  border-radius: 10px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  background: rgba(139, 92, 246, 0.14) !important;
+  border: 1px solid rgba(139, 92, 246, 0.42) !important;
+  color: #F8FAFC !important;
+  box-shadow: 0 6px 18px -6px rgba(139, 92, 246, 0.32) !important;
+}
+
+html[data-theme="light"] div:nth-of-type(2) > div:nth-of-type(1) > main:nth-of-type(1) > div:nth-of-type(2) > section:nth-of-type(1) > div:nth-of-type(5) > button:nth-of-type(1),
+html[data-theme="light"] #printInvoiceBtn.mg-print-invoice-btn {
+  background: rgba(109, 40, 217, 0.08) !important;
+  border: 1px solid rgba(91, 33, 182, 0.28) !important;
+  color: #4C1D95 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 6px 16px -8px rgba(91, 33, 182, 0.18) !important;
+}
+
+html[data-theme="light"] div:nth-of-type(2) > div:nth-of-type(1) > main:nth-of-type(1) > div:nth-of-type(2) > section:nth-of-type(1) > div:nth-of-type(5) > button:nth-of-type(1):hover,
+html[data-theme="light"] #printInvoiceBtn.mg-print-invoice-btn:hover {
+  background: rgba(109, 40, 217, 0.14) !important;
+  border-color: rgba(91, 33, 182, 0.45) !important;
+  color: #3B0764 !important;
+}
+
+.mg-invoice-header-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mg-invoice-header-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+}
+
+.mg-invoice-status-strip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(17, 20, 32, 0.72);
+  border: 1px solid rgba(139, 92, 246, 0.20);
+}
+
+html[data-theme="light"] .mg-invoice-status-strip {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border: 1px solid rgba(91, 33, 182, 0.15) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92) !important;
+}
+
+.mg-invoice-stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+html[data-theme="light"] .mg-invoice-stat-item {
+  background: rgba(245, 243, 255, 0.65) !important;
+  border: 1px solid rgba(91, 33, 182, 0.12) !important;
+}
+
+.mg-invoice-stat-item.is-highlight {
+  background: rgba(139, 92, 246, 0.14);
+  border-color: rgba(139, 92, 246, 0.40);
+}
+
+html[data-theme="light"] .mg-invoice-stat-item.is-highlight {
+  background: rgba(109, 40, 217, 0.10) !important;
+  border-color: rgba(91, 33, 182, 0.28) !important;
+}
+
+.mg-invoice-stat-label {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.mg-invoice-stat-val {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+html[data-theme="light"] .mg-invoice-stat-item.is-highlight .mg-invoice-stat-val {
+  color: #5B21B6 !important;
+}
+
+#invoicegameTable th,
+#invoicegameTable td,
+#invoicebuffetTable th,
+#invoicebuffetTable td {
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+/* Toast Notification on Invoice Page */
+.mg-invoice-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 9999;
+  padding: 12px 18px;
+  border-radius: 10px;
+  background: #1E1B4B;
+  color: #FFFFFF;
+  border: 1px solid #6D28D9;
+  box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.45);
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition: opacity 0.24s ease, transform 0.24s ease;
+}
+
+.mg-invoice-toast.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Print Summary Preview Modal */
+.mg-print-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9500;
+  background: rgba(10, 12, 22, 0.76);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.mg-print-modal-backdrop[hidden] {
+  display: none !important;
+}
+
+.mg-print-modal-dialog {
+  width: 100%;
+  max-width: 860px;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  background: #161824;
+  border: 1px solid rgba(139, 92, 246, 0.32);
+  box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.65);
+  overflow: hidden;
+}
+
+html[data-theme="light"] .mg-print-modal-dialog {
+  background: #F4F3FA !important;
+  border: 1px solid rgba(91, 33, 182, 0.22) !important;
+  box-shadow: 0 24px 60px -12px rgba(38, 35, 62, 0.28) !important;
+}
+
+.mg-print-modal-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 14px 20px;
+  background: rgba(24, 26, 40, 0.95);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+html[data-theme="light"] .mg-print-modal-toolbar {
+  background: #FFFFFF !important;
+  border-bottom: 1px solid rgba(91, 33, 182, 0.14) !important;
+}
+
+.mg-print-modal-title-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14.5px;
+  color: #F8FAFC;
+}
+
+html[data-theme="light"] .mg-print-modal-title-wrap {
+  color: #1F1D36 !important;
+}
+
+.mg-print-modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.mg-print-paper-viewport {
+  padding: 24px;
+  overflow-y: auto;
+  background: #E2E8F0;
+}
+
+/* Official Paper-White Receipt Sheet (Inside Modal & @media print) */
+.mg-print-receipt-sheet {
+  max-width: 780px;
+  margin: 0 auto;
+  background: #FFFFFF !important;
+  color: #0F172A !important;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+  padding: 24px;
+  direction: rtl;
+}
+
+.mg-print-receipt-sheet .mg-receipt-doc {
+  background: #FFFFFF !important;
+  color: #0F172A !important;
+  border: 2px solid #0F172A !important;
+  border-radius: 10px !important;
+  padding: 20px 22px !important;
+}
+
+.mg-print-receipt-sheet .mg-receipt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid #0F172A;
+  margin-bottom: 16px;
+}
+
+.mg-print-receipt-sheet .mg-receipt-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mg-print-receipt-sheet .mg-receipt-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #CBD5E1;
+}
+
+.mg-print-receipt-sheet .mg-receipt-club-name {
+  margin: 0 0 4px 0 !important;
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  color: #0F172A !important;
+}
+
+.mg-print-receipt-sheet .mg-receipt-doc-subtitle {
+  margin: 0 !important;
+  font-size: 12.5px !important;
+  color: #334155 !important;
+  font-weight: 600 !important;
+}
+
+.mg-print-receipt-sheet .mg-receipt-meta-box {
+  background: #F8FAFC !important;
+  border: 1px solid #CBD5E1 !important;
+  border-radius: 8px !important;
+  padding: 8px 14px !important;
+  font-size: 12px !important;
+  color: #1E293B !important;
+  min-width: 210px;
+}
+
+.mg-print-receipt-sheet .mg-receipt-meta-box > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 2px 0;
+  color: #0F172A !important;
+}
+
+.mg-print-receipt-sheet .mg-receipt-status-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.mg-print-receipt-sheet .mg-receipt-status-cell {
+  background: #F8FAFC !important;
+  border: 1px solid #CBD5E1 !important;
+  border-radius: 8px !important;
+  padding: 10px 12px !important;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mg-print-receipt-sheet .mg-receipt-status-kicker {
+  font-size: 11px !important;
+  color: #475569 !important;
+  font-weight: 600 !important;
+}
+
+.mg-print-receipt-sheet .mg-receipt-status-value {
+  font-size: 13px !important;
+  color: #0F172A !important;
+  font-weight: 700 !important;
+}
+
+.mg-print-receipt-sheet .mg-receipt-section {
+  margin-bottom: 18px;
+}
+
+.mg-print-receipt-sheet .mg-receipt-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #F1F5F9 !important;
+  border: 1px solid #CBD5E1 !important;
+  border-bottom: none !important;
+  border-radius: 8px 8px 0 0 !important;
+  padding: 8px 14px !important;
+}
+
+.mg-print-receipt-sheet .mg-receipt-section-head h2 {
+  margin: 0 !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  color: #0F172A !important;
+}
+
+.mg-print-receipt-sheet .mg-receipt-section-head span,
+.mg-print-receipt-sheet .mg-receipt-section-head strong {
+  font-size: 12.5px !important;
+  color: #0F172A !important;
+}
+
+.mg-print-receipt-sheet .mg-receipt-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #CBD5E1 !important;
+  background: #FFFFFF !important;
+}
+
+.mg-print-receipt-sheet .mg-receipt-table th,
+.mg-print-receipt-sheet .mg-receipt-table td,
+.mg-print-receipt-sheet .mg-receipt-table strong {
+  border: 1px solid #CBD5E1 !important;
+  padding: 8px 10px !important;
+  text-align: center !important;
+  font-size: 12.5px !important;
+  color: #0F172A !important;
+  background: #FFFFFF !important;
+}
+
+.mg-print-receipt-sheet .mg-receipt-table thead th {
+  background: #F8FAFC !important;
+  font-weight: 700 !important;
+}
+
+.mg-print-receipt-sheet .mg-receipt-summary-wrap {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 16px;
+  align-items: stretch;
+  margin-top: 8px;
+  margin-bottom: 16px;
+}
+
+.mg-print-receipt-sheet .mg-receipt-note-box {
+  height: 100%;
+  background: #F8FAFC !important;
+  border: 1px solid #CBD5E1 !important;
+  border-radius: 8px !important;
+  padding: 12px 14px !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 12px !important;
+  color: #0F172A !important;
+}
+
+.mg-print-receipt-sheet .mg-receipt-note-box p,
+.mg-print-receipt-sheet .mg-receipt-note-box strong {
+  color: #0F172A !important;
+}
+
+.mg-print-receipt-sheet .mg-receipt-sign-row {
+  display: flex;
+  justify-content: space-around;
+  padding-top: 20px;
+  border-top: 1px dashed #94A3B8;
+  font-size: 11.5px !important;
+  color: #475569 !important;
+}
+
+.mg-print-receipt-sheet .mg-receipt-totals-table {
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse;
+  border: 1.5px solid #0F172A !important;
+}
+
+.mg-print-receipt-sheet .mg-receipt-totals-table th,
+.mg-print-receipt-sheet .mg-receipt-totals-table td {
+  border: 1px solid #CBD5E1 !important;
+  padding: 8px 12px !important;
+  font-size: 12.5px !important;
+  color: #0F172A !important;
+  background: #FFFFFF !important;
+}
+
+.mg-print-receipt-sheet .mg-receipt-totals-table th {
+  background: #F8FAFC !important;
+  text-align: right !important;
+  width: 52%;
+}
+
+.mg-print-receipt-sheet .mg-receipt-totals-table td {
+  text-align: left !important;
+  font-weight: 700 !important;
+}
+
+.mg-print-receipt-sheet .mg-receipt-grand-row th,
+.mg-print-receipt-sheet .mg-receipt-grand-row td {
+  background: #0F172A !important;
+  color: #FFFFFF !important;
+  font-size: 13.5px !important;
+  font-weight: 800 !important;
+}
+
+.mg-print-receipt-sheet .mg-receipt-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  border-top: 1px solid #CBD5E1;
+  font-size: 11.5px !important;
+  color: #475569 !important;
+}
+
+@media (max-width: 900px) {
+  .mg-invoice-status-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .mg-print-receipt-sheet .mg-receipt-status-grid,
+  .mg-print-receipt-sheet .mg-receipt-summary-wrap {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Native Print Media Rules: Print ONLY the Official Receipt Summary Sheet, NEVER the Website UI */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
+  }
+
+  html,
+  body {
+    background: #FFFFFF !important;
+    color: #0F172A !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+
+  body::before,
+  body::after,
+  .mg-app-shell,
+  #sidebarBackdrop,
+  .hidden-print,
+  .mg-print-modal-toolbar,
+  .mg-invoice-toast {
+    display: none !important;
+  }
+
+  #mgPrintPreviewModal {
+    position: static !important;
+    display: block !important;
+    background: #FFFFFF !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    backdrop-filter: none !important;
+  }
+
+  .mg-print-modal-dialog,
+  .mg-print-paper-viewport,
+  #mgPrintSummarySheet {
+    max-width: 100% !important;
+    max-height: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: #FFFFFF !important;
+    overflow: visible !important;
+  }
+}
 
