@@ -995,6 +995,10 @@ function renderAndAnimateCircularCharts(metrics) {
 
   const gaugeRadius = 50;
 
+  const activePal = getActiveAccentPaletteObj();
+  const isLightTheme = document.documentElement.getAttribute('data-theme') === 'light';
+  const mutedChartColor = isLightTheme ? 'rgba(100, 116, 139, 0.28)' : 'rgba(148, 163, 184, 0.30)';
+
   // 1. Occupancy Circular Progress Chart (r=50)
   const occDonut = computeDonutSegmentsGeometry(
     [
@@ -1002,13 +1006,13 @@ function renderAndAnimateCircularCharts(metrics) {
         id: 'occupied',
         label: 'اشغال سالن',
         value: Math.max(1, metrics.occupiedStations),
-        color: '#8B5CF6',
+        color: activePal.primary,
       },
       {
         id: 'free',
         label: 'ظرفیت آزاد',
         value: Math.max(0, metrics.availableStations),
-        color: '#3F3F52',
+        color: mutedChartColor,
       },
     ],
     gaugeRadius
@@ -1042,14 +1046,14 @@ function renderAndAnimateCircularCharts(metrics) {
         label: 'سهم بازی',
         value: metrics.gameRevenue,
         formatted: `${formatToman(metrics.gameRevenue)} تومان`,
-        color: '#10B981',
+        color: activePal.primary,
       },
       {
         id: 'buffet',
         label: 'سهم بوفه',
         value: metrics.buffetRevenue,
         formatted: `${formatToman(metrics.buffetRevenue)} تومان`,
-        color: '#F59E0B',
+        color: activePal.secondary,
       },
     ],
     gaugeRadius
@@ -1074,18 +1078,20 @@ function renderAndAnimateCircularCharts(metrics) {
         label: 'تایمر فعال',
         value: Math.max(0, metrics.activeSessionsCount),
         formatted: `${toPersianDigits(metrics.activeSessionsCount)} سشن فعال`,
-        color: '#8B5CF6',
+        color: activePal.primary,
       },
       {
         id: 'waiting',
         label: 'آماده استارت',
         value: Math.max(0, metrics.waitingSessionsCount),
         formatted: `${toPersianDigits(metrics.waitingSessionsCount)} سشن آماده`,
-        color: '#4B5563',
+        color: mutedChartColor,
       },
     ],
     gaugeRadius
   );
+
+  syncOverviewChartsAccent();
 
   const runSeg = sessDonut.segments[0];
   const waitSeg = sessDonut.segments[1];
@@ -2356,27 +2362,14 @@ function initIgnaraSidebarFeatures() {
     navList.parentNode.insertBefore(newWrap, navList);
   }
 
-  // Inject "تنظیمات ظاهری" (Appearance Settings) into the sidebar menu if not already present
-  if (navList && !document.getElementById('navItemAppearance')) {
-    const groupHeader = document.createElement('li');
-    groupHeader.className = 'mg-nav-group-header';
-    groupHeader.setAttribute('role', 'presentation');
-    groupHeader.innerHTML = '<span>شخصی‌سازی و ظاهر</span>';
-
-    const appearanceLi = document.createElement('li');
-    appearanceLi.id = 'navItemAppearance';
-    appearanceLi.className = 'mg-nav-item';
-    appearanceLi.innerHTML = `
-      <a href="#appearance-settings" data-action="open-appearance-settings" data-rail-tip="تنظیمات ظاهری">
-        <span class="mg-nav-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
-        </span>
-        <span class="mg-nav-label">تنظیمات ظاهری</span>
-        <span id="navAppearanceSwatch" class="mg-nav-accent-swatch" aria-hidden="true"></span>
-      </a>
-    `;
-    navList.appendChild(groupHeader);
-    navList.appendChild(appearanceLi);
+  // Remove legacy sidebar Appearance Settings entry if present (moved to compact header icon button)
+  const legacyAppearanceLi = document.getElementById('navItemAppearance');
+  if (legacyAppearanceLi) {
+    const prevHeader = legacyAppearanceLi.previousElementSibling;
+    if (prevHeader && prevHeader.classList.contains('mg-nav-group-header')) {
+      prevHeader.remove();
+    }
+    legacyAppearanceLi.remove();
   }
 
   // Ensure every nav link has .mg-nav-icon, .mg-nav-label, --nav-i stagger index, and data-rail-tip
@@ -2693,6 +2686,9 @@ const GAMING_ACCENT_PALETTES = [
     title: 'بنفش نئون',
     desc: 'ترکیب بنفش رویال و نیلی الکتریک (پوسته پیش‌فرض Game District)',
     swatch: '#7C3AED',
+    primary: '#7C3AED',
+    secondary: '#C4B5FD',
+    deep: '#5B21B6',
     grad: 'linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%)',
   },
   {
@@ -2700,6 +2696,9 @@ const GAMING_ACCENT_PALETTES = [
     title: 'قرمز سایبر',
     desc: 'ترکیب قرمز یاقوتی و زرشکی تیره با حس گیمینگ ROG',
     swatch: '#E11D48',
+    primary: '#E11D48',
+    secondary: '#FDA4AF',
+    deep: '#9F1239',
     grad: 'linear-gradient(135deg, #E11D48 0%, #9F1239 100%)',
   },
   {
@@ -2707,6 +2706,9 @@ const GAMING_ACCENT_PALETTES = [
     title: 'نارنجی ماگما',
     desc: 'ترکیب نارنجی آتشین و کهربایی تیره با حس رقابتی',
     swatch: '#EA580C',
+    primary: '#EA580C',
+    secondary: '#FDBA74',
+    deep: '#9A3412',
     grad: 'linear-gradient(135deg, #EA580C 0%, #9A3412 100%)',
   },
   {
@@ -2714,6 +2716,9 @@ const GAMING_ACCENT_PALETTES = [
     title: 'سبز زمردی',
     desc: 'ترکیب سبز تیره گیمینگ و زمردی سایبر به سبک Razer',
     swatch: '#059669',
+    primary: '#059669',
+    secondary: '#6EE7B7',
+    deep: '#065F46',
     grad: 'linear-gradient(135deg, #059669 0%, #065F46 100%)',
   },
   {
@@ -2721,6 +2726,9 @@ const GAMING_ACCENT_PALETTES = [
     title: 'آبی کبالت',
     desc: 'ترکیب آبی کبالت تیره و فیروزه‌ای الکتریک به سبک PlayStation',
     swatch: '#2563EB',
+    primary: '#2563EB',
+    secondary: '#93C5FD',
+    deep: '#1E40AF',
     grad: 'linear-gradient(135deg, #2563EB 0%, #1E40AF 100%)',
   },
 ];
@@ -2735,6 +2743,39 @@ function getSavedAccentPalette() {
     // ignore
   }
   return 'violet';
+}
+
+function getActiveAccentPaletteObj() {
+  const activeId = document.documentElement.getAttribute('data-accent') || getSavedAccentPalette();
+  return GAMING_ACCENT_PALETTES.find((p) => p.id === activeId) || GAMING_ACCENT_PALETTES[0];
+}
+
+function syncOverviewChartsAccent() {
+  const pal = getActiveAccentPaletteObj();
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  const mutedStroke = isLight ? 'rgba(100, 116, 139, 0.28)' : 'rgba(148, 163, 184, 0.28)';
+
+  // Chart 1: Occupancy ring gradient + available arc
+  const occGrad = document.getElementById('gradCyanIndigo');
+  if (occGrad) {
+    const stops = occGrad.querySelectorAll('stop');
+    if (stops[0]) stops[0].setAttribute('stop-color', pal.secondary);
+    if (stops[1]) stops[1].setAttribute('stop-color', pal.primary);
+  }
+  const availArc = document.getElementById('gaugeAvailableArc');
+  if (availArc) availArc.setAttribute('stroke', mutedStroke);
+
+  // Chart 2: Revenue donut (harmonious primary + lighter tonal shade of same accent)
+  const rev0 = document.getElementById('donutRevSeg0');
+  const rev1 = document.getElementById('donutRevSeg1');
+  if (rev0) rev0.setAttribute('stroke', pal.primary);
+  if (rev1) rev1.setAttribute('stroke', pal.secondary);
+
+  // Chart 3: Sessions donut (primary + calm neutral slate)
+  const sess0 = document.getElementById('donutSessSeg0');
+  const sess1 = document.getElementById('donutSessSeg1');
+  if (sess0) sess0.setAttribute('stroke', pal.primary);
+  if (sess1) sess1.setAttribute('stroke', mutedStroke);
 }
 
 // Immediately set initial accent on <html> before DOMContentLoaded
@@ -2790,6 +2831,7 @@ function applyAccentPalette(paletteId, options = {}) {
     // ignore
   }
 
+  syncOverviewChartsAccent();
   syncAppearanceModalUI();
 
   if (options.animate !== false) {
@@ -2803,7 +2845,44 @@ function applyAccentPalette(paletteId, options = {}) {
   }
 }
 
+function ensureHeaderAppearanceButton() {
+  if (document.getElementById('mgAppearanceToggleBtn')) return;
+  const topbarLeft = document.querySelector('.mg-topbar-left');
+  if (!topbarLeft) return;
+
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.id = 'mgAppearanceToggleBtn';
+  btn.className = 'mg-icon-btn mg-appearance-header-btn';
+  btn.setAttribute('data-action', 'open-appearance-settings');
+  btn.setAttribute('aria-label', 'تنظیمات ظاهری و ترکیب رنگی');
+  btn.setAttribute('title', 'تنظیمات ظاهری');
+  btn.innerHTML = `
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
+      <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
+      <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
+      <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
+      <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path>
+    </svg>
+    <span id="navAppearanceSwatch" class="mg-header-accent-dot" aria-hidden="true"></span>
+  `;
+
+  const themeBtn = document.getElementById('mgThemeToggleBtn');
+  if (themeBtn && themeBtn.parentNode === topbarLeft) {
+    themeBtn.insertAdjacentElement('afterend', btn);
+  } else {
+    const notifWrap = topbarLeft.querySelector('.mg-notification-wrap');
+    if (notifWrap) {
+      topbarLeft.insertBefore(btn, notifWrap);
+    } else {
+      topbarLeft.appendChild(btn);
+    }
+  }
+}
+
 function initAppearanceSettings() {
+  ensureHeaderAppearanceButton();
   const initialAccent = getSavedAccentPalette();
   applyAccentPalette(initialAccent, { animate: false });
 
@@ -2965,9 +3044,9 @@ function initAppearanceSettings() {
     modal.setAttribute('hidden', '');
   };
 
-  // Intercept click on "تنظیمات ظاهری" link in sidebar
+  // Intercept click on compact Appearance Settings button in header
   document.addEventListener('click', (e) => {
-    const trigger = e.target.closest('[data-action="open-appearance-settings"], #navItemAppearance a');
+    const trigger = e.target.closest('[data-action="open-appearance-settings"], #mgAppearanceToggleBtn, #navItemAppearance a');
     if (!trigger) return;
     e.preventDefault();
     e.stopPropagation();
@@ -2975,6 +3054,7 @@ function initAppearanceSettings() {
   });
 
   window.addEventListener('mg:theme-changed', () => {
+    syncOverviewChartsAccent();
     syncAppearanceModalUI();
   });
 

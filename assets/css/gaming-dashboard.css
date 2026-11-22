@@ -9479,3 +9479,145 @@ html[data-theme="light"] #mgTablesView .mg-ops-card .mg-select.is-invalid:focus 
     inset 0 1px 0 rgba(255, 255, 255, 0.95),
     0 0 0 3px rgba(220, 38, 38, 0.18) !important;
 }
+
+/* ==========================================================================
+   COMPACT HEADER APPEARANCE BUTTON (کنار دکمه تم روشن / تاریک)
+   ========================================================================== */
+.mg-appearance-header-btn {
+  position: relative;
+  width: 38px !important;
+  height: 38px !important;
+  padding: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  transition:
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease !important;
+}
+
+.mg-appearance-header-btn:hover {
+  transform: translateY(-1px) scale(1.04) !important;
+  border-color: rgba(var(--mg-accent-rgb), 0.55) !important;
+  box-shadow: 0 6px 16px -6px rgba(var(--mg-accent-rgb), 0.38) !important;
+}
+
+.mg-appearance-header-btn:active {
+  transform: scale(0.93) !important;
+}
+
+.mg-appearance-header-btn svg {
+  color: var(--mg-accent-soft, #A78BFA);
+  transition: color 0.2s ease;
+}
+
+html[data-theme="light"] .mg-appearance-header-btn svg {
+  color: var(--mg-accent-2, #6D28D9) !important;
+}
+
+.mg-header-accent-dot {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--mg-accent-grad);
+  border: 1.5px solid #0E101A;
+  box-shadow: 0 0 6px rgba(var(--mg-accent-rgb), 0.65);
+  pointer-events: none;
+}
+
+html[data-theme="light"] .mg-header-accent-dot {
+  border-color: #FFFFFF !important;
+}
+
+/* ==========================================================================
+   COHESIVE ACCENT-MATCHED CIRCULAR CHARTS, LEGENDS & KPI RINGS (بدون شلوغی)
+   ========================================================================== */
+html[data-accent] #occupancyDonutSvg #gradCyanIndigo stop:first-child {
+  stop-color: var(--mg-accent-soft) !important;
+}
+
+html[data-accent] #occupancyDonutSvg #gradCyanIndigo stop:last-child {
+  stop-color: var(--mg-accent-1) !important;
+}
+
+html[data-accent] #occupancyDonutSvg #gaugeAvailableArc {
+  stroke: rgba(148, 163, 184, 0.28) !important;
+}
+
+html[data-accent] #revenueDonutSvg #donutRevSeg0 {
+  stroke: var(--mg-accent-1) !important;
+}
+
+html[data-accent] #revenueDonutSvg #donutRevSeg1 {
+  stroke: var(--mg-accent-soft) !important;
+}
+
+html[data-accent] #sessionsDonutSvg #donutSessSeg0 {
+  stroke: var(--mg-accent-1) !important;
+}
+
+html[data-accent] #sessionsDonutSvg #donutSessSeg1 {
+  stroke: rgba(148, 163, 184, 0.28) !important;
+}
+
+/* Matching calm tonal legend dots for all 3 circular charts */
+html[data-accent] #chartOccupancyCard .mg-legend-dot.dot-cyan,
+html[data-accent] #chartRevenueDonutCard .mg-legend-dot.dot-emerald,
+html[data-accent] #chartSessionsDonutCard .mg-legend-dot.dot-purple {
+  background: var(--mg-accent-1) !important;
+  box-shadow: 0 0 0 2px rgba(var(--mg-accent-rgb), 0.22) !important;
+}
+
+html[data-accent] #chartRevenueDonutCard .mg-legend-dot.dot-amber {
+  background: var(--mg-accent-soft) !important;
+  box-shadow: 0 0 0 2px rgba(var(--mg-accent-rgb), 0.14) !important;
+}
+
+html[data-accent] #chartOccupancyCard .mg-legend-dot.dot-indigo,
+html[data-accent] #chartSessionsDonutCard .mg-legend-dot.dot-indigo {
+  background: rgba(148, 163, 184, 0.48) !important;
+  box-shadow: none !important;
+}
+
+/* Harmonized Overview KPI Rings & Clock Icon (Restrained Monochrome Tonal Scale) */
+html[data-accent] #mgOverviewView .mg-kpi-ring-bar,
+html[data-accent] #mgOverviewView .mg-kpi-ring-bar.ring-indigo,
+html[data-accent] #mgOverviewView .mg-kpi-ring-bar.ring-cyan,
+html[data-accent] #mgOverviewView .mg-kpi-ring-bar.ring-emerald,
+html[data-accent] #mgOverviewView .mg-kpi-ring-bar.ring-purple {
+  stroke: var(--mg-accent-1) !important;
+}
+
+html[data-accent] #mgOverviewView .mg-kpi-ring-bar.ring-amber {
+  stroke: var(--mg-accent-soft) !important;
+}
+
+html:not([data-theme="light"])[data-accent] #mgOverviewView .mg-kpi-icon {
+  color: var(--mg-accent-soft) !important;
+  background: rgba(var(--mg-accent-rgb), 0.12) !important;
+}
+
+html:not([data-theme="light"])[data-accent] .mg-live-clock svg {
+  stroke: var(--mg-accent-soft) !important;
+}
+
+html[data-theme="light"][data-accent] #occupancyDonutSvg #gaugeAvailableArc,
+html[data-theme="light"][data-accent] #sessionsDonutSvg #donutSessSeg1 {
+  stroke: rgba(100, 116, 139, 0.24) !important;
+}
+
+html[data-theme="light"][data-accent] #revenueDonutSvg #donutRevSeg1 {
+  stroke: var(--mg-accent-soft) !important;
+}
+
+html[data-theme="light"][data-accent] #chartOccupancyCard .mg-legend-dot.dot-indigo,
+html[data-theme="light"][data-accent] #chartSessionsDonutCard .mg-legend-dot.dot-indigo {
+  background: rgba(100, 116, 139, 0.42) !important;
+}
+
