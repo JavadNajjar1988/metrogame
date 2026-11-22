@@ -434,14 +434,15 @@ export function computeIncomeReportMetrics({
       if (String(item.paydate).trim() === '85') continue;
 
       transactionsCount++;
-      const cType = consoleKeys.includes(item.consoleType) ? item.consoleType : 'ps4';
       const gAmount = Math.max(0, parseInt(item.gameTotal, 10) || 0);
-
-      rowData[paymentLabel][cType] += gAmount;
-      rowData[paymentLabel].totalItem += gAmount;
-      totalColumn[cType] += gAmount;
-      totalColumn.totalItem += gAmount;
-      totalIncome += gAmount;
+      if (gAmount > 0 && item.consoleType !== 'buffet_only') {
+        const cType = consoleKeys.includes(item.consoleType) ? item.consoleType : 'ps4';
+        rowData[paymentLabel][cType] += gAmount;
+        rowData[paymentLabel].totalItem += gAmount;
+        totalColumn[cType] += gAmount;
+        totalColumn.totalItem += gAmount;
+        totalIncome += gAmount;
+      }
 
       if (Array.isArray(item.Buffet)) {
         for (const buffetItem of item.Buffet) {

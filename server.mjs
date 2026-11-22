@@ -68,9 +68,20 @@ const server = createServer(async (request, response) => {
   try {
     if (isAction(file)) {
       if (request.method === 'POST') {
-        const result = await runAction(file, await readForm(request));
-        if (result.location) return response.writeHead(303, { Location: result.location }).end();
-        return json(response, 200, result);
+        const isHtmlNav = (request.headers.accept || '').includes('text/html');
+        try {
+          const result = await runAction(file, await readForm(request));
+          if (result.location) return response.writeHead(303, { Location: result.location }).end();
+          if (isHtmlNav) {
+            return response.writeHead(303, { Location: 'index.html#tables' }).end();
+          }
+          return json(response, 200, result);
+        } catch (err) {
+          if (isHtmlNav) {
+            return response.writeHead(303, { Location: 'index.html#tables' }).end();
+          }
+          throw err;
+        }
       }
       if (file === 'console_costs.php' && request.method === 'GET') return json(response, 200, {});
       response.setHeader('Allow', 'POST');

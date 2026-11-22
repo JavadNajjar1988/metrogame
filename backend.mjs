@@ -56,14 +56,22 @@ function invalid(message) {
   throw Object.assign(new Error(message), { status: 400 });
 }
 
+function normalizeDigits(str) {
+  return String(str ?? '')
+    .replace(/[۰-۹]/g, d => String(d.charCodeAt(0) - 1776))
+    .replace(/[٠-٩]/g, d => String(d.charCodeAt(0) - 1632));
+}
+
 function field(form, key) {
-  const value = form.get(key);
-  if (typeof value !== 'string' || !value.trim()) invalid('مقدار الزامی وارد نشده است.');
+  const raw = form.get(key);
+  const value = typeof raw === 'string' ? normalizeDigits(raw).trim() : '';
+  if (!value) invalid('مقدار الزامی وارد نشده است.');
   return value;
 }
 
 function number(form, key, minimum = 0) {
-  const value = Number(field(form, key));
+  const cleaned = field(form, key).replace(/[,٬\s]/g, '');
+  const value = Number(cleaned);
   if (!Number.isFinite(value) || value < minimum) invalid('مقدار عددی معتبر نیست.');
   return value;
 }
@@ -164,17 +172,45 @@ async function removeFromFile(name, keep, location) {
 
 async function removeTemporary(name, form) {
   const table = field(form, 'factor_name');
+  const rawIndex = form.get('itemIndex');
+  const hasIndex = rawIndex !== null && String(rawIndex).trim() !== '';
   await update(name, data => {
     const tables = { ...data };
+    if (hasIndex) {
+      const idx = Number(normalizeDigits(String(rawIndex)).trim());
+      const currentList = Object.hasOwn(tables, table) && Array.isArray(tables[table]) ? tables[table] : null;
+      if (!currentList || !Number.isInteger(idx) || idx < 0 || idx >= currentList.length) {
+        invalid('ردیف مورد نظر برای حذف در سرور یافت نشد.');
+      }
+      const nextList = currentList.filter((_, i) => i !== idx);
+      if (nextList.length > 0) {
+        tables[table] = nextList;
+      } else {
+        delete tables[table];
+      }
+      return tables;
+    }
     delete tables[table];
     return tables;
   });
-  return redirect('index.html');
+  return hasIndex ? ok : redirect('index.html');
 }
+
+const knownConsoles = new Set([
+  'ps50',
+  'ps4',
+  'xbox',
+  'computer',
+  'pool-table',
+  'foosball',
+  'jewelry',
+]);
 
 const routes = {
   'process.php': async form => {
-    const tableNumber = field(form, 'tableNumber');
+    const rawTable = form.get('tableNumber') ?? form.get('table-number');
+    const tableNumber = typeof rawTable === 'string' ? normalizeDigits(rawTable).trim() : '';
+    if (!tableNumber) invalid('شماره میز وارد نشده است.');
     const reservations = await readData('reservations.json');
     if (reservations.some(item => same(item.tableNumber, tableNumber))) {
       return { error: 'شماره میز تکراری است.' };
@@ -182,15 +218,23 @@ const routes = {
     const priceType = field(form, 'priceType');
     const consoleType = field(form, 'consoleType');
     const { consoles } = await readData('data.json');
-    if (!Object.hasOwn(prices, priceType) || !consoles.some(item => item.name === consoleType)) {
+    const isValidConsole =
+      knownConsoles.has(consoleType) || consoles.some(item => item.name === consoleType);
+    if (!Object.hasOwn(prices, priceType) || !isValidConsole) {
       invalid('تعرفه یا کنسول معتبر نیست.');
     }
+    const rawPreCost = form.get('pre-payment-cost');
+    const prePaymentCost =
+      typeof rawPreCost === 'string' ? normalizeDigits(rawPreCost).replace(/[,٬\s]/g, '').trim() : null;
+    const isPre = form.get('pre-payment') === 'pre-payment' || form.get('paymentType') === 'pre-payment';
     await save('reservations.json', [...reservations, {
-      tableNumber, consoleType, priceType,
+      tableNumber,
+      consoleType,
+      priceType,
       paymentType: form.get('paymentType'),
-      prePaymentCost: form.get('pre-payment-cost'),
-      postPayment: form.get('post-payment'),
-      prePayment: form.get('pre-payment'),
+      prePaymentCost: isPre ? (prePaymentCost || '0') : null,
+      postPayment: isPre ? null : (form.get('post-payment') || 'post-payment'),
+      prePayment: isPre ? 'pre-payment' : null,
     }]);
     return ok;
   },
@@ -265,9 +309,11 @@ const routes = {
     const priceType = field(form, 'priceType');
     const { consoles } = await readData('data.json');
     const selected = consoles.find(item => item.name === consoleType);
-    if (!selected || !Object.hasOwn(prices, priceType)) invalid('تعرفه یا کنسول معتبر نیست.');
+    const isValidConsole = Boolean(selected) || knownConsoles.has(consoleType);
+    if (!isValidConsole || !Object.hasOwn(prices, priceType)) invalid('تعرفه یا کنسول معتبر نیست.');
     const gameCost = number(form, 'gameCost');
-    return appendForTable('game_temporary.json', form, { cosoleprice: selected[priceType], gameCost, consoleType, priceType });
+    const consoleRate = selected && selected[priceType] ? selected[priceType] : '60000';
+    return appendForTable('game_temporary.json', form, { cosoleprice: consoleRate, gameCost, consoleType, priceType });
   },
   'delete_game_temperory.php': form => removeTemporary('game_temporary.json', form),
   'delete_buffet_temperory.php': form => removeTemporary('buffet_temporary.json', form),

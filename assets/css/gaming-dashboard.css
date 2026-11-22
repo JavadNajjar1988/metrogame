@@ -8344,3 +8344,1138 @@ html[data-theme="light"] .mg-print-modal-title-wrap {
   }
 }
 
+/* ==========================================================================
+   5 CURATED GAMING COLOR COMBINATIONS (DARK & LIGHT THEME)
+   ========================================================================== */
+:root,
+html[data-accent="violet"] {
+  --mg-accent-1: #7C3AED;
+  --mg-accent-2: #6D28D9;
+  --mg-accent-3: #5B21B6;
+  --mg-accent-comp: #4F46E5;
+  --mg-accent-soft: #A78BFA;
+  --mg-accent-rgb: 124, 58, 237;
+  --mg-accent-deep-rgb: 91, 33, 182;
+  --mg-accent-comp-rgb: 79, 70, 229;
+  --mg-accent-grad: linear-gradient(135deg, #7C3AED 0%, #6D28D9 52%, #4F46E5 100%);
+  --mg-light-bg: #ECEBF4;
+  --mg-light-bg-2: #E2DFEE;
+  --mg-light-card-tint: rgba(243, 241, 252, 0.88);
+  --mg-light-ink: #1F1D36;
+  --mg-light-ink-soft: #312E4D;
+  --mg-light-hover-bg: #F5F3FF;
+}
+
+html[data-accent="crimson"] {
+  --mg-accent-1: #E11D48;
+  --mg-accent-2: #BE123C;
+  --mg-accent-3: #9F1239;
+  --mg-accent-comp: #EA580C;
+  --mg-accent-soft: #FB7185;
+  --mg-accent-rgb: 225, 29, 72;
+  --mg-accent-deep-rgb: 159, 18, 57;
+  --mg-accent-comp-rgb: 234, 88, 12;
+  --mg-accent-grad: linear-gradient(135deg, #E11D48 0%, #BE123C 54%, #9F1239 100%);
+  --mg-light-bg: #F3ECEE;
+  --mg-light-bg-2: #EADFE3;
+  --mg-light-card-tint: rgba(252, 242, 245, 0.89);
+  --mg-light-ink: #2A121A;
+  --mg-light-ink-soft: #4A202D;
+  --mg-light-hover-bg: #FFF1F2;
+}
+
+html[data-accent="orange"] {
+  --mg-accent-1: #EA580C;
+  --mg-accent-2: #C2410C;
+  --mg-accent-3: #9A3412;
+  --mg-accent-comp: #D97706;
+  --mg-accent-soft: #FB923C;
+  --mg-accent-rgb: 234, 88, 12;
+  --mg-accent-deep-rgb: 154, 52, 18;
+  --mg-accent-comp-rgb: 217, 119, 6;
+  --mg-accent-grad: linear-gradient(135deg, #EA580C 0%, #C2410C 54%, #9A3412 100%);
+  --mg-light-bg: #F3EEEA;
+  --mg-light-bg-2: #EAE2DB;
+  --mg-light-card-tint: rgba(252, 246, 240, 0.89);
+  --mg-light-ink: #2B1810;
+  --mg-light-ink-soft: #4B2C1E;
+  --mg-light-hover-bg: #FFF7ED;
+}
+
+html[data-accent="emerald"] {
+  --mg-accent-1: #059669;
+  --mg-accent-2: #047857;
+  --mg-accent-3: #065F46;
+  --mg-accent-comp: #0D9488;
+  --mg-accent-soft: #34D399;
+  --mg-accent-rgb: 5, 150, 105;
+  --mg-accent-deep-rgb: 6, 95, 70;
+  --mg-accent-comp-rgb: 13, 148, 136;
+  --mg-accent-grad: linear-gradient(135deg, #059669 0%, #047857 54%, #065F46 100%);
+  --mg-light-bg: #EAF2EF;
+  --mg-light-bg-2: #DFECE7;
+  --mg-light-card-tint: rgba(240, 250, 246, 0.89);
+  --mg-light-ink: #102A22;
+  --mg-light-ink-soft: #1E463A;
+  --mg-light-hover-bg: #ECFDF5;
+}
+
+html[data-accent="cyber"] {
+  --mg-accent-1: #2563EB;
+  --mg-accent-2: #1D4ED8;
+  --mg-accent-3: #1E40AF;
+  --mg-accent-comp: #0891B2;
+  --mg-accent-soft: #60A5FA;
+  --mg-accent-rgb: 37, 99, 235;
+  --mg-accent-deep-rgb: 30, 64, 175;
+  --mg-accent-comp-rgb: 8, 145, 178;
+  --mg-accent-grad: linear-gradient(135deg, #2563EB 0%, #1D4ED8 54%, #0E7490 100%);
+  --mg-light-bg: #EAF0F6;
+  --mg-light-bg-2: #DFE8F1;
+  --mg-light-card-tint: rgba(241, 246, 253, 0.89);
+  --mg-light-ink: #121E36;
+  --mg-light-ink-soft: #24375B;
+  --mg-light-hover-bg: #EFF6FF;
+}
+
+/* ==========================================================================
+   1. DARK MODE DYNAMIC GAMING ACCENT OVERRIDES
+   ========================================================================== */
+html:not([data-theme="light"])[data-accent] .mg-brand-logo {
+  background: var(--mg-accent-grad) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow: 0 6px 16px -4px rgba(var(--mg-accent-rgb), 0.45) !important;
+}
+
+html:not([data-theme="light"])[data-accent] .mg-brand-subtitle {
+  color: var(--mg-accent-soft) !important;
+}
+
+html:not([data-theme="light"])[data-accent] #mgNavSlidingPill,
+html:not([data-theme="light"])[data-accent] .mg-nav-sliding-pill,
+html:not([data-theme="light"])[data-accent] div:nth-of-type(2) > aside#mgSidebar:nth-of-type(1) > ul#mgNavList:nth-of-type(1) > div#mgNavSlidingPill {
+  background: var(--mg-accent-grad) !important;
+  border-color: var(--mg-accent-1) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 8px 22px -6px rgba(var(--mg-accent-rgb), 0.55) !important;
+}
+
+html:not([data-theme="light"])[data-accent] #mgSidebarQuickNew,
+html:not([data-theme="light"])[data-accent] .mg-sidebar-new-btn {
+  background: linear-gradient(135deg, rgba(var(--mg-accent-rgb), 0.22) 0%, rgba(var(--mg-accent-deep-rgb), 0.16) 100%) !important;
+  border-color: rgba(var(--mg-accent-rgb), 0.44) !important;
+  color: #F8FAFC !important;
+}
+
+html:not([data-theme="light"])[data-accent] .mg-sidebar-new-ico {
+  background: var(--mg-accent-grad) !important;
+  color: #FFFFFF !important;
+}
+
+html:not([data-theme="light"])[data-accent] #mgSidebarQuickNew:hover,
+html:not([data-theme="light"])[data-accent] .mg-sidebar-new-btn:hover {
+  background: var(--mg-accent-grad) !important;
+  border-color: var(--mg-accent-1) !important;
+  box-shadow: 0 8px 20px -6px rgba(var(--mg-accent-rgb), 0.48) !important;
+}
+
+html:not([data-theme="light"])[data-accent] .mg-nav-badge.badge-Highlight {
+  background: rgba(var(--mg-accent-rgb), 0.18) !important;
+  color: var(--mg-accent-soft) !important;
+  border: 1px solid rgba(var(--mg-accent-rgb), 0.36) !important;
+}
+
+html:not([data-theme="light"])[data-accent] .mg-section-accent {
+  background: var(--mg-accent-grad) !important;
+}
+
+html:not([data-theme="light"])[data-accent] .mg-station-badge,
+html:not([data-theme="light"])[data-accent] .mg-mini-num-badge {
+  background: rgba(var(--mg-accent-rgb), 0.22) !important;
+  border-color: rgba(var(--mg-accent-rgb), 0.45) !important;
+}
+
+html:not([data-theme="light"])[data-accent] .mg-btn-primary,
+html:not([data-theme="light"])[data-accent] .btn-primary {
+  background: var(--mg-accent-grad) !important;
+  border-color: var(--mg-accent-1) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 8px 20px -6px rgba(var(--mg-accent-rgb), 0.45) !important;
+}
+
+html:not([data-theme="light"])[data-accent] .mg-radio-sliding-pill {
+  background: linear-gradient(135deg, rgba(var(--mg-accent-rgb), 0.30) 0%, rgba(var(--mg-accent-comp-rgb), 0.22) 100%) !important;
+  border: 1.5px solid var(--mg-accent-1) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 8px 22px -6px rgba(var(--mg-accent-rgb), 0.45) !important;
+}
+
+html:not([data-theme="light"])[data-accent] .mg-radio-card:not(.is-pill-target):has(input:checked),
+html:not([data-theme="light"])[data-accent] .mg-radio-card:not(.is-pill-target).is-selected,
+html:not([data-theme="light"])[data-accent] #mgTablesView .mg-payment-modes .mg-radio-card:has(input:checked),
+html:not([data-theme="light"])[data-accent] #mgTablesView .mg-payment-modes .mg-radio-card.is-selected {
+  background: rgba(var(--mg-accent-rgb), 0.20) !important;
+  border-color: var(--mg-accent-1) !important;
+  box-shadow: 0 0 0 1px rgba(var(--mg-accent-rgb), 0.28) !important;
+}
+
+html:not([data-theme="light"])[data-accent] .mg-filter-btn.active,
+html:not([data-theme="light"])[data-accent] .mg-chip-btn.active,
+html:not([data-theme="light"])[data-accent] .mg-period-pill.active,
+html:not([data-theme="light"])[data-accent] .mg-view-switch-btn.active {
+  background: var(--mg-accent-grad) !important;
+  border-color: var(--mg-accent-1) !important;
+  color: #FFFFFF !important;
+}
+
+html:not([data-theme="light"])[data-accent] #mgNotifCount,
+html:not([data-theme="light"])[data-accent] .mg-notif-count {
+  background: var(--mg-accent-grad) !important;
+  box-shadow: 0 3px 8px rgba(var(--mg-accent-rgb), 0.45) !important;
+}
+
+html:not([data-theme="light"])[data-accent] .mg-input:focus,
+html:not([data-theme="light"])[data-accent] .form-control:focus,
+html:not([data-theme="light"])[data-accent] select.form-control:focus {
+  border-color: var(--mg-accent-1) !important;
+  box-shadow: 0 0 0 3px rgba(var(--mg-accent-rgb), 0.20) !important;
+}
+
+html:not([data-theme="light"])[data-accent] .mg-invoice-stat-item.is-highlight {
+  background: rgba(var(--mg-accent-rgb), 0.16) !important;
+  border-color: var(--mg-accent-1) !important;
+}
+
+/* ==========================================================================
+   2. LIGHT MODE DYNAMIC GAMING ACCENT OVERRIDES
+   ========================================================================== */
+html[data-theme="light"][data-accent] {
+  --ombria-bg: var(--mg-light-bg) !important;
+  --ombria-bg-2: var(--mg-light-bg-2) !important;
+  --ombria-veil:
+    radial-gradient(1250px 640px at 88% -6%, rgba(var(--mg-accent-rgb), 0.11), transparent 62%),
+    radial-gradient(980px 540px at 8% 18%, rgba(var(--mg-accent-comp-rgb), 0.08), transparent 58%),
+    radial-gradient(920px 520px at 50% 104%, rgba(var(--mg-accent-deep-rgb), 0.06), transparent 64%),
+    linear-gradient(180deg, var(--mg-light-bg) 0%, var(--mg-light-bg-2) 100%) !important;
+  --ombria-card: rgba(255, 255, 255, 0.85) !important;
+  --ombria-card-2: var(--mg-light-card-tint) !important;
+  --ombria-line: rgba(var(--mg-accent-deep-rgb), 0.13) !important;
+  --ombria-line-strong: rgba(var(--mg-accent-deep-rgb), 0.25) !important;
+  --ombria-ink: var(--mg-light-ink) !important;
+  --ombria-ink-soft: var(--mg-light-ink-soft) !important;
+  --ombria-violet: var(--mg-accent-3) !important;
+  --ombria-violet-soft: var(--mg-accent-1) !important;
+  --ombria-violet-tint: rgba(var(--mg-accent-rgb), 0.11) !important;
+  --ombria-indigo: var(--mg-accent-comp) !important;
+  --ombria-shadow-card:
+    0 12px 32px -12px rgba(var(--mg-accent-deep-rgb), 0.10),
+    0 4px 12px -4px rgba(31, 29, 54, 0.05) !important;
+  --ombria-shadow-hover:
+    0 18px 38px -12px rgba(var(--mg-accent-deep-rgb), 0.16),
+    0 6px 16px -4px rgba(31, 29, 54, 0.07) !important;
+  --ombria-btn-shadow:
+    0 10px 22px -6px rgba(var(--mg-accent-deep-rgb), 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32) !important;
+}
+
+html[data-theme="light"][data-accent],
+html[data-theme="light"][data-accent] body {
+  background-color: var(--mg-light-bg) !important;
+  background-image: var(--ombria-veil) !important;
+}
+
+html[data-theme="light"][data-accent] .mg-kpi-card,
+html[data-theme="light"][data-accent] .mg-kpi-card.kpi-cyan,
+html[data-theme="light"][data-accent] .mg-kpi-card.kpi-emerald,
+html[data-theme="light"][data-accent] .mg-kpi-card.kpi-amber,
+html[data-theme="light"][data-accent] .mg-kpi-card.kpi-purple {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.92) 0%, var(--mg-light-card-tint) 100%) !important;
+  border: 1px solid rgba(var(--mg-accent-deep-rgb), 0.14) !important;
+}
+
+html[data-theme="light"][data-accent] .mg-kpi-card .mg-kpi-icon {
+  background: rgba(var(--mg-accent-rgb), 0.10) !important;
+  color: var(--mg-accent-3) !important;
+  border-color: rgba(var(--mg-accent-rgb), 0.22) !important;
+}
+
+html[data-theme="light"][data-accent] .mg-kpi-ring-bar.ring-indigo,
+html[data-theme="light"][data-accent] .mg-kpi-ring-bar.ring-purple {
+  stroke: var(--mg-accent-1) !important;
+}
+
+html[data-theme="light"][data-accent] .mg-kpi-ring-bar.ring-cyan {
+  stroke: var(--mg-accent-comp) !important;
+}
+
+html[data-theme="light"][data-accent] .mg-brand-logo,
+html[data-theme="light"][data-accent] .mg-sidebar-new-ico,
+html[data-theme="light"][data-accent] .mg-station-badge,
+html[data-theme="light"][data-accent] .mg-mini-num-badge,
+html[data-theme="light"][data-accent] .mg-section-accent,
+html[data-theme="light"][data-accent] #mgNavSlidingPill,
+html[data-theme="light"][data-accent] .mg-nav-sliding-pill,
+html[data-theme="light"][data-accent] .mg-radio-sliding-pill,
+html[data-theme="light"][data-accent] .mg-btn-primary,
+html[data-theme="light"][data-accent] .mg-btn-emerald,
+html[data-theme="light"][data-accent] .btn-primary,
+html[data-theme="light"][data-accent] .btn-success,
+html[data-theme="light"][data-accent] .mg-filter-btn.active,
+html[data-theme="light"][data-accent] .mg-chip-btn.active,
+html[data-theme="light"][data-accent] .mg-period-pill.active,
+html[data-theme="light"][data-accent] .mg-view-switch-btn.active,
+html[data-theme="light"][data-accent] #mgNotifCount,
+html[data-theme="light"][data-accent] .mg-notif-count,
+html[data-theme="light"][data-accent] .mg-grand-total-pill,
+html[data-theme="light"][data-accent] .mg-grand-total-pill.pill-amber,
+html[data-theme="light"][data-accent] .mg-grand-total-pill.pill-emerald {
+  background: var(--mg-accent-grad) !important;
+  border-color: var(--mg-accent-3) !important;
+  color: #FFFFFF !important;
+  box-shadow: var(--ombria-btn-shadow) !important;
+}
+
+html[data-theme="light"][data-accent] .mg-brand-subtitle,
+html[data-theme="light"][data-accent] .mg-total-amount,
+html[data-theme="light"][data-accent] .mg-th-console i,
+html[data-theme="light"][data-accent] .mg-info-bang {
+  color: var(--mg-accent-3) !important;
+}
+
+html[data-theme="light"][data-accent] .mg-btn-cyan,
+html[data-theme="light"][data-accent] .mg-btn-amber,
+html[data-theme="light"][data-accent] .btn-info,
+html[data-theme="light"][data-accent] .btn-warning,
+html[data-theme="light"][data-accent] #printInvoiceBtn.mg-print-invoice-btn {
+  background: rgba(var(--mg-accent-rgb), 0.08) !important;
+  border: 1px solid rgba(var(--mg-accent-deep-rgb), 0.26) !important;
+  color: var(--mg-accent-3) !important;
+}
+
+html[data-theme="light"][data-accent] .mg-btn-cyan span,
+html[data-theme="light"][data-accent] .mg-btn-amber span {
+  color: var(--mg-accent-3) !important;
+}
+
+html[data-theme="light"][data-accent] .mg-btn-cyan:hover,
+html[data-theme="light"][data-accent] .mg-btn-amber:hover,
+html[data-theme="light"][data-accent] #printInvoiceBtn.mg-print-invoice-btn:hover {
+  background: var(--mg-accent-grad) !important;
+  border-color: var(--mg-accent-3) !important;
+  color: #FFFFFF !important;
+}
+
+html[data-theme="light"][data-accent] .mg-btn-cyan:hover span,
+html[data-theme="light"][data-accent] .mg-btn-amber:hover span {
+  color: #FFFFFF !important;
+}
+
+html[data-theme="light"][data-accent] .mg-card-header-icon,
+html[data-theme="light"][data-accent] .mg-header-icon-box,
+html[data-theme="light"][data-accent] .mg-card-tag,
+html[data-theme="light"][data-accent] .mg-chart-badge,
+html[data-theme="light"][data-accent] .mg-nav-badge,
+html[data-theme="light"][data-accent] .mg-nav-badge.badge-Highlight,
+html[data-theme="light"][data-accent] .mg-row-index,
+html[data-theme="light"][data-accent] .mg-player-badge,
+html[data-theme="light"][data-accent] .mg-pay-mode-tag,
+html[data-theme="light"][data-accent] .mg-pay-method-badge.badge-pos,
+html[data-theme="light"][data-accent] .mg-pay-method-badge.badge-account,
+html[data-theme="light"][data-accent] .mg-pay-pct-tag.tag-cyan,
+html[data-theme="light"][data-accent] .mg-pay-pct-tag.tag-purple,
+html[data-theme="light"][data-accent] .mg-income-legend-pct {
+  background: rgba(var(--mg-accent-rgb), 0.10) !important;
+  color: var(--mg-accent-3) !important;
+  border: 1px solid rgba(var(--mg-accent-deep-rgb), 0.22) !important;
+}
+
+html[data-theme="light"][data-accent] .mg-table tbody tr:hover,
+html[data-theme="light"][data-accent] .table tbody tr:hover,
+html[data-theme="light"][data-accent] .mg-legend-item:hover,
+html[data-theme="light"][data-accent] .mg-legend-item.is-active,
+html[data-theme="light"][data-accent] .mg-income-legend-row:hover,
+html[data-theme="light"][data-accent] .mg-income-legend-row.is-active {
+  background: var(--mg-light-hover-bg) !important;
+  border-color: var(--mg-accent-2) !important;
+}
+
+html[data-theme="light"][data-accent] .mg-radio-card:not(.is-pill-target):not(:has(input:checked)):hover {
+  background: var(--mg-light-hover-bg) !important;
+  border-color: rgba(var(--mg-accent-rgb), 0.36) !important;
+  color: var(--mg-accent-3) !important;
+}
+
+html[data-theme="light"][data-accent] .mg-radio-card:not(.is-pill-target):not(:has(input:checked)):hover span {
+  color: var(--mg-accent-3) !important;
+}
+
+html[data-theme="light"][data-accent] .mg-radio-card:not(:has(.mg-radio-sliding-pill)):has(input:checked),
+html[data-theme="light"][data-accent] .mg-invoice-pay-options .mg-radio-card.is-selected,
+html[data-theme="light"][data-accent] #mgTablesView .mg-payment-modes .mg-radio-card:has(input:checked),
+html[data-theme="light"][data-accent] #mgTablesView .mg-payment-modes .mg-radio-card.is-selected {
+  background: var(--mg-accent-grad) !important;
+  border-color: var(--mg-accent-3) !important;
+  color: #FFFFFF !important;
+}
+
+html[data-theme="light"][data-accent] .mg-live-clock svg {
+  stroke: var(--mg-accent-2) !important;
+}
+
+/* ==========================================================================
+   SIDEBAR APPEARANCE SWATCH & APPEARANCE CUSTOMIZER MODAL (#mgAppearanceModal)
+   ========================================================================== */
+.mg-nav-accent-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--mg-accent-grad);
+  border: 2px solid rgba(255, 255, 255, 0.65);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  flex-shrink: 0;
+  margin-right: auto;
+}
+
+html.is-rail .mg-nav-accent-swatch {
+  display: none !important;
+}
+
+.mg-appearance-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9600;
+  background: rgba(8, 10, 18, 0.62);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.mg-appearance-backdrop.is-open {
+  opacity: 1;
+}
+
+.mg-appearance-backdrop[hidden] {
+  display: none !important;
+}
+
+.mg-appearance-dialog {
+  width: 100%;
+  max-width: 640px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 20px;
+  background: linear-gradient(
+    145deg,
+    rgba(28, 32, 52, 0.72) 0%,
+    rgba(16, 19, 32, 0.62) 55%,
+    rgba(22, 25, 42, 0.70) 100%
+  );
+  backdrop-filter: blur(28px) saturate(175%);
+  -webkit-backdrop-filter: blur(28px) saturate(175%);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.05),
+    0 32px 72px -14px rgba(0, 0, 0, 0.78);
+  color: #F8FAFC;
+  transform: translateY(10px) scale(0.98);
+  transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.22s ease;
+}
+
+.mg-appearance-backdrop.is-open .mg-appearance-dialog {
+  transform: translateY(0) scale(1);
+}
+
+html[data-theme="light"] .mg-appearance-dialog {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.80) 0%,
+    rgba(246, 245, 254, 0.68) 100%
+  ) !important;
+  backdrop-filter: blur(28px) saturate(175%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(175%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.92) !important;
+  color: var(--mg-light-ink) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 0 0 1px rgba(var(--mg-accent-deep-rgb), 0.16),
+    0 28px 64px -14px rgba(31, 29, 54, 0.22) !important;
+}
+
+.mg-appearance-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+html[data-theme="light"] .mg-appearance-header {
+  border-bottom-color: rgba(var(--mg-accent-deep-rgb), 0.12) !important;
+}
+
+.mg-appearance-header-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mg-appearance-header-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--mg-accent-grad);
+  color: #FFFFFF;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 6px 16px -4px rgba(var(--mg-accent-rgb), 0.45);
+  flex-shrink: 0;
+}
+
+.mg-appearance-header-title h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: nowrap !important;
+  gap: 6px;
+}
+
+.mg-appearance-close-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  color: inherit;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.18s ease, border-color 0.18s ease;
+}
+
+.mg-appearance-close-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.30);
+}
+
+html[data-theme="light"] .mg-appearance-close-btn {
+  background: rgba(255, 255, 255, 0.72) !important;
+  border-color: rgba(var(--mg-accent-deep-rgb), 0.18) !important;
+}
+
+.mg-appearance-body {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.mg-appearance-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mg-appearance-sec-label {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: nowrap !important;
+  gap: 6px;
+}
+
+.mg-appearance-section-head small {
+  font-size: 11.5px;
+  color: var(--mg-accent-soft);
+  font-weight: 600;
+}
+
+html[data-theme="light"] .mg-appearance-section-head small {
+  color: var(--mg-accent-3) !important;
+}
+
+.mg-theme-mode-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.mg-theme-mode-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.035) 55%,
+    rgba(255, 255, 255, 0.07) 100%
+  );
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    0 6px 16px -6px rgba(0, 0, 0, 0.32);
+  color: inherit;
+  text-align: right;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+html[data-theme="light"] .mg-theme-mode-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.84) 0%, rgba(255, 255, 255, 0.54) 100%) !important;
+  border-color: rgba(255, 255, 255, 0.94) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 0 0 1px rgba(var(--mg-accent-deep-rgb), 0.14),
+    0 6px 14px -6px rgba(var(--mg-accent-deep-rgb), 0.10) !important;
+}
+
+.mg-theme-mode-card:hover {
+  border-color: rgba(var(--mg-accent-rgb), 0.55);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.06) 100%);
+}
+
+.mg-theme-mode-card .mg-theme-mode-title {
+  flex: 1;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  flex-wrap: nowrap !important;
+  gap: 6px !important;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  margin: 0;
+}
+
+.mg-theme-mode-card.is-selected {
+  border-color: var(--mg-accent-1) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(var(--mg-accent-rgb), 0.28) 0%,
+    rgba(var(--mg-accent-rgb), 0.12) 100%
+  ) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.30),
+    0 8px 20px -6px rgba(var(--mg-accent-rgb), 0.38) !important;
+}
+
+.mg-accent-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.mg-accent-card {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 12px;
+  border-radius: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.035) 55%,
+    rgba(255, 255, 255, 0.07) 100%
+  );
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    0 6px 16px -6px rgba(0, 0, 0, 0.30);
+  color: inherit;
+  text-align: right;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    transform 0.18s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.18s ease,
+    background-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+html[data-theme="light"] .mg-accent-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.84) 0%, rgba(255, 255, 255, 0.54) 100%) !important;
+  border-color: rgba(255, 255, 255, 0.94) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 0 0 1px rgba(var(--mg-accent-deep-rgb), 0.14),
+    0 6px 14px -6px rgba(var(--mg-accent-deep-rgb), 0.10) !important;
+}
+
+.mg-accent-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(var(--mg-accent-rgb), 0.55);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.06) 100%);
+}
+
+.mg-accent-card.is-selected {
+  border-color: var(--mg-accent-1) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(var(--mg-accent-rgb), 0.28) 0%,
+    rgba(var(--mg-accent-rgb), 0.12) 100%
+  ) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    0 8px 20px -6px rgba(var(--mg-accent-rgb), 0.40) !important;
+}
+
+.mg-accent-swatch-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  flex-shrink: 0;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.42),
+    0 3px 8px rgba(0, 0, 0, 0.28);
+}
+
+.mg-accent-card-title {
+  flex: 1;
+  min-width: 0;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  flex-wrap: nowrap !important;
+  gap: 5px !important;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.mg-accent-check-badge {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10.5px;
+  font-weight: 800;
+  background: var(--mg-accent-grad);
+  color: #FFFFFF;
+  flex-shrink: 0;
+  opacity: 0;
+  transform: scale(0.75);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.mg-accent-card.is-selected .mg-accent-check-badge {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.mg-appearance-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+html[data-theme="light"] .mg-appearance-footer {
+  border-top-color: rgba(var(--mg-accent-deep-rgb), 0.12) !important;
+}
+
+@media (max-width: 640px) {
+  .mg-theme-mode-grid,
+  .mg-accent-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   UNIVERSAL GLASSMORPHISM FIELDS & FROSTED SURFACES (تم تاریک و تم روشن)
+   ========================================================================== */
+
+/* Subtle Ambient Refraction Backdrop so frosted glass genuinely catches light */
+html:not([data-theme="light"]) body {
+  background-color: #0B0D16 !important;
+  background-image:
+    radial-gradient(620px circle at 14% 12%, rgba(var(--mg-accent-rgb), 0.18) 0%, transparent 62%),
+    radial-gradient(540px circle at 84% 78%, rgba(var(--mg-accent-rgb), 0.14) 0%, transparent 64%),
+    radial-gradient(460px circle at 52% 40%, rgba(99, 102, 241, 0.08) 0%, transparent 65%) !important;
+  background-attachment: fixed !important;
+}
+
+html[data-theme="light"] body {
+  background-image:
+    radial-gradient(620px circle at 15% 10%, rgba(var(--mg-accent-rgb), 0.15) 0%, transparent 60%),
+    radial-gradient(540px circle at 85% 80%, rgba(var(--mg-accent-rgb), 0.12) 0%, transparent 62%),
+    linear-gradient(145deg, #F3F5FD 0%, #EEF2FB 50%, #F7F5FD 100%) !important;
+  background-attachment: fixed !important;
+}
+
+/* Dark Mode Frosted Glass Card Shells & Panels */
+html:not([data-theme="light"]) .mg-card,
+html:not([data-theme="light"]) .mg-panel,
+html:not([data-theme="light"]) .mg-stat-card,
+html:not([data-theme="light"]) .mg-kpi-card,
+html:not([data-theme="light"]) .mg-chart-card,
+html:not([data-theme="light"]) .mg-table-card,
+html:not([data-theme="light"]) #mgTablesView section.mg-ops-card,
+html:not([data-theme="light"]) #mgTablesView #ChargeModal > .charge-modal-content,
+html:not([data-theme="light"]) #mgTablesView #myModal > .modal-content,
+html:not([data-theme="light"]) .mg-login-card,
+html:not([data-theme="light"]) .mg-invoice-card {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.075) 0%,
+    rgba(20, 23, 38, 0.56) 52%,
+    rgba(255, 255, 255, 0.035) 100%
+  ) !important;
+  background-color: rgba(18, 21, 35, 0.52) !important;
+  backdrop-filter: blur(22px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(160%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04),
+    0 14px 36px -12px rgba(0, 0, 0, 0.52) !important;
+}
+
+/* Light Mode Frosted Glass Card Shells & Panels */
+html[data-theme="light"] .mg-card,
+html[data-theme="light"] .mg-panel,
+html[data-theme="light"] .mg-stat-card,
+html[data-theme="light"] .mg-kpi-card,
+html[data-theme="light"] .mg-chart-card,
+html[data-theme="light"] .mg-table-card,
+html[data-theme="light"] #mgTablesView section.mg-ops-card,
+html[data-theme="light"] #mgTablesView #ChargeModal > .charge-modal-content,
+html[data-theme="light"] #mgTablesView #myModal > .modal-content,
+html[data-theme="light"] .mg-login-card,
+html[data-theme="light"] .mg-invoice-card {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.78) 0%,
+    rgba(255, 255, 255, 0.54) 100%
+  ) !important;
+  backdrop-filter: blur(22px) saturate(165%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(165%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.90) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 0 0 1px rgba(var(--mg-accent-deep-rgb), 0.10),
+    0 12px 30px -10px rgba(var(--mg-accent-deep-rgb), 0.12) !important;
+}
+
+/* 1. Dark Mode Frosted Glass Inputs, Selects, Textareas & Field Controls */
+html:not([data-theme="light"]) .mg-input,
+html:not([data-theme="light"]) .mg-select,
+html:not([data-theme="light"]) .form-control,
+html:not([data-theme="light"]) select.form-control,
+html:not([data-theme="light"]) input[type="text"],
+html:not([data-theme="light"]) input[type="number"],
+html:not([data-theme="light"]) input[type="password"],
+html:not([data-theme="light"]) input[type="date"],
+html:not([data-theme="light"]) input[type="tel"],
+html:not([data-theme="light"]) input[type="email"],
+html:not([data-theme="light"]) input[type="search"],
+html:not([data-theme="light"]) textarea,
+html:not([data-theme="light"]) #mgTablesView .mg-ops-card .mg-input,
+html:not([data-theme="light"]) #mgTablesView .mg-ops-card .mg-select,
+html:not([data-theme="light"]) #mgTablesView .mg-ops-card .form-control {
+  background-color: rgba(255, 255, 255, 0.065) !important;
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.03) 52%,
+    rgba(255, 255, 255, 0.085) 100%
+  ) !important;
+  backdrop-filter: blur(18px) saturate(165%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(165%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  color: #F8FAFC !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.28),
+    0 6px 18px -6px rgba(0, 0, 0, 0.38) !important;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease !important;
+}
+
+html:not([data-theme="light"]) .mg-input::placeholder,
+html:not([data-theme="light"]) .form-control::placeholder,
+html:not([data-theme="light"]) input::placeholder,
+html:not([data-theme="light"]) textarea::placeholder {
+  color: rgba(226, 232, 240, 0.56) !important;
+}
+
+/* Preserve select dropdown arrow with specular glass sheen in Dark Mode */
+html:not([data-theme="light"]) select,
+html:not([data-theme="light"]) .mg-select,
+html:not([data-theme="light"]) select.form-control,
+html:not([data-theme="light"]) #mgTablesView .mg-ops-card select.form-control,
+html:not([data-theme="light"]) #mgTablesView .mg-ops-card .mg-select {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='%23E2E8F0' stroke-width='2.3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.03) 52%, rgba(255, 255, 255, 0.085) 100%) !important;
+  background-repeat: no-repeat, no-repeat !important;
+  background-position: left 12px center, 0 0 !important;
+  background-size: 15px 15px, 100% 100% !important;
+}
+
+html:not([data-theme="light"]) select option,
+html:not([data-theme="light"]) .mg-select option,
+html:not([data-theme="light"]) select.form-control option {
+  background-color: #16192A !important;
+  color: #F8FAFC !important;
+}
+
+html:not([data-theme="light"]) .mg-input:hover:not(:disabled),
+html:not([data-theme="light"]) .mg-select:hover:not(:disabled),
+html:not([data-theme="light"]) .form-control:hover:not(:disabled),
+html:not([data-theme="light"]) select.form-control:hover:not(:disabled),
+html:not([data-theme="light"]) input[type="text"]:hover:not(:disabled),
+html:not([data-theme="light"]) input[type="number"]:hover:not(:disabled),
+html:not([data-theme="light"]) input[type="password"]:hover:not(:disabled),
+html:not([data-theme="light"]) input[type="date"]:hover:not(:disabled),
+html:not([data-theme="light"]) input[type="search"]:hover:not(:disabled),
+html:not([data-theme="light"]) textarea:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.105) !important;
+  border-color: rgba(255, 255, 255, 0.34) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.36),
+    0 8px 22px -6px rgba(0, 0, 0, 0.42) !important;
+}
+
+html:not([data-theme="light"]) .mg-input:focus,
+html:not([data-theme="light"]) .mg-select:focus,
+html:not([data-theme="light"]) .form-control:focus,
+html:not([data-theme="light"]) select.form-control:focus,
+html:not([data-theme="light"]) input[type="text"]:focus,
+html:not([data-theme="light"]) input[type="number"]:focus,
+html:not([data-theme="light"]) input[type="password"]:focus,
+html:not([data-theme="light"]) input[type="date"]:focus,
+html:not([data-theme="light"]) input[type="search"]:focus,
+html:not([data-theme="light"]) textarea:focus {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  border-color: var(--mg-accent-1) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.38),
+    0 0 0 3px rgba(var(--mg-accent-rgb), 0.28),
+    0 8px 22px -4px rgba(var(--mg-accent-rgb), 0.30) !important;
+}
+
+html:not([data-theme="light"]) .mg-input:disabled,
+html:not([data-theme="light"]) .form-control:disabled,
+html:not([data-theme="light"]) input:disabled {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+  border-color: rgba(255, 255, 255, 0.10) !important;
+  opacity: 0.62 !important;
+}
+
+/* Dark Mode Frosted Glass Radio Cards, Console Tiles, Subpanels & Filter Chips */
+html:not([data-theme="light"]) .mg-radio-card,
+html:not([data-theme="light"]) #mgTablesView .mg-payment-modes .mg-radio-card,
+html:not([data-theme="light"]) .mg-console-tile,
+html:not([data-theme="light"]) .mg-form-subpanel,
+html:not([data-theme="light"]) .mg-chip-btn,
+html:not([data-theme="light"]) .mg-filter-btn,
+html:not([data-theme="light"]) .mg-period-pill {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.13) 0%,
+    rgba(255, 255, 255, 0.035) 55%,
+    rgba(255, 255, 255, 0.075) 100%
+  ) !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(16px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(160%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.20) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.26),
+    0 6px 16px -6px rgba(0, 0, 0, 0.34) !important;
+}
+
+html:not([data-theme="light"]) .mg-radio-card:hover,
+html:not([data-theme="light"]) #mgTablesView .mg-payment-modes .mg-radio-card:hover,
+html:not([data-theme="light"]) .mg-console-tile:hover,
+html:not([data-theme="light"]) .mg-chip-btn:hover,
+html:not([data-theme="light"]) .mg-filter-btn:hover,
+html:not([data-theme="light"]) .mg-period-pill:hover {
+  background-color: rgba(255, 255, 255, 0.11) !important;
+  border-color: rgba(255, 255, 255, 0.34) !important;
+}
+
+/* 2. Light Mode Frosted Glass Inputs, Selects, Textareas & Field Controls */
+html[data-theme="light"] .mg-input,
+html[data-theme="light"] .mg-select,
+html[data-theme="light"] .form-control,
+html[data-theme="light"] select.form-control,
+html[data-theme="light"] input[type="text"],
+html[data-theme="light"] input[type="number"],
+html[data-theme="light"] input[type="password"],
+html[data-theme="light"] input[type="date"],
+html[data-theme="light"] input[type="tel"],
+html[data-theme="light"] input[type="email"],
+html[data-theme="light"] input[type="search"],
+html[data-theme="light"] textarea,
+html[data-theme="light"] #mgTablesView .mg-ops-card .mg-input,
+html[data-theme="light"] #mgTablesView .mg-ops-card .mg-select,
+html[data-theme="light"] #mgTablesView .mg-ops-card .form-control {
+  background-color: rgba(255, 255, 255, 0.56) !important;
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.86) 0%,
+    rgba(255, 255, 255, 0.44) 55%,
+    rgba(255, 255, 255, 0.68) 100%
+  ) !important;
+  backdrop-filter: blur(18px) saturate(165%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(165%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.92) !important;
+  color: var(--mg-light-ink, #141224) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 0 0 1px rgba(var(--mg-accent-deep-rgb), 0.16),
+    0 6px 18px -6px rgba(var(--mg-accent-deep-rgb), 0.12) !important;
+}
+
+html[data-theme="light"] select,
+html[data-theme="light"] .mg-select,
+html[data-theme="light"] select.form-control,
+html[data-theme="light"] #mgTablesView .mg-ops-card select.form-control,
+html[data-theme="light"] #mgTablesView .mg-ops-card .mg-select {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%23312E4D' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.86) 0%, rgba(255, 255, 255, 0.44) 55%, rgba(255, 255, 255, 0.68) 100%) !important;
+  background-repeat: no-repeat, no-repeat !important;
+  background-position: left 12px center, 0 0 !important;
+  background-size: 13px 13px, 100% 100% !important;
+}
+
+html[data-theme="light"] .mg-input:hover:not(:disabled),
+html[data-theme="light"] .mg-select:hover:not(:disabled),
+html[data-theme="light"] .form-control:hover:not(:disabled),
+html[data-theme="light"] select.form-control:hover:not(:disabled),
+html[data-theme="light"] input[type="text"]:hover:not(:disabled),
+html[data-theme="light"] input[type="number"]:hover:not(:disabled),
+html[data-theme="light"] input[type="password"]:hover:not(:disabled),
+html[data-theme="light"] input[type="date"]:hover:not(:disabled),
+html[data-theme="light"] input[type="search"]:hover:not(:disabled),
+html[data-theme="light"] textarea:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.74) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 0 0 1px rgba(var(--mg-accent-rgb), 0.34),
+    0 8px 20px -6px rgba(var(--mg-accent-deep-rgb), 0.16) !important;
+}
+
+html[data-theme="light"] .mg-input:focus,
+html[data-theme="light"] .mg-select:focus,
+html[data-theme="light"] .form-control:focus,
+html[data-theme="light"] select.form-control:focus,
+html[data-theme="light"] input[type="text"]:focus,
+html[data-theme="light"] input[type="number"]:focus,
+html[data-theme="light"] input[type="password"]:focus,
+html[data-theme="light"] input[type="date"]:focus,
+html[data-theme="light"] input[type="search"]:focus,
+html[data-theme="light"] textarea:focus {
+  background-color: rgba(255, 255, 255, 0.86) !important;
+  border-color: var(--mg-accent-1) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 0 0 3px rgba(var(--mg-accent-rgb), 0.20),
+    0 8px 22px -6px rgba(var(--mg-accent-deep-rgb), 0.18) !important;
+}
+
+html[data-theme="light"] .mg-radio-card:not(:has(input:checked)):not(.is-selected),
+html[data-theme="light"] #mgTablesView .mg-payment-modes .mg-radio-card:not(:has(input:checked)):not(.is-selected),
+html[data-theme="light"] .mg-console-tile:not(:has(input:checked)),
+html[data-theme="light"] .mg-form-subpanel,
+html[data-theme="light"] .mg-chip-btn:not(.active),
+html[data-theme="light"] .mg-filter-btn:not(.active),
+html[data-theme="light"] .mg-period-pill:not(.active) {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.82) 0%,
+    rgba(255, 255, 255, 0.46) 100%
+  ) !important;
+  background-color: rgba(255, 255, 255, 0.54) !important;
+  backdrop-filter: blur(16px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(160%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.90) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 0 0 1px rgba(var(--mg-accent-deep-rgb), 0.15),
+    0 6px 14px -4px rgba(var(--mg-accent-deep-rgb), 0.10) !important;
+}
+
+/* Inline Client-Side Form Validation Feedback */
+.mg-field-error {
+  display: block;
+  margin-top: 2px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #FCA5A5;
+  line-height: 1.45;
+}
+
+.mg-field-error:empty {
+  display: none;
+}
+
+html[data-theme="light"] .mg-field-error {
+  color: #DC2626 !important;
+}
+
+html:not([data-theme="light"]) .mg-input.is-invalid,
+html:not([data-theme="light"]) .mg-select.is-invalid,
+html:not([data-theme="light"]) .form-control.is-invalid,
+html:not([data-theme="light"]) #mgTablesView .mg-ops-card .mg-input.is-invalid,
+html:not([data-theme="light"]) #mgTablesView .mg-ops-card .mg-select.is-invalid,
+html:not([data-theme="light"]) #mgTablesView .mg-ops-card .form-control.is-invalid,
+html:not([data-theme="light"]) #mgTablesView .mg-ops-card .mg-input.is-invalid:focus,
+html:not([data-theme="light"]) #mgTablesView .mg-ops-card .mg-select.is-invalid:focus {
+  border-color: rgba(239, 68, 68, 0.90) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 0 0 3px rgba(239, 68, 68, 0.24) !important;
+}
+
+html[data-theme="light"] .mg-input.is-invalid,
+html[data-theme="light"] .mg-select.is-invalid,
+html[data-theme="light"] .form-control.is-invalid,
+html[data-theme="light"] #mgTablesView .mg-ops-card .mg-input.is-invalid,
+html[data-theme="light"] #mgTablesView .mg-ops-card .mg-select.is-invalid,
+html[data-theme="light"] #mgTablesView .mg-ops-card .form-control.is-invalid,
+html[data-theme="light"] #mgTablesView .mg-ops-card .mg-input.is-invalid:focus,
+html[data-theme="light"] #mgTablesView .mg-ops-card .mg-select.is-invalid:focus {
+  border-color: #DC2626 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 0 0 3px rgba(220, 38, 38, 0.18) !important;
+}

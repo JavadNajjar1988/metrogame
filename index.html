@@ -11,13 +11,13 @@
   <link rel="icon" href="src/assets/images/metrogame_emblem_1794207267121.jpg" type="image/jpeg">
 
   <!-- Theme Pre-Init (Prevents Flash of Incorrect Theme) -->
-  <script>(function(){try{var t=localStorage.getItem('mg_theme_v1');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');}catch(e){}})();</script>
+  <script>(function(){try{var t=localStorage.getItem('mg_theme_v1');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');var a=localStorage.getItem('mg_accent_palette_v1');document.documentElement.setAttribute('data-accent',a||'violet');}catch(e){}})();</script>
 
   <!-- Local Stylesheets -->
   <link href="assets/bootstrap/bootstrap.min.css" rel="stylesheet">
   <link href="assets/bootstrap/bootstrap-rtl.css" rel="stylesheet">
   <link href="fontello/css/my-icon.css" rel="stylesheet">
-  <link href="assets/css/gaming-dashboard.css?v=20261110-20" rel="stylesheet">
+  <link href="assets/css/gaming-dashboard.css?v=20261121-3" rel="stylesheet">
 </head>
 <body>
   <audio id="alarmSound" src="src/alarm.mp3" preload="none"></audio>
@@ -451,16 +451,17 @@
                   </div>
                 </div>
 
-                <form action="process.php" method="post" class="mg-card-form">
+                <form id="reservationForm" action="process.php" method="post" class="mg-card-form" novalidate>
                   <div class="mg-form-grid">
                     <div class="mg-form-group full-width">
                       <label for="tableNumber" class="mg-label">شماره میز</label>
-                      <input type="text" id="tableNumber" name="table-number" required class="form-control mg-input" placeholder="شماره میز (مثلاً ۱)">
+                      <input type="text" id="tableNumber" name="tableNumber" required aria-required="true" aria-describedby="tableNumberError" class="form-control mg-input" placeholder="شماره میز (مثلاً ۱)">
+                      <span class="mg-field-error" id="tableNumberError" role="alert" aria-live="polite"></span>
                     </div>
 
                     <div class="mg-form-group full-width">
                       <label for="consoleType" class="mg-label">کنسول بازی</label>
-                      <select class="form-control mg-select" id="consoleType" name="consoleType" required>
+                      <select class="form-control mg-select" id="consoleType" name="consoleType" required aria-required="true" aria-describedby="consoleTypeError">
                         <option value="">انتخاب کنسول...</option>
                         <option value="ps50">پلی‌استیشن ۵ (PS5)</option>
                         <option value="ps4">پلی‌استیشن ۴ (PS4)</option>
@@ -470,17 +471,19 @@
                         <option value="foosball">فوتبال دستی</option>
                         <option value="jewelry">اتاق VIP / VR</option>
                       </select>
+                      <span class="mg-field-error" id="consoleTypeError" role="alert" aria-live="polite"></span>
                     </div>
 
                     <div class="mg-form-group full-width">
                       <label for="priceType" class="mg-label">تعداد دسته / بازیکن</label>
-                      <select class="form-control mg-select" id="priceType" name="priceType" required>
+                      <select class="form-control mg-select" id="priceType" name="priceType" required aria-required="true" aria-describedby="priceTypeError">
                         <option value="">انتخاب تعرفه...</option>
                         <option value="one_player_price">تک نفره</option>
                         <option value="two_player_price">دو نفره</option>
                         <option value="three_player_price">سه نفره</option>
                         <option value="four_player_price">چهار نفره</option>
                       </select>
+                      <span class="mg-field-error" id="priceTypeError" role="alert" aria-live="polite"></span>
                     </div>
 
                     <div class="mg-form-group full-width">
@@ -499,7 +502,8 @@
 
                     <div class="mg-form-group full-width" id="prepayCostGroup">
                       <label for="pre-payment-cost" class="mg-label">مبلغ پیش‌پرداخت (تومان)</label>
-                      <input type="number" id="pre-payment-cost" name="pre-payment-cost" class="form-control mg-input" placeholder="مبلغ شارژ اولیه به تومان" disabled>
+                      <input type="number" id="pre-payment-cost" name="pre-payment-cost" min="1" step="1000" aria-describedby="prePaymentCostError" class="form-control mg-input" placeholder="مبلغ شارژ اولیه به تومان" disabled>
+                      <span class="mg-field-error" id="prePaymentCostError" role="alert" aria-live="polite"></span>
                     </div>
                   </div>
 
@@ -641,8 +645,8 @@
 
   <!-- Scripts -->
   <script src="vendors/Flot/jquery.js"></script>
-  <script src="JS/7878.js?v=20261110-20"></script>
+  <script src="JS/7878.js?v=20261121-2"></script>
   <script src="JS/showErrorAlert.js?v=20261109-4"></script>
-  <script type="module" src="JS/dashboard-ui.js?v=20261110-20"></script>
+  <script type="module" src="JS/dashboard-ui.js?v=20261121-3"></script>
 </body>
 </html>

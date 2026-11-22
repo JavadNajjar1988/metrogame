@@ -1,3 +1,11 @@
+import {
+  resolveInvoiceTableSelection,
+  resolvePrimaryConsoleType,
+  computeInvoiceTotals,
+  buildBuffetPaymentPayload as buildBuffetPayloadFromItems,
+  validateInvoiceSettlementInput,
+} from './invoice-helpers.mjs?v=20261116-1';
+
 const requestedTable = new URLSearchParams(window.location.search).get('table');
 
 const CONSOLE_LABELS = {
@@ -10,6 +18,7 @@ const CONSOLE_LABELS = {
   vip: 'وی‌آر / VIP',
   foosball: 'فوتبال دستی / بیلیارد',
   'pool-table': 'میز بیلیارد',
+  buffet_only: 'سفارش بوفه (بدون بازی)',
 };
 
 const PRICE_TYPE_LABELS = {
@@ -88,47 +97,37 @@ function showInvoiceNotice(message, type = 'info') {
 }
 
 function computeTotals() {
-  const gameTotal = invoiceState.gameItems.reduce(
-    (sum, item) => sum + (Number(item.gameCost) || 0),
-    0
-  );
-  const buffetTotal = invoiceState.buffetItems.reduce(
-    (sum, item) => sum + (Number(item.unitPrice) || 0) * (Number(item.quantity) || 0),
-    0
-  );
-  const rawTotal = gameTotal + buffetTotal;
-  const payable = rawTotal >= 1000 ? Math.round(rawTotal / 1000) * 1000 : rawTotal;
-  const roundingDiff = rawTotal - payable;
-  const totalBuffetQty = invoiceState.buffetItems.reduce(
-    (sum, item) => sum + (Number(item.quantity) || 0),
-    0
-  );
-
-  return {
-    gameTotal,
-    buffetTotal,
-    rawTotal,
-    payable,
-    roundingDiff,
-    totalBuffetQty,
-  };
+  return computeInvoiceTotals(invoiceState.gameItems, invoiceState.buffetItems);
 }
 
 function buildBuffetPaymentPayload() {
-  return invoiceState.buffetItems.map((item) => [
-    item.productType || 'other',
-    (Number(item.unitPrice) || 0) * (Number(item.quantity) || 0),
-  ]);
+  return buildBuffetPayloadFromItems(invoiceState.buffetItems);
+}
+
+function invalidateInvoiceSessionCache() {
+  try {
+    sessionStorage.removeItem('mg_bundle_v1');
+    sessionStorage.removeItem('mg_sidebar_badges');
+  } catch {
+    // ignore storage errors
+  }
 }
 
 function syncTableDataForSelection(tableKey) {
   const key = String(tableKey || '').trim();
   invoiceState.tableNumber = key;
   invoiceState.issuedAt = new Date();
+  if (!key) {
+    invoiceState.invoiceSerial = '—';
+    invoiceState.gameItems = [];
+    invoiceState.buffetItems = [];
+    return;
+  }
+
   const dateCompact = `${invoiceState.issuedAt.getFullYear()}${String(
     invoiceState.issuedAt.getMonth() + 1
   ).padStart(2, '0')}${String(invoiceState.issuedAt.getDate()).padStart(2, '0')}`;
-  invoiceState.invoiceSerial = `MG-${key || '1'}-${dateCompact.slice(-4)}`;
+  invoiceState.invoiceSerial = `MG-${key}-${dateCompact.slice(-4)}`;
 
   const rawGameList = Array.isArray(invoiceState.gameTempMap[key])
     ? invoiceState.gameTempMap[key]
@@ -137,6 +136,8 @@ function syncTableDataForSelection(tableKey) {
   if (rawGameList.length > 0) {
     invoiceState.gameItems = rawGameList.map((g, idx) => ({
       id: `g-${idx}`,
+      source: 'temp',
+      sourceIndex: idx,
       consoleType: g.consoleType || 'ps50',
       priceType: g.priceType || 'one_player_price',
       basePrice: Number(g.cosoleprice ?? g.unitprice ?? 0) || 0,
@@ -158,6 +159,8 @@ function syncTableDataForSelection(tableKey) {
       invoiceState.gameItems = [
         {
           id: 'g-res-0',
+          source: 'reservation',
+          sourceIndex: -1,
           consoleType: activeRes.consoleType || 'ps50',
           priceType: activeRes.priceType || 'one_player_price',
           basePrice: baseRate,
@@ -175,6 +178,8 @@ function syncTableDataForSelection(tableKey) {
 
   invoiceState.buffetItems = rawBuffetList.map((b, idx) => ({
     id: `b-${idx}`,
+    source: 'temp',
+    sourceIndex: idx,
     productCode: b.productCode || '',
     title: b.title || 'محصول بوفه',
     quantity: Number(b.quantity) || 1,
@@ -184,7 +189,8 @@ function syncTableDataForSelection(tableKey) {
 }
 
 function renderInvoicePageDom() {
-  const tableLabel = invoiceState.tableNumber
+  const hasActiveTable = Boolean(invoiceState.tableNumber);
+  const tableLabel = hasActiveTable
     ? `میز شماره ${toFaDigits(invoiceState.tableNumber)}`
     : 'بدون میز انتخابی';
 
@@ -201,15 +207,26 @@ function renderInvoicePageDom() {
 
   const invoiceHeader = document.getElementById('invoiceHeader');
   if (invoiceHeader) {
-    invoiceHeader.innerHTML = `
+    invoiceHeader.innerHTML = hasActiveTable
+      ? `
       <div class="mg-invoice-header-main">
         <h2 class="mg-card-title">
           صورت‌حساب تسویه ${tableLabel}
         </h2>
         <div class="mg-invoice-header-meta">
-          <span>شماره فاکتور: <strong>${toFaDigits(invoiceState.invoiceSerial || 'MG-101')}</strong></span>
+          <span>شماره فاکتور: <strong>${toFaDigits(invoiceState.invoiceSerial || '—')}</strong></span>
           <span aria-hidden="true">·</span>
           <span>تاریخ: <strong>${dateStr} — ساعت ${timeStr}</strong></span>
+        </div>
+      </div>
+    `
+      : `
+      <div class="mg-invoice-header-main">
+        <h2 class="mg-card-title">
+          در حال حاضر صورت‌حساب فعالی برای تسویه وجود ندارد
+        </h2>
+        <div class="mg-invoice-header-meta">
+          <span>برای صدور صورت‌حساب ابتدا از بخش «مدیریت میزها» سشن یا سفارش بوفه ثبت کنید.</span>
         </div>
       </div>
     `;
@@ -317,7 +334,7 @@ function renderInvoicePageDom() {
   if (summaryTableNum) {
     summaryTableNum.textContent = invoiceState.tableNumber
       ? `میز ${toFaDigits(invoiceState.tableNumber)}`
-      : 'نامشخص';
+      : 'بدون فاکتور';
   }
   if (summaryGameStatus) {
     if (invoiceState.gameItems.length > 0) {
@@ -341,6 +358,16 @@ function renderInvoicePageDom() {
   }
   if (summaryPayableAmount) {
     summaryPayableAmount.textContent = `${toFaNum(totals.payable)} تومان`;
+  }
+
+  const canSettle = Boolean(invoiceState.tableNumber && totals.rawTotal > 0 && totals.payable > 0);
+  const paymentBtnEl = document.getElementById('paymentButton');
+  const printBtnEl = document.getElementById('printInvoiceBtn');
+  if (paymentBtnEl) {
+    paymentBtnEl.disabled = !canSettle;
+  }
+  if (printBtnEl) {
+    printBtnEl.disabled = !hasActiveTable || totals.rawTotal <= 0;
   }
 
   // Keep the print summary sheet synchronized at all times
@@ -416,6 +443,8 @@ function buildPrintableReceiptInnerHtml() {
       ? `${getConsoleTitle(invoiceState.gameItems[0].consoleType)} (${getPriceTypeTitle(
           invoiceState.gameItems[0].priceType
         )})`
+      : invoiceState.buffetItems.length > 0
+      ? 'سفارش بوفه (بدون بازی)'
       : 'ثبت نشده';
 
   return `
@@ -870,6 +899,12 @@ window.closeInvoicePrintSummary = function closeInvoicePrintSummary() {
 
 async function settleInvoiceAndCleanup(factorName) {
   const cleanFactor = String(factorName || '').trim();
+  invalidateInvoiceSessionCache();
+  try {
+    sessionStorage.setItem('mg_return_to_tables', '1');
+  } catch {
+    // ignore storage errors
+  }
   if (!cleanFactor) {
     window.location.href = 'index.html#tables-section';
     return;
@@ -879,12 +914,18 @@ async function settleInvoiceAndCleanup(factorName) {
     fetch('./delete_game_temperory.php', {
       method: 'POST',
       body: `factor_name=${encodeURIComponent(cleanFactor)}`,
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: 'application/json',
+      },
     }),
     fetch('./delete_buffet_temperory.php', {
       method: 'POST',
       body: `factor_name=${encodeURIComponent(cleanFactor)}`,
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: 'application/json',
+      },
     }),
   ]);
 
@@ -969,15 +1010,63 @@ function bindInvoiceInteractions() {
     });
   }
 
-  // Delete row buttons inside game/buffet invoice tables
+  // Delete row buttons inside game/buffet invoice tables (persisted to server JSON)
   const sectionEl = document.getElementById('mgInvoiceSection');
   if (sectionEl && !sectionEl.dataset.deleteBound) {
     sectionEl.dataset.deleteBound = '1';
-    sectionEl.addEventListener('click', (e) => {
+    sectionEl.addEventListener('click', async (e) => {
       const removeBtn = e.target.closest('.mg-remove-invoice-row');
-      if (!removeBtn) return;
+      if (!removeBtn || removeBtn.disabled) return;
       const type = removeBtn.getAttribute('data-remove-type');
       const rowId = removeBtn.getAttribute('data-row-id');
+      const tableKey = String(invoiceState.tableNumber || '').trim();
+      const targetList = type === 'game' ? invoiceState.gameItems : invoiceState.buffetItems;
+      const targetItem = targetList.find((item) => item.id === rowId);
+      if (!targetItem) return;
+
+      if (targetItem.source === 'temp' && tableKey && Number.isInteger(targetItem.sourceIndex) && targetItem.sourceIndex >= 0) {
+        removeBtn.disabled = true;
+        const endpoint = type === 'game' ? './delete_game_temperory.php' : './delete_buffet_temperory.php';
+        try {
+          const body = new URLSearchParams();
+          body.set('factor_name', tableKey);
+          body.set('itemIndex', String(targetItem.sourceIndex));
+          const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              Accept: 'application/json',
+            },
+            body: body.toString(),
+          });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok || data.error) {
+            showInvoiceNotice(data.error || 'خطا در حذف ردیف از سرور.', 'error');
+            removeBtn.disabled = false;
+            return;
+          }
+
+          if (type === 'game' && Array.isArray(invoiceState.gameTempMap[tableKey])) {
+            const next = invoiceState.gameTempMap[tableKey].filter((_, idx) => idx !== targetItem.sourceIndex);
+            if (next.length > 0) invoiceState.gameTempMap[tableKey] = next;
+            else delete invoiceState.gameTempMap[tableKey];
+          } else if (type === 'buffet' && Array.isArray(invoiceState.buffetTempMap[tableKey])) {
+            const next = invoiceState.buffetTempMap[tableKey].filter((_, idx) => idx !== targetItem.sourceIndex);
+            if (next.length > 0) invoiceState.buffetTempMap[tableKey] = next;
+            else delete invoiceState.buffetTempMap[tableKey];
+          }
+
+          invalidateInvoiceSessionCache();
+          syncTableDataForSelection(tableKey);
+          renderInvoicePageDom();
+          showInvoiceNotice('ردیف انتخاب‌شده از صورت‌حساب و سرور حذف شد.', 'success');
+        } catch {
+          showInvoiceNotice('خطا در ارتباط با سرور هنگام حذف ردیف.', 'error');
+          removeBtn.disabled = false;
+        }
+        return;
+      }
+
       if (type === 'game') {
         invoiceState.gameItems = invoiceState.gameItems.filter((item) => item.id !== rowId);
       } else if (type === 'buffet') {
@@ -987,60 +1076,85 @@ function bindInvoiceInteractions() {
     });
   }
 
+  function appendBuffetPayloadToForm(params, buffetPayment) {
+    buffetPayment.forEach(([bType, bAmount], idx) => {
+      params.set(`BuffetPrice[${idx}][0]`, String(bType));
+      params.set(`BuffetPrice[${idx}][1]`, String(bAmount));
+    });
+  }
+
   // Payment settlement button
   const paymentButton = document.getElementById('paymentButton');
   if (paymentButton && !paymentButton.dataset.bound) {
     paymentButton.dataset.bound = '1';
-    paymentButton.addEventListener('click', () => {
+    paymentButton.addEventListener('click', async () => {
       const payWay = getSelectedPayMethodId();
       const totals = computeTotals();
-      const primaryConsole =
-        invoiceState.gameItems.length > 0 ? invoiceState.gameItems[0].consoleType : 'ps50';
+      const validation = validateInvoiceSettlementInput({
+        tableNumber: invoiceState.tableNumber,
+        totals,
+        payWay: payWay === 'cash' || payWay === 'pos' ? payWay : 'cash',
+      });
+      if (!validation.ok) {
+        showInvoiceNotice(validation.error, 'error');
+        return;
+      }
+
+      const primaryConsole = resolvePrimaryConsoleType({
+        gameItems: invoiceState.gameItems,
+        reservationsList: invoiceState.reservationsList,
+        tableNumber: invoiceState.tableNumber,
+      });
       const buffetPayment = buildBuffetPaymentPayload();
       const paydate = new Date().toISOString();
       const factorName = invoiceState.tableNumber;
 
-      if (payWay === 'cash') {
-        $.ajax({
-          type: 'POST',
-          url: './cashPay.php',
-          data: {
-            gameTotal: totals.gameTotal,
-            consoleType: primaryConsole,
-            BuffetPrice: buffetPayment,
-            paydate,
-          },
-        }).always(() => {
-          settleInvoiceAndCleanup(factorName);
-        });
-      } else if (payWay === 'pos') {
-        $.ajax({
-          type: 'POST',
-          url: './creditpay.php',
-          data: {
-            gameTotal: totals.gameTotal,
-            consoleType: primaryConsole,
-            BuffetPrice: buffetPayment,
-            paydate,
-          },
-        }).always(() => {
-          settleInvoiceAndCleanup(factorName);
-        });
+      if (payWay === 'cash' || payWay === 'pos') {
+        paymentButton.disabled = true;
+        const url = payWay === 'cash' ? './cashPay.php' : './creditpay.php';
+        try {
+          const params = new URLSearchParams();
+          params.set('gameTotal', String(totals.gameTotal));
+          params.set('consoleType', primaryConsole);
+          params.set('paydate', paydate);
+          appendBuffetPayloadToForm(params, buffetPayment);
+
+          const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              Accept: 'application/json',
+            },
+            body: params.toString(),
+          });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok || data.error) {
+            showInvoiceNotice(data.error || 'خطا در ثبت پرداخت. لطفاً دوباره تلاش کنید.', 'error');
+            paymentButton.disabled = false;
+            return;
+          }
+          await settleInvoiceAndCleanup(factorName);
+        } catch {
+          showInvoiceNotice('خطا در ارتباط با سرور هنگام ثبت پرداخت.', 'error');
+          paymentButton.disabled = false;
+        }
       } else if (payWay === 'acount') {
         const customerModal = document.getElementById('customerModal');
         if (customerModal) {
           customerModal.style.display = 'block';
+          document.getElementById('customerId')?.focus();
         }
       } else if (payWay === 'debt') {
         const debtModal = document.getElementById('debtModal');
         if (debtModal) {
           debtModal.style.display = 'block';
+          document.getElementById('debtName')?.focus();
         }
       }
     });
   }
 
-  // Customer account settlement modal form
+  // Customer account settlement modal form (deduct balance FIRST, then record revenue ONLY on success)
   const customerModal = document.getElementById('customerModal');
   const customerForm = document.getElementById('customerForm');
   if (customerModal && !customerModal.dataset.bound) {
@@ -1053,43 +1167,88 @@ function bindInvoiceInteractions() {
   }
   if (customerForm && !customerForm.dataset.bound) {
     customerForm.dataset.bound = '1';
-    customerForm.addEventListener('submit', (e) => {
+    customerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const customerId = document.getElementById('customerId')?.value;
+      const submitBtn = customerForm.querySelector('button[type="submit"]');
+      if (submitBtn && submitBtn.disabled) return;
+
+      const rawCustomerId = document.getElementById('customerId')?.value || '';
       const totals = computeTotals();
-      const primaryConsole =
-        invoiceState.gameItems.length > 0 ? invoiceState.gameItems[0].consoleType : 'ps50';
+      const validation = validateInvoiceSettlementInput({
+        tableNumber: invoiceState.tableNumber,
+        totals,
+        payWay: 'acount',
+        customerId: rawCustomerId,
+      });
+      if (!validation.ok) {
+        showInvoiceNotice(validation.error, 'error');
+        return;
+      }
+
+      const primaryConsole = resolvePrimaryConsoleType({
+        gameItems: invoiceState.gameItems,
+        reservationsList: invoiceState.reservationsList,
+        tableNumber: invoiceState.tableNumber,
+      });
       const buffetPayment = buildBuffetPaymentPayload();
       const paydate = new Date().toISOString();
 
-      $.ajax({
-        type: 'POST',
-        url: './customerpay.php',
-        data: {
-          gameTotal: totals.gameTotal,
-          consoleType: primaryConsole,
-          BuffetPrice: buffetPayment,
-          paydate,
-        },
-      });
+      if (submitBtn) submitBtn.disabled = true;
+      try {
+        // Step 1: Validate customer exists & has sufficient balance before recording revenue
+        const chargeParams = new URLSearchParams();
+        chargeParams.set('totalcost', String(totals.payable));
+        chargeParams.set('customerId', validation.customerId);
 
-      $.ajax({
-        type: 'POST',
-        url: './costumercharge.php',
-        data: { totalcost: totals.payable, customerId },
-        dataType: 'json',
-        success(response) {
-          if (response && response.error) {
-            showInvoiceNotice(response.error, 'error');
-          } else {
-            if (customerModal) customerModal.style.display = 'none';
-            settleInvoiceAndCleanup(invoiceState.tableNumber);
-          }
-        },
-        error() {
-          showInvoiceNotice('کد اشتراک معتبر نیست یا موجودی کافی نمی‌باشد.', 'error');
-        },
-      });
+        const chargeRes = await fetch('./costumercharge.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Accept: 'application/json',
+          },
+          body: chargeParams.toString(),
+        });
+        const chargeData = await chargeRes.json().catch(() => ({}));
+        if (!chargeRes.ok || chargeData.error) {
+          showInvoiceNotice(
+            chargeData.error || 'کد اشتراک معتبر نیست یا موجودی کافی نمی‌باشد.',
+            'error'
+          );
+          if (submitBtn) submitBtn.disabled = false;
+          return;
+        }
+
+        // Step 2: Balance deducted successfully — now log revenue in customerPay.json
+        const payParams = new URLSearchParams();
+        payParams.set('gameTotal', String(totals.gameTotal));
+        payParams.set('consoleType', primaryConsole);
+        payParams.set('paydate', paydate);
+        appendBuffetPayloadToForm(payParams, buffetPayment);
+
+        const payRes = await fetch('./customerpay.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Accept: 'application/json',
+          },
+          body: payParams.toString(),
+        });
+        const payData = await payRes.json().catch(() => ({}));
+        if (!payRes.ok || payData.error) {
+          showInvoiceNotice(
+            payData.error || 'مبلغ از حساب کسر شد ولی خطایی در ثبت گزارش مالی رخ داد.',
+            'error'
+          );
+          if (submitBtn) submitBtn.disabled = false;
+          return;
+        }
+
+        if (customerModal) customerModal.style.display = 'none';
+        await settleInvoiceAndCleanup(invoiceState.tableNumber);
+      } catch {
+        showInvoiceNotice('خطا در ارتباط با سرور هنگام کسر از حساب مشتری.', 'error');
+        if (submitBtn) submitBtn.disabled = false;
+      }
     });
   }
 
@@ -1106,30 +1265,63 @@ function bindInvoiceInteractions() {
   }
   if (debtForm && !debtForm.dataset.bound) {
     debtForm.dataset.bound = '1';
-    debtForm.addEventListener('submit', (e) => {
+    debtForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const debtorname = document.getElementById('debtName')?.value;
+      const submitBtn = debtForm.querySelector('button[type="submit"]');
+      if (submitBtn && submitBtn.disabled) return;
+
+      const debtorname = document.getElementById('debtName')?.value || '';
       const totals = computeTotals();
-      const primaryConsole =
-        invoiceState.gameItems.length > 0 ? invoiceState.gameItems[0].consoleType : 'ps50';
+      const validation = validateInvoiceSettlementInput({
+        tableNumber: invoiceState.tableNumber,
+        totals,
+        payWay: 'debt',
+        debtorName: debtorname,
+      });
+      if (!validation.ok) {
+        showInvoiceNotice(validation.error, 'error');
+        return;
+      }
+
+      const primaryConsole = resolvePrimaryConsoleType({
+        gameItems: invoiceState.gameItems,
+        reservationsList: invoiceState.reservationsList,
+        tableNumber: invoiceState.tableNumber,
+      });
       const buffetPayment = buildBuffetPaymentPayload();
       const paydate = new Date().toISOString();
 
-      $.ajax({
-        type: 'POST',
-        url: './debtpay.php',
-        data: {
-          gameTotal: totals.gameTotal,
-          consoleType: primaryConsole,
-          totalBuffetPrice: totals.buffetTotal,
-          BuffetPrice: buffetPayment,
-          paydate,
-          debtorname,
-        },
-      }).always(() => {
+      if (submitBtn) submitBtn.disabled = true;
+      try {
+        const debtParams = new URLSearchParams();
+        debtParams.set('gameTotal', String(totals.gameTotal));
+        debtParams.set('consoleType', primaryConsole);
+        debtParams.set('totalBuffetPrice', String(totals.buffetTotal));
+        debtParams.set('paydate', paydate);
+        debtParams.set('debtorname', validation.debtorName);
+        appendBuffetPayloadToForm(debtParams, buffetPayment);
+
+        const debtRes = await fetch('./debtpay.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Accept: 'application/json',
+          },
+          body: debtParams.toString(),
+        });
+        const debtData = await debtRes.json().catch(() => ({}));
+        if (!debtRes.ok || debtData.error) {
+          showInvoiceNotice(debtData.error || 'خطا در ثبت بدهکار.', 'error');
+          if (submitBtn) submitBtn.disabled = false;
+          return;
+        }
+
         if (debtModal) debtModal.style.display = 'none';
-        settleInvoiceAndCleanup(invoiceState.tableNumber);
-      });
+        await settleInvoiceAndCleanup(invoiceState.tableNumber);
+      } catch {
+        showInvoiceNotice('خطا در ارتباط با سرور هنگام ثبت بدهکار.', 'error');
+        if (submitBtn) submitBtn.disabled = false;
+      }
     });
   }
 
@@ -1169,36 +1361,32 @@ async function initInvoicePage() {
       ? dataRes.value.consoles
       : [];
 
-  const tableSet = new Set([
-    ...Object.keys(invoiceState.gameTempMap),
-    ...Object.keys(invoiceState.buffetTempMap),
-    ...invoiceState.reservationsList.map((r) => String(r.tableNumber)),
-  ]);
+  const { availableTables, chosenTable } = resolveInvoiceTableSelection({
+    requestedTable,
+    gameTempMap: invoiceState.gameTempMap,
+    buffetTempMap: invoiceState.buffetTempMap,
+    reservationsList: invoiceState.reservationsList,
+  });
 
-  if (requestedTable) {
-    tableSet.add(String(requestedTable));
-  }
-
-  const tables = Array.from(tableSet).filter(Boolean);
-  invoiceState.availableTables = tables;
-
-  const chosenTable =
-    requestedTable && tableSet.has(String(requestedTable))
-      ? String(requestedTable)
-      : tables[0] || '1';
+  invoiceState.availableTables = availableTables;
 
   const switcherWrap = document.getElementById('invoiceTableSwitcherWrap');
   const selector = document.getElementById('invoiceTableSelector');
-  if (switcherWrap && selector && tables.length > 0) {
-    switcherWrap.style.display = 'inline-flex';
-    selector.innerHTML = tables
-      .map(
-        (t) =>
-          `<option value="${t}" ${String(t) === String(chosenTable) ? 'selected' : ''}>میز شماره ${toFaDigits(
-            t
-          )}</option>`
-      )
-      .join('');
+  if (switcherWrap && selector) {
+    if (availableTables.length > 0) {
+      switcherWrap.style.display = 'inline-flex';
+      selector.innerHTML = availableTables
+        .map(
+          (t) =>
+            `<option value="${t}" ${String(t) === String(chosenTable) ? 'selected' : ''}>میز شماره ${toFaDigits(
+              t
+            )}</option>`
+        )
+        .join('');
+    } else {
+      switcherWrap.style.display = 'none';
+      selector.innerHTML = '';
+    }
   }
 
   syncTableDataForSelection(chosenTable);

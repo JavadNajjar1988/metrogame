@@ -7,35 +7,66 @@ import {
   computeIncomeReportMetrics,
 } from './dashboard-metrics.mjs?v=20261109-3';
 
+const ACCENT_CHART_SWATCHES = {
+  violet: {
+    dark: ['#8B5CF6', '#6366F1', '#A855F7', '#10B981', '#818CF8', '#64748B'],
+    light: ['#6D28D9', '#4F46E5', '#7C3AED', '#059669', '#4338CA', '#64748B'],
+  },
+  crimson: {
+    dark: ['#F43F5E', '#FB923C', '#E11D48', '#10B981', '#F59E0B', '#64748B'],
+    light: ['#BE123C', '#EA580C', '#9F1239', '#059669', '#D97706', '#64748B'],
+  },
+  orange: {
+    dark: ['#F97316', '#FBBF24', '#EA580C', '#10B981', '#FB7185', '#64748B'],
+    light: ['#C2410C', '#D97706', '#9A3412', '#059669', '#BE123C', '#64748B'],
+  },
+  emerald: {
+    dark: ['#10B981', '#14B8A6', '#34D399', '#84CC16', '#06B6D4', '#64748B'],
+    light: ['#047857', '#0F766E', '#059669', '#4D7C0F', '#0E7490', '#64748B'],
+  },
+  cyber: {
+    dark: ['#3B82F6', '#06B6D4', '#60A5FA', '#10B981', '#818CF8', '#64748B'],
+    light: ['#1D4ED8', '#0E7490', '#2563EB', '#059669', '#4338CA', '#64748B'],
+  },
+};
+
 const CONSOLE_META = [
-  { key: 'ps4', label: 'پلی‌استیشن ۴', color: '#8B5CF6', lightColor: '#6D28D9', dotClass: 'dot-purple' },
-  { key: 'ps50', label: 'پلی‌استیشن ۵', color: '#A78BFA', lightColor: '#4F46E5', dotClass: 'dot-indigo' },
-  { key: 'xbox', label: 'ایکس‌باکس', color: '#6D28D9', lightColor: '#8B5CF6', dotClass: 'dot-purple' },
-  { key: 'computer', label: 'سیستم PC', color: '#10B981', lightColor: '#0D9488', dotClass: 'dot-emerald' },
-  { key: 'jewelry', label: 'وی‌آر / VIP', color: '#F59E0B', lightColor: '#6366F1', dotClass: 'dot-indigo' },
-  { key: 'foosball', label: 'فوتبال دستی', color: '#64748B', lightColor: '#64748B', dotClass: 'dot-slate' },
+  { key: 'ps4', label: 'پلی‌استیشن ۴', slot: 0, dotClass: 'dot-purple' },
+  { key: 'ps50', label: 'پلی‌استیشن ۵', slot: 1, dotClass: 'dot-indigo' },
+  { key: 'xbox', label: 'ایکس‌باکس', slot: 2, dotClass: 'dot-purple' },
+  { key: 'computer', label: 'سیستم PC', slot: 3, dotClass: 'dot-emerald' },
+  { key: 'jewelry', label: 'وی‌آر / VIP', slot: 4, dotClass: 'dot-indigo' },
+  { key: 'foosball', label: 'فوتبال دستی', slot: 5, dotClass: 'dot-slate' },
 ];
 
 const BUFFET_META = [
-  { key: 'cold_drink', label: 'نوشیدنی سرد', color: '#8B5CF6', lightColor: '#6D28D9', dotClass: 'dot-purple' },
-  { key: 'fastfood', label: 'فست‌فود و ساندویچ', color: '#F59E0B', lightColor: '#4F46E5', dotClass: 'dot-indigo' },
-  { key: 'snack', label: 'اسنک و تنقلات', color: '#A78BFA', lightColor: '#8B5CF6', dotClass: 'dot-purple' },
-  { key: 'hot_drink', label: 'نوشیدنی گرم', color: '#10B981', lightColor: '#0D9488', dotClass: 'dot-emerald' },
-  { key: 'other', label: 'سایر اقلام', color: '#64748B', lightColor: '#64748B', dotClass: 'dot-slate' },
+  { key: 'cold_drink', label: 'نوشیدنی سرد', slot: 0, dotClass: 'dot-purple' },
+  { key: 'fastfood', label: 'فست‌فود و ساندویچ', slot: 1, dotClass: 'dot-indigo' },
+  { key: 'snack', label: 'اسنک و تنقلات', slot: 2, dotClass: 'dot-purple' },
+  { key: 'hot_drink', label: 'نوشیدنی گرم', slot: 3, dotClass: 'dot-emerald' },
+  { key: 'other', label: 'سایر اقلام', slot: 5, dotClass: 'dot-slate' },
 ];
 
 const PAYMENT_META = [
-  { key: 'credit', label: 'کارتخوان (POS)', color: '#8B5CF6', lightColor: '#6D28D9', dotClass: 'dot-purple' },
-  { key: 'cash', label: 'دریافتی نقدی', color: '#10B981', lightColor: '#0D9488', dotClass: 'dot-emerald' },
-  { key: 'account', label: 'حساب کاربری', color: '#64748B', lightColor: '#4F46E5', dotClass: 'dot-indigo' },
+  { key: 'credit', label: 'کارتخوان (POS)', slot: 0, dotClass: 'dot-purple' },
+  { key: 'cash', label: 'دریافتی نقدی', slot: 3, dotClass: 'dot-emerald' },
+  { key: 'account', label: 'حساب کاربری', slot: 1, dotClass: 'dot-indigo' },
 ];
 
 function isLightModeActive() {
   return document.documentElement.getAttribute('data-theme') === 'light';
 }
 
+function getActiveAccentSwatches() {
+  const accent = document.documentElement.getAttribute('data-accent') || 'violet';
+  const entry = ACCENT_CHART_SWATCHES[accent] || ACCENT_CHART_SWATCHES.violet;
+  return isLightModeActive() ? entry.light : entry.dark;
+}
+
 function getMetaColor(metaItem) {
-  return isLightModeActive() && metaItem.lightColor ? metaItem.lightColor : metaItem.color;
+  const swatches = getActiveAccentSwatches();
+  const idx = typeof metaItem.slot === 'number' ? metaItem.slot : 0;
+  return swatches[idx] || swatches[0];
 }
 
 function setText(id, text) {
@@ -401,24 +432,25 @@ function renderTablesAndCharts(report, periodSubtitle) {
   const barsWrap = document.getElementById('paymentMethodBars');
   if (barsWrap) {
     const light = isLightModeActive();
+    const swatches = getActiveAccentSwatches();
     const barItems = [
       {
         label: 'دستگاه کارتخوان (POS)',
         amount: report.totalCredit,
         pct: creditPct,
-        color: light ? '#6D28D9' : '#22D3EE',
+        color: swatches[0],
       },
       {
         label: 'دریافتی نقدی صندوق',
         amount: report.totalCash,
         pct: cashPct,
-        color: light ? '#0D9488' : '#10B981',
+        color: swatches[3],
       },
       {
         label: 'کسر از حساب کاربری مشتریان',
         amount: report.totalAccount,
         pct: accountPct,
-        color: light ? '#4F46E5' : '#A855F7',
+        color: swatches[1],
       },
     ];
     barsWrap.innerHTML = barItems
@@ -430,7 +462,7 @@ function renderTablesAndCharts(report, periodSubtitle) {
             <strong>${formatToman(item.amount)} تومان (${toPersianDigits(item.pct)}٪)</strong>
           </div>
           <div class="mg-pay-bar-track">
-            <div class="mg-pay-bar-fill" style="width: ${Math.max(item.amount > 0 ? 5 : 0, item.pct)}%; background: ${item.color}; box-shadow: ${light ? 'none' : `0 0 12px ${item.color}`};"></div>
+            <div class="mg-pay-bar-fill" style="width: ${Math.max(item.amount > 0 ? 5 : 0, item.pct)}%; background: ${item.color}; box-shadow: ${light ? 'none' : `0 0 10px ${item.color}55`};"></div>
           </div>
         </div>
       `
@@ -593,11 +625,13 @@ let lastIncomeState = null;
 
 if (!window.__mgIncomeThemeListenerBound) {
   window.__mgIncomeThemeListenerBound = true;
-  window.addEventListener('mg:theme-changed', () => {
+  const rerenderIncomeOnAppearanceChange = () => {
     if (lastIncomeState && document.getElementById('GameIncomeTable')) {
       renderTablesAndCharts(lastIncomeState.report, lastIncomeState.subtitle);
     }
-  });
+  };
+  window.addEventListener('mg:theme-changed', rerenderIncomeOnAppearanceChange);
+  window.addEventListener('mg:accent-changed', rerenderIncomeOnAppearanceChange);
 }
 
 window.renderIncomePage = initIncomeDashboard;

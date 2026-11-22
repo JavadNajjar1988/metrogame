@@ -154,8 +154,8 @@ const SPA_SECTIONS = {
   },
   console: {
     key: 'console',
-    file: 'console.html?v=20261110-20',
-    script: 'JS/console.js?v=20261110-20',
+    file: 'console.html?v=20261121-3',
+    script: 'JS/console.js?v=20261121-3',
     renderFn: 'renderConsolePage',
     navMatch: 'console.html',
     title: 'مدیریت کنسول‌ها',
@@ -165,8 +165,8 @@ const SPA_SECTIONS = {
   },
   buffet: {
     key: 'buffet',
-    file: 'buffet.html?v=20261110-20',
-    script: 'JS/buffet.js?v=20261110-20',
+    file: 'buffet.html?v=20261121-3',
+    script: 'JS/buffet.js?v=20261121-3',
     renderFn: 'renderBuffetPage',
     navMatch: 'buffet.html',
     title: 'مدیریت بوفه و خوراکی‌ها',
@@ -176,8 +176,8 @@ const SPA_SECTIONS = {
   },
   accounts: {
     key: 'accounts',
-    file: 'acounts.html?v=20261110-20',
-    script: 'JS/acounts.js?v=20261110-20',
+    file: 'acounts.html?v=20261121-3',
+    script: 'JS/acounts.js?v=20261121-3',
     renderFn: 'renderAccountsPage',
     navMatch: 'acounts.html',
     title: 'باشگاه مشتریان',
@@ -187,8 +187,8 @@ const SPA_SECTIONS = {
   },
   debtors: {
     key: 'debtors',
-    file: 'Debtors.html?v=20261110-20',
-    script: 'JS/Debtors.js?v=20261110-20',
+    file: 'Debtors.html?v=20261121-3',
+    script: 'JS/Debtors.js?v=20261121-3',
     renderFn: 'renderDebtorsPage',
     navMatch: 'Debtors.html',
     title: 'مدیریت حساب بدهکاران',
@@ -198,8 +198,8 @@ const SPA_SECTIONS = {
   },
   income: {
     key: 'income',
-    file: 'income.html?v=20261110-20',
-    script: 'JS/income.js?v=20261110-20',
+    file: 'income.html?v=20261121-3',
+    script: 'JS/income.js?v=20261121-3',
     renderFn: 'renderIncomePage',
     navMatch: 'income.html',
     title: 'گزارش جامع درآمد و تحلیل مالی',
@@ -324,7 +324,7 @@ async function ensureIndexViewsPresent() {
   const mainEl = document.querySelector('main.mg-content');
   if (!mainEl) return false;
   try {
-    const res = await fetch('index.html?v=20261110-20', { cache: 'no-store' });
+    const res = await fetch('index.html?v=20261110-24', { cache: 'no-store' });
     if (!res.ok) return false;
     const html = await res.text();
     const doc = new DOMParser().parseFromString(html, 'text/html');
@@ -340,7 +340,7 @@ async function ensureIndexViewsPresent() {
       tablesEl.setAttribute('hidden', '');
       mainEl.insertBefore(tablesEl, document.getElementById('mgDynamicView'));
     }
-    await ensureSpaScriptLoaded('JS/7878.js?v=20261110-20', 'renderTablesWorkspace');
+    await ensureSpaScriptLoaded('JS/7878.js?v=20261110-24', 'renderTablesWorkspace');
     if (typeof window.renderTablesWorkspace === 'function') {
       window.renderTablesWorkspace();
     }
@@ -739,8 +739,16 @@ function initQuickPresets() {
         if (postRadio) postRadio.checked = false;
         preRadio.closest('.mg-radio-card')?.classList.add('is-selected');
         postRadio?.closest('.mg-radio-card')?.classList.remove('is-selected');
+        const group = document.getElementById('prepayCostGroup');
+        if (group) group.style.display = '';
         costInput.disabled = false;
+        costInput.required = true;
+        costInput.setAttribute('aria-required', 'true');
         costInput.value = amount;
+        costInput.classList.remove('is-invalid');
+        costInput.removeAttribute('aria-invalid');
+        const errEl = document.getElementById('prePaymentCostError');
+        if (errEl) errEl.textContent = '';
         costInput.focus();
       }
     });
@@ -2348,6 +2356,29 @@ function initIgnaraSidebarFeatures() {
     navList.parentNode.insertBefore(newWrap, navList);
   }
 
+  // Inject "تنظیمات ظاهری" (Appearance Settings) into the sidebar menu if not already present
+  if (navList && !document.getElementById('navItemAppearance')) {
+    const groupHeader = document.createElement('li');
+    groupHeader.className = 'mg-nav-group-header';
+    groupHeader.setAttribute('role', 'presentation');
+    groupHeader.innerHTML = '<span>شخصی‌سازی و ظاهر</span>';
+
+    const appearanceLi = document.createElement('li');
+    appearanceLi.id = 'navItemAppearance';
+    appearanceLi.className = 'mg-nav-item';
+    appearanceLi.innerHTML = `
+      <a href="#appearance-settings" data-action="open-appearance-settings" data-rail-tip="تنظیمات ظاهری">
+        <span class="mg-nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+        </span>
+        <span class="mg-nav-label">تنظیمات ظاهری</span>
+        <span id="navAppearanceSwatch" class="mg-nav-accent-swatch" aria-hidden="true"></span>
+      </a>
+    `;
+    navList.appendChild(groupHeader);
+    navList.appendChild(appearanceLi);
+  }
+
   // Ensure every nav link has .mg-nav-icon, .mg-nav-label, --nav-i stagger index, and data-rail-tip
   sidebar.querySelectorAll('.mg-nav-item').forEach((item, idx) => {
     item.style.setProperty('--nav-i', String(idx));
@@ -2373,7 +2404,11 @@ function initIgnaraSidebarFeatures() {
 
     const spans = Array.from(a.querySelectorAll(':scope > span'));
     spans.forEach((sp) => {
-      if (!sp.classList.contains('mg-nav-icon') && !sp.classList.contains('mg-nav-badge')) {
+      if (
+        !sp.classList.contains('mg-nav-icon') &&
+        !sp.classList.contains('mg-nav-badge') &&
+        !sp.classList.contains('mg-nav-accent-swatch')
+      ) {
         sp.classList.add('mg-nav-label');
         if (!a.getAttribute('data-rail-tip')) {
           a.setAttribute('data-rail-tip', sp.textContent.trim());
@@ -2527,6 +2562,7 @@ function initCommandPalette() {
     { title: 'باشگاه مشتریان', sub: 'مدیریت لیست مشتریان و اشتراک‌ها', action: () => switchSpaSection('accounts'), kbd: 'G U' },
     { title: 'حساب بدهکاران', sub: 'پیگیری و تسویه حساب‌های دفتری', action: () => switchSpaSection('debtors'), kbd: 'G D' },
     { title: 'گزارش جامع درآمد و تحلیل مالی', sub: 'تفکیک فروش کنسول‌ها، بوفه و روش‌های پرداخت', action: () => switchSpaSection('income'), kbd: 'G I' },
+    { title: 'تنظیمات ظاهری و ترکیب رنگی گیمینگ', sub: 'انتخاب بین ۵ ترکیب رنگی گیمینگ (بنفش، قرمز، نارنجی، سبز تیره، آبی سایبر)', action: () => window.openAppearanceModal?.(), kbd: 'P' },
     { title: 'تغییر پوسته (حالت روشن / حالت تیره)', sub: 'جابه‌جایی آنی بین تم تیره گیمینگ و تم روشن روزانه', action: () => toggleSiteTheme(), kbd: 'T' },
     { title: 'جمع / باز کردن منوی کناری (حالت فشرده)', sub: 'تغییر وضعیت سایدبار بین حالت کامل و آیکونی', action: () => document.getElementById('mgSidebarFoldBtn')?.click(), kbd: '[' },
   ];
@@ -2538,7 +2574,7 @@ function initCommandPalette() {
   modalWrap.innerHTML = `
     <div class="mg-cmd-dialog" role="dialog" aria-modal="true" aria-label="جستجوی سریع و فرمان‌ها">
       <div class="mg-cmd-input-row">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" id="mgCmdInput" class="mg-cmd-input" placeholder="جستجوی بخش، عملیات، میز یا فرمان سریع..." autocomplete="off">
         <kbd class="mg-kbd">ESC</kbd>
       </div>
@@ -2646,12 +2682,321 @@ function initCommandPalette() {
   });
 }
 
+/* ==========================================================================
+   APPEARANCE SETTINGS & 5 CURATED GAMING COLOR COMBINATIONS
+   ========================================================================== */
+const ACCENT_STORAGE_KEY = 'mg_accent_palette_v1';
+
+const GAMING_ACCENT_PALETTES = [
+  {
+    id: 'violet',
+    title: 'بنفش نئون',
+    desc: 'ترکیب بنفش رویال و نیلی الکتریک (پوسته پیش‌فرض Game District)',
+    swatch: '#7C3AED',
+    grad: 'linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%)',
+  },
+  {
+    id: 'crimson',
+    title: 'قرمز سایبر',
+    desc: 'ترکیب قرمز یاقوتی و زرشکی تیره با حس گیمینگ ROG',
+    swatch: '#E11D48',
+    grad: 'linear-gradient(135deg, #E11D48 0%, #9F1239 100%)',
+  },
+  {
+    id: 'orange',
+    title: 'نارنجی ماگما',
+    desc: 'ترکیب نارنجی آتشین و کهربایی تیره با حس رقابتی',
+    swatch: '#EA580C',
+    grad: 'linear-gradient(135deg, #EA580C 0%, #9A3412 100%)',
+  },
+  {
+    id: 'emerald',
+    title: 'سبز زمردی',
+    desc: 'ترکیب سبز تیره گیمینگ و زمردی سایبر به سبک Razer',
+    swatch: '#059669',
+    grad: 'linear-gradient(135deg, #059669 0%, #065F46 100%)',
+  },
+  {
+    id: 'cyber',
+    title: 'آبی کبالت',
+    desc: 'ترکیب آبی کبالت تیره و فیروزه‌ای الکتریک به سبک PlayStation',
+    swatch: '#2563EB',
+    grad: 'linear-gradient(135deg, #2563EB 0%, #1E40AF 100%)',
+  },
+];
+
+function getSavedAccentPalette() {
+  try {
+    const saved = localStorage.getItem(ACCENT_STORAGE_KEY);
+    if (saved && GAMING_ACCENT_PALETTES.some((p) => p.id === saved)) {
+      return saved;
+    }
+  } catch {
+    // ignore
+  }
+  return 'violet';
+}
+
+// Immediately set initial accent on <html> before DOMContentLoaded
+try {
+  document.documentElement.setAttribute('data-accent', getSavedAccentPalette());
+} catch {
+  // ignore
+}
+
+function syncAppearanceModalUI() {
+  const activeAccent = document.documentElement.getAttribute('data-accent') || 'violet';
+  const activeTheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+  const paletteObj =
+    GAMING_ACCENT_PALETTES.find((p) => p.id === activeAccent) || GAMING_ACCENT_PALETTES[0];
+
+  const navSwatch = document.getElementById('navAppearanceSwatch');
+  if (navSwatch && paletteObj) {
+    navSwatch.style.background = paletteObj.grad;
+  }
+
+  const modal = document.getElementById('mgAppearanceModal');
+  if (!modal) return;
+
+  modal.querySelectorAll('[data-accent-choice]').forEach((card) => {
+    const id = card.getAttribute('data-accent-choice');
+    const isSelected = id === activeAccent;
+    card.classList.toggle('is-selected', isSelected);
+    card.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+  });
+
+  modal.querySelectorAll('[data-theme-mode-choice]').forEach((btn) => {
+    const mode = btn.getAttribute('data-theme-mode-choice');
+    const isSelected = mode === activeTheme;
+    btn.classList.toggle('is-selected', isSelected);
+    btn.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+  });
+
+  const activeNameEl = document.getElementById('mgAppearanceActiveTitle');
+  if (activeNameEl && paletteObj) {
+    activeNameEl.textContent = `${paletteObj.title} · ${activeTheme === 'light' ? 'تم روشن' : 'تم تاریک'}`;
+  }
+}
+
+function applyAccentPalette(paletteId, options = {}) {
+  const validObj =
+    GAMING_ACCENT_PALETTES.find((p) => p.id === paletteId) || GAMING_ACCENT_PALETTES[0];
+  const validId = validObj.id;
+
+  document.documentElement.setAttribute('data-accent', validId);
+  try {
+    localStorage.setItem(ACCENT_STORAGE_KEY, validId);
+  } catch {
+    // ignore
+  }
+
+  syncAppearanceModalUI();
+
+  if (options.animate !== false) {
+    loadAndRenderKPIs();
+  }
+
+  try {
+    window.dispatchEvent(new CustomEvent('mg:accent-changed', { detail: { accent: validId } }));
+  } catch {
+    // ignore
+  }
+}
+
+function initAppearanceSettings() {
+  const initialAccent = getSavedAccentPalette();
+  applyAccentPalette(initialAccent, { animate: false });
+
+  if (!document.getElementById('mgAppearanceModal')) {
+    const modal = document.createElement('div');
+    modal.id = 'mgAppearanceModal';
+    modal.className = 'mg-appearance-backdrop hidden-print';
+    modal.setAttribute('hidden', '');
+
+    const cardsHtml = GAMING_ACCENT_PALETTES.map(
+      (p) => `
+        <div role="button" tabindex="0" class="mg-accent-card" data-accent-choice="${p.id}" data-tip="${p.desc}" aria-pressed="false">
+          <span class="mg-accent-swatch-dot" style="background: ${p.grad}; --swatch-color: ${p.swatch};" aria-hidden="true"></span>
+          <strong class="mg-accent-card-title">${p.title}</strong>
+          <span class="mg-accent-check-badge" aria-hidden="true">✓</span>
+        </div>
+      `
+    ).join('');
+
+    modal.innerHTML = `
+      <div class="mg-appearance-dialog" role="dialog" aria-modal="true" aria-labelledby="mgAppearanceTitle">
+        <div class="mg-appearance-header">
+          <div class="mg-appearance-header-title">
+            <span class="mg-appearance-header-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+            </span>
+            <h2 id="mgAppearanceTitle" data-tip="شخصی‌سازی حالت تاریک و روشن و انتخاب ترکیب رنگی هماهنگ برای کل محیط برنامه، فیلدهای شیشه‌ای و نمودارها">تنظیمات ظاهری</h2>
+          </div>
+          <button type="button" id="mgCloseAppearanceBtn" class="mg-appearance-close-btn" aria-label="بستن پنجره تنظیمات ظاهری">&times;</button>
+        </div>
+
+        <div class="mg-appearance-body">
+          <!-- Mode Switcher (Dark vs Light) -->
+          <div class="mg-appearance-section">
+            <div class="mg-appearance-section-head">
+              <span class="mg-appearance-sec-label" data-tip="جابه‌جایی آنی بین تم تاریک گیمینگ و تم روشن شیشه‌ای">۱. حالت پوسته</span>
+              <small id="mgAppearanceActiveTitle"></small>
+            </div>
+            <div class="mg-theme-mode-grid">
+              <div role="button" tabindex="0" class="mg-theme-mode-card" data-theme-mode-choice="dark" data-tip="پس‌زمینه تیره با سطوح شیشه‌ای مات و کنتراست بالا">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                <strong class="mg-theme-mode-title">تم تاریک</strong>
+              </div>
+              <div role="button" tabindex="0" class="mg-theme-mode-card" data-theme-mode-choice="light" data-tip="سطوح شیشه‌ای روشن و شفاف هماهنگ با طیف رنگی انتخاب‌شده">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                <strong class="mg-theme-mode-title">تم روشن</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5 Gaming Color Combinations -->
+          <div class="mg-appearance-section">
+            <div class="mg-appearance-section-head">
+              <span class="mg-appearance-sec-label" data-tip="تغییر هماهنگ رنگ دکمه‌ها، منوی کناری، فیلدهای شیشه‌ای و نمودارها در هر دو تم تاریک و روشن">۲. ترکیب رنگی</span>
+            </div>
+            <div class="mg-accent-cards-grid">
+              ${cardsHtml}
+            </div>
+          </div>
+
+          <div class="mg-appearance-footer">
+            <button type="button" class="btn mg-btn mg-btn-primary" id="mgAppearanceDoneBtn">تایید و بستن</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // Attach '!' (mg-info-bang) buttons to modal title, section headers, mode cards, and color cards
+    const titleEl = modal.querySelector('#mgAppearanceTitle');
+    if (titleEl) {
+      attachBangToTarget(titleEl, () => titleEl.getAttribute('data-tip') || '');
+    }
+    modal.querySelectorAll('.mg-appearance-sec-label').forEach((secLabel) => {
+      attachBangToTarget(secLabel, () => secLabel.getAttribute('data-tip') || '');
+    });
+    modal.querySelectorAll('.mg-theme-mode-card').forEach((modeCard) => {
+      const strong = modeCard.querySelector('.mg-theme-mode-title');
+      if (strong) {
+        attachBangToTarget(strong, () => modeCard.getAttribute('data-tip') || '');
+      }
+    });
+    modal.querySelectorAll('.mg-accent-card').forEach((accentCard) => {
+      const strong = accentCard.querySelector('.mg-accent-card-title');
+      if (strong) {
+        attachBangToTarget(strong, () => accentCard.getAttribute('data-tip') || '');
+      }
+    });
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        window.closeAppearanceModal();
+        return;
+      }
+      if (e.target.closest('.mg-info-bang')) {
+        return;
+      }
+      const accentCard = e.target.closest('[data-accent-choice]');
+      if (accentCard) {
+        const chosen = accentCard.getAttribute('data-accent-choice');
+        applyAccentPalette(chosen, { animate: true, event: e });
+        return;
+      }
+      const modeBtn = e.target.closest('[data-theme-mode-choice]');
+      if (modeBtn) {
+        const chosenTheme = modeBtn.getAttribute('data-theme-mode-choice');
+        applySiteTheme(chosenTheme, { animate: true, event: e });
+        syncAppearanceModalUI();
+      }
+    });
+
+    modal.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      if (e.target.closest('.mg-info-bang')) return;
+      const accentCard = e.target.closest('[data-accent-choice]');
+      if (accentCard) {
+        e.preventDefault();
+        applyAccentPalette(accentCard.getAttribute('data-accent-choice'), { animate: true, event: e });
+        return;
+      }
+      const modeBtn = e.target.closest('[data-theme-mode-choice]');
+      if (modeBtn) {
+        e.preventDefault();
+        applySiteTheme(modeBtn.getAttribute('data-theme-mode-choice'), { animate: true, event: e });
+        syncAppearanceModalUI();
+      }
+    });
+
+    document.getElementById('mgCloseAppearanceBtn')?.addEventListener('click', () => {
+      window.closeAppearanceModal();
+    });
+    document.getElementById('mgAppearanceDoneBtn')?.addEventListener('click', () => {
+      window.closeAppearanceModal();
+    });
+  }
+
+  window.openAppearanceModal = function openAppearanceModal() {
+    const modal = document.getElementById('mgAppearanceModal');
+    if (!modal) return;
+    syncAppearanceModalUI();
+    modal.removeAttribute('hidden');
+    requestAnimationFrame(() => {
+      modal.classList.add('is-open');
+    });
+    // Close mobile sidebar if open
+    const sidebar = document.getElementById('mgSidebar');
+    const backdrop = document.getElementById('sidebarBackdrop');
+    if (sidebar && sidebar.classList.contains('open')) {
+      sidebar.classList.remove('open');
+      if (backdrop) backdrop.classList.remove('open');
+    }
+  };
+
+  window.closeAppearanceModal = function closeAppearanceModal() {
+    const modal = document.getElementById('mgAppearanceModal');
+    if (!modal) return;
+    modal.classList.remove('is-open');
+    modal.setAttribute('hidden', '');
+  };
+
+  // Intercept click on "تنظیمات ظاهری" link in sidebar
+  document.addEventListener('click', (e) => {
+    const trigger = e.target.closest('[data-action="open-appearance-settings"], #navItemAppearance a');
+    if (!trigger) return;
+    e.preventDefault();
+    e.stopPropagation();
+    window.openAppearanceModal();
+  });
+
+  window.addEventListener('mg:theme-changed', () => {
+    syncAppearanceModalUI();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const modal = document.getElementById('mgAppearanceModal');
+      if (modal && !modal.hasAttribute('hidden')) {
+        window.closeAppearanceModal();
+      }
+    }
+  });
+
+  syncAppearanceModalUI();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initThemeSwitcher();
   initFontSwitcher();
   initLiveClock();
   initSidebarAndNotifications();
   initIgnaraSidebarFeatures();
+  initAppearanceSettings();
   initIndexViewRouter();
   initCommandPalette();
   initQuickPresets();
@@ -2661,4 +3006,10 @@ document.addEventListener('DOMContentLoaded', () => {
   initExclamationTooltips();
   animateHeadingWords('mgTopbarTitle');
   loadAndRenderKPIs();
+
+  window.addEventListener('mg:tables-updated', () => {
+    loadAndRenderKPIs();
+  });
 });
+
+

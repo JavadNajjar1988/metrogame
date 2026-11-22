@@ -3,7 +3,90 @@ window.convertToPersian = function convertToPersian(number) {
   return String(number ?? '').replace(/\d/g, (digit) => persianDigits[Number(digit)]);
 };
 
+function toEnglishDigits(str) {
+  return String(str ?? '')
+    .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 1776))
+    .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 1632))
+    .trim();
+}
+
+function invalidateTablesCache() {
+  window.__mgBundlePromise = null;
+  window.__mgJsonPromises = {};
+  try {
+    sessionStorage.removeItem('mg_bundle_v1');
+    sessionStorage.removeItem('mg_sidebar_badges');
+    sessionStorage.setItem('mg_return_to_tables', '1');
+  } catch {
+    // ignore storage errors
+  }
+}
+
 window.renderTablesWorkspace = function renderTablesWorkspace() {
+  function showToast(message) {
+    let toast = document.getElementById('mgToast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'mgToast';
+      toast.className = 'mg-toast';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.classList.add('show');
+    clearTimeout(window.__mgToastTimer);
+    window.__mgToastTimer = setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3200);
+  }
+
+  function setFieldError(inputEl, errorElId, message) {
+    const errEl = document.getElementById(errorElId);
+    if (errEl) errEl.textContent = message || '';
+    if (inputEl) {
+      if (message) {
+        inputEl.classList.add('is-invalid');
+        inputEl.setAttribute('aria-invalid', 'true');
+        if (typeof inputEl.setCustomValidity === 'function') {
+          inputEl.setCustomValidity(message);
+        }
+      } else {
+        inputEl.classList.remove('is-invalid');
+        inputEl.removeAttribute('aria-invalid');
+        if (typeof inputEl.setCustomValidity === 'function') {
+          inputEl.setCustomValidity('');
+        }
+      }
+    }
+  }
+
+  function clearRegistrationErrors() {
+    setFieldError(document.getElementById('tableNumber'), 'tableNumberError', '');
+    setFieldError(document.getElementById('consoleType'), 'consoleTypeError', '');
+    setFieldError(document.getElementById('priceType'), 'priceTypeError', '');
+    setFieldError(document.getElementById('pre-payment-cost'), 'prePaymentCostError', '');
+  }
+
+  function syncPrePaymentState(isPrePay) {
+    if (!postRadio || !preRadio || !preCostInput) return;
+    postRadio.checked = !isPrePay;
+    preRadio.checked = isPrePay;
+    preCostInput.disabled = !isPrePay;
+    preCostInput.required = isPrePay;
+    if (isPrePay) {
+      preCostInput.setAttribute('aria-required', 'true');
+      if (prepayCostGroup) prepayCostGroup.style.display = '';
+      preRadio.closest('.mg-radio-card')?.classList.add('is-selected');
+      postRadio.closest('.mg-radio-card')?.classList.remove('is-selected');
+    } else {
+      preCostInput.removeAttribute('aria-required');
+      preCostInput.value = '';
+      setFieldError(preCostInput, 'prePaymentCostError', '');
+      if (prepayCostGroup) prepayCostGroup.style.display = 'none';
+      postRadio.closest('.mg-radio-card')?.classList.add('is-selected');
+      preRadio.closest('.mg-radio-card')?.classList.remove('is-selected');
+    }
+  }
+
   // Bind post-payment vs pre-payment radio toggle
   const postRadio = document.getElementById('post-payment');
   const preRadio = document.getElementById('pre-payment');
@@ -12,27 +95,192 @@ window.renderTablesWorkspace = function renderTablesWorkspace() {
 
   if (postRadio && preRadio && preCostInput && !postRadio.dataset.bound) {
     postRadio.dataset.bound = 'true';
-    if (prepayCostGroup && postRadio.checked) {
-      prepayCostGroup.style.display = 'none';
-    }
+    syncPrePaymentState(Boolean(preRadio.checked));
     postRadio.addEventListener('change', function () {
       if (this.checked) {
-        preRadio.checked = false;
-        preCostInput.disabled = true;
-        preCostInput.value = '';
-        if (prepayCostGroup) prepayCostGroup.style.display = 'none';
-        postRadio.closest('.mg-radio-card')?.classList.add('is-selected');
-        preRadio.closest('.mg-radio-card')?.classList.remove('is-selected');
+        syncPrePaymentState(false);
       }
     });
     preRadio.addEventListener('change', function () {
       if (this.checked) {
-        postRadio.checked = false;
-        preCostInput.disabled = false;
-        if (prepayCostGroup) prepayCostGroup.style.display = '';
+        syncPrePaymentState(true);
         preCostInput.focus();
-        preRadio.closest('.mg-radio-card')?.classList.add('is-selected');
-        postRadio.closest('.mg-radio-card')?.classList.remove('is-selected');
+      }
+    });
+  }
+
+  // Bind live validation clearing on registration form inputs
+  const tableInputEl = document.getElementById('tableNumber');
+  const consoleSelectEl = document.getElementById('consoleType');
+  const priceSelectEl = document.getElementById('priceType');
+
+  if (tableInputEl && !tableInputEl.dataset.boundValidation) {
+    tableInputEl.dataset.boundValidation = 'true';
+    tableInputEl.addEventListener('input', () => {
+      if (toEnglishDigits(tableInputEl.value)) {
+        setFieldError(tableInputEl, 'tableNumberError', '');
+      }
+    });
+  }
+  if (consoleSelectEl && !consoleSelectEl.dataset.boundValidation) {
+    consoleSelectEl.dataset.boundValidation = 'true';
+    consoleSelectEl.addEventListener('change', () => {
+      if (consoleSelectEl.value.trim()) {
+        setFieldError(consoleSelectEl, 'consoleTypeError', '');
+      }
+    });
+  }
+  if (priceSelectEl && !priceSelectEl.dataset.boundValidation) {
+    priceSelectEl.dataset.boundValidation = 'true';
+    priceSelectEl.addEventListener('change', () => {
+      if (priceSelectEl.value.trim()) {
+        setFieldError(priceSelectEl, 'priceTypeError', '');
+      }
+    });
+  }
+  if (preCostInput && !preCostInput.dataset.boundValidation) {
+    preCostInput.dataset.boundValidation = 'true';
+    preCostInput.addEventListener('input', () => {
+      const cleaned = toEnglishDigits(preCostInput.value).replace(/[,٬\s]/g, '');
+      if (cleaned && Number.isFinite(Number(cleaned)) && Number(cleaned) > 0) {
+        setFieldError(preCostInput, 'prePaymentCostError', '');
+      }
+    });
+  }
+
+  function validateRegistrationFields() {
+    clearRegistrationErrors();
+    const tableInput = document.getElementById('tableNumber');
+    const consoleSelect = document.getElementById('consoleType');
+    const priceSelect = document.getElementById('priceType');
+
+    const tableNumberVal = toEnglishDigits(tableInput ? tableInput.value : '');
+    const consoleTypeVal = consoleSelect ? consoleSelect.value.trim() : '';
+    const priceTypeVal = priceSelect ? priceSelect.value.trim() : '';
+    const isPrePay = Boolean(preRadio && preRadio.checked);
+    const preCostVal = toEnglishDigits(preCostInput ? preCostInput.value : '').replace(/[,٬\s]/g, '');
+    const preCostNum = Number(preCostVal);
+
+    let firstInvalidEl = null;
+    let firstMessage = '';
+
+    if (!tableNumberVal) {
+      const msg = 'لطفاً شماره میز را وارد کنید.';
+      setFieldError(tableInput, 'tableNumberError', msg);
+      if (!firstInvalidEl) {
+        firstInvalidEl = tableInput;
+        firstMessage = msg;
+      }
+    }
+    if (!consoleTypeVal) {
+      const msg = 'لطفاً کنسول بازی را انتخاب کنید.';
+      setFieldError(consoleSelect, 'consoleTypeError', msg);
+      if (!firstInvalidEl) {
+        firstInvalidEl = consoleSelect;
+        firstMessage = msg;
+      }
+    }
+    if (!priceTypeVal) {
+      const msg = 'لطفاً تعداد دسته / تعرفه را انتخاب کنید.';
+      setFieldError(priceSelect, 'priceTypeError', msg);
+      if (!firstInvalidEl) {
+        firstInvalidEl = priceSelect;
+        firstMessage = msg;
+      }
+    }
+    if (isPrePay) {
+      if (!preCostVal) {
+        const msg = 'در حالت پیش‌پرداخت، وارد کردن مبلغ پیش‌پرداخت الزامی است.';
+        setFieldError(preCostInput, 'prePaymentCostError', msg);
+        if (!firstInvalidEl) {
+          firstInvalidEl = preCostInput;
+          firstMessage = msg;
+        }
+      } else if (!Number.isFinite(preCostNum) || preCostNum <= 0) {
+        const msg = 'مبلغ پیش‌پرداخت باید عددی معتبر و بزرگ‌تر از صفر باشد.';
+        setFieldError(preCostInput, 'prePaymentCostError', msg);
+        if (!firstInvalidEl) {
+          firstInvalidEl = preCostInput;
+          firstMessage = msg;
+        }
+      }
+    }
+
+    return {
+      valid: !firstInvalidEl,
+      firstInvalidEl,
+      firstMessage,
+      values: {
+        tableNumberVal,
+        consoleTypeVal,
+        priceTypeVal,
+        isPrePay,
+        preCostVal,
+      },
+    };
+  }
+
+  // Bind Table Registration Form (#reservationForm / form[action="process.php"])
+  const reservationForm =
+    document.getElementById('reservationForm') ||
+    document.querySelector('form[action="process.php"]');
+  if (reservationForm && !reservationForm.dataset.boundSubmit) {
+    reservationForm.dataset.boundSubmit = 'true';
+    reservationForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const submitBtn = document.getElementById('startReservationButton');
+      const validation = validateRegistrationFields();
+
+      if (!validation.valid) {
+        showToast(validation.firstMessage);
+        if (validation.firstInvalidEl) validation.firstInvalidEl.focus();
+        return;
+      }
+
+      const { tableNumberVal, consoleTypeVal, priceTypeVal, isPrePay, preCostVal } =
+        validation.values;
+
+      const formData = new FormData();
+      formData.set('tableNumber', tableNumberVal);
+      formData.set('table-number', tableNumberVal);
+      formData.set('consoleType', consoleTypeVal);
+      formData.set('priceType', priceTypeVal);
+      if (isPrePay) {
+        formData.set('pre-payment', 'pre-payment');
+        formData.set('paymentType', 'pre-payment');
+        formData.set('pre-payment-cost', preCostVal);
+      } else {
+        formData.set('post-payment', 'post-payment');
+        formData.set('paymentType', 'post-payment');
+      }
+
+      if (submitBtn) submitBtn.disabled = true;
+      try {
+        const response = await fetch('./process.php', {
+          method: 'POST',
+          headers: { Accept: 'application/json' },
+          body: formData,
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || data.error) {
+          showToast(data.error || 'خطا در ثبت میز. لطفاً مقادیر را بررسی کنید.');
+          return;
+        }
+
+        showToast(`میز ${convertToPersian(tableNumberVal)} با موفقیت ثبت شد.`);
+        reservationForm.reset();
+        clearRegistrationErrors();
+        syncPrePaymentState(false);
+
+        invalidateTablesCache();
+        window.renderTablesWorkspace();
+        window.dispatchEvent(new CustomEvent('mg:tables-updated'));
+      } catch {
+        showToast('خطا در ارتباط با سرور هنگام ثبت میز.');
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
       }
     });
   }
@@ -53,22 +301,6 @@ window.renderTablesWorkspace = function renderTablesWorkspace() {
     three_player_price: 'سه نفره',
     four_player_price: 'چهار نفره',
   };
-
-  function showToast(message) {
-    let toast = document.getElementById('mgToast');
-    if (!toast) {
-      toast = document.createElement('div');
-      toast.id = 'mgToast';
-      toast.className = 'mg-toast';
-      document.body.appendChild(toast);
-    }
-    toast.textContent = message;
-    toast.classList.add('show');
-    clearTimeout(window.__mgToastTimer);
-    window.__mgToastTimer = setTimeout(() => {
-      toast.classList.remove('show');
-    }, 3200);
-  }
 
   function highlightCard(elementId) {
     const container = document.getElementById(elementId);
@@ -227,12 +459,19 @@ window.renderTablesWorkspace = function renderTablesWorkspace() {
 
           fetch('buffet_temporary.php', {
             method: 'POST',
+            headers: { Accept: 'application/json' },
             body: formData,
           })
             .then((response) => response.json())
-            .then(() => {
+            .then((resData) => {
+              if (resData && resData.error) {
+                showToast(resData.error);
+                return;
+              }
               showToast(`سفارش بوفه برای میز ${convertToPersian(targetTable)} با موفقیت ثبت شد.`);
-              setTimeout(() => location.reload(), 600);
+              invalidateTablesCache();
+              window.renderTablesWorkspace();
+              window.dispatchEvent(new CustomEvent('mg:tables-updated'));
             })
             .catch(() => {
               showToast('خطا در ثبت سفارش بوفه.');
@@ -263,8 +502,8 @@ window.renderTablesWorkspace = function renderTablesWorkspace() {
 
           const chargeAmountInput = document.getElementById('chargeAmount');
           const chargeTimeInput = document.getElementById('chargeTime');
-          const chargeAmount = Number(chargeAmountInput ? chargeAmountInput.value : 0) || 0;
-          const chargeMinutes = Number(chargeTimeInput ? chargeTimeInput.value : 0) || 0;
+          const chargeAmount = Number(toEnglishDigits(chargeAmountInput ? chargeAmountInput.value : 0)) || 0;
+          const chargeMinutes = Number(toEnglishDigits(chargeTimeInput ? chargeTimeInput.value : 0)) || 0;
           const charge_Time = chargeMinutes * 60 + Math.round((3600 * chargeAmount) / hourlyPrice);
 
           if (charge_Time <= 0) {
@@ -281,10 +520,13 @@ window.renderTablesWorkspace = function renderTablesWorkspace() {
             },
             success: function () {
               showToast(`شارژ میز ${convertToPersian(targetTable)} با موفقیت اعمال شد.`);
-              setTimeout(() => location.reload(), 600);
+              invalidateTablesCache();
+              window.renderTablesWorkspace();
+              window.dispatchEvent(new CustomEvent('mg:tables-updated'));
             },
-            error: function () {
-              showToast('خطا در ارتباط با سرور هنگام شارژ میز.');
+            error: function (xhr) {
+              const msg = xhr?.responseJSON?.error || 'خطا در ارتباط با سرور هنگام شارژ میز.';
+              showToast(msg);
             },
           });
         });
@@ -430,7 +672,10 @@ window.renderTablesWorkspace = function renderTablesWorkspace() {
               url: './timing.php',
               data: { tableNumber: tableNumber, clickTime: clickTimeNow },
               success: function () {
-                location.reload();
+                showToast(`تایمر میز ${convertToPersian(tableNumber)} شروع شد.`);
+                invalidateTablesCache();
+                window.renderTablesWorkspace();
+                window.dispatchEvent(new CustomEvent('mg:tables-updated'));
               },
               error: function () {
                 showToast('خطا در شروع زمان‌سنج میز.');
@@ -449,7 +694,10 @@ window.renderTablesWorkspace = function renderTablesWorkspace() {
                 startTime: startTimeNow,
               },
               success: function () {
-                location.reload();
+                showToast(`تایمر میز ${convertToPersian(tableNumber)} شروع شد.`);
+                invalidateTablesCache();
+                window.renderTablesWorkspace();
+                window.dispatchEvent(new CustomEvent('mg:tables-updated'));
               },
               error: function () {
                 showToast('خطا در شروع تایمر میز.');
