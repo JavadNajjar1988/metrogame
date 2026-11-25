@@ -10,6 +10,15 @@ function toEnglishDigits(str) {
     .trim();
 }
 
+function escapeHtmlSafe(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function invalidateTablesCache() {
   window.__mgBundlePromise = null;
   window.__mgJsonPromises = {};
@@ -242,11 +251,17 @@ window.renderTablesWorkspace = function renderTablesWorkspace() {
       const { tableNumberVal, consoleTypeVal, priceTypeVal, isPrePay, preCostVal } =
         validation.values;
 
+      const customerSelectEl = document.getElementById('reservationCustomerSelect');
+      const selectedCustomerId = customerSelectEl ? customerSelectEl.value.trim() : '';
+
       const formData = new FormData();
       formData.set('tableNumber', tableNumberVal);
       formData.set('table-number', tableNumberVal);
       formData.set('consoleType', consoleTypeVal);
       formData.set('priceType', priceTypeVal);
+      if (selectedCustomerId) {
+        formData.set('customerId', selectedCustomerId);
+      }
       if (isPrePay) {
         formData.set('pre-payment', 'pre-payment');
         formData.set('paymentType', 'pre-payment');
@@ -274,8 +289,18 @@ window.renderTablesWorkspace = function renderTablesWorkspace() {
         clearRegistrationErrors();
         syncPrePaymentState(false);
 
+        // Reset any active table payment filter so the newly added table is always visible
+        const allFilterBtn = document.querySelector('[data-table-filter="all"]');
+        if (allFilterBtn && !allFilterBtn.classList.contains('active')) {
+          allFilterBtn.click();
+        }
+        const searchInput = document.getElementById('dashboardSearch');
+        if (searchInput && searchInput.value) {
+          searchInput.value = '';
+        }
+
         invalidateTablesCache();
-        window.renderTablesWorkspace();
+        await window.renderTablesWorkspace({ forceFresh: true });
         window.dispatchEvent(new CustomEvent('mg:tables-updated'));
       } catch {
         showToast('خطا در ارتباط با سرور هنگام ثبت میز.');
@@ -311,9 +336,33 @@ window.renderTablesWorkspace = function renderTablesWorkspace() {
     setTimeout(() => card.classList.remove('card-highlight'), 1800);
   }
 
+  function postFormUrlEncoded(url, payload) {
+    const body = new URLSearchParams();
+    Object.entries(payload || {}).forEach(([k, v]) => {
+      if (v !== undefined && v !== null) body.set(k, String(v));
+    });
+    return fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        Accept: 'application/json',
+      },
+      body: body.toString(),
+    });
+  }
+
+  const opts = arguments[0] && typeof arguments[0] === 'object' ? arguments[0] : {};
+  const forceFresh = Boolean(opts.forceFresh);
+
+  if (forceFresh) {
+    window.__mgBundlePromise = null;
+    window.__mgJsonPromises = {};
+  }
+
   const getBundleMap = () => {
     if (!window.__mgBundlePromise) {
-      window.__mgBundlePromise = fetch('./bundle.json')
+      const cacheBust = forceFresh ? `?_=${Date.now()}` : '';
+      window.__mgBundlePromise = fetch(`./bundle.json${cacheBust}`, { cache: 'no-store' })
         .then((r) => (r.ok ? r.json() : null))
         .then((bundle) => {
           if (bundle && typeof bundle === 'object') {
@@ -337,33 +386,130 @@ window.renderTablesWorkspace = function renderTablesWorkspace() {
       window.__mgJsonPromises[url] = getBundleMap()
         .then((bundle) => {
           if (bundle && cleanKey in bundle) return bundle[cleanKey];
-          return fetch(url).then((r) => (r.ok ? r.json() : fallback));
+          return fetch(url, { cache: 'no-store' }).then((r) => (r.ok ? r.json() : fallback));
         })
         .catch(() => fallback);
     }
     return window.__mgJsonPromises[url];
   };
 
-  Promise.all([
+  return Promise.all([
     fetchSharedJson('./data.json', { consoles: [] }),
     fetchSharedJson('./reservations.json', []),
     fetchSharedJson('./products.json', []),
     fetchSharedJson('./clickTime.json', []),
     fetchSharedJson('./finishTime.json', []),
     fetchSharedJson('./buffet_temporary.json', []),
+    fetchSharedJson('./gamenet_layout.json', null),
+    fetchSharedJson('./customer_data.json', {}),
+    fetchSharedJson('./loyalty_config.json', { milestoneHours: 24, discountPercent: 20 }),
+    import('./gamenet-3d-engine.mjs?v=20261124-7').catch(() => null),
+    import('./loyalty-engine.mjs?v=20261124-7').catch(() => null),
   ])
-    .then(function ([dataJson, reservationsJson, productsJson, clickTimesJson, finishTimesJson, buffetTempJson]) {
+    .then(function ([
+      dataJson,
+      reservationsJson,
+      productsJson,
+      clickTimesJson,
+      finishTimesJson,
+      buffetTempJson,
+      layoutJson,
+      customersJson,
+      loyaltyConfigJson,
+      engine3dMod,
+      loyaltyMod,
+    ]) {
+      // Clear any previously running row timer intervals before re-rendering
+      if (Array.isArray(window.__mgTableTimerIntervals)) {
+        window.__mgTableTimerIntervals.forEach((id) => clearInterval(id));
+      }
+      window.__mgTableTimerIntervals = [];
+
       const consolesList = Array.isArray(dataJson?.consoles) ? dataJson.consoles : [];
       const reservations = Array.isArray(reservationsJson) ? reservationsJson : [];
       const products = Array.isArray(productsJson) ? productsJson : [];
       const clickTimes = Array.isArray(clickTimesJson) ? clickTimesJson : [];
       const finishTimes = Array.isArray(finishTimesJson) ? finishTimesJson : [];
-      const buffetTemp = Array.isArray(buffetTempJson) ? buffetTempJson : [];
+      const customersMap = customersJson && typeof customersJson === 'object' ? customersJson : {};
+      const loyaltyConfig =
+        loyaltyMod && typeof loyaltyMod.sanitizeLoyaltyConfig === 'function'
+          ? loyaltyMod.sanitizeLoyaltyConfig(loyaltyConfigJson)
+          : { milestoneHours: 24, discountPercent: 20 };
+
+      const effectiveLayout =
+        layoutJson && Array.isArray(layoutJson.items)
+          ? layoutJson
+          : engine3dMod && typeof engine3dMod.createStarterLayout === 'function'
+            ? engine3dMod.createStarterLayout('pro-arena')
+            : { items: [] };
+
+      const mergedTables =
+        engine3dMod && typeof engine3dMod.mergeTablesWith3DStations === 'function'
+          ? engine3dMod.mergeTablesWith3DStations(reservations, effectiveLayout)
+          : {
+              activeRows: reservations.map((res) => ({
+                status: 'active',
+                tableNumber: String(res.tableNumber),
+                reservation: res,
+                from3D: false,
+                station3D: null,
+              })),
+              idleRows: [],
+              allRows: reservations.map((res) => ({
+                status: 'active',
+                tableNumber: String(res.tableNumber),
+                reservation: res,
+                from3D: false,
+                station3D: null,
+              })),
+              totalStations3D: 0,
+            };
+
+      // Populate optional registered club customer selector inside registration form
+      const resCustomerSelect = document.getElementById('reservationCustomerSelect');
+      if (resCustomerSelect) {
+        const prevVal = resCustomerSelect.value;
+        resCustomerSelect.innerHTML = '<option value="">مشتری مهمان (بدون اشتراک)</option>';
+        Object.values(customersMap).forEach((cust) => {
+          if (!cust || !cust.customerId) return;
+          const opt = document.createElement('option');
+          opt.value = String(cust.customerId);
+          const loyalty =
+            loyaltyMod && typeof loyaltyMod.computeCustomerLoyalty === 'function'
+              ? loyaltyMod.computeCustomerLoyalty(cust, loyaltyConfig)
+              : null;
+          const rewardHint =
+            loyalty && loyalty.availableRewards > 0
+              ? ` · 🎁 تخفیف ${convertToPersian(loyalty.discountPercent)}٪ آماده`
+              : loyalty
+                ? ` · ${convertToPersian(loyalty.totalPlayHours)}/${convertToPersian(loyalty.milestoneHours)} ساعت`
+                : '';
+          opt.textContent = `${cust.customerName} (کد ${convertToPersian(cust.customerId)})${rewardHint}`;
+          resCustomerSelect.appendChild(opt);
+        });
+        if (prevVal && Object.prototype.hasOwnProperty.call(customersMap, prevVal)) {
+          resCustomerSelect.value = prevVal;
+        }
+      }
 
       function getHourlyPrice(consoleType, priceType) {
         const found = consolesList.find((c) => c.name === consoleType);
         const rate = found ? Number(found[priceType]) : 0;
         return rate > 0 ? rate : 60000;
+      }
+
+      // Immediately sync active tables badge counters in header/sidebar/section
+      const countTag = document.getElementById('activeTableFilteredCount');
+      if (countTag) {
+        const totalAll = mergedTables.allRows.length;
+        countTag.textContent =
+          mergedTables.idleRows.length > 0
+            ? `${convertToPersian(reservations.length)} فعال · ${convertToPersian(totalAll)} ایستگاه سالن`
+            : `${convertToPersian(reservations.length)} میز فعال`;
+      }
+      const navTablesBadge = document.getElementById('navTablesBadge');
+      if (navTablesBadge) {
+        navTablesBadge.textContent = convertToPersian(reservations.length);
       }
 
       // 1. Populate Buffet Product Dropdown immediately
@@ -415,7 +561,8 @@ window.renderTablesWorkspace = function renderTablesWorkspace() {
       populateTableSelectors();
 
       // Update card titles when dropdown changes
-      if (chargeTableSelect) {
+      if (chargeTableSelect && !chargeTableSelect.dataset.boundChange) {
+        chargeTableSelect.dataset.boundChange = 'true';
         chargeTableSelect.addEventListener('change', function () {
           const tNum = this.value;
           const titleEl = document.getElementById('chargeFormTitle');
@@ -425,7 +572,8 @@ window.renderTablesWorkspace = function renderTablesWorkspace() {
         });
       }
 
-      if (buffetTableSelect) {
+      if (buffetTableSelect && !buffetTableSelect.dataset.boundChange) {
+        buffetTableSelect.dataset.boundChange = 'true';
         buffetTableSelect.addEventListener('change', function () {
           const tNum = this.value;
           const titleEl = document.getElementById('formTitle');
@@ -435,16 +583,21 @@ window.renderTablesWorkspace = function renderTablesWorkspace() {
         });
       }
 
+      // Keep latest data accessible to bound form submit handlers
+      window.__mgLatestReservations = reservations;
+      window.__mgLatestConsoles = consolesList;
+
       // 3. Bind Dedicated Buffet Form Submit (#buyForm)
       const buyForm = document.getElementById('buyForm');
       if (buyForm && !buyForm.dataset.bound) {
         buyForm.dataset.bound = 'true';
         buyForm.addEventListener('submit', function (e) {
           e.preventDefault();
+          const currentReservations = window.__mgLatestReservations || reservations;
           const targetTable =
             (buffetTableSelect && buffetTableSelect.value) ||
             buyForm.dataset.selectedTable ||
-            (reservations[0] && reservations[0].tableNumber);
+            (currentReservations[0] && currentReservations[0].tableNumber);
 
           if (!targetTable) {
             showToast('ابتدا یک میز فعال ثبت یا انتخاب کنید.');
@@ -463,14 +616,14 @@ window.renderTablesWorkspace = function renderTablesWorkspace() {
             body: formData,
           })
             .then((response) => response.json())
-            .then((resData) => {
+            .then(async (resData) => {
               if (resData && resData.error) {
                 showToast(resData.error);
                 return;
               }
               showToast(`سفارش بوفه برای میز ${convertToPersian(targetTable)} با موفقیت ثبت شد.`);
               invalidateTablesCache();
-              window.renderTablesWorkspace();
+              await window.renderTablesWorkspace({ forceFresh: true });
               window.dispatchEvent(new CustomEvent('mg:tables-updated'));
             })
             .catch(() => {
@@ -483,22 +636,30 @@ window.renderTablesWorkspace = function renderTablesWorkspace() {
       const chargeForm = document.getElementById('chargeForm');
       if (chargeForm && !chargeForm.dataset.bound) {
         chargeForm.dataset.bound = 'true';
-        chargeForm.addEventListener('submit', function (e) {
+        chargeForm.addEventListener('submit', async function (e) {
           e.preventDefault();
+          const currentReservations = window.__mgLatestReservations || reservations;
+          const currentConsoles = window.__mgLatestConsoles || consolesList;
           const targetTable =
             (chargeTableSelect && chargeTableSelect.value) ||
             chargeForm.dataset.selectedTable ||
-            (reservations[0] && reservations[0].tableNumber);
+            (currentReservations[0] && currentReservations[0].tableNumber);
 
           if (!targetTable) {
             showToast('ابتدا یک میز فعال برای شارژ انتخاب کنید.');
             return;
           }
 
-          const targetRes = reservations.find((r) => String(r.tableNumber) === String(targetTable));
-          const hourlyPrice = targetRes
-            ? getHourlyPrice(targetRes.consoleType, targetRes.priceType)
-            : 60000;
+          const targetRes = currentReservations.find(
+            (r) => String(r.tableNumber) === String(targetTable)
+          );
+          const foundConsole = targetRes
+            ? currentConsoles.find((c) => c.name === targetRes.consoleType)
+            : null;
+          const hourlyPrice =
+            foundConsole && Number(foundConsole[targetRes.priceType]) > 0
+              ? Number(foundConsole[targetRes.priceType])
+              : 60000;
 
           const chargeAmountInput = document.getElementById('chargeAmount');
           const chargeTimeInput = document.getElementById('chargeTime');
@@ -511,53 +672,57 @@ window.renderTablesWorkspace = function renderTablesWorkspace() {
             return;
           }
 
-          $.ajax({
-            type: 'POST',
-            url: './charging.php',
-            data: {
+          try {
+            const resp = await postFormUrlEncoded('./charging.php', {
               tableNumber: targetTable,
               charge_Time: charge_Time,
-            },
-            success: function () {
-              showToast(`شارژ میز ${convertToPersian(targetTable)} با موفقیت اعمال شد.`);
-              invalidateTablesCache();
-              window.renderTablesWorkspace();
-              window.dispatchEvent(new CustomEvent('mg:tables-updated'));
-            },
-            error: function (xhr) {
-              const msg = xhr?.responseJSON?.error || 'خطا در ارتباط با سرور هنگام شارژ میز.';
-              showToast(msg);
-            },
-          });
+            });
+            const data = await resp.json().catch(() => ({}));
+            if (!resp.ok || data.error) {
+              showToast(data.error || 'خطا در ارتباط با سرور هنگام شارژ میز.');
+              return;
+            }
+            showToast(`شارژ میز ${convertToPersian(targetTable)} با موفقیت اعمال شد.`);
+            invalidateTablesCache();
+            await window.renderTablesWorkspace({ forceFresh: true });
+            window.dispatchEvent(new CustomEvent('mg:tables-updated'));
+          } catch {
+            showToast('خطا در ارتباط با سرور هنگام شارژ میز.');
+          }
         });
       }
 
-      // 5. Render Active Tables Rows inside #reservationTableBody
-      const tableBody = $('#reservationTableBody');
-      tableBody.empty();
+      // 5. Render Active Tables & Synced 3D Floor Plan Stations inside #reservationTableBody
+      const tableBody = document.getElementById('reservationTableBody');
+      if (!tableBody) return;
+      tableBody.innerHTML = '';
 
-      if (reservations.length === 0) {
-        tableBody.append(
-          `<tr class="mg-empty-row">
+      if (mergedTables.allRows.length === 0) {
+        tableBody.innerHTML = `
+          <tr class="mg-empty-row">
             <td colspan="7" class="mg-empty-state">
-              هیچ میز فعالی در حال حاضر ثبت نشده است. از فرم «ثبت و راه‌اندازی میز» برای شروع سشن جدید استفاده کنید.
+              هیچ میز فعال یا ایستگاه سه‌بعدی‌ای ثبت نشده است. از فرم «ثبت و راه‌اندازی میز» یا بخش «گیم نت من» استفاده کنید.
             </td>
-          </tr>`
-        );
+          </tr>
+        `;
         return;
       }
 
       let rowNumber = 1;
 
-      $.each(reservations, function (index, reservation) {
+      mergedTables.activeRows.forEach(function (activeMeta) {
+        const reservation = activeMeta.reservation;
         const prePaymentCost = Number(reservation.prePaymentCost) || 0;
         const consoleType = reservation.consoleType;
         const priceType = reservation.priceType;
         const hourlyPrice = getHourlyPrice(consoleType, priceType);
         const timeSeconds = Math.round((3600 * prePaymentCost) / hourlyPrice);
 
-        const isPostPayment = reservation.postPayment === 'post-payment';
-        const isPrePayment = reservation.prePayment === 'pre-payment';
+        const isPrePayment =
+          reservation.prePayment === 'pre-payment' || reservation.paymentType === 'pre-payment';
+        const isPostPayment =
+          !isPrePayment &&
+          (reservation.postPayment === 'post-payment' || reservation.paymentType === 'post-payment' || !reservation.prePayment);
         const paymentModeKey = isPrePayment ? 'pre-payment' : 'post-payment';
 
         // Calculate buffet items count for this table (supports both object map and array)
@@ -570,212 +735,6 @@ window.renderTablesWorkspace = function renderTablesWorkspace() {
           (sum, item) => sum + (Number(item.quantity) || 1),
           0
         );
-
-        const timeText = displayTime(reservation);
-        const consoleLabel = CONSOLE_LABELS[consoleType] || consoleType;
-        const priceLabel = PRICE_LABELS[priceType] || 'استاندارد';
-        const payModeLabel = isPrePayment ? 'پیش‌پرداخت' : 'پس‌کرایه';
-
-        const newRow = $('<tr></tr>');
-        newRow.attr('data-table', String(reservation.tableNumber));
-        newRow.attr('data-console', String(consoleType));
-        newRow.attr('data-payment', paymentModeKey);
-        newRow.attr('data-search', `${reservation.tableNumber} ${consoleLabel} ${priceLabel} ${consoleType}`);
-
-        newRow.append('<td><span class="mg-row-index">' + convertToPersian(rowNumber++) + '</span></td>');
-        newRow.append(
-          '<td><div class="mg-timer-wrap">' +
-            timeText +
-            '<span class="mg-pay-mode-tag">' +
-            payModeLabel +
-            '</span></div></td>'
-        );
-        newRow.append(
-          '<td><ul class="list-inline mg-station-badge"><i class="demo-icon icon-table" style="font-size: 18px;"></i><span>میز ' +
-            convertToPersian(reservation.tableNumber) +
-            '</span></ul></td>'
-        );
-
-        newRow.append('<td><span class="mg-player-badge">' + priceLabel + '</span></td>');
-
-        newRow.append(
-          '<td><div class="mg-console-cell"><i class="demo-icon icon-' +
-            consoleType +
-            '" style="font-size: 22px;"></i><span>' +
-            consoleLabel +
-            '</span></div></td>'
-        );
-
-        const buffetBadgeHtml =
-          tableBuffetCount > 0
-            ? ` <span class="mg-nav-badge badge-Highlight">${convertToPersian(tableBuffetCount)}</span>`
-            : '';
-
-        newRow.append(
-          '<td><button type="button" class="btn btn-warning btn-xs bufeh-button">بوفـه' +
-            buffetBadgeHtml +
-            '</button></td>'
-        );
-
-        // Buffet button focuses the dedicated Buffet Purchase card for this table
-        newRow.find('.bufeh-button').click(function () {
-          const modalTitle = `بوفه برای میز ${convertToPersian(reservation.tableNumber)}`;
-          const formTitle = `خرید از بوفه برای میز ${convertToPersian(reservation.tableNumber)}`;
-          const modal = document.getElementById('myModal');
-          if (modal) {
-            modal.style.display = 'flex';
-            const h3 = modal.querySelector('.modal-content h3');
-            if (h3) h3.textContent = modalTitle;
-          }
-          const formTitleEl = document.getElementById('formTitle');
-          if (formTitleEl) formTitleEl.textContent = formTitle;
-          if (buffetTableSelect) {
-            buffetTableSelect.value = String(reservation.tableNumber);
-          }
-          if (buyForm) {
-            buyForm.dataset.selectedTable = String(reservation.tableNumber);
-          }
-          highlightCard('myModal');
-        });
-
-        // Session Action Buttons (Start, End, Recharge)
-        if (isPostPayment) {
-          newRow.append(
-            '<td class="nowrap"><div class="mg-actions-cell">' +
-              '<a href="#" class="btn btn-success btn-xs start-button">▶ شــروع</a>' +
-              '<a href="#" class="btn btn-danger btn-xs end-button">■ پایان و فاکتور</a>' +
-              '</div></td>'
-          );
-        } else if (isPrePayment) {
-          newRow.append(
-            '<td class="nowrap"><div class="mg-actions-cell">' +
-              '<a href="#" class="btn btn-success btn-xs start-button">▶ شــروع</a>' +
-              '<a href="#" class="btn btn-danger btn-xs end-button">■ پایان و فاکتور</a>' +
-              '<a href="#" class="btn btn-info btn-xs charge-button">⚡ شارژ مجدد</a>' +
-              '</div></td>'
-          );
-        } else {
-          newRow.append('<td class="nowrap">وضعیت نامعلوم</td>');
-        }
-
-        // Start timer handler
-        let sessionPostPayment = isPostPayment;
-        let sessionPrePayment = isPrePayment;
-
-        newRow.find('.start-button').click(function (e) {
-          e.preventDefault();
-          const tableNumber = reservation.tableNumber;
-          if (sessionPostPayment) {
-            const clickTimeNow = Math.floor(Date.now() / 1000);
-            $.ajax({
-              type: 'POST',
-              url: './timing.php',
-              data: { tableNumber: tableNumber, clickTime: clickTimeNow },
-              success: function () {
-                showToast(`تایمر میز ${convertToPersian(tableNumber)} شروع شد.`);
-                invalidateTablesCache();
-                window.renderTablesWorkspace();
-                window.dispatchEvent(new CustomEvent('mg:tables-updated'));
-              },
-              error: function () {
-                showToast('خطا در شروع زمان‌سنج میز.');
-              },
-            });
-            sessionPostPayment = false;
-          } else if (sessionPrePayment) {
-            const startTimeNow = Math.floor(Date.now() / 1000);
-            const finishTimeNow = startTimeNow + (timeSeconds > 0 ? timeSeconds : 3600);
-            $.ajax({
-              type: 'POST',
-              url: './timer.php',
-              data: {
-                tableNumber: tableNumber,
-                finishTime: finishTimeNow,
-                startTime: startTimeNow,
-              },
-              success: function () {
-                showToast(`تایمر میز ${convertToPersian(tableNumber)} شروع شد.`);
-                invalidateTablesCache();
-                window.renderTablesWorkspace();
-                window.dispatchEvent(new CustomEvent('mg:tables-updated'));
-              },
-              error: function () {
-                showToast('خطا در شروع تایمر میز.');
-              },
-            });
-            sessionPrePayment = false;
-          }
-        });
-
-        // End session handler -> saves game_temporary.php, deletes reservation, redirects to invoice.html
-        newRow.find('.end-button').click(async function (event) {
-          event.preventDefault();
-          const button = $(this);
-          if (button.data('closing')) return;
-          button.data('closing', true);
-          try {
-            let gameCost = 0;
-            if (isPostPayment) {
-              const elapsedSec = Math.max(60, stopTimer());
-              gameCost = Math.round(hourlyPrice * (elapsedSec / 3600));
-            } else if (isPrePayment) {
-              const response = await fetch('./finishTime.json');
-              const timers = response.ok ? await response.json() : [];
-              const timer = Array.isArray(timers)
-                ? timers.find((item) => String(item.tableNumber) === String(reservation.tableNumber))
-                : null;
-              if (timer && timer.finishTime && timer.startTime) {
-                gameCost =
-                  Math.round((((timer.finishTime - timer.startTime) / 3600) * hourlyPrice) / 1000) *
-                  1000;
-              } else {
-                gameCost = prePaymentCost || Math.round(hourlyPrice);
-              }
-            } else {
-              return;
-            }
-
-            if (!button.data('gameSaved')) {
-              await $.post('./game_temporary.php', {
-                gameCost,
-                consoleType,
-                priceType,
-                tableNumber: reservation.tableNumber,
-              });
-              button.data('gameSaved', true);
-            }
-            await $.post('./delete_reservation.php', { tableNumber: reservation.tableNumber });
-            location.href = 'invoice.html?table=' + encodeURIComponent(reservation.tableNumber);
-          } catch {
-            showToast('پایان بازی ثبت نشد. دوباره تلاش کنید.');
-          } finally {
-            button.data('closing', false);
-          }
-        });
-
-        // Charge button focuses the dedicated Table Charging Card
-        newRow.find('.charge-button').click(function (e) {
-          e.preventDefault();
-          const chargeModalTitle = `شارژ برای میز ${convertToPersian(reservation.tableNumber)}`;
-          const chargeFormTitle = `شارژ برای میز ${convertToPersian(reservation.tableNumber)}`;
-          const chargeModal = document.getElementById('ChargeModal');
-          if (chargeModal) {
-            chargeModal.style.display = 'block';
-            const h3 = chargeModal.querySelector('.charge-modal-content h3');
-            if (h3) h3.textContent = chargeModalTitle;
-          }
-          const titleEl = document.getElementById('chargeFormTitle');
-          if (titleEl) titleEl.textContent = chargeFormTitle;
-          if (chargeTableSelect) {
-            chargeTableSelect.value = String(reservation.tableNumber);
-          }
-          if (chargeForm) {
-            chargeForm.dataset.selectedTable = String(reservation.tableNumber);
-          }
-          highlightCard('ChargeModal');
-        });
-
-        tableBody.append(newRow);
 
         // Live Timer Logic for Post-Payment (Count Up)
         let elapsedTime = 0;
@@ -807,6 +766,7 @@ window.renderTablesWorkspace = function renderTablesWorkspace() {
             elapsedTime = Math.max(0, Math.floor(Date.now() / 1000) - clickTime);
             updateTimer();
           }, 1000);
+          window.__mgTableTimerIntervals.push(timerInterval);
         }
 
         function loadTimer(tableNumber) {
@@ -865,6 +825,7 @@ window.renderTablesWorkspace = function renderTablesWorkspace() {
               showToast(`پایان زمان میز ${convertToPersian(reservation.tableNumber)}`);
             }
           }, 1000);
+          window.__mgTableTimerIntervals.push(timeinterval);
         }
 
         function loadTime(tableNumber) {
@@ -876,19 +837,330 @@ window.renderTablesWorkspace = function renderTablesWorkspace() {
         }
 
         function displayTime(res) {
-          if (res.postPayment === 'post-payment') {
+          if (isPostPayment) {
             setTimeout(() => loadTimer(res.tableNumber), 0);
             return `<div class="timer" id="timer${res.tableNumber}">۰۰:۰۰:۰۰</div>`;
-          } else if (res.prePayment === 'pre-payment') {
+          } else if (isPrePayment) {
             setTimeout(() => loadTime(res.tableNumber), 0);
             return `<div class="timer2" id="PreTime${res.tableNumber}">۰۰:۰۰:۰۰</div>`;
           } else {
             return 'زمان نامشخص';
           }
         }
+
+        const timeText = displayTime(reservation);
+        const consoleLabel = CONSOLE_LABELS[consoleType] || consoleType;
+        const priceLabel = PRICE_LABELS[priceType] || 'استاندارد';
+        const payModeLabel = isPrePayment ? 'پیش‌پرداخت' : 'پس‌کرایه';
+        const buffetBadgeHtml =
+          tableBuffetCount > 0
+            ? ` <span class="mg-nav-badge badge-Highlight">${convertToPersian(tableBuffetCount)}</span>`
+            : '';
+
+        const actionsHtml = isPostPayment
+          ? '<td class="nowrap"><div class="mg-actions-cell">' +
+            '<a href="#" class="btn btn-success btn-xs start-button">▶ شــروع</a>' +
+            '<a href="#" class="btn btn-danger btn-xs end-button">■ پایان و فاکتور</a>' +
+            '</div></td>'
+          : isPrePayment
+          ? '<td class="nowrap"><div class="mg-actions-cell">' +
+            '<a href="#" class="btn btn-success btn-xs start-button">▶ شــروع</a>' +
+            '<a href="#" class="btn btn-danger btn-xs end-button">■ پایان و فاکتور</a>' +
+            '<a href="#" class="btn btn-info btn-xs charge-button">⚡ شارژ مجدد</a>' +
+            '</div></td>'
+          : '<td class="nowrap">وضعیت نامعلوم</td>';
+
+        const linkedCust =
+          reservation.customerId && Object.prototype.hasOwnProperty.call(customersMap, String(reservation.customerId))
+            ? customersMap[String(reservation.customerId)]
+            : null;
+        const customerBadgeHtml = linkedCust
+          ? `<span class="mg-table-member-pill" title="مشتری عضو باشگاه">${escapeHtmlSafe(linkedCust.customerName)}</span>`
+          : '';
+        const sync3dPillHtml = activeMeta.from3D
+          ? '<span class="mg-table-3d-pill" title="متصل به نقشه سه‌بعدی گیم‌نت من">3D</span>'
+          : '';
+
+        const newRow = document.createElement('tr');
+        newRow.setAttribute('data-table', String(reservation.tableNumber));
+        newRow.setAttribute('data-console', String(consoleType));
+        newRow.setAttribute('data-payment', paymentModeKey);
+        newRow.setAttribute('data-status', 'active');
+        newRow.setAttribute(
+          'data-search',
+          `${reservation.tableNumber} ${consoleLabel} ${priceLabel} ${consoleType} ${linkedCust ? linkedCust.customerName : ''}`
+        );
+
+        newRow.innerHTML =
+          `<td><span class="mg-row-index">${convertToPersian(rowNumber++)}</span></td>` +
+          `<td><div class="mg-timer-wrap">${timeText}<span class="mg-pay-mode-tag">${payModeLabel}</span></div></td>` +
+          `<td><ul class="list-inline mg-station-badge"><i class="demo-icon icon-table" style="font-size: 18px;"></i><span>میز ${convertToPersian(reservation.tableNumber)}</span>${sync3dPillHtml}${customerBadgeHtml}</ul></td>` +
+          `<td><span class="mg-player-badge">${priceLabel}</span></td>` +
+          `<td><div class="mg-console-cell"><i class="demo-icon icon-${escapeHtmlSafe(consoleType)}" style="font-size: 22px;"></i><span>${escapeHtmlSafe(consoleLabel)}</span></div></td>` +
+          `<td><button type="button" class="btn btn-warning btn-xs bufeh-button">بوفـه${buffetBadgeHtml}</button></td>` +
+          actionsHtml;
+
+        // Buffet button focuses the dedicated Buffet Purchase card for this table
+        const bufehBtn = newRow.querySelector('.bufeh-button');
+        if (bufehBtn) {
+          bufehBtn.addEventListener('click', function () {
+            const modalTitle = `بوفه برای میز ${convertToPersian(reservation.tableNumber)}`;
+            const formTitle = `خرید از بوفه برای میز ${convertToPersian(reservation.tableNumber)}`;
+            const modal = document.getElementById('myModal');
+            if (modal) {
+              modal.style.display = 'flex';
+              const h3 = modal.querySelector('.modal-content h3');
+              if (h3) h3.textContent = modalTitle;
+            }
+            const formTitleEl = document.getElementById('formTitle');
+            if (formTitleEl) formTitleEl.textContent = formTitle;
+            if (buffetTableSelect) {
+              buffetTableSelect.value = String(reservation.tableNumber);
+            }
+            if (buyForm) {
+              buyForm.dataset.selectedTable = String(reservation.tableNumber);
+            }
+            highlightCard('myModal');
+          });
+        }
+
+        // Start timer handler
+        let sessionPostPayment = isPostPayment;
+        let sessionPrePayment = isPrePayment;
+
+        const startBtn = newRow.querySelector('.start-button');
+        if (startBtn) {
+          startBtn.addEventListener('click', async function (e) {
+            e.preventDefault();
+            const tableNumber = reservation.tableNumber;
+            try {
+              if (sessionPostPayment) {
+                const clickTimeNow = Math.floor(Date.now() / 1000);
+                const resp = await postFormUrlEncoded('./timing.php', {
+                  tableNumber: tableNumber,
+                  clickTime: clickTimeNow,
+                });
+                if (!resp.ok && resp.status !== 303) {
+                  showToast('خطا در شروع زمان‌سنج میز.');
+                  return;
+                }
+                showToast(`تایمر میز ${convertToPersian(tableNumber)} شروع شد.`);
+                sessionPostPayment = false;
+                invalidateTablesCache();
+                await window.renderTablesWorkspace({ forceFresh: true });
+                window.dispatchEvent(new CustomEvent('mg:tables-updated'));
+              } else if (sessionPrePayment) {
+                const startTimeNow = Math.floor(Date.now() / 1000);
+                const finishTimeNow = startTimeNow + (timeSeconds > 0 ? timeSeconds : 3600);
+                const resp = await postFormUrlEncoded('./timer.php', {
+                  tableNumber: tableNumber,
+                  finishTime: finishTimeNow,
+                  startTime: startTimeNow,
+                });
+                if (!resp.ok && resp.status !== 303) {
+                  showToast('خطا در شروع تایمر میز.');
+                  return;
+                }
+                showToast(`تایمر میز ${convertToPersian(tableNumber)} شروع شد.`);
+                sessionPrePayment = false;
+                invalidateTablesCache();
+                await window.renderTablesWorkspace({ forceFresh: true });
+                window.dispatchEvent(new CustomEvent('mg:tables-updated'));
+              }
+            } catch {
+              showToast('خطا در شروع زمان‌سنج میز.');
+            }
+          });
+        }
+
+        // End session handler -> saves game_temporary.php, deletes reservation, redirects to invoice.html
+        const endBtn = newRow.querySelector('.end-button');
+        if (endBtn) {
+          endBtn.addEventListener('click', async function (event) {
+            event.preventDefault();
+            if (endBtn.dataset.closing === '1') return;
+            endBtn.dataset.closing = '1';
+            try {
+              let gameCost = 0;
+              let playedSeconds = 0;
+              if (isPostPayment) {
+                const elapsedSec = Math.max(60, stopTimer());
+                playedSeconds = elapsedSec;
+                gameCost = Math.round(hourlyPrice * (elapsedSec / 3600));
+              } else if (isPrePayment) {
+                const response = await fetch('./finishTime.json', { cache: 'no-store' });
+                const timers = response.ok ? await response.json() : [];
+                const timer = Array.isArray(timers)
+                  ? timers.find((item) => String(item.tableNumber) === String(reservation.tableNumber))
+                  : null;
+                if (timer && timer.finishTime && timer.startTime) {
+                  playedSeconds = Math.max(60, Math.round(Number(timer.finishTime) - Number(timer.startTime)));
+                  gameCost =
+                    Math.round((((timer.finishTime - timer.startTime) / 3600) * hourlyPrice) / 1000) *
+                    1000;
+                } else {
+                  gameCost = prePaymentCost || Math.round(hourlyPrice);
+                  playedSeconds = hourlyPrice > 0 ? Math.max(60, Math.round((gameCost / hourlyPrice) * 3600)) : 3600;
+                }
+              } else {
+                return;
+              }
+
+              if (endBtn.dataset.gameSaved !== '1') {
+                const saveResp = await postFormUrlEncoded('./game_temporary.php', {
+                  gameCost,
+                  consoleType,
+                  priceType,
+                  tableNumber: reservation.tableNumber,
+                  playedSeconds,
+                  customerId: reservation.customerId || '',
+                });
+                if (!saveResp.ok) throw new Error('save_failed');
+                endBtn.dataset.gameSaved = '1';
+              }
+              const delResp = await postFormUrlEncoded('./delete_reservation.php', {
+                tableNumber: reservation.tableNumber,
+              });
+              if (!delResp.ok && delResp.status !== 303) throw new Error('delete_failed');
+              location.href = 'invoice.html?table=' + encodeURIComponent(reservation.tableNumber);
+            } catch {
+              showToast('پایان بازی ثبت نشد. دوباره تلاش کنید.');
+            } finally {
+              endBtn.dataset.closing = '0';
+            }
+          });
+        }
+
+        // Charge button focuses the dedicated Table Charging Card
+        const chargeBtn = newRow.querySelector('.charge-button');
+        if (chargeBtn) {
+          chargeBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const chargeModalTitle = `شارژ برای میز ${convertToPersian(reservation.tableNumber)}`;
+            const chargeFormTitle = `شارژ برای میز ${convertToPersian(reservation.tableNumber)}`;
+            const chargeModal = document.getElementById('ChargeModal');
+            if (chargeModal) {
+              chargeModal.style.display = 'block';
+              const h3 = chargeModal.querySelector('.charge-modal-content h3');
+              if (h3) h3.textContent = chargeModalTitle;
+            }
+            const titleEl = document.getElementById('chargeFormTitle');
+            if (titleEl) titleEl.textContent = chargeFormTitle;
+            if (chargeTableSelect) {
+              chargeTableSelect.value = String(reservation.tableNumber);
+            }
+            if (chargeForm) {
+              chargeForm.dataset.selectedTable = String(reservation.tableNumber);
+            }
+            highlightCard('ChargeModal');
+          });
+        }
+
+        tableBody.appendChild(newRow);
       });
+
+      // Render Idle 3D Floor-Plan Stations (PCs, Consoles, Billiard, Foosball, VIP/VR) synced from "گیم نت من"
+      mergedTables.idleRows.forEach(function (idleMeta) {
+        const st = idleMeta.station3D;
+        if (!st) return;
+        const consoleLabel = CONSOLE_LABELS[st.consoleType] || st.name;
+
+        const idleRow = document.createElement('tr');
+        idleRow.className = 'mg-idle-3d-row';
+        idleRow.setAttribute('data-table', String(st.tableNumber));
+        idleRow.setAttribute('data-console', String(st.consoleType));
+        idleRow.setAttribute('data-payment', 'idle');
+        idleRow.setAttribute('data-status', 'idle');
+        idleRow.setAttribute('data-3d-station', '1');
+        idleRow.setAttribute(
+          'data-search',
+          `${st.tableNumber} ${consoleLabel} ${st.name} ${st.consoleType} آزاد نقشه سه‌بعدی`
+        );
+
+        idleRow.innerHTML =
+          `<td><span class="mg-row-index">${convertToPersian(rowNumber++)}</span></td>` +
+          `<td><div class="mg-timer-wrap"><div class="mg-idle-timer-pill">۰۰:۰۰:۰۰</div><span class="mg-pay-mode-tag is-idle">آزاد · آماده</span></div></td>` +
+          `<td><ul class="list-inline mg-station-badge"><i class="demo-icon icon-table" style="font-size: 18px;"></i><span>میز ${convertToPersian(st.tableNumber)}</span><span class="mg-table-3d-pill" title="همگام‌سازی‌شده با نقشه سه‌بعدی گیم‌نت من">3D</span></ul></td>` +
+          `<td><span class="mg-player-badge is-idle">آماده رزرو</span></td>` +
+          `<td><div class="mg-console-cell"><i class="demo-icon icon-${escapeHtmlSafe(st.consoleType)}" style="font-size: 22px;"></i><span>${escapeHtmlSafe(consoleLabel)}</span></div></td>` +
+          `<td><span class="mg-idle-muted">—</span></td>` +
+          `<td class="nowrap"><div class="mg-actions-cell">` +
+          `<button type="button" class="btn btn-success btn-xs mg-quick-start-3d-btn" data-table-number="${escapeHtmlSafe(st.tableNumber)}" data-console-type="${escapeHtmlSafe(st.consoleType)}">▶ شروع سریع</button>` +
+          `<button type="button" class="btn btn-info btn-xs mg-prefill-3d-btn" data-table-number="${escapeHtmlSafe(st.tableNumber)}" data-console-type="${escapeHtmlSafe(st.consoleType)}">تنظیم فرم</button>` +
+          `</div></td>`;
+
+        const quickStartBtn = idleRow.querySelector('.mg-quick-start-3d-btn');
+        if (quickStartBtn) {
+          quickStartBtn.addEventListener('click', async function () {
+            if (quickStartBtn.disabled) return;
+            quickStartBtn.disabled = true;
+            try {
+              const regResp = await postFormUrlEncoded('./process.php', {
+                tableNumber: st.tableNumber,
+                'table-number': st.tableNumber,
+                consoleType: st.consoleType,
+                priceType: 'one_player_price',
+                'post-payment': 'post-payment',
+                paymentType: 'post-payment',
+              });
+              const regData = await regResp.json().catch(() => ({}));
+              if (!regResp.ok || regData.error) {
+                showToast(regData.error || 'خطا در شروع سریع میز.');
+                quickStartBtn.disabled = false;
+                return;
+              }
+              await postFormUrlEncoded('./timing.php', {
+                tableNumber: st.tableNumber,
+                clickTime: Math.floor(Date.now() / 1000),
+              });
+              showToast(`میز ${convertToPersian(st.tableNumber)} (${consoleLabel}) راه‌اندازی و تایمر شروع شد.`);
+              invalidateTablesCache();
+              await window.renderTablesWorkspace({ forceFresh: true });
+              window.dispatchEvent(new CustomEvent('mg:tables-updated'));
+            } catch {
+              showToast('خطا در ارتباط با سرور هنگام راه‌اندازی میز.');
+              quickStartBtn.disabled = false;
+            }
+          });
+        }
+
+        const prefillBtn = idleRow.querySelector('.mg-prefill-3d-btn');
+        if (prefillBtn) {
+          prefillBtn.addEventListener('click', function () {
+            const tblInput = document.getElementById('tableNumber');
+            const conSelect = document.getElementById('consoleType');
+            const prcSelect = document.getElementById('priceType');
+            if (tblInput) tblInput.value = String(st.tableNumber);
+            if (conSelect) conSelect.value = String(st.consoleType);
+            if (prcSelect && !prcSelect.value) prcSelect.value = 'one_player_price';
+            clearRegistrationErrors();
+            highlightCard('register-section');
+            if (tblInput) tblInput.focus();
+            showToast(`اطلاعات میز ${convertToPersian(st.tableNumber)} (${consoleLabel}) در فرم قرار گرفت.`);
+          });
+        }
+
+        tableBody.appendChild(idleRow);
+      });
+    })
+    .catch((err) => {
+      console.error('Failed to render active tables:', err);
     });
 };
 
-$(document).ready(window.renderTablesWorkspace);
+if (!window.__mgTablesLayoutSyncBound) {
+  window.__mgTablesLayoutSyncBound = true;
+  window.addEventListener('mg:layout-updated', () => {
+    invalidateTablesCache();
+    if (typeof window.renderTablesWorkspace === 'function') {
+      window.renderTablesWorkspace({ forceFresh: true });
+    }
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => window.renderTablesWorkspace());
+} else {
+  window.renderTablesWorkspace();
+}
 

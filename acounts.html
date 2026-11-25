@@ -10,7 +10,15 @@
   <link href="assets/bootstrap/bootstrap.min.css" rel="stylesheet">
   <link href="assets/bootstrap/bootstrap-rtl.css" rel="stylesheet">
   <link href="fontello/css/my-icon.css" rel="stylesheet">
-  <link href="assets/css/gaming-dashboard.css?v=20261121-4" rel="stylesheet">
+  <link href="assets/css/gaming-dashboard.css?v=20261124-9" rel="stylesheet">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./node_modules/three/build/three.module.js",
+        "three/addons/": "./node_modules/three/examples/jsm/"
+      }
+    }
+  </script>
 </head>
 <body>
   <div id="sidebarBackdrop" class="mg-sidebar-backdrop"></div>
@@ -83,6 +91,14 @@
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
             </span>
             <span class="mg-nav-label">مدیریت بوفه</span>
+          </a>
+        </li>
+        <li id="navItemMyGamenet" class="mg-nav-item">
+          <a href="index.html#my-gamenet" data-nav-view="my-gamenet" data-rail-tip="گیم نت من">
+            <span class="mg-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+            </span>
+            <span class="mg-nav-label">گیم نت من</span>
           </a>
         </li>
 
@@ -188,9 +204,38 @@
           </form>
         </div>
 
+        <div class="mg-card" id="loyaltyConfigCard">
+          <div class="mg-card-header">
+            <div>
+              <h2 class="mg-card-title">تنظیمات جایزه وفاداری (تخفیف پس از ساعت بازی)</h2>
+              <p class="mg-card-subtitle">مشتریان ثبت‌نام‌شده با رسیدن مجموع ساعات بازی به حد نصاب، به‌صورت خودکار تخفیف جایزه دریافت می‌کنند</p>
+            </div>
+            <span class="mg-card-tag">پاداش وفاداری</span>
+          </div>
+          <form id="loyaltyConfigForm" class="mg-loyalty-config-form">
+            <div class="mg-loyalty-config-grid">
+              <div class="mg-form-group">
+                <label for="loyaltyMilestoneHours" class="mg-label">ساعت بازی لازم برای هر جایزه (ساعت)</label>
+                <input type="number" min="1" max="200" step="1" class="form-control mg-input" id="loyaltyMilestoneHours" name="milestoneHours" value="24" required>
+              </div>
+              <div class="mg-form-group">
+                <label for="loyaltyDiscountPercent" class="mg-label">درصد تخفیف جایزه (%)</label>
+                <input type="number" min="1" max="90" step="1" class="form-control mg-input" id="loyaltyDiscountPercent" name="discountPercent" value="20" required>
+              </div>
+              <div class="mg-form-group mg-loyalty-config-submit-wrap">
+                <button type="submit" class="btn btn-primary mg-btn mg-btn-primary">ذخیره قانون جایزه</button>
+                <span id="loyaltyConfigStatus" class="mg-loyalty-config-status" aria-live="polite"></span>
+              </div>
+            </div>
+          </form>
+        </div>
+
         <div class="mg-card">
           <div class="mg-card-header">
-            <h2 class="mg-card-title">لیست مشتریان و اعتبار باقیمانده</h2>
+            <div>
+              <h2 class="mg-card-title">لیست مشتریان، ساعات بازی و جوایز تخفیف</h2>
+              <p class="mg-card-subtitle">پیگیری پیشرفت هر عضو باشگاه تا دریافت جایزه تخفیف بعدی</p>
+            </div>
           </div>
           <div class="mg-table-responsive">
             <table class="table mg-table" id="customerTable">
@@ -200,6 +245,8 @@
                   <th class="column-title">کد مشتری</th>
                   <th class="column-title">نام و نام خانوادگی</th>
                   <th class="column-title">مبلغ شارژ باقیمانده</th>
+                  <th class="column-title">ساعات بازی و پیشرفت</th>
+                  <th class="column-title">وضعیت جایزه تخفیف</th>
                   <th class="column-title">عملیات</th>
                 </tr>
               </thead>
@@ -224,12 +271,29 @@
             </div>
           </div>
         </div>
+
+        <!-- Log Customer Playtime Modal -->
+        <div id="addPlaytimeModal" class="modal" role="dialog" style="display: none;">
+          <div class="customer-modal-content mg-card" style="max-width: 440px; margin: 10vh auto;">
+            <span class="close" style="cursor: pointer; float: left; font-size: 22px;">&times;</span>
+            <div class="modal-header" id="addPlaytimeModalHeader" style="border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px; margin-bottom: 14px;"></div>
+            <div class="modal-body">
+              <form id="addPlaytimeForm">
+                <div class="mg-form-group">
+                  <label for="addPlaytimeHoursInput" class="mg-label">افزودن ساعت بازی به سابقه مشتری (ساعت):</label>
+                  <input type="number" min="0.5" max="240" step="0.5" class="form-control mg-input" id="addPlaytimeHoursInput" value="1" required>
+                </div>
+                <button type="submit" class="btn btn-success mg-btn mg-btn-emerald mg-btn-block" id="addPlaytimeSubmitBtn">ثبت ساعت بازی و به‌روزرسانی جایزه</button>
+              </form>
+            </div>
+          </div>
+        </div>
       </main>
     </div>
   </div>
 
   <script src="vendors/Flot/jquery.js"></script>
-  <script src="JS/acounts.js?v=20261110-24"></script>
-  <script type="module" src="JS/dashboard-ui.js?v=20261121-4"></script>
+  <script src="JS/acounts.js?v=20261124-9"></script>
+  <script type="module" src="JS/dashboard-ui.js?v=20261124-9"></script>
 </body>
 </html>

@@ -7,6 +7,7 @@ import {
   computeDonutSegmentsGeometry,
   interpolateCountUp,
 } from './dashboard-metrics.mjs?v=20261109-3';
+import { updateHomeArenaTrack } from './home-track.js?v=20261124-1';
 
 const prefersReducedMotion =
   typeof window !== 'undefined' &&
@@ -152,6 +153,14 @@ const SPA_SECTIONS = {
     tip: 'ثبت و راه‌اندازی میز جدید، شارژ مجدد سشن‌ها، ثبت سفارش بوفه و مدیریت تایمرها',
     url: 'index.html#tables-section',
   },
+  'my-gamenet': {
+    key: 'my-gamenet',
+    navMatch: '#my-gamenet',
+    title: 'گیم نت من',
+    docTitle: 'Game District | طراح سه‌بعدی گیم‌نت من',
+    tip: 'طراحی سه‌بعدی محیط سالن، ابعاد و نورپردازی و چیدمان میزها، صندلی‌ها و سیستم‌های بازی',
+    url: 'index.html#my-gamenet',
+  },
   console: {
     key: 'console',
     file: 'console.html?v=20261121-3',
@@ -176,8 +185,8 @@ const SPA_SECTIONS = {
   },
   accounts: {
     key: 'accounts',
-    file: 'acounts.html?v=20261121-3',
-    script: 'JS/acounts.js?v=20261121-3',
+    file: 'acounts.html?v=20261124-9',
+    script: 'JS/acounts.js?v=20261124-9',
     renderFn: 'renderAccountsPage',
     navMatch: 'acounts.html',
     title: 'باشگاه مشتریان',
@@ -221,6 +230,9 @@ function resolveSectionKeyFromHref(href = '') {
   if (lower.includes('acounts.html')) return 'accounts';
   if (lower.includes('debtors.html')) return 'debtors';
   if (lower.includes('income.html')) return 'income';
+  if (lower.includes('#my-gamenet') || lower === 'my-gamenet') {
+    return 'my-gamenet';
+  }
   if (lower.includes('#tables-section') || lower.includes('#tables') || lower === 'tables') {
     return 'tables';
   }
@@ -238,6 +250,14 @@ function detectInitialSectionKey() {
   if (path.includes('acounts.html')) return 'accounts';
   if (path.includes('debtors.html')) return 'debtors';
   if (path.includes('income.html')) return 'income';
+  if (hash === '#my-gamenet') {
+    try {
+      sessionStorage.removeItem('mg_return_to_tables');
+    } catch {
+      // ignore
+    }
+    return 'my-gamenet';
+  }
   if (hash === '#tables-section' || hash === '#tables') {
     try {
       sessionStorage.removeItem('mg_return_to_tables');
@@ -282,7 +302,12 @@ function ensureSpaScriptLoaded(scriptSrc, renderFnName) {
   }
   const p = new Promise((resolve) => {
     const s = document.createElement('script');
-    if (baseName.includes('income.js') || baseName.endsWith('.mjs')) {
+    if (
+      baseName.includes('income.js') ||
+      baseName.includes('acounts.js') ||
+      baseName.includes('invoice.js') ||
+      baseName.endsWith('.mjs')
+    ) {
       s.type = 'module';
     }
     s.src = scriptSrc;
@@ -318,18 +343,23 @@ async function fetchSectionMainHtml(sectionKey) {
 }
 
 async function ensureIndexViewsPresent() {
-  if (document.getElementById('mgOverviewView') && document.getElementById('mgTablesView')) {
+  if (
+    document.getElementById('mgOverviewView') &&
+    document.getElementById('mgTablesView') &&
+    document.getElementById('mgMyGamenetView')
+  ) {
     return true;
   }
   const mainEl = document.querySelector('main.mg-content');
   if (!mainEl) return false;
   try {
-    const res = await fetch('index.html?v=20261110-24', { cache: 'no-store' });
+    const res = await fetch('index.html?v=20261124-7', { cache: 'no-store' });
     if (!res.ok) return false;
     const html = await res.text();
     const doc = new DOMParser().parseFromString(html, 'text/html');
     const overviewEl = doc.getElementById('mgOverviewView');
     const tablesEl = doc.getElementById('mgTablesView');
+    const myGamenetEl = doc.getElementById('mgMyGamenetView');
     if (overviewEl && !document.getElementById('mgOverviewView')) {
       overviewEl.classList.remove('is-active-view');
       overviewEl.setAttribute('hidden', '');
@@ -340,9 +370,14 @@ async function ensureIndexViewsPresent() {
       tablesEl.setAttribute('hidden', '');
       mainEl.insertBefore(tablesEl, document.getElementById('mgDynamicView'));
     }
-    await ensureSpaScriptLoaded('JS/7878.js?v=20261110-24', 'renderTablesWorkspace');
+    if (myGamenetEl && !document.getElementById('mgMyGamenetView')) {
+      myGamenetEl.classList.remove('is-active-view');
+      myGamenetEl.setAttribute('hidden', '');
+      mainEl.insertBefore(myGamenetEl, document.getElementById('mgDynamicView'));
+    }
+    await ensureSpaScriptLoaded('JS/7878.js?v=20261124-9', 'renderTablesWorkspace');
     if (typeof window.renderTablesWorkspace === 'function') {
-      window.renderTablesWorkspace();
+      window.renderTablesWorkspace({ forceFresh: true });
     }
     initQuickPresets();
     initTableSearchAndFilter();
@@ -380,6 +415,7 @@ function syncSidebarNavActiveState(sectionKey) {
     const isMatch = Boolean(
       (sectionKey === 'overview' && (dataView === 'overview' || href.includes('#overview'))) ||
         (sectionKey === 'tables' && (dataView === 'tables' || href.includes('#tables'))) ||
+        (sectionKey === 'my-gamenet' && (dataView === 'my-gamenet' || href.includes('#my-gamenet'))) ||
         (Boolean(sec.file) && href.includes(sec.file.toLowerCase()))
     );
     if (isMatch && !matchedItem) {
@@ -447,12 +483,13 @@ async function switchSpaSection(targetKey, options = {}) {
   }
 
   // 5. Swap main view panes without synchronous layout thrashing so sidebar spring animation stays at 60fps
-  if (sectionKey === 'overview' || sectionKey === 'tables') {
+  if (sectionKey === 'overview' || sectionKey === 'tables' || sectionKey === 'my-gamenet') {
     await ensureIndexViewsPresent();
     if (currentSpaSectionKey !== sectionKey) return;
 
     const overviewPane = document.getElementById('mgOverviewView');
     const tablesPane = document.getElementById('mgTablesView');
+    const myGamenetPane = document.getElementById('mgMyGamenetView');
     const dynPane = document.getElementById('mgDynamicView');
 
     if (dynPane) {
@@ -460,22 +497,38 @@ async function switchSpaSection(targetKey, options = {}) {
       dynPane.setAttribute('hidden', '');
     }
 
-    if (overviewPane && tablesPane) {
-      const isTables = sectionKey === 'tables';
-      const activePane = isTables ? tablesPane : overviewPane;
-      const inactivePane = isTables ? overviewPane : tablesPane;
-
-      inactivePane.classList.remove('is-active-view');
-      inactivePane.setAttribute('hidden', '');
-
-      activePane.removeAttribute('hidden');
-      activePane.classList.add('is-active-view');
-    }
+    const indexPanes = [
+      { key: 'overview', el: overviewPane },
+      { key: 'tables', el: tablesPane },
+      { key: 'my-gamenet', el: myGamenetPane },
+    ];
+    indexPanes.forEach(({ key, el }) => {
+      if (!el) return;
+      if (key === sectionKey) {
+        el.removeAttribute('hidden');
+        el.classList.add('is-active-view');
+      } else {
+        el.classList.remove('is-active-view');
+        el.setAttribute('hidden', '');
+      }
+    });
 
     requestAnimationFrame(() => {
       if (currentSpaSectionKey !== sectionKey) return;
       if (sectionKey === 'overview') {
-        loadAndRenderKPIs();
+        loadAndRenderKPIs({ forceFresh: true });
+      } else if (sectionKey === 'tables' && typeof window.renderTablesWorkspace === 'function') {
+        window.renderTablesWorkspace({ forceFresh: true });
+      } else if (sectionKey === 'my-gamenet') {
+        import('./gamenet-3d.js?v=20261124-7')
+          .then((mod) => {
+            if (currentSpaSectionKey === 'my-gamenet' && typeof mod.mountMyGamenet3D === 'function') {
+              mod.mountMyGamenet3D();
+            }
+          })
+          .catch((err) => {
+            console.error('Failed to mount 3D Gamenet Builder:', err);
+          });
       }
       initScrollAndEntranceAnimations();
       initExclamationTooltips();
@@ -486,6 +539,7 @@ async function switchSpaSection(targetKey, options = {}) {
   // Management sub-section ('console', 'buffet', 'accounts', 'debtors', 'income')
   const overviewPane = document.getElementById('mgOverviewView');
   const tablesPane = document.getElementById('mgTablesView');
+  const myGamenetPane = document.getElementById('mgMyGamenetView');
   if (overviewPane) {
     overviewPane.classList.remove('is-active-view');
     overviewPane.setAttribute('hidden', '');
@@ -493,6 +547,10 @@ async function switchSpaSection(targetKey, options = {}) {
   if (tablesPane) {
     tablesPane.classList.remove('is-active-view');
     tablesPane.setAttribute('hidden', '');
+  }
+  if (myGamenetPane) {
+    myGamenetPane.classList.remove('is-active-view');
+    myGamenetPane.setAttribute('hidden', '');
   }
 
   const dynPane = getOrCreateDynamicViewPane();
@@ -571,7 +629,12 @@ function initIndexViewRouter() {
     currentSpaSectionKey = initialKey;
 
     // If page loaded directly on a secondary HTML file (e.g., console.html), wrap its initial <main> content into #mgDynamicView
-    if (!document.getElementById('mgOverviewView') && initialKey !== 'overview' && initialKey !== 'tables') {
+    if (
+      !document.getElementById('mgOverviewView') &&
+      initialKey !== 'overview' &&
+      initialKey !== 'tables' &&
+      initialKey !== 'my-gamenet'
+    ) {
       let dynPane = document.getElementById('mgDynamicView');
       if (!dynPane) {
         const initialHtml = mainEl.innerHTML;
@@ -636,6 +699,8 @@ function initIndexViewRouter() {
     const hash = (window.location.hash || '').toLowerCase();
     if (hash === '#tables-section' || hash === '#tables') {
       switchSpaSection('tables', { updateHistory: false, scrollToTop: true });
+    } else if (hash === '#my-gamenet') {
+      switchSpaSection('my-gamenet', { updateHistory: false, scrollToTop: true });
     } else if (hash === '#overview') {
       switchSpaSection('overview', { updateHistory: false, scrollToTop: true });
     }
@@ -804,6 +869,7 @@ function initTableSearchAndFilter() {
 
     rows.forEach((row, idx) => {
       const payment = row.getAttribute('data-payment') || '';
+      const status = row.getAttribute('data-status') || 'active';
       const consoleType = row.getAttribute('data-console') || '';
       const searchText = (row.getAttribute('data-search') || row.textContent || '').toLowerCase();
 
@@ -812,6 +878,8 @@ function initTableSearchAndFilter() {
         matchesFilter = payment === 'post-payment';
       } else if (activeFilter === 'pre-payment') {
         matchesFilter = payment === 'pre-payment';
+      } else if (activeFilter === 'idle') {
+        matchesFilter = status === 'idle';
       } else if (activeFilter === 'console') {
         matchesFilter = ['ps50', 'ps4', 'xbox'].includes(consoleType);
       } else if (activeFilter === 'other') {
@@ -1233,17 +1301,24 @@ function restoreCachedBadges() {
   }
 }
 
-function getSharedBundle() {
+function getSharedBundle(forceFresh = false) {
+  if (forceFresh) {
+    window.__mgBundlePromise = null;
+    window.__mgJsonPromises = {};
+  }
   if (!window.__mgBundlePromise) {
     let cached = null;
-    try {
-      const raw = sessionStorage.getItem('mg_bundle_v1');
-      if (raw) cached = JSON.parse(raw);
-    } catch {
-      cached = null;
+    if (!forceFresh) {
+      try {
+        const raw = sessionStorage.getItem('mg_bundle_v1');
+        if (raw) cached = JSON.parse(raw);
+      } catch {
+        cached = null;
+      }
     }
 
-    const networkPromise = fetch('./bundle.json')
+    const cacheBust = forceFresh ? `?_=${Date.now()}` : '';
+    window.__mgBundlePromise = fetch(`./bundle.json${cacheBust}`, { cache: 'no-store' })
       .then((r) => (r.ok ? r.json() : null))
       .then((bundle) => {
         if (bundle && typeof bundle === 'object') {
@@ -1257,33 +1332,36 @@ function getSharedBundle() {
         return cached;
       })
       .catch(() => cached);
-
-    window.__mgBundlePromise = cached ? Promise.resolve(cached) : networkPromise;
   }
   return window.__mgBundlePromise;
 }
 
-function fetchSharedJson(url, fallback) {
+function fetchSharedJson(url, fallback, forceFresh = false) {
   const cleanKey = String(url).replace(/^\.\//, '');
   window.__mgJsonPromises = window.__mgJsonPromises || {};
-  if (!window.__mgJsonPromises[url]) {
-    window.__mgJsonPromises[url] = getSharedBundle()
+  if (forceFresh || !window.__mgJsonPromises[url]) {
+    window.__mgJsonPromises[url] = getSharedBundle(forceFresh)
       .then((bundle) => {
         if (bundle && cleanKey in bundle) return bundle[cleanKey];
-        return fetch(url).then((r) => (r.ok ? r.json() : fallback));
+        const cacheBust = forceFresh ? `${url.includes('?') ? '&' : '?'}_=${Date.now()}` : '';
+        return fetch(`${url}${cacheBust}`, { cache: 'no-store' }).then((r) => (r.ok ? r.json() : fallback));
       })
       .catch(() => fallback);
   }
   return window.__mgJsonPromises[url];
 }
 
-async function loadAndRenderKPIs() {
-  const cachedBadges = restoreCachedBadges();
+async function loadAndRenderKPIs(options = {}) {
+  const forceFresh = Boolean(options && options.forceFresh);
+  if (forceFresh) {
+    getSharedBundle(true);
+  }
+  const cachedBadges = forceFresh ? null : restoreCachedBadges();
   const hasFullKpiWidgets = Boolean(document.getElementById('kpiActiveTables'));
 
   try {
     if (!hasFullKpiWidgets) {
-      if (cachedBadges) return;
+      if (cachedBadges && !forceFresh) return;
       const [dataRes, reservationsRes, debtPayRes, customerDataRes] = await Promise.all([
         fetchSharedJson('./data.json', { consoles: [] }),
         fetchSharedJson('./reservations.json', []),
@@ -1438,7 +1516,15 @@ async function loadAndRenderKPIs() {
     setText('tablesBannerPrepaid', `${toPersianDigits(metrics.prepaidTablesCount)} میز`);
     setText('tablesBannerRunning', `${toPersianDigits(metrics.activeSessionsCount)} سشن`);
 
-    // Render Overview Mini Active Stations Snapshot
+    // Render Hero Live Oval Arena Track + Legacy Mini Snapshot (if present)
+    updateHomeArenaTrack({
+      reservations: reservationsRes,
+      consoles: dataRes?.consoles || [],
+      clickTimes: clickTimeRes,
+      finishTimes: finishTimeRes,
+      buffetTemp: buffetTempRes,
+      stationCapacity: 12,
+    });
     renderOverviewMiniStations(reservationsRes, clickTimeRes, finishTimeRes, buffetTempRes);
 
     // Animate KPI Mini Progress Rings & Main Circular/Donut Charts
@@ -3088,7 +3174,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadAndRenderKPIs();
 
   window.addEventListener('mg:tables-updated', () => {
-    loadAndRenderKPIs();
+    loadAndRenderKPIs({ forceFresh: true });
   });
 });
 

@@ -9,6 +9,7 @@
     "lint": "node --check server.mjs && node --check backend.mjs && node --check JS/dashboard-metrics.mjs"
   },
   "dependencies": {
+    "three": "^0.187.0",
     "vazirmatn": "^33.0.3"
   }
 }

@@ -5,6 +5,13 @@ import {
   buildBuffetPaymentPayload as buildBuffetPayloadFromItems,
   validateInvoiceSettlementInput,
 } from './invoice-helpers.mjs?v=20261116-1';
+import {
+  DEFAULT_LOYALTY_CONFIG,
+  sanitizeLoyaltyConfig,
+  computeCustomerLoyalty,
+  applyLoyaltyDiscountToTotal,
+  estimatePlayedSecondsFromGameItems,
+} from './loyalty-engine.mjs?v=20261124-7';
 
 const requestedTable = new URLSearchParams(window.location.search).get('table');
 
@@ -44,10 +51,23 @@ const invoiceState = {
   buffetTempMap: {},
   consolesCatalog: [],
   reservationsList: [],
+  customersMap: {},
+  loyaltyConfig: { ...DEFAULT_LOYALTY_CONFIG },
+  selectedCustomerId: '',
+  useLoyaltyReward: false,
   payMethod: 'cash',
   invoiceSerial: '',
   issuedAt: new Date(),
 };
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
 function toFaNum(val) {
   const num = Number(val);
@@ -96,8 +116,44 @@ function showInvoiceNotice(message, type = 'info') {
   }, 3400);
 }
 
+function getSelectedCustomerRecord() {
+  const id = String(invoiceState.selectedCustomerId || '').trim();
+  if (!id || !invoiceState.customersMap || !Object.hasOwn(invoiceState.customersMap, id)) {
+    return null;
+  }
+  return invoiceState.customersMap[id];
+}
+
+function getSelectedCustomerLoyalty() {
+  const customer = getSelectedCustomerRecord();
+  if (!customer) return null;
+  return computeCustomerLoyalty(customer, invoiceState.loyaltyConfig);
+}
+
 function computeTotals() {
-  return computeInvoiceTotals(invoiceState.gameItems, invoiceState.buffetItems);
+  const base = computeInvoiceTotals(invoiceState.gameItems, invoiceState.buffetItems);
+  const loyalty = getSelectedCustomerLoyalty();
+  const canApplyReward = Boolean(loyalty && loyalty.hasRewardReady && invoiceState.useLoyaltyReward);
+  const discounted = applyLoyaltyDiscountToTotal(
+    base.rawTotal,
+    loyalty ? loyalty.discountPercent : 0,
+    canApplyReward
+  );
+
+  // Net gameTotal recorded into revenue after applying loyalty discount (never negative)
+  const netGameTotal = canApplyReward
+    ? Math.max(0, base.gameTotal - Math.min(base.gameTotal, discounted.discountAmount))
+    : base.gameTotal;
+
+  return {
+    ...base,
+    discountPercent: discounted.discountPercent,
+    discountAmount: discounted.discountAmount,
+    payable: discounted.payable,
+    roundingDiff: discounted.roundingDiff,
+    netGameTotal,
+    loyaltyApplied: canApplyReward && discounted.discountAmount > 0,
+  };
 }
 
 function buildBuffetPaymentPayload() {
@@ -142,6 +198,8 @@ function syncTableDataForSelection(tableKey) {
       priceType: g.priceType || 'one_player_price',
       basePrice: Number(g.cosoleprice ?? g.unitprice ?? 0) || 0,
       gameCost: Number(g.gameCost ?? 0) || 0,
+      playedSeconds: Number(g.playedSeconds ?? 0) || 0,
+      customerId: String(g.customerId || '').trim(),
     }));
   } else {
     // Fallback if table is still active in reservations.json
@@ -165,12 +223,26 @@ function syncTableDataForSelection(tableKey) {
           priceType: activeRes.priceType || 'one_player_price',
           basePrice: baseRate,
           gameCost: estimatedCost,
+          playedSeconds: 0,
+          customerId: String(activeRes.customerId || '').trim(),
         },
       ];
     } else {
       invoiceState.gameItems = [];
     }
   }
+
+  // Auto-link registered customer if attached to this table's game item or active reservation
+  const linkedFromGame = invoiceState.gameItems.find((g) => g.customerId)?.customerId || '';
+  const linkedFromRes =
+    invoiceState.reservationsList.find((r) => String(r.tableNumber) === key)?.customerId || '';
+  const autoCustomerId = String(linkedFromGame || linkedFromRes || '').trim();
+  if (autoCustomerId && Object.hasOwn(invoiceState.customersMap, autoCustomerId)) {
+    invoiceState.selectedCustomerId = autoCustomerId;
+  } else if (!Object.hasOwn(invoiceState.customersMap, invoiceState.selectedCustomerId)) {
+    invoiceState.selectedCustomerId = '';
+  }
+  invoiceState.useLoyaltyReward = false;
 
   const rawBuffetList = Array.isArray(invoiceState.buffetTempMap[key])
     ? invoiceState.buffetTempMap[key]
@@ -186,6 +258,102 @@ function syncTableDataForSelection(tableKey) {
     unitPrice: Number(b.unitPrice) || 0,
     productType: b.productType || 'other',
   }));
+}
+
+function populateInvoiceLoyaltyCustomerDropdown() {
+  const select = document.getElementById('invoiceLoyaltyCustomerSelect');
+  if (!select) return;
+  const customers = Object.values(invoiceState.customersMap || {});
+  const cfg = sanitizeLoyaltyConfig(invoiceState.loyaltyConfig);
+  const current = String(invoiceState.selectedCustomerId || '');
+
+  select.innerHTML =
+    '<option value="">— مشتری مهمان (بدون ثبت سابقه باشگاه) —</option>' +
+    customers
+      .map((c) => {
+        const loyalty = computeCustomerLoyalty(c, cfg);
+        const tag = loyalty.hasRewardReady
+          ? `🎁 ${toFaNum(loyalty.availableRewards)} تخفیف ${toFaNum(loyalty.discountPercent)}٪ آماده`
+          : `${toFaNum(loyalty.totalPlayHours)} از ${toFaNum(loyalty.milestoneHours)} ساعت`;
+        return `<option value="${escapeHtml(c.customerId)}" ${
+          String(c.customerId) === current ? 'selected' : ''
+        }>${escapeHtml(c.customerName)} (کد ${escapeHtml(c.customerId)}) — ${tag}</option>`;
+      })
+      .join('');
+}
+
+function renderInvoiceLoyaltyBox() {
+  const cfg = sanitizeLoyaltyConfig(invoiceState.loyaltyConfig);
+  const ruleNote = document.getElementById('invoiceLoyaltyRuleNote');
+  if (ruleNote) {
+    ruleNote.textContent = `با انتخاب مشتری عضو باشگاه، زمان بازی این فاکتور ثبت می‌شود و به ازای هر ${toFaNum(
+      cfg.milestoneHours
+    )} ساعت بازی، یک جایزه ${toFaNum(cfg.discountPercent)}٪ تخفیف فعال می‌گردد.`;
+  }
+
+  const select = document.getElementById('invoiceLoyaltyCustomerSelect');
+  if (select && select.value !== invoiceState.selectedCustomerId) {
+    select.value = invoiceState.selectedCustomerId || '';
+  }
+
+  const customer = getSelectedCustomerRecord();
+  const loyalty = getSelectedCustomerLoyalty();
+  const badgeEl = document.getElementById('invoiceLoyaltyBadge');
+  const progressBox = document.getElementById('invoiceLoyaltyProgressBox');
+  const rewardWrap = document.getElementById('invoiceLoyaltyRewardWrap');
+  const hoursEl = document.getElementById('invoiceLoyaltyCustomerHours');
+  const nextInfoEl = document.getElementById('invoiceLoyaltyNextInfo');
+  const fillEl = document.getElementById('invoiceLoyaltyProgressFill');
+  const checkbox = document.getElementById('invoiceApplyLoyaltyCheckbox');
+  const labelEl = document.getElementById('invoiceApplyLoyaltyLabel');
+
+  if (!customer || !loyalty) {
+    if (badgeEl) {
+      badgeEl.textContent = 'مشتری انتخاب نشده';
+      badgeEl.classList.remove('is-ready');
+    }
+    if (progressBox) progressBox.hidden = true;
+    if (rewardWrap) rewardWrap.hidden = true;
+    if (checkbox) checkbox.checked = false;
+    return;
+  }
+
+  if (progressBox) progressBox.hidden = false;
+  if (hoursEl) hoursEl.textContent = `${toFaNum(loyalty.totalPlayHours)} ساعت سابقه کل`;
+  if (nextInfoEl) {
+    nextInfoEl.textContent = loyalty.hasRewardReady
+      ? `${toFaNum(loyalty.availableRewards)} جایزه آماده استفاده`
+      : `${toFaNum(loyalty.hoursInCurrentCycle)} / ${toFaNum(loyalty.milestoneHours)} ساعت (${toFaNum(
+          loyalty.hoursRemainingToNext
+        )} ساعت باقی‌مانده)`;
+  }
+  if (fillEl) {
+    const pct = loyalty.hasRewardReady && loyalty.progressPercent === 0 ? 100 : loyalty.progressPercent;
+    fillEl.style.width = `${pct}%`;
+    fillEl.classList.toggle('is-ready', loyalty.hasRewardReady);
+  }
+
+  if (badgeEl) {
+    if (loyalty.hasRewardReady) {
+      badgeEl.textContent = `🎁 ${toFaNum(loyalty.availableRewards)} تخفیف ${toFaNum(loyalty.discountPercent)}٪ آماده`;
+      badgeEl.classList.add('is-ready');
+    } else {
+      badgeEl.textContent = `${toFaNum(loyalty.hoursRemainingToNext)} ساعت تا جایزه بعدی`;
+      badgeEl.classList.remove('is-ready');
+    }
+  }
+
+  if (rewardWrap) {
+    rewardWrap.hidden = !loyalty.hasRewardReady;
+  }
+  if (checkbox) {
+    checkbox.checked = Boolean(loyalty.hasRewardReady && invoiceState.useLoyaltyReward);
+  }
+  if (labelEl) {
+    labelEl.textContent = `اعمال جایزه تخفیف ${toFaNum(loyalty.discountPercent)}٪ (پاداش ${toFaNum(
+      loyalty.milestoneHours
+    )} ساعت بازی) برای ${customer.customerName}`;
+  }
 }
 
 function renderInvoicePageDom() {
@@ -309,7 +477,8 @@ function renderInvoicePageDom() {
     }
   }
 
-  // Update Totals & Live Status Strip
+  // Update Loyalty UI & Totals & Live Status Strip
+  renderInvoiceLoyaltyBox();
   const totals = computeTotals();
   const payMethodId = getSelectedPayMethodId();
   invoiceState.payMethod = payMethodId;
@@ -319,10 +488,22 @@ function renderInvoicePageDom() {
   const buffetTotalEl = document.getElementById('buffetTotal');
   const totalEl = document.getElementById('total');
   const payableEl = document.getElementById('payable');
+  const discountRowEl = document.getElementById('loyaltyDiscountRow');
+  const discountLabelEl = document.getElementById('loyaltyDiscountLabel');
+  const discountAmountEl = document.getElementById('loyaltyDiscountAmount');
 
   if (gameTotalEl) gameTotalEl.textContent = `${toFaNum(totals.gameTotal)} تومان`;
   if (buffetTotalEl) buffetTotalEl.textContent = `${toFaNum(totals.buffetTotal)} تومان`;
   if (totalEl) totalEl.textContent = `${toFaNum(totals.rawTotal)} تومان`;
+  if (discountRowEl) {
+    discountRowEl.hidden = !totals.loyaltyApplied;
+  }
+  if (discountLabelEl && totals.loyaltyApplied) {
+    discountLabelEl.textContent = `تخفیف جایزه وفاداری (${toFaNum(totals.discountPercent)}٪):`;
+  }
+  if (discountAmountEl) {
+    discountAmountEl.textContent = `− ${toFaNum(totals.discountAmount)} تومان`;
+  }
   if (payableEl) payableEl.textContent = `${toFaNum(totals.payable)} تومان`;
 
   const summaryTableNum = document.getElementById('summaryTableNum');
@@ -558,6 +739,15 @@ function buildPrintableReceiptInnerHtml() {
                 <th>مجموع کل فاکتور:</th>
                 <td>${toFaNum(totals.rawTotal)} تومان</td>
               </tr>
+              ${
+                totals.loyaltyApplied
+                  ? `
+              <tr>
+                <th>تخفیف جایزه وفاداری (${toFaNum(totals.discountPercent)}٪):</th>
+                <td>− ${toFaNum(totals.discountAmount)} تومان</td>
+              </tr>`
+                  : ''
+              }
               ${
                 totals.roundingDiff !== 0
                   ? `
@@ -1006,6 +1196,27 @@ function bindInvoiceInteractions() {
     tableSelector.dataset.bound = '1';
     tableSelector.addEventListener('change', () => {
       syncTableDataForSelection(tableSelector.value);
+      populateInvoiceLoyaltyCustomerDropdown();
+      renderInvoicePageDom();
+    });
+  }
+
+  // Loyalty customer selector & reward toggle
+  const loyaltySelect = document.getElementById('invoiceLoyaltyCustomerSelect');
+  if (loyaltySelect && !loyaltySelect.dataset.bound) {
+    loyaltySelect.dataset.bound = '1';
+    loyaltySelect.addEventListener('change', () => {
+      invoiceState.selectedCustomerId = String(loyaltySelect.value || '').trim();
+      invoiceState.useLoyaltyReward = false;
+      renderInvoicePageDom();
+    });
+  }
+
+  const loyaltyCheckbox = document.getElementById('invoiceApplyLoyaltyCheckbox');
+  if (loyaltyCheckbox && !loyaltyCheckbox.dataset.bound) {
+    loyaltyCheckbox.dataset.bound = '1';
+    loyaltyCheckbox.addEventListener('change', () => {
+      invoiceState.useLoyaltyReward = Boolean(loyaltyCheckbox.checked);
       renderInvoicePageDom();
     });
   }
@@ -1083,6 +1294,37 @@ function bindInvoiceInteractions() {
     });
   }
 
+  async function commitCustomerLoyaltyUpdate(explicitCustomerId, totals) {
+    const cid = String(explicitCustomerId || invoiceState.selectedCustomerId || '').trim();
+    if (!cid || !Object.hasOwn(invoiceState.customersMap || {}, cid)) {
+      return { ok: true };
+    }
+    const playedSeconds = estimatePlayedSecondsFromGameItems(invoiceState.gameItems);
+    const shouldRedeem = Boolean(totals.loyaltyApplied && cid === invoiceState.selectedCustomerId);
+    if (playedSeconds <= 0 && !shouldRedeem) {
+      return { ok: true };
+    }
+
+    const params = new URLSearchParams();
+    params.set('customerId', cid);
+    if (playedSeconds > 0) params.set('addSeconds', String(playedSeconds));
+    if (shouldRedeem) params.set('redeemReward', '1');
+
+    const res = await fetch('./customer_loyalty.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: 'application/json',
+      },
+      body: params.toString(),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.error) {
+      return { ok: false, error: data.error || 'خطا در اعمال امتیاز و تخفیف باشگاه مشتریان.' };
+    }
+    return { ok: true, data };
+  }
+
   // Payment settlement button
   const paymentButton = document.getElementById('paymentButton');
   if (paymentButton && !paymentButton.dataset.bound) {
@@ -1113,8 +1355,15 @@ function bindInvoiceInteractions() {
         paymentButton.disabled = true;
         const url = payWay === 'cash' ? './cashPay.php' : './creditpay.php';
         try {
+          const loyaltyResult = await commitCustomerLoyaltyUpdate('', totals);
+          if (!loyaltyResult.ok) {
+            showInvoiceNotice(loyaltyResult.error, 'error');
+            paymentButton.disabled = false;
+            return;
+          }
+
           const params = new URLSearchParams();
-          params.set('gameTotal', String(totals.gameTotal));
+          params.set('gameTotal', String(totals.netGameTotal));
           params.set('consoleType', primaryConsole);
           params.set('paydate', paydate);
           appendBuffetPayloadToForm(params, buffetPayment);
@@ -1142,7 +1391,13 @@ function bindInvoiceInteractions() {
         const customerModal = document.getElementById('customerModal');
         if (customerModal) {
           customerModal.style.display = 'block';
-          document.getElementById('customerId')?.focus();
+          const cidInput = document.getElementById('customerId');
+          if (cidInput) {
+            if (!cidInput.value && invoiceState.selectedCustomerId) {
+              cidInput.value = invoiceState.selectedCustomerId;
+            }
+            cidInput.focus();
+          }
         }
       } else if (payWay === 'debt') {
         const debtModal = document.getElementById('debtModal');
@@ -1218,9 +1473,11 @@ function bindInvoiceInteractions() {
           return;
         }
 
-        // Step 2: Balance deducted successfully — now log revenue in customerPay.json
+        // Step 2: Balance deducted successfully — log playtime/reward & record revenue
+        await commitCustomerLoyaltyUpdate(validation.customerId, totals);
+
         const payParams = new URLSearchParams();
-        payParams.set('gameTotal', String(totals.gameTotal));
+        payParams.set('gameTotal', String(totals.netGameTotal));
         payParams.set('consoleType', primaryConsole);
         payParams.set('paydate', paydate);
         appendBuffetPayloadToForm(payParams, buffetPayment);
@@ -1293,8 +1550,15 @@ function bindInvoiceInteractions() {
 
       if (submitBtn) submitBtn.disabled = true;
       try {
+        const loyaltyResult = await commitCustomerLoyaltyUpdate('', totals);
+        if (!loyaltyResult.ok) {
+          showInvoiceNotice(loyaltyResult.error, 'error');
+          if (submitBtn) submitBtn.disabled = false;
+          return;
+        }
+
         const debtParams = new URLSearchParams();
-        debtParams.set('gameTotal', String(totals.gameTotal));
+        debtParams.set('gameTotal', String(totals.netGameTotal));
         debtParams.set('consoleType', primaryConsole);
         debtParams.set('totalBuffetPrice', String(totals.buffetTotal));
         debtParams.set('paydate', paydate);
@@ -1337,12 +1601,17 @@ function bindInvoiceInteractions() {
 async function initInvoicePage() {
   bindInvoiceInteractions();
 
-  const [gameRes, buffetRes, reservationsRes, dataRes] = await Promise.allSettled([
-    fetch('game_temporary.json', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : {})),
-    fetch('buffet_temporary.json', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : {})),
-    fetch('reservations.json', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : [])),
-    fetch('data.json', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : { consoles: [] })),
-  ]);
+  const [gameRes, buffetRes, reservationsRes, dataRes, customersRes, loyaltyCfgRes] =
+    await Promise.allSettled([
+      fetch('game_temporary.json', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : {})),
+      fetch('buffet_temporary.json', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : {})),
+      fetch('reservations.json', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : [])),
+      fetch('data.json', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : { consoles: [] })),
+      fetch('customer_data.json', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : {})),
+      fetch('loyalty_config.json', { cache: 'no-store' }).then((r) =>
+        r.ok ? r.json() : DEFAULT_LOYALTY_CONFIG
+      ),
+    ]);
 
   invoiceState.gameTempMap =
     gameRes.status === 'fulfilled' && gameRes.value && typeof gameRes.value === 'object'
@@ -1360,6 +1629,13 @@ async function initInvoicePage() {
     dataRes.status === 'fulfilled' && dataRes.value && Array.isArray(dataRes.value.consoles)
       ? dataRes.value.consoles
       : [];
+  invoiceState.customersMap =
+    customersRes.status === 'fulfilled' && customersRes.value && typeof customersRes.value === 'object'
+      ? customersRes.value
+      : {};
+  invoiceState.loyaltyConfig = sanitizeLoyaltyConfig(
+    loyaltyCfgRes.status === 'fulfilled' ? loyaltyCfgRes.value : DEFAULT_LOYALTY_CONFIG
+  );
 
   const { availableTables, chosenTable } = resolveInvoiceTableSelection({
     requestedTable,
@@ -1390,6 +1666,7 @@ async function initInvoicePage() {
   }
 
   syncTableDataForSelection(chosenTable);
+  populateInvoiceLoyaltyCustomerDropdown();
   renderInvoicePageDom();
 }
 

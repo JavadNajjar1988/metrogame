@@ -2,6 +2,11 @@ import { randomInt, randomUUID } from 'node:crypto';
 import { readFile, rename, unlink, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  DEFAULT_LOYALTY_CONFIG,
+  sanitizeLoyaltyConfig,
+  computeCustomerLoyalty,
+} from './JS/loyalty-engine.mjs';
 
 const directory = process.env.METROGAME_DATA_DIR || fileURLToPath(new URL('.', import.meta.url));
 const defaults = {
@@ -18,6 +23,8 @@ const defaults = {
   'creditpay.json': [],
   'customerPay.json': [],
   'debtpay.json': [],
+  'gamenet_layout.json': null,
+  'loyalty_config.json': { ...DEFAULT_LOYALTY_CONFIG },
 };
 
 export const isDataFile = name => Object.hasOwn(defaults, name);
@@ -227,6 +234,15 @@ const routes = {
     const prePaymentCost =
       typeof rawPreCost === 'string' ? normalizeDigits(rawPreCost).replace(/[,٬\s]/g, '').trim() : null;
     const isPre = form.get('pre-payment') === 'pre-payment' || form.get('paymentType') === 'pre-payment';
+    const rawCustomerId = form.get('customerId');
+    let linkedCustomerId = null;
+    if (typeof rawCustomerId === 'string' && rawCustomerId.trim()) {
+      const cleanCustomerId = normalizeDigits(rawCustomerId).trim();
+      const customers = await readData('customer_data.json');
+      if (Object.hasOwn(customers, cleanCustomerId)) {
+        linkedCustomerId = cleanCustomerId;
+      }
+    }
     await save('reservations.json', [...reservations, {
       tableNumber,
       consoleType,
@@ -235,6 +251,7 @@ const routes = {
       prePaymentCost: isPre ? (prePaymentCost || '0') : null,
       postPayment: isPre ? null : (form.get('post-payment') || 'post-payment'),
       prePayment: isPre ? 'pre-payment' : null,
+      customerId: linkedCustomerId,
     }]);
     return ok;
   },
@@ -242,13 +259,64 @@ const routes = {
   'timer.php': form => startTimer(form, true),
   'charging.php': async form => {
     const table = field(form, 'tableNumber');
-    const seconds = number(form, 'charge_Time');
+    const seconds = number(form, 'charge_Time', 1);
+    const nowSec = Math.floor(Date.now() / 1000);
     const timers = await readData('finishTime.json');
     const timer = timers.find(item => same(item.tableNumber, table));
-    if (!timer) invalid('زمان‌سنج میز پیدا نشد.');
-    timer.finishTime = Number(timer.finishTime) + seconds;
+    if (timer) {
+      const baseFinish = Math.max(Number(timer.finishTime) || nowSec, nowSec);
+      timer.finishTime = baseFinish + seconds;
+      await save('finishTime.json', timers);
+      return { finishTime: timer.finishTime };
+    }
+
+    // Fallback: allow extending an unstarted pre-payment table or adding a timed block to a post-payment table
+    const reservations = await readData('reservations.json');
+    const reservation = reservations.find(item => same(item.tableNumber, table));
+    if (!reservation) invalid('زمان‌سنج میز پیدا نشد.');
+
+    const { consoles } = await readData('data.json');
+    const foundConsole = Array.isArray(consoles)
+      ? consoles.find(c => c.name === reservation.consoleType)
+      : null;
+    const hourlyPrice =
+      foundConsole && Number(foundConsole[reservation.priceType]) > 0
+        ? Number(foundConsole[reservation.priceType])
+        : 60000;
+
+    const clickTimes = await readData('clickTime.json');
+    const existingClick = clickTimes.find(item => same(item.tableNumber, table));
+    const isPre = reservation.prePayment === 'pre-payment' || reservation.paymentType === 'pre-payment';
+
+    let startTime = nowSec;
+    let finishTime = nowSec + seconds;
+
+    if (isPre) {
+      const plannedCost = Math.max(0, Number(reservation.prePaymentCost) || 0);
+      const plannedSec = plannedCost > 0 ? Math.round((plannedCost / hourlyPrice) * 3600) : 0;
+      finishTime = nowSec + plannedSec + seconds;
+    } else if (existingClick && Number(existingClick.clickTime) > 0) {
+      const clickSec = Number(existingClick.clickTime);
+      // Preserve active session start if within the last 24h; otherwise start fresh timed block
+      startTime = clickSec <= nowSec && nowSec - clickSec < 86400 ? clickSec : nowSec;
+      finishTime = nowSec + seconds;
+      await save(
+        'clickTime.json',
+        clickTimes.filter(item => !same(item.tableNumber, table))
+      );
+    }
+
+    const totalSec = Math.max(60, finishTime - startTime);
+    const updatedCost = Math.round(((totalSec / 3600) * hourlyPrice) / 1000) * 1000;
+    reservation.prePayment = 'pre-payment';
+    reservation.postPayment = null;
+    reservation.paymentType = 'pre-payment';
+    reservation.prePaymentCost = String(Math.max(0, updatedCost));
+
+    await save('reservations.json', reservations);
+    timers.push({ startTime: String(startTime), finishTime, tableNumber: String(table) });
     await save('finishTime.json', timers);
-    return { finishTime: timer.finishTime };
+    return { finishTime, convertedToPrePayment: !isPre };
   },
   'delete_reservation.php': async form => {
     const table = field(form, 'tableNumber');
@@ -313,7 +381,24 @@ const routes = {
     if (!isValidConsole || !Object.hasOwn(prices, priceType)) invalid('تعرفه یا کنسول معتبر نیست.');
     const gameCost = number(form, 'gameCost');
     const consoleRate = selected && selected[priceType] ? selected[priceType] : '60000';
-    return appendForTable('game_temporary.json', form, { cosoleprice: consoleRate, gameCost, consoleType, priceType });
+    const rawPlayed = form.get('playedSeconds');
+    const parsedPlayed =
+      typeof rawPlayed === 'string' && rawPlayed.trim()
+        ? Math.max(0, Math.min(864000, Math.floor(Number(normalizeDigits(rawPlayed).trim()) || 0)))
+        : 0;
+    const rawCustomerId = form.get('customerId');
+    const cleanCustomerId =
+      typeof rawCustomerId === 'string' && rawCustomerId.trim()
+        ? normalizeDigits(rawCustomerId).trim()
+        : '';
+    return appendForTable('game_temporary.json', form, {
+      cosoleprice: consoleRate,
+      gameCost,
+      consoleType,
+      priceType,
+      playedSeconds: parsedPlayed,
+      customerId: cleanCustomerId || null,
+    });
   },
   'delete_game_temperory.php': form => removeTemporary('game_temporary.json', form),
   'delete_buffet_temperory.php': form => removeTemporary('buffet_temporary.json', form),
@@ -322,7 +407,16 @@ const routes = {
     const accountCharge = form.get('acountCharge') ? number(form, 'acountCharge') : 0;
     await update('customer_data.json', customers => {
       const customerId = idFor(new Set(Object.keys(customers)));
-      return { ...customers, [customerId]: { customerId, customerName, accountCharge } };
+      return {
+        ...customers,
+        [customerId]: {
+          customerId,
+          customerName,
+          accountCharge,
+          totalPlaySeconds: 0,
+          usedRewards: 0,
+        },
+      };
     });
     return redirect('acounts.html');
   },
@@ -363,6 +457,94 @@ const routes = {
     }
     await save('Calender.json', [{ start, end }]);
     return ok;
+  },
+  'save_layout.php': async form => {
+    const raw = form.get('layout');
+    if (typeof raw !== 'string' || !raw.trim() || raw.length > 52000) {
+      invalid('دادهٔ چیدمان سه‌بعدی معتبر نیست.');
+    }
+    let parsed;
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      invalid('قالب JSON چیدمان معتبر نیست.');
+    }
+    if (!parsed || typeof parsed !== 'object' || !parsed.room || !Array.isArray(parsed.items) || parsed.items.length > 160) {
+      invalid('ساختار چیدمان سه‌بعدی معتبر نیست.');
+    }
+    await save('gamenet_layout.json', {
+      version: 1,
+      updatedAt: new Date().toISOString(),
+      room: parsed.room,
+      items: parsed.items,
+    });
+    return ok;
+  },
+  'loyalty_config.php': async form => {
+    const milestoneHours = number(form, 'milestoneHours', 1);
+    const discountPercent = number(form, 'discountPercent', 1);
+    const config = sanitizeLoyaltyConfig({ milestoneHours, discountPercent });
+    await save('loyalty_config.json', config);
+    return { status: 'ok', config };
+  },
+  'customer_loyalty.php': async form => {
+    const customerId = field(form, 'customerId');
+    const rawAddSeconds = form.get('addSeconds');
+    const rawAddHours = form.get('addHours');
+    const redeemReward = form.get('redeemReward') === '1' || form.get('redeemReward') === 'true';
+
+    let addSeconds = 0;
+    if (typeof rawAddSeconds === 'string' && rawAddSeconds.trim() !== '') {
+      const parsed = Number(normalizeDigits(rawAddSeconds).replace(/[,٬\s]/g, '').trim());
+      if (!Number.isFinite(parsed) || parsed < 0 || parsed > 864000) {
+        invalid('مدت زمان بازی معتبر نیست.');
+      }
+      addSeconds = Math.floor(parsed);
+    } else if (typeof rawAddHours === 'string' && rawAddHours.trim() !== '') {
+      const parsedHours = Number(normalizeDigits(rawAddHours).replace(/[,٬\s]/g, '').trim());
+      if (!Number.isFinite(parsedHours) || parsedHours < 0 || parsedHours > 240) {
+        invalid('تعداد ساعت بازی معتبر نیست.');
+      }
+      addSeconds = Math.round(parsedHours * 3600);
+    }
+
+    const [customers, rawConfig] = await Promise.all([
+      readData('customer_data.json'),
+      readData('loyalty_config.json'),
+    ]);
+    if (!Object.hasOwn(customers, customerId)) {
+      return { error: 'مشتری با این کد اشتراک پیدا نشد.' };
+    }
+
+    const config = sanitizeLoyaltyConfig(rawConfig);
+    const customer = customers[customerId];
+    const currentSeconds = Math.max(0, Math.floor(Number(customer.totalPlaySeconds) || 0));
+    const currentUsed = Math.max(0, Math.floor(Number(customer.usedRewards) || 0));
+
+    // Verify available reward BEFORE adding current session's seconds if redeeming now
+    if (redeemReward) {
+      const beforeStatus = computeCustomerLoyalty(
+        { totalPlaySeconds: currentSeconds, usedRewards: currentUsed },
+        config
+      );
+      if (beforeStatus.availableRewards <= 0) {
+        return { error: 'این مشتری در حال حاضر جایزه تخفیف آماده استفاده ندارد.' };
+      }
+      customer.usedRewards = currentUsed + 1;
+    } else {
+      customer.usedRewards = currentUsed;
+    }
+
+    customer.totalPlaySeconds = currentSeconds + addSeconds;
+    await save('customer_data.json', customers);
+
+    const loyalty = computeCustomerLoyalty(customer, config);
+    return {
+      status: 'ok',
+      customerId,
+      customerName: customer.customerName,
+      loyalty,
+    };
   },
 };
 

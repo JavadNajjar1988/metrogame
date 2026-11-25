@@ -10,7 +10,7 @@
   <link href="assets/bootstrap/bootstrap.min.css" rel="stylesheet">
   <link href="assets/bootstrap/bootstrap-rtl.css" rel="stylesheet">
   <link href="fontello/css/my-icon.css" rel="stylesheet">
-  <link href="assets/css/gaming-dashboard.css?v=20261121-4" rel="stylesheet">
+  <link href="assets/css/gaming-dashboard.css?v=20261124-9" rel="stylesheet">
 </head>
 <body>
   <div id="sidebarBackdrop" class="mg-sidebar-backdrop"></div>
@@ -29,6 +29,7 @@
         <li class="mg-nav-item"><a href="index.html#tables-section"><span>میزها</span><span id="navTablesBadge" class="mg-nav-badge">۰</span></a></li>
         <li class="mg-nav-item"><a href="console.html"><span>مدیریت کنسول‌ها</span><span id="navConsolesBadge" class="mg-nav-badge">۰</span></a></li>
         <li class="mg-nav-item"><a href="buffet.html"><span>مدیریت بوفه</span></a></li>
+        <li id="navItemMyGamenet" class="mg-nav-item"><a href="index.html#my-gamenet" data-nav-view="my-gamenet"><span>گیم نت من</span></a></li>
         <li class="mg-nav-item"><a href="acounts.html"><span>مشتریان</span><span id="navCustomersBadge" class="mg-nav-badge">۰</span></a></li>
         <li class="mg-nav-item"><a href="Debtors.html"><span>بدهکاران</span><span id="navDebtorsBadge" class="mg-nav-badge">۰</span></a></li>
         <li class="mg-nav-item"><a href="income.html"><span>گزارش درآمد</span></a></li>
@@ -146,6 +147,40 @@
               </table>
             </div>
 
+            <!-- Customer Loyalty & 24-Hour Playtime Reward Box -->
+            <section id="mgInvoiceLoyaltyBox" class="mg-invoice-loyalty-box hidden-print" aria-label="باشگاه مشتریان و تخفیف جایزه">
+              <div class="mg-invoice-loyalty-head">
+                <div>
+                  <h3 class="mg-invoice-loyalty-title">باشگاه مشتریان و تخفیف جایزه ساعات بازی</h3>
+                  <p id="invoiceLoyaltyRuleNote" class="mg-invoice-loyalty-sub">با انتخاب مشتری، ساعات بازی این فاکتور به سابقه او اضافه می‌شود و در صورت رسیدن به ۲۴ ساعت بازی، تخفیف جایزه فعال می‌گردد.</p>
+                </div>
+                <span id="invoiceLoyaltyBadge" class="mg-loyalty-reward-badge">مشتری انتخاب نشده</span>
+              </div>
+              <div class="mg-invoice-loyalty-grid">
+                <div class="mg-form-group" style="margin-bottom: 0;">
+                  <label for="invoiceLoyaltyCustomerSelect" class="mg-label">مشتری عضو باشگاه (اختیاری)</label>
+                  <select id="invoiceLoyaltyCustomerSelect" class="form-control mg-input">
+                    <option value="">— مشتری مهمان (بدون ثبت سابقه باشگاه) —</option>
+                  </select>
+                </div>
+                <div id="invoiceLoyaltyProgressBox" class="mg-invoice-loyalty-progress-box" hidden>
+                  <div class="mg-loyalty-progress-head">
+                    <strong id="invoiceLoyaltyCustomerHours">۰ ساعت کل</strong>
+                    <span id="invoiceLoyaltyNextInfo">۰ / ۲۴ ساعت</span>
+                  </div>
+                  <div class="mg-loyalty-progress-track">
+                    <div id="invoiceLoyaltyProgressFill" class="mg-loyalty-progress-fill" style="width: 0%;"></div>
+                  </div>
+                </div>
+                <div id="invoiceLoyaltyRewardWrap" class="mg-invoice-loyalty-reward-wrap" hidden>
+                  <label class="mg-invoice-loyalty-toggle">
+                    <input type="checkbox" id="invoiceApplyLoyaltyCheckbox">
+                    <span id="invoiceApplyLoyaltyLabel">اعمال تخفیف جایزه ۲۰٪ روی این صورت‌حساب</span>
+                  </label>
+                </div>
+              </div>
+            </section>
+
             <div class="row">
               <div class="col-md-6 hidden-print">
                 <h3 style="font-size: 15px; margin-bottom: 12px;">انتخاب روش تسویه حساب:</h3>
@@ -187,6 +222,10 @@
                       <tr>
                         <th style="width: 50%">مجموع کل:</th>
                         <td id="total">۰ تومان</td>
+                      </tr>
+                      <tr id="loyaltyDiscountRow" class="mg-loyalty-discount-row" hidden>
+                        <th id="loyaltyDiscountLabel">تخفیف جایزه وفاداری:</th>
+                        <td id="loyaltyDiscountAmount">۰ تومان</td>
                       </tr>
                       <tr>
                         <th>مبلغ قابل پرداخت:</th>
@@ -282,7 +321,7 @@
   <iframe id="mgReceiptPrintFrame" title="چاپ صورت‌حساب" style="position: fixed; right: -9999px; bottom: -9999px; width: 0; height: 0; border: 0;" aria-hidden="true"></iframe>
 
   <script src="vendors/Flot/jquery.js"></script>
-  <script type="module" src="JS/invoice.js?v=20261116-1"></script>
-  <script type="module" src="JS/dashboard-ui.js?v=20261121-4"></script>
+  <script type="module" src="JS/invoice.js?v=20261124-9"></script>
+  <script type="module" src="JS/dashboard-ui.js?v=20261124-9"></script>
 </body>
 </html>

@@ -106,6 +106,8 @@ const server = createServer(async (request, response) => {
         customerPay,
         debtpay,
         customer_data,
+        gamenet_layout,
+        loyalty_config,
       ] = await Promise.all([
         readData('data.json'),
         readData('reservations.json'),
@@ -118,6 +120,8 @@ const server = createServer(async (request, response) => {
         readData('customerPay.json'),
         readData('debtpay.json'),
         readData('customer_data.json'),
+        readData('gamenet_layout.json'),
+        readData('loyalty_config.json'),
       ]);
       return json(response, 200, {
         'data.json': data,
@@ -131,6 +135,8 @@ const server = createServer(async (request, response) => {
         'customerPay.json': customerPay,
         'debtpay.json': debtpay,
         'customer_data.json': customer_data,
+        'gamenet_layout.json': gamenet_layout,
+        'loyalty_config.json': loyalty_config,
       });
     }
 
@@ -138,21 +144,27 @@ const server = createServer(async (request, response) => {
 
     const type = types[extname(file)];
     const isPage = /^[\w-]+\.html$/.test(file);
-    const isAsset = /^(?:assets|build|fontello|JS|src|vendors)\/[\w./@ -]+$/.test(file);
+    const isAsset =
+      /^(?:assets|build|fontello|JS|src|vendors)\/[\w./@ -]+$/.test(file) ||
+      /^node_modules\/three\/(?:build|examples\/jsm)\/[\w./-]+$/.test(file);
     if (!type || (!isPage && !isAsset) || file.split('/').some(part => part.startsWith('.'))) {
       return response.writeHead(404).end();
     }
 
-    let content = isAsset ? assetCache.get(file) : undefined;
+    const ext = extname(file);
+    const isCodeAsset = ext === '.js' || ext === '.mjs' || ext === '.css';
+    const shouldMemoryCache = isAsset && !isCodeAsset;
+
+    let content = shouldMemoryCache ? assetCache.get(file) : undefined;
     if (!content) {
       content = await readFile(new URL(file, import.meta.url));
-      if (isAsset) assetCache.set(file, content);
+      if (shouldMemoryCache) assetCache.set(file, content);
     }
 
     response.writeHead(200, {
       'Content-Type': type,
       'Content-Length': String(content.byteLength),
-      'Cache-Control': isAsset ? 'public, max-age=86400' : 'no-cache',
+      'Cache-Control': isAsset && !isCodeAsset ? 'public, max-age=86400' : 'no-cache',
     });
     if (request.method === 'HEAD') {
       response.end();

@@ -17,7 +17,15 @@
   <link href="assets/bootstrap/bootstrap.min.css" rel="stylesheet">
   <link href="assets/bootstrap/bootstrap-rtl.css" rel="stylesheet">
   <link href="fontello/css/my-icon.css" rel="stylesheet">
-  <link href="assets/css/gaming-dashboard.css?v=20261121-4" rel="stylesheet">
+  <link href="assets/css/gaming-dashboard.css?v=20261124-9" rel="stylesheet">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./node_modules/three/build/three.module.js",
+        "three/addons/": "./node_modules/three/examples/jsm/"
+      }
+    }
+  </script>
 </head>
 <body>
   <audio id="alarmSound" src="src/alarm.mp3" preload="none"></audio>
@@ -93,6 +101,14 @@
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
             </span>
             <span class="mg-nav-label">مدیریت بوفه</span>
+          </a>
+        </li>
+        <li id="navItemMyGamenet" class="mg-nav-item">
+          <a href="#my-gamenet" data-nav-view="my-gamenet" data-rail-tip="گیم نت من">
+            <span class="mg-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+            </span>
+            <span class="mg-nav-label">گیم نت من</span>
           </a>
         </li>
 
@@ -200,6 +216,132 @@
              ================================================================== -->
         <div id="mgOverviewView" class="mg-view-pane is-active-view" data-view-pane="overview">
           <div class="mg-section-group">
+          <!-- HERO: Interactive Live Oval Arena Track & Frosted-Glass Table Inspector -->
+          <section id="mgArenaTrackSection" class="mg-card mg-arena-shell" aria-labelledby="mgArenaHeading">
+            <div class="mg-arena-header">
+              <div class="mg-arena-title-group">
+                <h2 id="mgArenaHeading" class="mg-card-title">پیست زنده میزها</h2>
+                <p id="mgArenaHeaderMeta" class="mg-arena-meta">در حال بارگذاری وضعیت میزهای سالن...</p>
+              </div>
+              <div class="mg-arena-controls">
+                <div class="mg-arena-mode-switch" role="group" aria-label="حالت نمایش حرکت روی پیست">
+                  <button type="button" class="mg-mode-btn is-active" data-track-mode="live-run" aria-pressed="true">چرخش دقیقه‌ای</button>
+                  <button type="button" class="mg-mode-btn" data-track-mode="true-pos" aria-pressed="false">موقعیت خط پایان</button>
+                </div>
+                <button type="button" class="btn mg-btn mg-btn-primary mg-btn-sm mg-arena-manage-cta" data-switch-view="tables">
+                  <span>مدیریت میزها &larr;</span>
+                </button>
+              </div>
+            </div>
+
+            <div id="mgArenaLayout" class="mg-arena-layout">
+              <div class="mg-oval-stage-wrap">
+                <div class="mg-oval-stage" id="mgOvalStage">
+                  <svg id="mgTrackSvg" class="mg-track-svg" viewBox="0 0 820 320" role="img" aria-label="پیست بیضی زنده زمان‌سنج میزها"></svg>
+                  <div class="mg-track-center" aria-live="polite">
+                    <div id="mgTrackCenterPrimary" class="mg-track-center-primary">۰</div>
+                    <div id="mgTrackCenterSub" class="mg-track-center-sub">از ۱۲ ایستگاه سالن</div>
+                    <div id="mgTrackCenterBadge" class="mg-track-center-badge" data-state="summary">در حال آماده‌سازی...</div>
+                  </div>
+                  <div id="mgRunnersLayer" class="mg-runners-layer" role="group" aria-label="میزهای فعال روی پیست"></div>
+                  <div id="mgTrackEmptyState" class="mg-track-empty" hidden>
+                    <button type="button" class="btn mg-btn mg-btn-primary mg-btn-sm" data-switch-view="tables">
+                      <span>+ ثبت اولین میز روی پیست</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Frosted-Glass Side Inspector Drawer -->
+              <aside id="mgTrackInspector" class="mg-track-inspector" aria-label="جزئیات و کنترل میز انتخاب‌شده" hidden aria-hidden="true">
+                <div class="mg-inspector-head">
+                  <div>
+                    <div class="mg-inspector-title-row">
+                      <h3 id="mgInspectorTitle" class="mg-inspector-title">میز —</h3>
+                      <span id="mgInspectorStatus" class="mg-inspector-status" data-status="waiting">آماده</span>
+                    </div>
+                    <p id="mgInspectorMeta" class="mg-inspector-meta">—</p>
+                  </div>
+                  <button type="button" id="mgInspectorCloseBtn" class="mg-inspector-close" aria-label="بستن پنل میز" title="بستن (Esc)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+
+                <div class="mg-inspector-timer-block">
+                  <div id="mgInspectorTimer" class="mg-inspector-timer">۰۰:۰۰:۰۰</div>
+                  <div id="mgInspectorTimerCaption" class="mg-inspector-timer-caption">—</div>
+                  <div class="mg-inspector-progress-track" aria-hidden="true">
+                    <div id="mgInspectorProgressBar" class="mg-inspector-progress-fill" style="width: 0%"></div>
+                  </div>
+                  <div class="mg-inspector-progress-meta">
+                    <span id="mgInspectorProgressText">۰٪ مسیر پیست</span>
+                    <span id="mgInspectorSpeedText">—</span>
+                  </div>
+                </div>
+
+                <div class="mg-inspector-costs">
+                  <div class="mg-inspector-cost-row">
+                    <span>هزینه بازی تا این لحظه</span>
+                    <strong id="mgInspectorGameCost">۰ تومان</strong>
+                  </div>
+                  <div class="mg-inspector-cost-row">
+                    <span>سفارش‌های بوفه</span>
+                    <strong id="mgInspectorBuffetCost">۰ تومان</strong>
+                  </div>
+                  <div class="mg-inspector-cost-row is-total">
+                    <span>جمع کل فعلی</span>
+                    <strong id="mgInspectorGrandTotal">۰ تومان</strong>
+                  </div>
+                </div>
+
+                <button type="button" id="mgInspectorStartBtn" class="btn mg-btn mg-btn-primary mg-btn-block" hidden>
+                  <span>شروع تایمر میز</span>
+                </button>
+
+                <div class="mg-inspector-extend">
+                  <div class="mg-inspector-section-label">افزودن / تمدید زمان</div>
+                  <p id="mgInspectorExtendHint" class="mg-inspector-hint">زمان اضافه‌شده بلافاصله به سشن افزوده می‌شود</p>
+                  <div class="mg-extend-quick-row">
+                    <button type="button" class="mg-extend-quick-btn" data-extend-minutes="15"><bdi dir="ltr">+۱۵</bdi> دقیقه</button>
+                    <button type="button" class="mg-extend-quick-btn" data-extend-minutes="30"><bdi dir="ltr">+۳۰</bdi> دقیقه</button>
+                    <button type="button" class="mg-extend-quick-btn" data-extend-minutes="60"><bdi dir="ltr">+۶۰</bdi> دقیقه</button>
+                  </div>
+                  <form id="mgInspectorExtendForm" class="mg-extend-custom-form">
+                    <label for="mgInspectorCustomMinutes" class="sr-only">مقدار دلخواه تمدید</label>
+                    <input type="text" inputmode="numeric" id="mgInspectorCustomMinutes" class="form-control mg-input mg-extend-input" placeholder="مقدار دلخواه...">
+                    <label for="mgInspectorCustomUnit" class="sr-only">واحد تمدید</label>
+                    <select id="mgInspectorCustomUnit" class="form-control mg-select mg-extend-unit">
+                      <option value="minutes">دقیقه</option>
+                      <option value="toman">تومان</option>
+                    </select>
+                    <button type="submit" class="btn mg-btn mg-btn-primary mg-extend-submit">اعمال</button>
+                  </form>
+                </div>
+
+                <div class="mg-inspector-footer">
+                  <div id="mgInspectorEndWrap" class="mg-inspector-end-wrap" data-confirming="false">
+                    <button type="button" id="mgInspectorEndBtn" class="btn mg-btn mg-btn-crimson mg-btn-block">
+                      <span>پایان بازی و صدور فاکتور</span>
+                    </button>
+                    <div id="mgInspectorEndConfirm" class="mg-inspector-confirm-box" hidden>
+                      <span class="mg-inspector-confirm-text">تایمر متوقف و فاکتور صادر شود؟</span>
+                      <div class="mg-inspector-confirm-actions">
+                        <button type="button" id="mgInspectorEndConfirmYes" class="btn mg-btn mg-btn-crimson mg-btn-sm">تأیید و صدور فاکتور</button>
+                        <button type="button" id="mgInspectorEndConfirmCancel" class="btn mg-btn mg-btn-sm mg-inspector-cancel-btn">انصراف</button>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="button" id="mgInspectorManageBtn" class="btn mg-btn mg-btn-sm mg-inspector-secondary-btn" data-switch-view="tables">
+                    <span>بوفه و تنظیمات کامل میز &larr;</span>
+                  </button>
+                </div>
+              </aside>
+            </div>
+          </section>
+
           <section aria-label="خلاصه وضعیت گیم‌نت" class="mg-kpi-grid">
             <!-- KPI 1: Number of active tables -->
             <article class="mg-kpi-card mg-stagger-item" style="--stagger-idx: 1;">
@@ -419,20 +561,6 @@
             </article>
           </section>
 
-          <!-- Active Stations Live Snapshot Card -->
-          <section class="mg-card mg-overview-stations-card" aria-label="میزهای فعال در حال حاضر">
-            <div class="mg-card-header">
-              <div>
-                <h3 class="mg-card-title">میزهای فعال</h3>
-              </div>
-              <button type="button" class="btn mg-btn mg-btn-primary mg-btn-sm" data-switch-view="tables">
-                <span>مدیریت میزها &larr;</span>
-              </button>
-            </div>
-            <div id="overviewMiniTablesList" class="mg-mini-stations-grid">
-              <!-- Populated dynamically by dashboard-ui.js -->
-            </div>
-          </section>
           </div>
         </div>
 
@@ -504,6 +632,13 @@
                       <label for="pre-payment-cost" class="mg-label">مبلغ پیش‌پرداخت (تومان)</label>
                       <input type="number" id="pre-payment-cost" name="pre-payment-cost" min="1" step="1000" aria-describedby="prePaymentCostError" class="form-control mg-input" placeholder="مبلغ شارژ اولیه به تومان" disabled>
                       <span class="mg-field-error" id="prePaymentCostError" role="alert" aria-live="polite"></span>
+                    </div>
+
+                    <div class="mg-form-group full-width">
+                      <label for="reservationCustomerSelect" class="mg-label">مشتری عضو باشگاه (اختیاری — ثبت ساعات بازی و جایزه)</label>
+                      <select class="form-control mg-select" id="reservationCustomerSelect" name="customerId">
+                        <option value="">مشتری مهمان (بدون اشتراک)</option>
+                      </select>
                     </div>
                   </div>
 
@@ -608,6 +743,7 @@
                     <button type="button" class="mg-filter-btn active" data-table-filter="all">همه</button>
                     <button type="button" class="mg-filter-btn" data-table-filter="post-payment">پس‌کرایه</button>
                     <button type="button" class="mg-filter-btn" data-table-filter="pre-payment">پیش‌پرداخت</button>
+                    <button type="button" class="mg-filter-btn" data-table-filter="idle">آزاد (نقشه سه‌بعدی)</button>
                   </div>
                 </div>
 
@@ -631,6 +767,15 @@
             </div>
           </div>
         </div>
+
+        <!-- ==================================================================
+             VIEW 3: MY GAMENET 3D BUILDER (گیم نت من)
+             ================================================================== -->
+        <div id="mgMyGamenetView" class="mg-view-pane mg3d-view-pane" data-view-pane="my-gamenet" hidden>
+          <section class="mg3d-stage-card" aria-label="فضای طراحی سه‌بعدی گیم‌نت من">
+            <div id="mg3dBuilderShell" class="mg3d-builder-shell"></div>
+          </section>
+        </div>
       </main>
     </div>
   </div>
@@ -645,8 +790,8 @@
 
   <!-- Scripts -->
   <script src="vendors/Flot/jquery.js"></script>
-  <script src="JS/7878.js?v=20261121-2"></script>
+  <script src="JS/7878.js?v=20261124-9"></script>
   <script src="JS/showErrorAlert.js?v=20261109-4"></script>
-  <script type="module" src="JS/dashboard-ui.js?v=20261121-4"></script>
+  <script type="module" src="JS/dashboard-ui.js?v=20261124-9"></script>
 </body>
 </html>
