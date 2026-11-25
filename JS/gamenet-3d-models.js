@@ -318,59 +318,59 @@ export function drawStationTimerCanvas(canvas, tableNumber, timerState = null, a
     warning: { border: '#f59e0b', badgeBg: '#d97706', text: '#fef3c7', dot: '#fbbf24' },
     expired: { border: '#ef4444', badgeBg: '#dc2626', text: '#fee2e2', dot: '#f87171' },
     waiting: { border: accentHex, badgeBg: accentHex, text: '#ede9fe', dot: accentHex },
-    idle: { border: 'rgba(148, 163, 184, 0.58)', badgeBg: '#1e293b', text: '#cbd5e1', dot: '#64748b' },
-  }[status] || { border: accentHex, badgeBg: '#1e293b', text: '#e2e8f0', dot: accentHex };
+    idle: { border: 'rgba(148, 163, 184, 0.78)', badgeBg: '#1e293b', text: '#f1f5f9', dot: '#94a3b8' },
+  }[status] || { border: accentHex, badgeBg: '#1e293b', text: '#f8fafc', dot: accentHex };
 
   // Pill background
-  drawRoundedRectPath(ctx, 6, 8, w - 12, h - 16, (h - 16) / 2);
-  ctx.fillStyle = status === 'idle' ? 'rgba(11, 16, 30, 0.86)' : 'rgba(10, 15, 28, 0.95)';
+  drawRoundedRectPath(ctx, 8, 10, w - 16, h - 20, (h - 20) / 2);
+  ctx.fillStyle = status === 'idle' ? 'rgba(10, 15, 28, 0.94)' : 'rgba(8, 13, 24, 0.98)';
   ctx.fill();
-  ctx.lineWidth = status === 'idle' ? 3 : 4;
+  ctx.lineWidth = status === 'idle' ? 4 : 5;
   ctx.strokeStyle = palette.border;
   ctx.stroke();
 
   // Right-side circular station number badge
-  const circleR = 26;
-  const circleX = w - 42;
+  const circleR = 44;
+  const circleX = w - 66;
   const circleY = h / 2;
   ctx.beginPath();
   ctx.arc(circleX, circleY, circleR, 0, Math.PI * 2);
   ctx.fillStyle = palette.badgeBg;
   ctx.fill();
-  ctx.lineWidth = 2.5;
+  ctx.lineWidth = 3.5;
   ctx.strokeStyle = status === 'idle' ? accentHex : '#ffffff';
   ctx.stroke();
 
   ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 28px Vazirmatn, Tahoma, sans-serif';
+  ctx.font = '800 48px Vazirmatn, Tahoma, sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(displayNum, circleX, circleY + 2);
+  ctx.fillText(displayNum, circleX, circleY + 3);
 
   // Small status dot on the left side
   ctx.beginPath();
-  ctx.arc(28, h / 2, 6, 0, Math.PI * 2);
+  ctx.arc(40, h / 2, 9, 0, Math.PI * 2);
   ctx.fillStyle = palette.dot;
   ctx.fill();
 
-  // Compact live timer readout with adaptive sizing so multi-hour timers never crowd
+  // Crisp enlarged live timer / status readout
   ctx.fillStyle = palette.text;
   const isClock = displayText.includes(':');
-  const fontSize = isClock ? (displayText.length > 8 ? 24 : 28) : 24;
-  ctx.font = `bold ${fontSize}px Vazirmatn, Tahoma, sans-serif`;
+  const fontSize = isClock ? (displayText.length > 8 ? 40 : 46) : 42;
+  ctx.font = `800 ${fontSize}px Vazirmatn, Tahoma, sans-serif`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  const textAreaLeft = 42;
-  const textAreaRight = circleX - circleR - 8;
+  const textAreaLeft = 58;
+  const textAreaRight = circleX - circleR - 12;
   const textCenterX = (textAreaLeft + textAreaRight) / 2;
-  const maxTextW = Math.max(80, textAreaRight - textAreaLeft);
-  ctx.fillText(displayText, textCenterX, h / 2 + 2, maxTextW);
+  const maxTextW = Math.max(150, textAreaRight - textAreaLeft);
+  ctx.fillText(displayText, textCenterX, h / 2 + 3, maxTextW);
 }
 
 function createStationTimerSprite(tableNumber, timerState, accentHex, anisotropy = 4) {
   const canvas = document.createElement('canvas');
-  canvas.width = 304;
-  canvas.height = 88;
+  canvas.width = 448;
+  canvas.height = 140;
   drawStationTimerCanvas(canvas, tableNumber, timerState, accentHex);
 
   const texture = new THREE.CanvasTexture(canvas);
@@ -904,8 +904,8 @@ export function buildFurnitureModel(
         ? { text: 'فعال', status: 'running', isOccupied: true }
         : { text: 'آزاد', status: 'idle', isOccupied: false });
     const sprite = createStationTimerSprite(item.tableNumber, resolvedTimer, accentHex, anisotropy);
-    sprite.position.set(0, spec.height + 0.44, 0);
-    sprite.scale.set(1.22, 0.355, 1);
+    sprite.position.set(0, spec.height + 0.56, 0);
+    sprite.scale.set(1.84, 0.575, 1);
     group.add(sprite);
   }
 
