@@ -163,13 +163,13 @@ const SPA_SECTIONS = {
   },
   tournaments: {
     key: 'tournaments',
-    file: 'tournaments.html?v=20261126-1',
-    script: 'JS/tournaments.js?v=20261126-1',
+    file: 'tournaments.html?v=20261126-2',
+    script: 'JS/tournaments.js?v=20261126-2',
     renderFn: 'renderTournamentsPage',
     navMatch: 'tournaments.html',
     title: 'تورنومنت',
-    docTitle: 'Game District | شبکه رقابتی تورنومنت‌های گیم‌نت‌ها',
-    tip: 'سرویس اختصاصی رقابت آنلاین و حضوری بین گیم‌نت‌ها در بازی‌های ویدیویی، فوتبال دستی و بیلیارد',
+    docTitle: 'Game District | شبکه رقابتی، چالش مستقیم و رتبه‌بندی گیم‌نت‌ها',
+    tip: 'سرویس اختصاصی رقابت آنلاین و حضوری بین گیم‌نت‌ها، چالش مستقیم و جدول رتبه‌بندی رسمی',
     url: 'tournaments.html',
   },
   console: {
@@ -469,6 +469,12 @@ async function switchSpaSection(targetKey, options = {}) {
   setText('mgTopbarTitle', sec.title);
   if (sec.docTitle) {
     document.title = sec.docTitle;
+  }
+
+  // Toggle adaptive glass canvas scope cleanly on main.mg-content only for Tournaments
+  const mainContentEl = document.querySelector('main.mg-content');
+  if (mainContentEl) {
+    mainContentEl.classList.toggle('trn-glass-canvas', sectionKey === 'tournaments');
   }
 
   // 3. Close mobile sidebar if open

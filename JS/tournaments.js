@@ -5,8 +5,10 @@
  */
 (function initTournamentsController() {
   const modulesPromise = Promise.all([
-    import('./tournaments-engine.mjs?v=20261126-1'),
-    import('./tournaments-renderers.mjs?v=20261126-1'),
+    import('./tournaments-engine.mjs?v=20261126-2'),
+    import('./tournaments-renderers.mjs?v=20261126-2'),
+    import('./tournaments-competition.mjs?v=20261126-2'),
+    import('./tournaments-competition-renderers.mjs?v=20261126-2'),
     import('./dashboard-metrics.mjs?v=20261109-3'),
   ]);
 
@@ -14,16 +16,23 @@
     tournaments: [],
     teams: [],
     challenges: [],
+    directChallenges: [],
     customers: {},
     activeTab: 'overview',
     selectedId: null,
     filters: {
       category: 'all',
       challengeStatus: 'all',
+      directBox: 'all',
+      lbTimeframe: 'all_time',
+      lbGame: 'all',
+      activeView: 'active',
       query: '',
     },
     engine: null,
     ui: null,
+    comp: null,
+    compUi: null,
     metrics: null,
   };
 
@@ -87,15 +96,17 @@
     }
     if (Array.isArray(data.teams)) state.teams = data.teams;
     if (Array.isArray(data.challenges)) state.challenges = data.challenges;
+    if (Array.isArray(data.directChallenges)) state.directChallenges = data.directChallenges;
     return data;
   }
 
   async function fetchFreshData() {
     const ts = Date.now();
-    const [trnRes, teamsRes, chalRes, custRes] = await Promise.all([
+    const [trnRes, teamsRes, chalRes, directRes, custRes] = await Promise.all([
       fetch(`tournaments.json?_=${ts}`, { cache: 'no-store' }),
       fetch(`tournament_teams.json?_=${ts}`, { cache: 'no-store' }).catch(() => null),
       fetch(`tournament_challenges.json?_=${ts}`, { cache: 'no-store' }).catch(() => null),
+      fetch(`tournament_direct_challenges.json?_=${ts}`, { cache: 'no-store' }).catch(() => null),
       fetch(`customer_data.json?_=${ts}`, { cache: 'no-store' }).catch(() => null),
     ]);
 
@@ -112,6 +123,10 @@
     if (chalRes && chalRes.ok) {
       const cList = await chalRes.json();
       state.challenges = Array.isArray(cList) ? cList : [];
+    }
+    if (directRes && directRes.ok) {
+      const dList = await directRes.json();
+      state.directChallenges = Array.isArray(dList) ? dList : [];
     }
     if (custRes && custRes.ok) {
       const custObj = await custRes.json();
@@ -255,25 +270,69 @@
     fillTeamSelect('trnTeamQuickPicker', 'انتخاب تیم نماینده (اختیاری)...');
     fillTeamSelect('trnChTeamSelect', 'تعریف دستی تیم یا بازیکن نماینده...');
     fillTeamSelect('trnAcceptTeamPicker', 'وارد کردن دستی نام تیم یا بازیکن...');
+    fillTeamSelect('trnDcTeamPicker', 'انتخاب دستی یا از باشگاه مشتریان...');
+    fillTeamSelect('trnDcAcceptTeamPicker', 'ورود دستی ترکیب...');
 
-    // 3. Customer checkbox grids inside modals
+    // 3. Target Gaming Center picker for Direct Challenges
+    const dcTargetSel = document.getElementById('trnDcTargetCenter');
+    if (dcTargetSel && state.comp) {
+      const prev = dcTargetSel.value;
+      dcTargetSel.innerHTML = '';
+      state.comp.GAMING_CENTER_DIRECTORY.filter((c) => c.id !== state.engine.LOCAL_GAMENET_ID).forEach((c) => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = `${c.name} (${c.city})`;
+        dcTargetSel.appendChild(opt);
+      });
+      if (prev && Array.from(dcTargetSel.options).some((o) => o.value === prev)) {
+        dcTargetSel.value = prev;
+      }
+    }
+
+    // 4. Customer checkbox grids inside modals
     renderCustomerCheckboxes('trnInternalCustomerList', 'internalCustomerIds');
     renderCustomerCheckboxes('trnTeamCustomerChecks', 'teamCustomerIds');
+    renderCustomerCheckboxes('trnDcCustomerChecklist', 'dcCustomerIds');
+  }
+
+  function computeOverallBoard(category = 'all', gameId = 'all', timeframe = 'all_time') {
+    if (!state.comp) return { rows: [], leader: null, totalMatchesCounted: 0 };
+    return state.comp.computeGamingCenterLeaderboard(
+      state.tournaments,
+      state.directChallenges,
+      {
+        category,
+        game: gameId,
+        timeframe,
+      }
+    );
   }
 
   function renderKPIsAndHero() {
     const summary = state.engine.computeNetworkSummary(state.tournaments, state.challenges, state.teams);
+    const overallBoard = computeOverallBoard('all', 'all', 'all_time');
+    const localRank = overallBoard.rows.find((r) => r.isLocal) || overallBoard.rows[0];
+    const pendingDirect = state.directChallenges.filter(
+      (dc) => dc.status === 'pending' || dc.status === 'awaiting_agreement'
+    ).length;
+
     const setEl = (id, text) => {
       const el = document.getElementById(id);
       if (el) el.textContent = text;
     };
 
-    setEl('trnKpiChallenges', formatFaNum(summary.openChallenges));
+    if (localRank) {
+      setEl('trnKpiRank', `#${formatFaNum(localRank.rank)}`);
+      setEl(
+        'trnKpiRankSub',
+        `${formatFaNum(localRank.points)} امتیاز رسمی · ${formatFaNum(localRank.winRate)}٪ نرخ برد`
+      );
+    }
+
+    setEl('trnKpiChallenges', formatFaNum(summary.openChallenges + pendingDirect));
     setEl(
       'trnKpiChallengesSub',
-      summary.readyChallenges > 0
-        ? `${formatFaNum(summary.readyChallenges)} چالش آماده تشکیل تورنومنت`
-        : 'در انتظار پذیرش گیم‌نت‌ها'
+      `${formatFaNum(pendingDirect)} چالش مستقیم فعال · ${formatFaNum(summary.openChallenges)} چالش باز`
     );
     setEl('trnKpiActive', formatFaNum(summary.activeTournaments));
     setEl(
@@ -282,8 +341,6 @@
     );
     setEl('trnKpiTeams', formatFaNum(summary.localTeamsCount));
     setEl('trnKpiTeamsSub', `${formatFaNum(summary.localPlayers)} اعزام ثبت‌شده از سالن شما`);
-    setEl('trnKpiGamenets', formatFaNum(summary.connectedGamenets));
-    setEl('trnKpiGamenetsSub', `${formatFaNum(summary.completedCount)} قهرمانی رسمی ثبت‌شده`);
 
     const navBadge = document.getElementById('navTournamentsBadge');
     if (navBadge) {
@@ -327,7 +384,11 @@
     const el = document.getElementById('trnCategorySelector');
     if (!el) return;
 
-    const allItems = [...state.tournaments, ...state.challenges.filter((c) => c.status !== 'formed')];
+    const allItems = [
+      ...state.tournaments,
+      ...state.challenges.filter((c) => c.status !== 'formed'),
+      ...state.directChallenges.filter((dc) => dc.status !== 'rejected'),
+    ];
     const counts = {
       all: allItems.length,
       video_games: allItems.filter((x) => x.category === 'video_games').length,
@@ -344,16 +405,20 @@
     const cat = state.filters.category;
     const filteredTournaments = state.engine.filterTournaments(state.tournaments, { category: cat });
     const filteredChallenges = state.engine.filterChallenges(state.challenges, { category: cat });
+    const filteredDirect = state.comp.filterDirectChallenges(state.directChallenges, { category: cat });
     const filteredTeams =
       cat === 'all' ? state.teams : state.teams.filter((tm) => tm.category === cat);
     const summary = state.engine.computeNetworkSummary(state.tournaments, state.challenges, state.teams);
+    const leaderboard = computeOverallBoard(cat, 'all', 'all_time');
 
     el.innerHTML = state.ui.renderOverviewDashboard(
       {
         tournaments: filteredTournaments,
         challenges: filteredChallenges,
+        directChallenges: filteredDirect,
         teams: filteredTeams,
         summary,
+        leaderboard,
       },
       getFmt()
     );
@@ -411,32 +476,138 @@
     el.innerHTML = list.map((tm) => state.ui.renderTeamCard(tm, getFmt())).join('');
   }
 
-  function renderInternalCompetitions() {
-    const el = document.getElementById('trnInternalGrid');
-    if (!el) return;
-    const list = state.engine.filterTournaments(state.tournaments, {
-      scope: 'internal',
+  function renderDirectChallenges() {
+    const el = document.getElementById('trnDirectChallengesList');
+    if (!el || !state.comp || !state.compUi) return;
+
+    document.querySelectorAll('[data-trn-dc-box]').forEach((btn) => {
+      btn.classList.toggle('is-active', btn.getAttribute('data-trn-dc-box') === state.filters.directBox);
+    });
+
+    const list = state.comp.filterDirectChallenges(state.directChallenges, {
+      box: state.filters.directBox,
       category: state.filters.category,
       query: state.filters.query,
     });
 
     if (list.length === 0) {
       el.innerHTML = `
-        <div class="trn-empty-state">
-          <h3>مسابقه داخلی فعالی در این دسته وجود ندارد</h3>
-          <p>یک مسابقه داخلی بین مشتریان ثبت‌نام‌شده سالن برگزار کنید تا تیم یا بازیکن برتر نماینده رسمی Game District شود.</p>
-          <button type="button" class="btn mg-btn mg-btn-primary" data-trn-action="open-create-internal">ساخت مسابقه داخلی جدید</button>
+        <div class="trn-empty-state trn-glass-surface">
+          <h3>چالش مستقیمی با این فیلتر پیدا نشد</h3>
+          <p>می‌توانید فیلتر وضعیت دعوت‌نامه‌ها را تغییر دهید یا همین حالا یک چالش مستقیم رسمی به یکی از گیم‌نت‌های شبکه ارسال کنید.</p>
+          <button type="button" class="btn mg-btn mg-btn-primary" data-trn-action="open-direct-challenge">ارسال چالش مستقیم</button>
         </div>
       `;
       return;
     }
 
-    el.innerHTML = list.map((t) => state.ui.renderTournamentCard(t, getFmt())).join('');
+    el.innerHTML = list.map((dc) => state.compUi.renderDirectChallengeCard(dc, getFmt())).join('');
+  }
+
+  function renderLeaderboard() {
+    const rootEl = document.getElementById('trnLeaderboardRoot');
+    const gameSel = document.getElementById('trnLeaderboardGameFilter');
+    if (!rootEl || !state.comp || !state.compUi) return;
+
+    document.querySelectorAll('[data-trn-lb-timeframe]').forEach((btn) => {
+      btn.classList.toggle(
+        'is-active',
+        btn.getAttribute('data-trn-lb-timeframe') === state.filters.lbTimeframe
+      );
+    });
+
+    if (gameSel) {
+      const cat = state.filters.category;
+      const games = state.engine.getActivitiesByCategory(cat);
+      const validIds = new Set(['all', ...games.map((g) => g.id)]);
+      if (!validIds.has(state.filters.lbGame)) {
+        state.filters.lbGame = 'all';
+      }
+      gameSel.innerHTML = '';
+      const allOpt = document.createElement('option');
+      allOpt.value = 'all';
+      allOpt.textContent =
+        cat === 'all'
+          ? 'همه بازی‌ها و رشته‌ها (رتبه‌بندی کلی)'
+          : `همه رشته‌های ${state.engine.getCategoryMeta(cat).label}`;
+      gameSel.appendChild(allOpt);
+      games.forEach((g) => {
+        const opt = document.createElement('option');
+        opt.value = g.id;
+        opt.textContent = g.name;
+        gameSel.appendChild(opt);
+      });
+      gameSel.value = state.filters.lbGame;
+    }
+
+    const board = computeOverallBoard(
+      state.filters.category,
+      state.filters.lbGame,
+      state.filters.lbTimeframe
+    );
+    rootEl.innerHTML = state.compUi.renderGamingCenterLeaderboard(
+      board,
+      {
+        timeframe: state.filters.lbTimeframe,
+        category: state.filters.category,
+        gameId: state.filters.lbGame,
+      },
+      getFmt()
+    );
   }
 
   function renderActiveTournaments() {
     const el = document.getElementById('trnActiveGrid');
     if (!el) return;
+
+    const view = state.filters.activeView || 'active';
+    document.querySelectorAll('[data-trn-active-view]').forEach((btn) => {
+      btn.classList.toggle('is-active', btn.getAttribute('data-trn-active-view') === view);
+    });
+
+    const fmt = getFmt();
+    el.classList.toggle('is-single-col', view === 'completed');
+
+    if (view === 'internal') {
+      const list = state.engine.filterTournaments(state.tournaments, {
+        scope: 'internal',
+        category: state.filters.category,
+        query: state.filters.query,
+      });
+      if (list.length === 0) {
+        el.innerHTML = `
+          <div class="trn-empty-state trn-glass-surface">
+            <h3>مسابقه داخلی فعالی در این دسته وجود ندارد</h3>
+            <p>یک مسابقه داخلی بین مشتریان ثبت‌نام‌شده سالن برگزار کنید تا برنده آن نماینده رسمی Game District شود.</p>
+            <button type="button" class="btn mg-btn mg-btn-primary" data-trn-action="open-create-internal">ساخت مسابقه داخلی جدید</button>
+          </div>
+        `;
+        return;
+      }
+      el.innerHTML = list.map((t) => state.ui.renderTournamentCard(t, fmt)).join('');
+      return;
+    }
+
+    if (view === 'completed') {
+      const list = state.engine.filterTournaments(state.tournaments, {
+        status: 'completed',
+        category: state.filters.category,
+        query: state.filters.query,
+      });
+      if (list.length === 0) {
+        el.innerHTML = `
+          <div class="trn-empty-state trn-glass-surface">
+            <h3>تورنومنت پایان‌یافته‌ای در این دسته ثبت نشده است</h3>
+            <p>پس از ثبت نتیجه فینال در بخش «جدول مسابقات»، نتیجه رسمی و امتیاز آن اینجا و در جدول رتبه‌بندی ثبت می‌شود.</p>
+            <button type="button" class="btn mg-btn mg-btn-primary" data-trn-jump-tab="brackets">رفتن به جدول مسابقات</button>
+          </div>
+        `;
+        return;
+      }
+      el.innerHTML = list.map((t) => state.ui.renderChampionCard(t, fmt)).join('');
+      return;
+    }
+
     const list = state.engine
       .filterTournaments(state.tournaments, {
         scope: 'inter_center',
@@ -447,16 +618,16 @@
 
     if (list.length === 0) {
       el.innerHTML = `
-        <div class="trn-empty-state">
+        <div class="trn-empty-state trn-glass-surface">
           <h3>تورنومنت فعال بین‌گیم‌نتی با این فیلتر پیدا نشد</h3>
-          <p>می‌توانید یک تورنومنت جدید ایجاد کنید یا از بخش «چالش‌های باز» یک چالش پذیرفته‌شده را به تورنومنت تبدیل کنید.</p>
+          <p>می‌توانید یک تورنومنت جدید ایجاد کنید یا از بخش «چالش مستقیم» و «چالش‌های باز» رقابت جدیدی آغاز کنید.</p>
           <button type="button" class="btn mg-btn mg-btn-primary" data-trn-action="open-create-network">ایجاد تورنومنت جدید</button>
         </div>
       `;
       return;
     }
 
-    el.innerHTML = list.map((t) => state.ui.renderTournamentCard(t, getFmt())).join('');
+    el.innerHTML = list.map((t) => state.ui.renderTournamentCard(t, fmt)).join('');
   }
 
   function renderBracketDetail() {
@@ -560,7 +731,27 @@
               : 'ثبت‌نام نماینده در تورنومنت';
     }
 
+    const isH2H = Boolean(t.isHeadToHead || t.matchMode === 'head_to_head');
+    const bracketTitleEl = document.getElementById('trnBracketPanelTitle');
+    const bracketSubEl = document.getElementById('trnBracketPanelSub');
+    const enrollSideBlock = document.getElementById('trnEnrollSideBlock');
+
+    if (bracketTitleEl) {
+      bracketTitleEl.textContent = isH2H
+        ? 'صفحه دیدار رو‌در‌رو بین‌گیم‌نتی (Head-to-Head)'
+        : 'جدول حذفی و مراحل مسابقه';
+    }
+    if (bracketSubEl) {
+      bracketSubEl.textContent = isH2H
+        ? 'پس از اتمام مسابقه، نتیجه نهایی را ثبت کنید تا برنده تایید و امتیاز در جدول رتبه‌بندی لحاظ شود.'
+        : 'روی دکمه «ثبت نتیجه» در هر دیدار آماده کلیک کنید تا امتیاز ثبت شده و برنده مشخص شود.';
+    }
+    if (enrollSideBlock) {
+      enrollSideBlock.hidden = isH2H;
+    }
+
     if (genBtn) {
+      genBtn.hidden = isH2H;
       genBtn.disabled = participants.length < 2 || t.status === 'completed';
       genBtn.textContent = t.bracket ? 'قرعه‌کشی مجدد جدول' : 'قرعه‌کشی و ساخت جدول';
     }
@@ -590,7 +781,7 @@
                   </div>
                 </div>
                 ${
-                  t.status !== 'completed'
+                  t.status !== 'completed' && !isH2H
                     ? `<button type="button" class="trn-remove-player-btn" data-trn-remove-player="${state.ui.escapeHtml(p.id)}" title="حذف از فهرست" aria-label="حذف ${state.ui.escapeHtml(p.playerName)}">&times;</button>`
                     : ''
                 }
@@ -602,67 +793,26 @@
     }
 
     if (stageEl) {
-      stageEl.innerHTML = state.ui.renderBracketStage(t, fmt);
-    }
-  }
-
-  function renderChampionsAndLeaderboard() {
-    const champGrid = document.getElementById('trnChampionsGrid');
-    const tbody = document.getElementById('trnNetworkTableBody');
-    const fmt = getFmt();
-
-    if (champGrid) {
-      const completed = state.engine.filterTournaments(state.tournaments, {
-        status: 'completed',
-        category: state.filters.category,
-        query: state.filters.query,
-      });
-
-      if (completed.length === 0) {
-        champGrid.innerHTML = `
-          <div class="trn-empty-state">
-            <h3>تورنومنت پایان‌یافته‌ای در این دسته ثبت نشده است</h3>
-            <p>پس از ثبت نتیجه فینال در بخش «جدول مسابقات»، کارت افتخار قهرمان و جزئیات جایزه اینجا نمایش داده می‌شود.</p>
-            <button type="button" class="btn mg-btn mg-btn-primary" data-trn-jump-tab="brackets">رفتن به جدول مسابقات</button>
-          </div>
-        `;
-      } else {
-        champGrid.innerHTML = completed.map((t) => state.ui.renderChampionCard(t, fmt)).join('');
-      }
-    }
-
-    if (tbody) {
-      const summary = state.engine.computeNetworkSummary(state.tournaments, state.challenges, state.teams);
-      tbody.innerHTML = summary.partnerLeaderboard
-        .map(
-          (gn, index) => `
-            <tr class="${gn.isLocal ? 'trn-local-row' : ''}">
-              <td class="trn-tabular">${formatFaNum(index + 1)}</td>
-              <td>
-                <strong>${state.ui.escapeHtml(gn.name)}</strong>
-                ${gn.isLocal ? '<span class="trn-local-tag">سالن شما</span>' : ''}
-              </td>
-              <td>${state.ui.escapeHtml(gn.city)}</td>
-              <td class="trn-tabular">${formatFaNum(gn.hostedCount)}</td>
-              <td class="trn-tabular">${formatFaNum(gn.playersSent)}</td>
-              <td class="trn-tabular">${formatFaNum(gn.championships)}</td>
-              <td class="trn-tabular">${gn.prizeOffered > 0 ? formatToman(gn.prizeOffered) : 'توافقی'}</td>
-            </tr>
-          `
-        )
-        .join('');
+      stageEl.innerHTML =
+        isH2H && state.compUi
+          ? state.compUi.renderHeadToHeadMatchStage(t, fmt)
+          : state.ui.renderBracketStage(t, fmt);
     }
   }
 
   function switchTab(tabKey) {
-    state.activeTab = tabKey;
+    const resolved = tabKey === 'internal' || tabKey === 'champions' ? 'active' : tabKey;
+    if (tabKey === 'internal') state.filters.activeView = 'internal';
+    if (tabKey === 'champions') state.filters.activeView = 'completed';
+
+    state.activeTab = resolved;
     document.querySelectorAll('.trn-tab-btn[data-trn-tab]').forEach((btn) => {
-      const isActive = btn.getAttribute('data-trn-tab') === tabKey;
+      const isActive = btn.getAttribute('data-trn-tab') === resolved;
       btn.classList.toggle('is-active', isActive);
       btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
     });
     document.querySelectorAll('.trn-tab-pane[data-trn-pane]').forEach((pane) => {
-      const isActive = pane.getAttribute('data-trn-pane') === tabKey;
+      const isActive = pane.getAttribute('data-trn-pane') === resolved;
       pane.classList.toggle('is-active', isActive);
       if (isActive) pane.removeAttribute('hidden');
       else pane.setAttribute('hidden', '');
@@ -670,9 +820,13 @@
 
     const filterBar = document.getElementById('trnSearchFilterBar');
     const chStatusSel = document.getElementById('trnChallengeStatusFilter');
-    const showSearch = ['challenges', 'teams', 'internal', 'active', 'champions'].includes(tabKey);
+    const showSearch = ['challenges', 'direct', 'teams', 'active'].includes(resolved);
     if (filterBar) filterBar.hidden = !showSearch;
-    if (chStatusSel) chStatusSel.hidden = tabKey !== 'challenges';
+    if (chStatusSel) chStatusSel.hidden = resolved !== 'challenges';
+
+    if (resolved === 'active') renderActiveTournaments();
+    if (resolved === 'leaderboard') renderLeaderboard();
+    if (resolved === 'direct') renderDirectChallenges();
   }
 
   function closeModal(type) {
@@ -684,6 +838,10 @@
       prize: 'trnPrizeModal',
       'form-trn': 'trnFormTournamentModal',
       match: 'trnMatchModal',
+      'direct-create': 'trnDirectCreateModal',
+      'direct-accept': 'trnDirectAcceptModal',
+      'direct-propose': 'trnDirectProposeModal',
+      'direct-reject': 'trnDirectRejectModal',
     };
     const modal = document.getElementById(map[type] || 'trnCreateModal');
     if (modal) modal.setAttribute('hidden', '');
@@ -932,17 +1090,181 @@
     document.getElementById('trnMatchModal')?.removeAttribute('hidden');
   }
 
+  function syncDirectCreateModalMode() {
+    const cat = document.getElementById('trnDcCategory')?.value || 'billiards';
+    const isPhysCat = state.engine.isPhysicalCategory(cat);
+    populateActivitySelect(document.getElementById('trnDcGame'), cat, false);
+
+    const modeWrap = document.getElementById('trnDcModeWrap');
+    const modeSel = document.getElementById('trnDcMode');
+    if (modeWrap) modeWrap.hidden = isPhysCat;
+    const effectiveMode = isPhysCat ? 'physical' : modeSel?.value || 'online';
+
+    const venueWrap = document.getElementById('trnDcVenueWrap');
+    const onlineWrap = document.getElementById('trnDcOnlineIdWrap');
+    if (venueWrap) venueWrap.hidden = effectiveMode !== 'physical';
+    if (onlineWrap) onlineWrap.hidden = effectiveMode === 'physical';
+
+    const gameId = document.getElementById('trnDcGame')?.value;
+    const game = state.engine.TOURNAMENT_GAMES.find((g) => g.id === gameId);
+    const fmtEl = document.getElementById('trnDcFormat');
+    if (fmtEl && game && !fmtEl.dataset.userEdited) {
+      fmtEl.value = game.defaultFormat;
+    }
+
+    syncDirectVenuePreset();
+  }
+
+  function syncDirectVenuePreset() {
+    const preset = document.getElementById('trnDcVenuePreset')?.value || 'local';
+    const venueInput = document.getElementById('trnDcVenue');
+    if (!venueInput) return;
+    if (preset === 'local') {
+      venueInput.value = state.engine.LOCAL_GAMENET_VENUE;
+    } else if (preset === 'target') {
+      const targetId = document.getElementById('trnDcTargetCenter')?.value;
+      const targetInfo = state.comp?.getGamingCenterInfo(targetId);
+      venueInput.value = targetInfo
+        ? `سالن گیم‌نت ${targetInfo.name} — ${targetInfo.city}`
+        : 'سالن گیم‌نت مقصد';
+    }
+  }
+
+  function openDirectCreateModal() {
+    const modal = document.getElementById('trnDirectCreateModal');
+    const form = document.getElementById('trnDirectCreateForm');
+    if (form) form.reset();
+    const fmtEl = document.getElementById('trnDcFormat');
+    if (fmtEl) delete fmtEl.dataset.userEdited;
+    const errEl = document.getElementById('trnDcCreateError');
+    if (errEl) errEl.hidden = true;
+
+    populateDynamicPickers();
+    const catEl = document.getElementById('trnDcCategory');
+    if (catEl && state.filters.category !== 'all') {
+      catEl.value = state.filters.category;
+    }
+    const dateEl = document.getElementById('trnDcDate');
+    if (dateEl && !dateEl.value) dateEl.value = 'پنج‌شنبه ۶ آذر ۱۴۰۵';
+
+    syncDirectCreateModalMode();
+    if (modal) modal.removeAttribute('hidden');
+    document.getElementById('trnDcTargetCenter')?.focus();
+  }
+
+  function openDirectAcceptModal(directId) {
+    const dc = state.directChallenges.find((item) => item.id === directId);
+    if (!dc) return;
+
+    const form = document.getElementById('trnDirectAcceptForm');
+    if (form) form.reset();
+    document.getElementById('trnDcAcceptId').value = dc.id;
+    document.getElementById('trnDcAcceptError').hidden = true;
+    populateDynamicPickers();
+
+    const isPhysical = dc.mode === 'physical';
+    const onlineWrap = document.getElementById('trnDcAcceptOnlineWrap');
+    if (onlineWrap) onlineWrap.hidden = isPhysical;
+
+    const isIncoming = dc.targetGamenetId === state.engine.LOCAL_GAMENET_ID;
+    const summaryEl = document.getElementById('trnDcAcceptSummary');
+    if (summaryEl) {
+      summaryEl.innerHTML = `
+        <div class="trn-card-kicker">
+          <strong>${state.ui.escapeHtml(dc.challengerGamenetName)} VS ${state.ui.escapeHtml(dc.targetGamenetName)}</strong>
+          <span aria-hidden="true">·</span>
+          <span>${state.ui.escapeHtml(dc.gameName)}</span>
+        </div>
+        <div style="margin-top:6px; font-size:12.5px;">
+          زمان: <strong>${state.ui.escapeHtml(dc.proposedDate)} ${dc.proposedTime ? `ساعت ${state.ui.escapeHtml(dc.proposedTime)}` : ''}</strong>
+          · جایزه: <strong>${state.ui.escapeHtml(dc.prizeSummary)}</strong>
+        </div>
+      `;
+    }
+
+    const teamNameEl = document.getElementById('trnDcAcceptTeamName');
+    const membersEl = document.getElementById('trnDcAcceptMembers');
+    const onlineEl = document.getElementById('trnDcAcceptOnlineId');
+
+    if (isIncoming) {
+      const matchTeam = state.teams.find(
+        (tm) => tm.gamenetId === state.engine.LOCAL_GAMENET_ID && tm.category === dc.category
+      );
+      if (matchTeam) {
+        document.getElementById('trnDcAcceptTeamPicker').value = matchTeam.id;
+        if (teamNameEl) teamNameEl.value = matchTeam.name;
+        if (membersEl) membersEl.value = (matchTeam.members || []).map((m) => m.name).join('، ');
+        if (onlineEl && !isPhysical) onlineEl.value = matchTeam.onlineTag || 'Steam:GD_Squad';
+      } else if (teamNameEl) {
+        teamNameEl.value = 'نماینده Game District';
+      }
+    } else {
+      if (teamNameEl) teamNameEl.value = dc.targetRoster?.teamName || `نماینده ${dc.targetGamenetName}`;
+      if (membersEl) {
+        membersEl.value =
+          (dc.targetRoster?.members || []).map((m) => m.name).join('، ') || 'نماینده تاییدشده حریف';
+      }
+      if (onlineEl && !isPhysical) onlineEl.value = dc.targetRoster?.onlineId || 'Match_Rep';
+    }
+
+    document.getElementById('trnDirectAcceptModal')?.removeAttribute('hidden');
+  }
+
+  function openDirectProposeModal(directId) {
+    const dc = state.directChallenges.find((item) => item.id === directId);
+    if (!dc) return;
+
+    const form = document.getElementById('trnDirectProposeForm');
+    if (form) form.reset();
+    document.getElementById('trnDcProposeId').value = dc.id;
+    document.getElementById('trnDcProposeError').hidden = true;
+
+    const activeTerms = dc.pendingProposal?.terms || dc;
+    document.getElementById('trnDcPropDate').value = activeTerms.proposedDate || dc.proposedDate || '';
+    document.getElementById('trnDcPropTime').value = activeTerms.proposedTime || dc.proposedTime || '';
+    document.getElementById('trnDcPropFormat').value = activeTerms.format || dc.format || '';
+    document.getElementById('trnDcPropVenue').value = activeTerms.venue || dc.venue || '';
+    document.getElementById('trnDcPropVenueWrap').hidden = dc.mode !== 'physical';
+    document.getElementById('trnDcPropPrizeType').value = activeTerms.prizeType || dc.prizeType || 'vip_session';
+    document.getElementById('trnDcPropPrizeSummary').value = activeTerms.prizeSummary || dc.prizeSummary || '';
+    document.getElementById('trnDcPropNotes').value = activeTerms.notes || dc.notes || '';
+
+    const summaryEl = document.getElementById('trnDcProposeSummary');
+    if (summaryEl) {
+      summaryEl.innerHTML = `
+        <div class="trn-card-kicker">
+          <strong>${state.ui.escapeHtml(dc.challengerGamenetName)} VS ${state.ui.escapeHtml(dc.targetGamenetName)}</strong>
+          <span aria-hidden="true">·</span>
+          <span>${state.ui.escapeHtml(dc.gameName)}</span>
+        </div>
+        <div style="margin-top:4px; font-size:12.5px;">شرایط فعلی: ${state.ui.escapeHtml(dc.proposedDate)} ${dc.proposedTime ? `(${state.ui.escapeHtml(dc.proposedTime)})` : ''} · جایزه: ${state.ui.escapeHtml(dc.prizeSummary)}</div>
+      `;
+    }
+
+    document.getElementById('trnDirectProposeModal')?.removeAttribute('hidden');
+  }
+
+  function openDirectRejectModal(directId) {
+    const dc = state.directChallenges.find((item) => item.id === directId);
+    if (!dc) return;
+    const form = document.getElementById('trnDirectRejectForm');
+    if (form) form.reset();
+    document.getElementById('trnDcRejectId').value = dc.id;
+    document.getElementById('trnDcRejectError').hidden = true;
+    document.getElementById('trnDirectRejectModal')?.removeAttribute('hidden');
+  }
+
   function renderAll() {
     populateDynamicPickers();
     renderKPIsAndHero();
     renderCategoryBar();
     renderOverview();
     renderChallenges();
+    renderDirectChallenges();
+    renderLeaderboard();
     renderTeams();
-    renderInternalCompetitions();
     renderActiveTournaments();
     renderBracketDetail();
-    renderChampionsAndLeaderboard();
   }
 
   function bindEventsOnce() {
@@ -971,13 +1293,38 @@
         renderCategoryBar();
         renderOverview();
         renderChallenges();
+        renderDirectChallenges();
+        renderLeaderboard();
         renderTeams();
-        renderInternalCompetitions();
         renderActiveTournaments();
-        renderChampionsAndLeaderboard();
         return;
       }
 
+      const dcBoxBtn = e.target.closest('[data-trn-dc-box]');
+      if (dcBoxBtn) {
+        state.filters.directBox = dcBoxBtn.getAttribute('data-trn-dc-box') || 'all';
+        renderDirectChallenges();
+        return;
+      }
+
+      const lbTimeBtn = e.target.closest('[data-trn-lb-timeframe]');
+      if (lbTimeBtn) {
+        state.filters.lbTimeframe = lbTimeBtn.getAttribute('data-trn-lb-timeframe') || 'all_time';
+        renderLeaderboard();
+        return;
+      }
+
+      const activeViewBtn = e.target.closest('[data-trn-active-view]');
+      if (activeViewBtn) {
+        state.filters.activeView = activeViewBtn.getAttribute('data-trn-active-view') || 'active';
+        renderActiveTournaments();
+        return;
+      }
+
+      if (e.target.closest('[data-trn-action="open-direct-challenge"]')) {
+        openDirectCreateModal();
+        return;
+      }
       if (e.target.closest('[data-trn-action="open-create-internal"]')) {
         openCreateModal('internal');
         return;
@@ -992,6 +1339,77 @@
       }
       if (e.target.closest('[data-trn-action="open-challenge"]')) {
         openChallengeModal('');
+        return;
+      }
+
+      const dcAcceptBtn = e.target.closest('[data-trn-dc-accept]');
+      if (dcAcceptBtn) {
+        openDirectAcceptModal(dcAcceptBtn.getAttribute('data-trn-dc-accept'));
+        return;
+      }
+
+      const dcProposeBtn = e.target.closest('[data-trn-dc-propose]');
+      if (dcProposeBtn) {
+        openDirectProposeModal(dcProposeBtn.getAttribute('data-trn-dc-propose'));
+        return;
+      }
+
+      const dcRejectBtn = e.target.closest('[data-trn-dc-reject]');
+      if (dcRejectBtn) {
+        openDirectRejectModal(dcRejectBtn.getAttribute('data-trn-dc-reject'));
+        return;
+      }
+
+      const dcConfirmBtn = e.target.closest('[data-trn-dc-confirm]');
+      if (dcConfirmBtn) {
+        try {
+          const resp = await postTournamentAction({
+            action: 'confirm_direct_terms',
+            directId: dcConfirmBtn.getAttribute('data-trn-dc-confirm'),
+            gamenetId: state.engine.LOCAL_GAMENET_ID,
+          });
+          if (resp.tournament?.id) state.selectedId = resp.tournament.id;
+          renderAll();
+          showToast(
+            resp.bothAgreed
+              ? 'توافق دوطرفه نهایی شد و دیدار رو‌در‌رو آماده برگزاری است!'
+              : 'تایید شما ثبت شد؛ در انتظار تایید گیم‌نت مقابل.'
+          );
+        } catch (err) {
+          showToast(err.message);
+        }
+        return;
+      }
+
+      const dcConfirmBothBtn = e.target.closest('[data-trn-dc-confirm-both]');
+      if (dcConfirmBothBtn) {
+        try {
+          const resp = await postTournamentAction({
+            action: 'confirm_direct_terms',
+            directId: dcConfirmBothBtn.getAttribute('data-trn-dc-confirm-both'),
+            confirmBoth: '1',
+          });
+          if (resp.tournament?.id) state.selectedId = resp.tournament.id;
+          renderAll();
+          showToast('توافق دوطرفه ثبت شد و دیدار رو‌در‌رو ایجاد گردید!');
+        } catch (err) {
+          showToast(err.message);
+        }
+        return;
+      }
+
+      const dcDeleteBtn = e.target.closest('[data-trn-dc-delete]');
+      if (dcDeleteBtn) {
+        try {
+          await postTournamentAction({
+            action: 'delete_direct_challenge',
+            directId: dcDeleteBtn.getAttribute('data-trn-dc-delete'),
+          });
+          renderAll();
+          showToast('چالش مستقیم حذف شد.');
+        } catch (err) {
+          showToast(err.message);
+        }
         return;
       }
 
@@ -1200,10 +1618,13 @@
       if (e.target.id === 'trnSearchInput') {
         state.filters.query = e.target.value || '';
         renderChallenges();
+        renderDirectChallenges();
         renderTeams();
-        renderInternalCompetitions();
         renderActiveTournaments();
-        renderChampionsAndLeaderboard();
+        return;
+      }
+      if (e.target.id === 'trnDcFormat') {
+        e.target.dataset.userEdited = '1';
       }
     });
 
@@ -1213,9 +1634,54 @@
         renderChallenges();
         return;
       }
+      if (e.target.id === 'trnLeaderboardGameFilter') {
+        state.filters.lbGame = e.target.value || 'all';
+        renderLeaderboard();
+        return;
+      }
       if (e.target.id === 'trnDetailSelect') {
         state.selectedId = e.target.value;
         renderBracketDetail();
+        return;
+      }
+      if (e.target.id === 'trnDcCategory' || e.target.id === 'trnDcMode') {
+        syncDirectCreateModalMode();
+        return;
+      }
+      if (e.target.id === 'trnDcGame') {
+        const game = state.engine.TOURNAMENT_GAMES.find((g) => g.id === e.target.value);
+        const fmtEl = document.getElementById('trnDcFormat');
+        if (fmtEl && game && !fmtEl.dataset.userEdited) {
+          fmtEl.value = game.defaultFormat;
+        }
+        return;
+      }
+      if (e.target.id === 'trnDcVenuePreset' || e.target.id === 'trnDcTargetCenter') {
+        syncDirectVenuePreset();
+        return;
+      }
+      if (e.target.id === 'trnDcTeamPicker') {
+        const tm = state.teams.find((x) => x.id === e.target.value);
+        if (tm) {
+          const catEl = document.getElementById('trnDcCategory');
+          if (catEl) catEl.value = tm.category;
+          syncDirectCreateModalMode();
+          const gameEl = document.getElementById('trnDcGame');
+          if (gameEl && tm.gameId) gameEl.value = tm.gameId;
+          document.getElementById('trnDcTeamName').value = tm.name;
+          document.getElementById('trnDcEntryType').value = tm.entryType === 'individual' ? 'individual' : 'team';
+          document.getElementById('trnDcManualMembers').value = (tm.members || []).map((m) => m.name).join('، ');
+          if (tm.onlineTag) document.getElementById('trnDcOnlineId').value = tm.onlineTag;
+        }
+        return;
+      }
+      if (e.target.id === 'trnDcAcceptTeamPicker') {
+        const tm = state.teams.find((x) => x.id === e.target.value);
+        if (tm) {
+          document.getElementById('trnDcAcceptTeamName').value = tm.name;
+          document.getElementById('trnDcAcceptMembers').value = (tm.members || []).map((m) => m.name).join('، ');
+          if (tm.onlineTag) document.getElementById('trnDcAcceptOnlineId').value = tm.onlineTag;
+        }
         return;
       }
       if (e.target.id === 'trnInputCategory' || e.target.id === 'trnInputScope') {
@@ -1611,11 +2077,159 @@
           closeModal('match');
           renderAll();
           const completed = resp.tournament?.status === 'completed';
+          const isH2H = Boolean(resp.tournament?.isHeadToHead);
           showToast(
             completed
-              ? 'قهرمان رسمی تورنومنت ثبت شد و در تالار قهرمانان قرار گرفت!'
+              ? isH2H
+                ? 'نتیجه دیدار رو‌در‌رو ثبت شد و +۲۰ امتیاز در جدول رتبه‌بندی اعمال گردید!'
+                : 'قهرمان رسمی تورنومنت ثبت شد و امتیازات در جدول رتبه‌بندی به‌روزرسانی شد!'
               : 'نتیجه ثبت شد و برنده به مرحله بعد صعود کرد.'
           );
+        } catch (err) {
+          errEl.textContent = err.message;
+          errEl.hidden = false;
+        }
+        return;
+      }
+
+      // 9. Send Direct Gaming Center Challenge
+      if (e.target.id === 'trnDirectCreateForm') {
+        e.preventDefault();
+        const errEl = document.getElementById('trnDcCreateError');
+        errEl.hidden = true;
+
+        const checkedMembers = Array.from(
+          e.target.querySelectorAll('input[name="dcCustomerIds"]:checked')
+        ).map((inp) => ({
+          name: inp.getAttribute('data-customer-name') || '',
+          customerId: inp.value,
+          role: 'عضو باشگاه مشتریان',
+        }));
+        const manualRaw = document.getElementById('trnDcManualMembers')?.value || '';
+        const manualMembers = state.engine.parseMembersList(manualRaw);
+        const allMembers = [...checkedMembers, ...manualMembers];
+
+        const cat = document.getElementById('trnDcCategory')?.value || 'billiards';
+        const isPhysCat = state.engine.isPhysicalCategory(cat);
+        const mode = isPhysCat ? 'physical' : document.getElementById('trnDcMode')?.value || 'online';
+        const targetId = document.getElementById('trnDcTargetCenter')?.value || '';
+        const targetInfo = state.comp.getGamingCenterInfo(targetId);
+
+        const payload = {
+          action: 'create_direct_challenge',
+          targetGamenetId: targetId,
+          targetGamenetName: targetInfo.name,
+          category: cat,
+          gameId: document.getElementById('trnDcGame')?.value || '',
+          mode,
+          entryType: document.getElementById('trnDcEntryType')?.value || 'individual',
+          format: document.getElementById('trnDcFormat')?.value || '',
+          venue: mode === 'physical' ? document.getElementById('trnDcVenue')?.value || '' : '',
+          proposedDate: document.getElementById('trnDcDate')?.value || '',
+          proposedTime: document.getElementById('trnDcTime')?.value || '',
+          prizeType: document.getElementById('trnDcPrizeType')?.value || 'vip_session',
+          prizeSummary: document.getElementById('trnDcPrizeSummary')?.value || '',
+          notes: document.getElementById('trnDcNotes')?.value || '',
+          teamId: document.getElementById('trnDcTeamPicker')?.value || '',
+          teamName: document.getElementById('trnDcTeamName')?.value || '',
+          onlineId: document.getElementById('trnDcOnlineId')?.value || '',
+          members: JSON.stringify(allMembers),
+        };
+
+        const check = state.comp.sanitizeDirectChallengeInput({
+          ...payload,
+          members: allMembers,
+        });
+        if (check.error) {
+          errEl.textContent = check.error;
+          errEl.hidden = false;
+          return;
+        }
+
+        try {
+          await postTournamentAction(payload);
+          closeModal('direct-create');
+          state.filters.directBox = 'all';
+          switchTab('direct');
+          renderAll();
+          showToast(`چالش مستقیم با موفقیت برای «${targetInfo.name}» ارسال شد.`);
+        } catch (err) {
+          errEl.textContent = err.message;
+          errEl.hidden = false;
+        }
+        return;
+      }
+
+      // 10. Accept Direct Challenge & Auto-create Head-to-Head Match
+      if (e.target.id === 'trnDirectAcceptForm') {
+        e.preventDefault();
+        const errEl = document.getElementById('trnDcAcceptError');
+        errEl.hidden = true;
+        try {
+          const resp = await postTournamentAction({
+            action: 'accept_direct_challenge',
+            directId: document.getElementById('trnDcAcceptId')?.value || '',
+            teamId: document.getElementById('trnDcAcceptTeamPicker')?.value || '',
+            teamName: document.getElementById('trnDcAcceptTeamName')?.value || '',
+            onlineId: document.getElementById('trnDcAcceptOnlineId')?.value || '',
+            members: document.getElementById('trnDcAcceptMembers')?.value || '',
+          });
+          closeModal('direct-accept');
+          if (resp.tournament?.id) {
+            state.selectedId = resp.tournament.id;
+            switchTab('brackets');
+          }
+          renderAll();
+          showToast('چالش مستقیم تایید شد و صفحه دیدار رو‌در‌رو آماده ثبت نتیجه است!');
+        } catch (err) {
+          errEl.textContent = err.message;
+          errEl.hidden = false;
+        }
+        return;
+      }
+
+      // 11. Propose Changes to Direct Challenge Terms
+      if (e.target.id === 'trnDirectProposeForm') {
+        e.preventDefault();
+        const errEl = document.getElementById('trnDcProposeError');
+        errEl.hidden = true;
+        try {
+          await postTournamentAction({
+            action: 'propose_direct_changes',
+            directId: document.getElementById('trnDcProposeId')?.value || '',
+            proposerGamenetId: state.engine.LOCAL_GAMENET_ID,
+            proposedDate: document.getElementById('trnDcPropDate')?.value || '',
+            proposedTime: document.getElementById('trnDcPropTime')?.value || '',
+            format: document.getElementById('trnDcPropFormat')?.value || '',
+            venue: document.getElementById('trnDcPropVenue')?.value || '',
+            prizeType: document.getElementById('trnDcPropPrizeType')?.value || '',
+            prizeSummary: document.getElementById('trnDcPropPrizeSummary')?.value || '',
+            notes: document.getElementById('trnDcPropNotes')?.value || '',
+          });
+          closeModal('direct-propose');
+          renderAll();
+          showToast('پیشنهاد تغییر شرایط ثبت شد و برای توافق دوطرفه نمایش داده می‌شود.');
+        } catch (err) {
+          errEl.textContent = err.message;
+          errEl.hidden = false;
+        }
+        return;
+      }
+
+      // 12. Reject Direct Challenge
+      if (e.target.id === 'trnDirectRejectForm') {
+        e.preventDefault();
+        const errEl = document.getElementById('trnDcRejectError');
+        errEl.hidden = true;
+        try {
+          await postTournamentAction({
+            action: 'reject_direct_challenge',
+            directId: document.getElementById('trnDcRejectId')?.value || '',
+            reason: document.getElementById('trnDcRejectReason')?.value || '',
+          });
+          closeModal('direct-reject');
+          renderAll();
+          showToast('دعوت‌نامه چالش مستقیم رد شد.');
         } catch (err) {
           errEl.textContent = err.message;
           errEl.hidden = false;
@@ -1626,9 +2240,11 @@
 
   async function renderTournamentsPage() {
     if (!document.getElementById('mgTournamentsRoot')) return;
-    const [engine, ui, metrics] = await modulesPromise;
+    const [engine, ui, comp, compUi, metrics] = await modulesPromise;
     state.engine = engine;
     state.ui = ui;
+    state.comp = comp;
+    state.compUi = compUi;
     state.metrics = metrics;
     bindEventsOnce();
     await fetchFreshData();

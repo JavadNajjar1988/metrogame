@@ -78,11 +78,14 @@ export function renderCategorySelectorBar(activeCategory, counts = {}, fmt) {
     .join('');
 }
 
-export function renderOverviewDashboard({ tournaments, challenges, teams, summary }, fmt) {
+export function renderOverviewDashboard({ tournaments, challenges, directChallenges = [], teams, summary, leaderboard }, fmt) {
   const readyChallenge = challenges.find((c) => canFormTournamentFromChallenge(c)) || challenges.find((c) => c.status !== 'formed');
   const activeLive = tournaments.find((t) => t.status === 'live' && t.scope === 'inter_center') || tournaments.find((t) => t.status === 'live');
-  const latestChampion = tournaments.find((t) => t.status === 'completed' && t.bracket?.champion);
-  const internalActive = tournaments.find((t) => t.scope === 'internal');
+  const pendingDirectCount = directChallenges.filter((dc) => dc.status === 'pending' || dc.status === 'awaiting_agreement').length;
+  const topThree = Array.isArray(leaderboard?.rows) ? leaderboard.rows.slice(0, 3) : [];
+  const localRankRow = Array.isArray(leaderboard?.rows)
+    ? leaderboard.rows.find((r) => r.isLocal)
+    : null;
 
   const readyBlock = readyChallenge
     ? (() => {
@@ -90,7 +93,7 @@ export function renderOverviewDashboard({ tournaments, challenges, teams, summar
         const agreed = readyChallenge.prizeAgreement?.status === 'agreed';
         const catMeta = getCategoryMeta(readyChallenge.category);
         return `
-          <article class="trn-ov-panel">
+          <article class="trn-ov-panel trn-glass-surface">
             <div class="trn-ov-panel-head">
               <div>
                 <p class="trn-ov-kicker">چالش‌های باز بین‌گیم‌نتی · ${escapeHtml(catMeta.label)}</p>
@@ -118,7 +121,7 @@ export function renderOverviewDashboard({ tournaments, challenges, teams, summar
         `;
       })()
     : `
-      <article class="trn-ov-panel">
+      <article class="trn-ov-panel trn-glass-surface">
         <p class="trn-ov-kicker">چالش‌های باز شبکه</p>
         <h3 class="trn-panel-title">چالش باز جدیدی ثبت نشده است</h3>
         <p class="trn-ov-statement">تیم منتخب گیم‌نت خود را انتخاب کنید و یک فراخوان رقابت رسمی برای سایر گیم‌نت‌های شبکه منتشر کنید.</p>
@@ -128,41 +131,70 @@ export function renderOverviewDashboard({ tournaments, challenges, teams, summar
       </article>
     `;
 
-  const championBlock = latestChampion
-    ? renderChampionCard(latestChampion, fmt, { compact: true })
-    : `
-      <article class="trn-ov-panel">
-        <p class="trn-ov-kicker">تالار قهرمانان</p>
-        <h3 class="trn-panel-title">هنوز تورنومنت پایان‌یافته‌ای ثبت نشده است</h3>
-        <p class="trn-ov-statement">با ثبت نتیجه فینال در جدول مسابقات، قهرمان رسمی و جزئیات جایزه در این بخش ثبت می‌شود.</p>
-      </article>
-    `;
+  const leaderboardMiniRows = topThree
+    .map((row) => {
+      const medalCls = row.rank === 1 ? 'is-gold' : row.rank === 2 ? 'is-silver' : 'is-bronze';
+      return `
+        <li class="trn-ov-lb-row ${row.isLocal ? 'is-local' : ''}">
+          <span class="trn-rank-badge ${medalCls} trn-tabular">${fmt.num(row.rank)}</span>
+          <div class="trn-ov-lb-name">
+            <strong>${escapeHtml(row.name)}</strong>
+            <span>${escapeHtml(row.city)} · ${fmt.num(row.wins)} برد / ${fmt.num(row.losses)} باخت</span>
+          </div>
+          <strong class="trn-ov-lb-pts trn-tabular">${fmt.num(row.points)} امتیاز</strong>
+        </li>
+      `;
+    })
+    .join('');
+
+  const leaderboardPreviewPanel = `
+    <article class="trn-ov-panel trn-glass-surface">
+      <div class="trn-ov-panel-head">
+        <div>
+          <p class="trn-ov-kicker">رتبه‌بندی رسمی شبکه گیم‌نت‌ها</p>
+          <h3 class="trn-panel-title">سه گیم‌نت برتر شبکه</h3>
+        </div>
+        ${
+          localRankRow
+            ? `<span class="trn-status-text is-accent trn-tabular">رتبه فعلی شما: #${fmt.num(localRankRow.rank)}</span>`
+            : ''
+        }
+      </div>
+      <ul class="trn-ov-lb-list">
+        ${leaderboardMiniRows || '<li class="trn-muted-meta">هنوز مسابقه‌ای ثبت نشده است.</li>'}
+      </ul>
+      <div class="trn-ov-actions">
+        <button type="button" class="btn mg-btn mg-btn-primary mg-btn-sm" data-trn-jump-tab="leaderboard">مشاهده جدول کامل رتبه‌بندی</button>
+        <button type="button" class="btn mg-btn trn-ghost-btn mg-btn-sm" data-trn-action="open-direct-challenge">ارسال چالش مستقیم</button>
+      </div>
+    </article>
+  `;
 
   const workflowStrip = `
     <section class="trn-workflow-grid" aria-label="دسترسی سریع جریان‌های رقابت">
-      <article class="trn-workflow-card">
+      <article class="trn-workflow-card trn-glass-surface">
         <span class="trn-workflow-step">۰۱</span>
-        <h4>ساخت تیم‌های نماینده</h4>
-        <p>از مشتریان ثبت‌نام‌شده باشگاه تیم‌های ویدیویی، فوتبال دستی و بیلیارد بسازید (${fmt.num(teams.length)} تیم آماده).</p>
-        <button type="button" class="btn mg-btn trn-ghost-btn mg-btn-sm" data-trn-jump-tab="teams">مدیریت تیم‌های سالن</button>
+        <h4>چالش مستقیم به گیم‌نت‌ها</h4>
+        <p>${pendingDirectCount > 0 ? `${fmt.num(pendingDirectCount)} چالش مستقیم در انتظار پاسخ یا توافق شرایط نهایی است.` : 'یک گیم‌نت مشخص را در بازی ویدیویی، بیلیارد یا فوتبال دستی مستقیماً به رقابت دعوت کنید.'}</p>
+        <button type="button" class="btn mg-btn trn-ghost-btn mg-btn-sm" data-trn-jump-tab="direct">مدیریت چالش‌های مستقیم</button>
       </article>
-      <article class="trn-workflow-card">
+      <article class="trn-workflow-card trn-glass-surface">
         <span class="trn-workflow-step">۰۲</span>
-        <h4>مسابقات داخلی انتخابی</h4>
-        <p>${internalActive ? `رویداد داخلی فعال: ${escapeHtml(internalActive.title)}` : 'مسابقه داخلی برگزار کنید و برندگان را به‌عنوان نماینده رسمی سالن معرفی کنید.'}</p>
-        <button type="button" class="btn mg-btn trn-ghost-btn mg-btn-sm" data-trn-jump-tab="internal">بخش مسابقات داخلی</button>
+        <h4>رتبه‌بندی گیم‌نت‌ها</h4>
+        <p>${localRankRow ? `جایگاه فعلی Game District: رتبه ${fmt.num(localRankRow.rank)} با ${fmt.num(localRankRow.points)} امتیاز رسمی.` : 'جایگاه و درصد برد گیم‌نت‌های عضو شبکه را در همه رشته‌ها بررسی کنید.'}</p>
+        <button type="button" class="btn mg-btn trn-ghost-btn mg-btn-sm" data-trn-jump-tab="leaderboard">مشاهده رتبه‌بندی</button>
       </article>
-      <article class="trn-workflow-card">
+      <article class="trn-workflow-card trn-glass-surface">
         <span class="trn-workflow-step">۰۳</span>
-        <h4>چالش و توافق جایزه</h4>
-        <p>فراخوان رقابت بدهید، چالش سایر گیم‌نت‌ها را بپذیرید و پس از توافق روی جایزه، جدول را خودکار بسازید.</p>
-        <button type="button" class="btn mg-btn trn-ghost-btn mg-btn-sm" data-trn-jump-tab="challenges">ورود به چالش‌های باز</button>
+        <h4>تیم‌های نماینده و انتخابی داخلی</h4>
+        <p>از مشتریان ثبت‌نام‌شده تیم بسازید (${fmt.num(teams.length)} تیم آماده) یا مسابقه داخلی برگزار کنید.</p>
+        <button type="button" class="btn mg-btn trn-ghost-btn mg-btn-sm" data-trn-jump-tab="teams">مدیریت تیم‌های من</button>
       </article>
-      <article class="trn-workflow-card">
+      <article class="trn-workflow-card trn-glass-surface">
         <span class="trn-workflow-step">۰۴</span>
-        <h4>جدول مسابقات و قهرمانی</h4>
-        <p>${activeLive ? `مسابقه در حال اجرا: ${escapeHtml(activeLive.title)}` : 'نتایج هر مرحله را ثبت کنید و قهرمان نهایی را در تالار افتخارات نمایش دهید.'}</p>
-        <button type="button" class="btn mg-btn trn-ghost-btn mg-btn-sm" data-trn-jump-tab="brackets">باز کردن جدول فعال</button>
+        <h4>جدول مسابقات و دیدارهای زنده</h4>
+        <p>${activeLive ? `رویداد در حال اجرا: ${escapeHtml(activeLive.title)}` : 'نتایج هر دیدار را ثبت کنید تا امتیاز رتبه‌بندی و قهرمان نهایی به‌روزرسانی شود.'}</p>
+        <button type="button" class="btn mg-btn trn-ghost-btn mg-btn-sm" data-trn-jump-tab="brackets">ورود به جدول مسابقات</button>
       </article>
     </section>
   `;
@@ -171,7 +203,7 @@ export function renderOverviewDashboard({ tournaments, challenges, teams, summar
     ${workflowStrip}
     <div class="trn-ov-split">
       ${readyBlock}
-      ${championBlock}
+      ${leaderboardPreviewPanel}
     </div>
   `;
 }

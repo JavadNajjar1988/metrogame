@@ -194,10 +194,10 @@ test('seed data, category filtering, and network summary work seamlessly togethe
   const teams = createSeedTeams();
 
   const summary = computeNetworkSummary(tournaments, challenges, teams);
-  assert.equal(summary.totalTournaments, 5);
-  assert.equal(summary.activeTournaments, 3);
+  assert.equal(summary.totalTournaments, 7);
+  assert.equal(summary.activeTournaments, 4);
   assert.equal(summary.internalCount, 1);
-  assert.equal(summary.completedCount, 2);
+  assert.equal(summary.completedCount, 3);
   assert.equal(summary.openChallenges, 3);
   assert.equal(summary.readyChallenges, 1);
   assert.equal(summary.localTeamsCount, 3);

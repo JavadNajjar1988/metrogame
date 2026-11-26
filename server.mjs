@@ -111,6 +111,7 @@ const server = createServer(async (request, response) => {
         tournaments,
         tournament_teams,
         tournament_challenges,
+        tournament_direct_challenges,
       ] = await Promise.all([
         readData('data.json'),
         readData('reservations.json'),
@@ -128,6 +129,7 @@ const server = createServer(async (request, response) => {
         readData('tournaments.json'),
         readData('tournament_teams.json'),
         readData('tournament_challenges.json'),
+        readData('tournament_direct_challenges.json'),
       ]);
       return json(response, 200, {
         'data.json': data,
@@ -146,6 +148,7 @@ const server = createServer(async (request, response) => {
         'tournaments.json': tournaments,
         'tournament_teams.json': tournament_teams,
         'tournament_challenges.json': tournament_challenges,
+        'tournament_direct_challenges.json': tournament_direct_challenges,
       });
     }
 

@@ -27,6 +27,15 @@ import {
   LOCAL_GAMENET_NAME,
   LOCAL_GAMENET_CITY,
 } from './JS/tournaments-engine.mjs';
+import {
+  createSeedDirectChallenges,
+  sanitizeDirectChallengeInput,
+  acceptDirectChallenge,
+  rejectDirectChallenge,
+  proposeDirectChallengeChanges,
+  confirmDirectChallengeTerms,
+  buildHeadToHeadMatchFromDirectChallenge,
+} from './JS/tournaments-competition.mjs';
 
 const directory = process.env.METROGAME_DATA_DIR || fileURLToPath(new URL('.', import.meta.url));
 const defaults = {
@@ -48,6 +57,7 @@ const defaults = {
   'tournaments.json': createSeedTournaments(),
   'tournament_teams.json': createSeedTeams(),
   'tournament_challenges.json': createSeedChallenges(),
+  'tournament_direct_challenges.json': createSeedDirectChallenges(),
 };
 
 export const isDataFile = name => Object.hasOwn(defaults, name);
@@ -571,20 +581,23 @@ const routes = {
   },
   'tournaments_api.php': async form => {
     const action = field(form, 'action');
-    const [rawTrn, rawTeams, rawChallenges] = await Promise.all([
+    const [rawTrn, rawTeams, rawChallenges, rawDirect] = await Promise.all([
       readData('tournaments.json'),
       readData('tournament_teams.json'),
       readData('tournament_challenges.json'),
+      readData('tournament_direct_challenges.json'),
     ]);
     const tournaments = (Array.isArray(rawTrn) ? rawTrn : createSeedTournaments()).map(normalizeTournamentRecord);
     const teams = Array.isArray(rawTeams) ? rawTeams : createSeedTeams();
     const challenges = Array.isArray(rawChallenges) ? rawChallenges : createSeedChallenges();
+    const directChallenges = Array.isArray(rawDirect) ? rawDirect : createSeedDirectChallenges();
 
     const bundleResp = (extra = {}) => ({
       status: 'ok',
       tournaments,
       teams,
       challenges,
+      directChallenges,
       ...extra,
     });
 
@@ -727,6 +740,24 @@ const routes = {
           month: 'long',
           day: 'numeric',
         }).format(new Date());
+
+        if (target.sourceDirectChallengeId) {
+          const dcIdx = directChallenges.findIndex((dc) => same(dc.id, target.sourceDirectChallengeId));
+          if (dcIdx !== -1) {
+            directChallenges[dcIdx].status = 'completed';
+            directChallenges[dcIdx].result = {
+              winnerGamenetId: result.champion?.gamenetId || '',
+              winnerGamenetName: result.champion?.gamenetName || '',
+              winnerName: result.champion?.playerName || '',
+              scoreA: target.bracket.finalScore?.scoreA ?? 0,
+              scoreB: target.bracket.finalScore?.scoreB ?? 0,
+              verified: true,
+              completedAt: target.bracket.completedAt || new Date().toISOString(),
+            };
+            directChallenges[dcIdx].updatedAt = new Date().toISOString();
+            await save('tournament_direct_challenges.json', directChallenges);
+          }
+        }
       }
       await save('tournaments.json', tournaments);
       return bundleResp({ tournament: target });
@@ -977,7 +1008,187 @@ const routes = {
       const challengeId = field(form, 'challengeId');
       const nextChallenges = challenges.filter((c) => !same(c.id, challengeId));
       await save('tournament_challenges.json', nextChallenges);
-      return { status: 'ok', tournaments, teams, challenges: nextChallenges };
+      return { status: 'ok', tournaments, teams, challenges: nextChallenges, directChallenges };
+    }
+
+    /* --- DIRECT GAMING CENTER CHALLENGES ("چالش مستقیم") --- */
+    if (action === 'create_direct_challenge') {
+      const sanitized = sanitizeDirectChallengeInput({
+        targetGamenetId: form.get('targetGamenetId'),
+        targetGamenetName: form.get('targetGamenetName'),
+        category: form.get('category'),
+        gameId: form.get('gameId'),
+        customGameName: form.get('customGameName'),
+        mode: form.get('mode'),
+        entryType: form.get('entryType'),
+        format: form.get('format'),
+        platform: form.get('platform'),
+        venue: form.get('venue'),
+        proposedDate: form.get('proposedDate'),
+        proposedTime: form.get('proposedTime'),
+        prizeType: form.get('prizeType'),
+        prizeSummary: form.get('prizeSummary'),
+        notes: form.get('notes'),
+        teamId: form.get('teamId'),
+        teamName: form.get('teamName'),
+        onlineId: form.get('onlineId'),
+        members: form.get('members'),
+      });
+      if (sanitized.error) invalid(sanitized.error);
+
+      const created = {
+        id: 'dch-' + randomUUID().slice(0, 8),
+        ...sanitized.value,
+        createdAt: new Date().toISOString(),
+      };
+      const nextDirect = [created, ...directChallenges].slice(0, 80);
+      await save('tournament_direct_challenges.json', nextDirect);
+      return {
+        status: 'ok',
+        directChallenge: created,
+        tournaments,
+        teams,
+        challenges,
+        directChallenges: nextDirect,
+      };
+    }
+
+    if (action === 'accept_direct_challenge') {
+      const directId = field(form, 'directId');
+      const idx = directChallenges.findIndex((dc) => same(dc.id, directId));
+      if (idx === -1) invalid('چالش مستقیم مورد نظر پیدا نشد.');
+
+      const accepted = acceptDirectChallenge(directChallenges[idx], {
+        teamId: form.get('teamId') || '',
+        teamName: form.get('teamName') || '',
+        onlineId: form.get('onlineId') || '',
+        members: form.get('members') || '',
+      });
+      if (accepted.error) invalid(accepted.error);
+
+      let createdMatch = null;
+      let nextTournaments = tournaments;
+      if (!accepted.challenge.linkedTournamentId) {
+        const built = buildHeadToHeadMatchFromDirectChallenge(
+          accepted.challenge,
+          'trn-h2h-' + randomUUID().slice(0, 6)
+        );
+        if (!built.error) {
+          accepted.challenge.linkedTournamentId = built.tournament.id;
+          createdMatch = built.tournament;
+          nextTournaments = [built.tournament, ...tournaments].slice(0, 80);
+        }
+      }
+
+      directChallenges[idx] = accepted.challenge;
+      await Promise.all([
+        save('tournament_direct_challenges.json', directChallenges),
+        ...(createdMatch ? [save('tournaments.json', nextTournaments)] : []),
+      ]);
+      return {
+        status: 'ok',
+        directChallenge: accepted.challenge,
+        tournament: createdMatch,
+        tournaments: nextTournaments,
+        teams,
+        challenges,
+        directChallenges,
+      };
+    }
+
+    if (action === 'reject_direct_challenge') {
+      const directId = field(form, 'directId');
+      const idx = directChallenges.findIndex((dc) => same(dc.id, directId));
+      if (idx === -1) invalid('چالش مستقیم مورد نظر پیدا نشد.');
+
+      const rejected = rejectDirectChallenge(directChallenges[idx], {
+        reason: form.get('reason') || '',
+      });
+      if (rejected.error) invalid(rejected.error);
+
+      directChallenges[idx] = rejected.challenge;
+      await save('tournament_direct_challenges.json', directChallenges);
+      return bundleResp({ directChallenge: rejected.challenge });
+    }
+
+    if (action === 'propose_direct_changes') {
+      const directId = field(form, 'directId');
+      const idx = directChallenges.findIndex((dc) => same(dc.id, directId));
+      if (idx === -1) invalid('چالش مستقیم مورد نظر پیدا نشد.');
+
+      const proposed = proposeDirectChallengeChanges(directChallenges[idx], {
+        proposerGamenetId: form.get('proposerGamenetId') || LOCAL_GAMENET_ID,
+        proposedDate: form.get('proposedDate'),
+        proposedTime: form.get('proposedTime'),
+        mode: form.get('mode'),
+        venue: form.get('venue'),
+        format: form.get('format'),
+        prizeType: form.get('prizeType'),
+        prizeSummary: form.get('prizeSummary'),
+        notes: form.get('notes'),
+        teamId: form.get('teamId') || '',
+        teamName: form.get('teamName') || '',
+        onlineId: form.get('onlineId') || '',
+        members: form.get('members') || '',
+      });
+      if (proposed.error) invalid(proposed.error);
+
+      directChallenges[idx] = proposed.challenge;
+      await save('tournament_direct_challenges.json', directChallenges);
+      return bundleResp({ directChallenge: proposed.challenge });
+    }
+
+    if (action === 'confirm_direct_terms') {
+      const directId = field(form, 'directId');
+      const idx = directChallenges.findIndex((dc) => same(dc.id, directId));
+      if (idx === -1) invalid('چالش مستقیم مورد نظر پیدا نشد.');
+
+      const confirmed = confirmDirectChallengeTerms(directChallenges[idx], {
+        gamenetId: form.get('gamenetId') || LOCAL_GAMENET_ID,
+        confirmBoth: form.get('confirmBoth') || '',
+        teamId: form.get('teamId') || '',
+        teamName: form.get('teamName') || '',
+        onlineId: form.get('onlineId') || '',
+        members: form.get('members') || '',
+      });
+      if (confirmed.error) invalid(confirmed.error);
+
+      let createdMatch = null;
+      let nextTournaments = tournaments;
+      if (confirmed.bothAgreed && !confirmed.challenge.linkedTournamentId) {
+        const built = buildHeadToHeadMatchFromDirectChallenge(
+          confirmed.challenge,
+          'trn-h2h-' + randomUUID().slice(0, 6)
+        );
+        if (!built.error) {
+          confirmed.challenge.linkedTournamentId = built.tournament.id;
+          createdMatch = built.tournament;
+          nextTournaments = [built.tournament, ...tournaments].slice(0, 80);
+        }
+      }
+
+      directChallenges[idx] = confirmed.challenge;
+      await Promise.all([
+        save('tournament_direct_challenges.json', directChallenges),
+        ...(createdMatch ? [save('tournaments.json', nextTournaments)] : []),
+      ]);
+      return {
+        status: 'ok',
+        directChallenge: confirmed.challenge,
+        bothAgreed: confirmed.bothAgreed,
+        tournament: createdMatch,
+        tournaments: nextTournaments,
+        teams,
+        challenges,
+        directChallenges,
+      };
+    }
+
+    if (action === 'delete_direct_challenge') {
+      const directId = field(form, 'directId');
+      const nextDirect = directChallenges.filter((dc) => !same(dc.id, directId));
+      await save('tournament_direct_challenges.json', nextDirect);
+      return { status: 'ok', tournaments, teams, challenges, directChallenges: nextDirect };
     }
 
     invalid('عملیات تورنومنت نامعتبر است.');
