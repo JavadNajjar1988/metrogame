@@ -9,10 +9,23 @@ import {
 } from './JS/loyalty-engine.mjs';
 import {
   createSeedTournaments,
+  createSeedTeams,
+  createSeedChallenges,
+  normalizeTournamentRecord,
   sanitizeTournamentInput,
+  sanitizeTeamInput,
+  sanitizeChallengeInput,
   validateParticipantInput,
+  acceptChallengeForCenter,
+  updateChallengePrizeAgreement,
+  buildTournamentFromChallenge,
   generateSingleEliminationBracket,
   recordBracketMatchWinner,
+  computePrizeAgreementStatus,
+  cleanText,
+  LOCAL_GAMENET_ID,
+  LOCAL_GAMENET_NAME,
+  LOCAL_GAMENET_CITY,
 } from './JS/tournaments-engine.mjs';
 
 const directory = process.env.METROGAME_DATA_DIR || fileURLToPath(new URL('.', import.meta.url));
@@ -33,6 +46,8 @@ const defaults = {
   'gamenet_layout.json': null,
   'loyalty_config.json': { ...DEFAULT_LOYALTY_CONFIG },
   'tournaments.json': createSeedTournaments(),
+  'tournament_teams.json': createSeedTeams(),
+  'tournament_challenges.json': createSeedChallenges(),
 };
 
 export const isDataFile = name => Object.hasOwn(defaults, name);
@@ -556,15 +571,32 @@ const routes = {
   },
   'tournaments_api.php': async form => {
     const action = field(form, 'action');
-    const rawList = await readData('tournaments.json');
-    const tournaments = Array.isArray(rawList) ? rawList : createSeedTournaments();
+    const [rawTrn, rawTeams, rawChallenges] = await Promise.all([
+      readData('tournaments.json'),
+      readData('tournament_teams.json'),
+      readData('tournament_challenges.json'),
+    ]);
+    const tournaments = (Array.isArray(rawTrn) ? rawTrn : createSeedTournaments()).map(normalizeTournamentRecord);
+    const teams = Array.isArray(rawTeams) ? rawTeams : createSeedTeams();
+    const challenges = Array.isArray(rawChallenges) ? rawChallenges : createSeedChallenges();
 
+    const bundleResp = (extra = {}) => ({
+      status: 'ok',
+      tournaments,
+      teams,
+      challenges,
+      ...extra,
+    });
+
+    /* --- TOURNAMENTS (Internal & Inter-Center, Online & Physical) --- */
     if (action === 'create') {
       const sanitized = sanitizeTournamentInput({
         title: form.get('title'),
+        category: form.get('category'),
         gameId: form.get('gameId'),
         customGameName: form.get('customGameName'),
         platform: form.get('platform'),
+        venue: form.get('venue'),
         format: form.get('format'),
         scope: form.get('scope'),
         maxSlots: form.get('maxSlots'),
@@ -575,21 +607,50 @@ const routes = {
         prizeSecond: form.get('prizeSecond'),
         prizeThird: form.get('prizeThird'),
         startDate: form.get('startDate'),
+        registrationDeadline: form.get('registrationDeadline'),
         lobbyCode: form.get('lobbyCode'),
         rules: form.get('rules'),
       });
       if (sanitized.error) invalid(sanitized.error);
 
-      const created = {
+      // Optional initial participants (e.g. from internal customer selection or team selection)
+      const initialParticipants = [];
+      const rawInit = form.get('initialParticipants');
+      if (typeof rawInit === 'string' && rawInit.trim().startsWith('[')) {
+        try {
+          const parsedList = JSON.parse(rawInit);
+          if (Array.isArray(parsedList)) {
+            const tempTrn = { ...sanitized.value, participants: initialParticipants };
+            for (const item of parsedList.slice(0, sanitized.value.maxSlots)) {
+              const v = validateParticipantInput(item, tempTrn);
+              if (!v.error) {
+                initialParticipants.push({
+                  id: 'p-' + randomUUID().slice(0, 8),
+                  ...v.value,
+                  registeredAt: new Date().toISOString(),
+                });
+              }
+            }
+          }
+        } catch {
+          // Ignore malformed optional seed participants
+        }
+      }
+
+      const autoGenerate = form.get('autoGenerateBracket') === '1' && initialParticipants.length >= 2;
+      const created = normalizeTournamentRecord({
         id: 'trn-' + randomUUID().slice(0, 8),
         ...sanitized.value,
+        status: autoGenerate ? 'live' : 'registration',
         createdAt: new Date().toISOString(),
-        participants: [],
-        bracket: null,
-      };
+        participants: initialParticipants,
+        bracket: autoGenerate
+          ? generateSingleEliminationBracket(initialParticipants, sanitized.value.maxSlots)
+          : null,
+      });
       const updated = [created, ...tournaments].slice(0, 80);
       await save('tournaments.json', updated);
-      return { status: 'ok', tournament: created, tournaments: updated };
+      return { status: 'ok', tournament: created, tournaments: updated, teams, challenges };
     }
 
     if (action === 'register_player') {
@@ -602,10 +663,11 @@ const routes = {
         {
           playerName: form.get('playerName'),
           onlineId: form.get('onlineId'),
-          gamenetId: form.get('gamenetId') || 'game-district',
-          gamenetName: form.get('gamenetName') || 'Game District',
-          city: form.get('city') || 'تهران',
+          gamenetId: form.get('gamenetId') || LOCAL_GAMENET_ID,
+          gamenetName: form.get('gamenetName') || LOCAL_GAMENET_NAME,
+          city: form.get('city') || LOCAL_GAMENET_CITY,
           customerId: form.get('customerId') || '',
+          members: form.get('members') || '',
         },
         target
       );
@@ -618,7 +680,7 @@ const routes = {
       };
       target.participants = [...(Array.isArray(target.participants) ? target.participants : []), participant];
       await save('tournaments.json', tournaments);
-      return { status: 'ok', tournament: target, participant, tournaments };
+      return bundleResp({ tournament: target, participant });
     }
 
     if (action === 'remove_player') {
@@ -629,7 +691,7 @@ const routes = {
       if (target.status === 'completed') invalid('تورنومنت پایان‌یافته قابل ویرایش نیست.');
       target.participants = (target.participants || []).filter((p) => !same(p.id, participantId));
       await save('tournaments.json', tournaments);
-      return { status: 'ok', tournament: target, tournaments };
+      return bundleResp({ tournament: target });
     }
 
     if (action === 'generate_bracket') {
@@ -642,7 +704,7 @@ const routes = {
       target.bracket = generateSingleEliminationBracket(target.participants, target.maxSlots);
       target.status = 'live';
       await save('tournaments.json', tournaments);
-      return { status: 'ok', tournament: target, tournaments };
+      return bundleResp({ tournament: target });
     }
 
     if (action === 'record_result') {
@@ -660,16 +722,262 @@ const routes = {
       target.bracket = result.bracket;
       if (result.completed) {
         target.status = 'completed';
+        target.completedDateLabel = new Intl.DateTimeFormat('fa-IR', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        }).format(new Date());
       }
       await save('tournaments.json', tournaments);
-      return { status: 'ok', tournament: target, tournaments };
+      return bundleResp({ tournament: target });
+    }
+
+    if (action === 'update_tournament_prize') {
+      const tournamentId = field(form, 'tournamentId');
+      const modeAction = cleanText(form.get('modeAction'), 30) || 'confirm';
+      const target = tournaments.find((t) => same(t.id, tournamentId));
+      if (!target) invalid('تورنومنت مورد نظر پیدا نشد.');
+
+      if (modeAction === 'propose') {
+        const summary = cleanText(form.get('summary'), 160);
+        if (summary.length < 3) invalid('شرح جایزه پیشنهادی را وارد کنید.');
+        target.prizeAgreement = {
+          ...(target.prizeAgreement || {}),
+          status: 'proposed',
+          summary,
+          prizeType: cleanText(form.get('prizeType'), 30) || target.prizeType || 'playtime',
+          proposedByGamenetId: LOCAL_GAMENET_ID,
+          proposedByGamenetName: LOCAL_GAMENET_NAME,
+          confirmedGamenetIds: [LOCAL_GAMENET_ID],
+        };
+        target.prizes = { ...(target.prizes || {}), first: summary };
+      } else {
+        const allIds = new Set(target.prizeAgreement?.confirmedGamenetIds || []);
+        allIds.add(LOCAL_GAMENET_ID);
+        if (modeAction === 'finalize_all') {
+          (target.participants || []).forEach((p) => {
+            if (p.gamenetId) allIds.add(String(p.gamenetId));
+          });
+        }
+        target.prizeAgreement = {
+          ...(target.prizeAgreement || {}),
+          confirmedGamenetIds: Array.from(allIds),
+        };
+        target.prizeAgreement.status =
+          modeAction === 'finalize_all' ? 'agreed' : computePrizeAgreementStatus(target);
+      }
+
+      await save('tournaments.json', tournaments);
+      return bundleResp({ tournament: target });
     }
 
     if (action === 'delete') {
       const tournamentId = field(form, 'tournamentId');
       const next = tournaments.filter((t) => !same(t.id, tournamentId));
       await save('tournaments.json', next);
-      return { status: 'ok', tournaments: next };
+      return { status: 'ok', tournaments: next, teams, challenges };
+    }
+
+    /* --- MY GAMING CENTER'S REPRESENTATIVE TEAMS --- */
+    if (action === 'create_team') {
+      const sanitized = sanitizeTeamInput({
+        name: form.get('name'),
+        category: form.get('category'),
+        gameId: form.get('gameId'),
+        customGameName: form.get('customGameName'),
+        entryType: form.get('entryType'),
+        members: form.get('members'),
+        onlineTag: form.get('onlineTag'),
+        notes: form.get('notes'),
+      });
+      if (sanitized.error) invalid(sanitized.error);
+
+      const createdTeam = {
+        id: 'team-' + randomUUID().slice(0, 8),
+        ...sanitized.value,
+        createdAt: new Date().toISOString(),
+      };
+      const nextTeams = [createdTeam, ...teams].slice(0, 60);
+      await save('tournament_teams.json', nextTeams);
+      return { status: 'ok', team: createdTeam, tournaments, teams: nextTeams, challenges };
+    }
+
+    if (action === 'promote_winner_to_team') {
+      const tournamentId = field(form, 'tournamentId');
+      const target = tournaments.find((t) => same(t.id, tournamentId));
+      if (!target || !target.bracket?.champion) {
+        invalid('این مسابقه هنوز برنده نهایی ندارد.');
+      }
+      const champ = target.bracket.champion;
+      const members =
+        Array.isArray(champ.members) && champ.members.length > 0
+          ? champ.members
+          : [{ name: champ.playerName, customerId: null, role: 'قهرمان داخلی' }];
+      const createdTeam = {
+        id: 'team-' + randomUUID().slice(0, 8),
+        name: champ.playerName,
+        category: target.category,
+        mode: target.mode,
+        gameId: target.gameId,
+        gameName: target.gameName,
+        entryType: members.length > 1 ? 'team' : 'individual',
+        onlineTag: target.mode === 'online' ? champ.onlineId || '' : '',
+        members,
+        notes: `برگزیده شده از «${target.title}»`,
+        gamenetId: LOCAL_GAMENET_ID,
+        gamenetName: LOCAL_GAMENET_NAME,
+        city: LOCAL_GAMENET_CITY,
+        createdAt: new Date().toISOString(),
+      };
+      const nextTeams = [createdTeam, ...teams].slice(0, 60);
+      await save('tournament_teams.json', nextTeams);
+      return { status: 'ok', team: createdTeam, tournaments, teams: nextTeams, challenges };
+    }
+
+    if (action === 'delete_team') {
+      const teamId = field(form, 'teamId');
+      const nextTeams = teams.filter((tm) => !same(tm.id, teamId));
+      await save('tournament_teams.json', nextTeams);
+      return { status: 'ok', tournaments, teams: nextTeams, challenges };
+    }
+
+    /* --- PUBLIC CHALLENGES, ACCEPTANCE, PRIZE AGREEMENTS & AUTO-FORMATION --- */
+    if (action === 'create_challenge') {
+      const sanitized = sanitizeChallengeInput({
+        title: form.get('title'),
+        statement: form.get('statement'),
+        category: form.get('category'),
+        gameId: form.get('gameId'),
+        customGameName: form.get('customGameName'),
+        platform: form.get('platform'),
+        venue: form.get('venue'),
+        competitionScope: form.get('competitionScope'),
+        entryType: form.get('entryType'),
+        format: form.get('format'),
+        maxCenters: form.get('maxCenters'),
+        preferredDate: form.get('preferredDate'),
+        registrationDeadline: form.get('registrationDeadline'),
+        teamId: form.get('teamId'),
+        teamName: form.get('teamName'),
+        onlineTag: form.get('onlineTag'),
+        members: form.get('members'),
+        prizeType: form.get('prizeType'),
+        suggestedPrize: form.get('suggestedPrize'),
+        prizePoolValue: form.get('prizePoolValue'),
+      });
+      if (sanitized.error) invalid(sanitized.error);
+
+      const createdChallenge = {
+        id: 'chl-' + randomUUID().slice(0, 8),
+        ...sanitized.value,
+        createdAt: new Date().toISOString(),
+      };
+      const nextChallenges = [createdChallenge, ...challenges].slice(0, 60);
+      await save('tournament_challenges.json', nextChallenges);
+      return { status: 'ok', challenge: createdChallenge, tournaments, teams, challenges: nextChallenges };
+    }
+
+    if (action === 'accept_challenge') {
+      const challengeId = field(form, 'challengeId');
+      const idx = challenges.findIndex((c) => same(c.id, challengeId));
+      if (idx === -1) invalid('چالش مورد نظر پیدا نشد.');
+
+      const result = acceptChallengeForCenter(challenges[idx], {
+        gamenetId: form.get('gamenetId') || LOCAL_GAMENET_ID,
+        gamenetName: form.get('gamenetName') || LOCAL_GAMENET_NAME,
+        city: form.get('city') || LOCAL_GAMENET_CITY,
+        teamId: form.get('teamId') || '',
+        teamName: form.get('teamName'),
+        onlineId: form.get('onlineId') || '',
+        members: form.get('members'),
+        confirmPrize: form.get('confirmPrize'),
+        counterPrize: form.get('counterPrize') || '',
+        counterPrizeType: form.get('counterPrizeType') || '',
+      });
+      if (result.error) invalid(result.error);
+
+      challenges[idx] = result.challenge;
+      await save('tournament_challenges.json', challenges);
+      return bundleResp({ challenge: result.challenge });
+    }
+
+    if (action === 'propose_prize' || action === 'confirm_prize') {
+      const challengeId = field(form, 'challengeId');
+      const idx = challenges.findIndex((c) => same(c.id, challengeId));
+      if (idx === -1) invalid('چالش مورد نظر پیدا نشد.');
+
+      const result = updateChallengePrizeAgreement(challenges[idx], {
+        actionType:
+          action === 'propose_prize'
+            ? 'propose'
+            : form.get('finalizeAll') === '1'
+              ? 'finalize_all'
+              : 'confirm',
+        gamenetId: form.get('gamenetId') || LOCAL_GAMENET_ID,
+        gamenetName: form.get('gamenetName') || LOCAL_GAMENET_NAME,
+        summary: form.get('summary') || '',
+        prizeType: form.get('prizeType') || '',
+        prizePoolValue: form.get('prizePoolValue'),
+      });
+      if (result.error) invalid(result.error);
+
+      challenges[idx] = result.challenge;
+      await save('tournament_challenges.json', challenges);
+      return bundleResp({ challenge: result.challenge });
+    }
+
+    if (action === 'form_tournament') {
+      const challengeId = field(form, 'challengeId');
+      const idx = challenges.findIndex((c) => same(c.id, challengeId));
+      if (idx === -1) invalid('چالش مورد نظر پیدا نشد.');
+
+      const generatedId = 'trn-' + randomUUID().slice(0, 8);
+      const built = buildTournamentFromChallenge(
+        challenges[idx],
+        {
+          title: form.get('title') || '',
+          startDate: form.get('startDate') || '',
+          registrationDeadline: form.get('registrationDeadline') || '',
+          venue: form.get('venue') || '',
+          platform: form.get('platform') || '',
+          maxSlots: form.get('maxSlots') || '',
+          format: form.get('format') || '',
+          prizeSummary: form.get('prizeSummary') || '',
+          prizeSecond: form.get('prizeSecond') || '',
+          prizeThird: form.get('prizeThird') || '',
+          confirmPrizeNow: form.get('confirmPrizeNow') || '',
+          rules: form.get('rules') || '',
+        },
+        generatedId
+      );
+      if (built.error) invalid(built.error);
+
+      challenges[idx].status = 'formed';
+      challenges[idx].formedTournamentId = built.tournament.id;
+      if (built.tournament.prizeAgreement?.status === 'agreed') {
+        challenges[idx].prizeAgreement.status = 'agreed';
+      }
+
+      const nextTournaments = [built.tournament, ...tournaments].slice(0, 80);
+      await Promise.all([
+        save('tournaments.json', nextTournaments),
+        save('tournament_challenges.json', challenges),
+      ]);
+      return {
+        status: 'ok',
+        tournament: built.tournament,
+        challenge: challenges[idx],
+        tournaments: nextTournaments,
+        teams,
+        challenges,
+      };
+    }
+
+    if (action === 'delete_challenge') {
+      const challengeId = field(form, 'challengeId');
+      const nextChallenges = challenges.filter((c) => !same(c.id, challengeId));
+      await save('tournament_challenges.json', nextChallenges);
+      return { status: 'ok', tournaments, teams, challenges: nextChallenges };
     }
 
     invalid('عملیات تورنومنت نامعتبر است.');

@@ -163,13 +163,13 @@ const SPA_SECTIONS = {
   },
   tournaments: {
     key: 'tournaments',
-    file: 'tournaments.html?v=20261125-1',
-    script: 'JS/tournaments.js?v=20261125-1',
+    file: 'tournaments.html?v=20261126-1',
+    script: 'JS/tournaments.js?v=20261126-1',
     renderFn: 'renderTournamentsPage',
     navMatch: 'tournaments.html',
     title: 'تورنومنت',
-    docTitle: 'Game District | شبکه تورنومنت‌های آنلاین گیم‌نت‌ها',
-    tip: 'سرویس اختصاصی رقابت آنلاین بین گیم‌نت‌های متصل به سامانه با جوایز انتخابی هر سالن و جدول حذفی زنده',
+    docTitle: 'Game District | شبکه رقابتی تورنومنت‌های گیم‌نت‌ها',
+    tip: 'سرویس اختصاصی رقابت آنلاین و حضوری بین گیم‌نت‌ها در بازی‌های ویدیویی، فوتبال دستی و بیلیارد',
     url: 'tournaments.html',
   },
   console: {

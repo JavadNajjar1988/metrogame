@@ -11787,7 +11787,7 @@ html[data-theme="light"] .mg-loyalty-discount-row td {
 .trn-workspace {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 16px;
   padding-bottom: 36px;
 }
 
@@ -11798,7 +11798,7 @@ html[data-theme="light"] .mg-loyalty-discount-row td {
 /* 1. Flagship Network Hero Banner */
 .trn-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.15fr);
+  grid-template-columns: minmax(0, 1.24fr) minmax(0, 0.94fr);
   align-items: stretch;
   background: var(--bg-card, #141422);
   border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
@@ -11807,16 +11807,16 @@ html[data-theme="light"] .mg-loyalty-discount-row td {
 }
 
 .trn-hero-content {
-  padding: 30px 32px;
+  padding: 22px 26px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 14px;
+  gap: 10px;
 }
 
 .trn-hero-kicker {
   margin: 0;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 700;
   color: var(--mg-accent-2, #a78bfa);
   letter-spacing: 0.01em;
@@ -11824,27 +11824,34 @@ html[data-theme="light"] .mg-loyalty-discount-row td {
 
 .trn-hero-title {
   margin: 0;
-  font-size: clamp(22px, 2.2vw, 30px);
+  font-size: clamp(20px, 2vw, 27px);
   font-weight: 800;
-  line-height: 1.35;
+  line-height: 1.32;
   color: var(--text-primary, #f8fafc);
   text-wrap: balance;
 }
 
 .trn-hero-desc {
   margin: 0;
-  font-size: 14.5px;
-  line-height: 1.75;
+  font-size: 13.5px;
+  line-height: 1.7;
   color: var(--text-secondary, #cbd5e1);
-  max-width: 56ch;
+  max-width: 58ch;
 }
 
 .trn-hero-actions {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 6px;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.trn-hero-actions .trn-primary-cta,
+.trn-hero-actions .trn-ghost-btn {
+  padding: 9px 14px;
+  font-size: 13px;
+  gap: 6px;
 }
 
 .trn-primary-cta {
@@ -11882,7 +11889,7 @@ html[data-theme="light"] .mg-loyalty-discount-row td {
 
 .trn-hero-media {
   position: relative;
-  min-height: 270px;
+  min-height: 215px;
   background: linear-gradient(135deg, #0b0e1a 0%, #171a2d 100%);
   overflow: hidden;
 }
@@ -11966,10 +11973,10 @@ html[data-theme="light"] .mg-loyalty-discount-row td {
 }
 
 .trn-kpi-cell {
-  padding: 18px 22px;
+  padding: 13px 18px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   border-left: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
 }
 
@@ -12987,9 +12994,992 @@ html[data-theme="light"] .trn-ghost-btn:hover {
   color: #0f172a !important;
 }
 
+/* ==========================================================================
+   EXPANDED COMPETITIVE CLUB NETWORK STYLES (Categories, Challenges, Teams, Champions)
+   ========================================================================== */
+
+/* Category Selector Strip */
+.trn-category-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.trn-cat-card {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 14px;
+  background: var(--bg-card, #141422);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  border-radius: 14px;
+  color: var(--text-primary, #f8fafc);
+  text-align: right;
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+
+.trn-cat-card:hover {
+  border-color: rgba(var(--mg-accent-rgb, 124, 58, 237), 0.42);
+  transform: translateY(-1px);
+}
+
+.trn-cat-card.is-active {
+  background: rgba(var(--mg-accent-rgb, 124, 58, 237), 0.14);
+  border-color: rgba(var(--mg-accent-rgb, 124, 58, 237), 0.65);
+}
+
+.trn-cat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--mg-accent-2, #c4b5fd);
+}
+
+.trn-cat-card.is-active .trn-cat-icon {
+  background: var(--mg-accent-1, #7c3aed);
+  color: #ffffff;
+}
+
+.trn-cat-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.trn-cat-label {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-primary, #f8fafc);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trn-cat-sub {
+  font-size: 12px;
+  color: var(--text-muted, #94a3b8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trn-cat-count {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-secondary, #cbd5e1);
+  padding-inline-start: 6px;
+}
+
+/* 7-Tab Toolbar Polish */
+.trn-tabs {
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.trn-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.trn-tab-btn {
+  flex-shrink: 0;
+}
+
+/* Section Header Bar */
+.trn-section-bar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.trn-section-heading {
+  margin: 0 0 4px;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary, #f8fafc);
+}
+
+/* Overview Workflow Strip & Split Panels */
+.trn-overview-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.trn-workflow-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.trn-workflow-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 20px;
+  background: var(--bg-card, #141422);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  border-radius: 15px;
+}
+
+.trn-workflow-step {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--mg-accent-2, #a78bfa);
+  font-variant-numeric: tabular-nums;
+}
+
+.trn-workflow-card h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-primary, #f8fafc);
+}
+
+.trn-workflow-card p {
+  margin: 0 0 8px;
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--text-secondary, #cbd5e1);
+  flex: 1;
+}
+
+.trn-ov-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.trn-ov-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 22px 24px;
+  background: var(--bg-card, #141422);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  border-radius: 16px;
+}
+
+.trn-ov-panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.trn-ov-kicker {
+  margin: 0 0 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--mg-accent-2, #a78bfa);
+}
+
+.trn-ov-statement {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--text-secondary, #cbd5e1);
+}
+
+.trn-ov-meta-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-muted, #94a3b8);
+}
+
+.trn-ov-meta-line strong {
+  color: var(--text-primary, #f8fafc);
+}
+
+.trn-ov-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+/* Public Challenge Cards & Prize Agreements */
+.trn-challenges-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.trn-challenge-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 22px;
+  background: var(--bg-card, #141422);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  border-radius: 16px;
+  transition: border-color 0.2s ease;
+}
+
+.trn-challenge-card.is-ready-form {
+  border-color: rgba(52, 211, 153, 0.42);
+}
+
+.trn-challenge-top {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.trn-challenge-thumb {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  min-height: 148px;
+  background: #0f1322;
+}
+
+.trn-challenge-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.trn-challenge-thumb-meta {
+  position: absolute;
+  right: 12px;
+  left: 12px;
+  bottom: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.trn-challenge-head-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.trn-challenge-statement {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--text-secondary, #e2e8f0);
+}
+
+.trn-challenge-specs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--text-muted, #94a3b8);
+  margin-top: 2px;
+}
+
+.trn-challenge-specs strong {
+  color: var(--text-primary, #f8fafc);
+}
+
+/* Prize Agreement Summary (Distinct Proposed vs Agreed States) */
+.trn-prize-agreement-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.trn-prize-agreement-box.is-proposed {
+  border-color: rgba(245, 158, 11, 0.35);
+  background: rgba(245, 158, 11, 0.06);
+}
+
+.trn-prize-agreement-box.is-agreed {
+  border-color: rgba(16, 185, 129, 0.38);
+  background: rgba(16, 185, 129, 0.07);
+}
+
+.trn-prize-agreement-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.trn-prize-agreement-title-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+}
+
+.trn-prize-agreement-state,
+.trn-prize-state-inline {
+  font-size: 12.5px;
+  font-weight: 800;
+}
+
+.trn-prize-agreement-state.is-proposed,
+.trn-prize-state-inline.is-proposed {
+  color: #fbbf24;
+}
+
+.trn-prize-agreement-state.is-agreed,
+.trn-prize-state-inline.is-agreed {
+  color: #34d399;
+}
+
+.trn-prize-agreement-summary {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: var(--text-primary, #f8fafc);
+  line-height: 1.55;
+}
+
+.trn-prize-agreement-actions,
+.trn-detail-prize-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.trn-detail-prize-actions {
+  margin-top: 12px;
+}
+
+.trn-inline-action {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary, #f8fafc);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.16s ease, border-color 0.16s ease;
+}
+
+.trn-inline-action:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.trn-inline-action.is-confirm {
+  background: rgba(16, 185, 129, 0.16);
+  border-color: rgba(52, 211, 153, 0.45);
+  color: #6ee7b7;
+}
+
+.trn-inline-action.is-confirm:hover {
+  background: rgba(16, 185, 129, 0.25);
+}
+
+/* Participating Centers List inside Challenge */
+.trn-centers-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.trn-section-mini-label {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-primary, #f8fafc);
+}
+
+.trn-centers-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.trn-center-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.07));
+}
+
+.trn-center-row.is-local {
+  border-color: rgba(var(--mg-accent-rgb, 124, 58, 237), 0.38);
+  background: rgba(var(--mg-accent-rgb, 124, 58, 237), 0.08);
+}
+
+.trn-center-row-main {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.trn-center-row-main strong {
+  font-size: 13.5px;
+  color: var(--text-primary, #f8fafc);
+}
+
+.trn-center-team {
+  font-size: 12.5px;
+  color: var(--text-secondary, #cbd5e1);
+}
+
+.trn-center-row-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.trn-prize-ok {
+  color: #34d399;
+}
+
+.trn-prize-wait {
+  color: #fbbf24;
+}
+
+/* Automatic Tournament Formation Banner */
+.trn-auto-form-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(96, 165, 250, 0.36);
+}
+
+.trn-auto-form-banner strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-primary, #f8fafc);
+  margin-bottom: 2px;
+}
+
+.trn-auto-form-banner span {
+  font-size: 12.5px;
+  color: var(--text-secondary, #cbd5e1);
+}
+
+.trn-challenge-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+}
+
+/* My Gaming Center's Representative Teams */
+.trn-teams-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.trn-team-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  background: var(--bg-card, #141422);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  border-radius: 16px;
+}
+
+.trn-team-card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.trn-team-icon-box {
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: rgba(var(--mg-accent-rgb, 124, 58, 237), 0.16);
+  color: var(--mg-accent-2, #c4b5fd);
+}
+
+.trn-team-head-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.trn-team-meta-row {
+  font-size: 12.5px;
+  color: var(--text-secondary, #cbd5e1);
+}
+
+.trn-team-meta-row strong {
+  color: var(--text-primary, #f8fafc);
+}
+
+.trn-team-notes {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--text-muted, #94a3b8);
+}
+
+.trn-team-members-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.trn-team-member-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 11px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
+  font-size: 12.5px;
+}
+
+.trn-team-member-item strong {
+  color: var(--text-primary, #f8fafc);
+}
+
+.trn-team-member-item span {
+  color: var(--text-muted, #94a3b8);
+  font-size: 11.5px;
+}
+
+/* Online vs Physical Mode Strip in Tournament Detail Header */
+.trn-detail-mode-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--text-secondary, #e2e8f0);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+}
+
+.trn-detail-mode-strip.is-physical {
+  background: rgba(59, 130, 246, 0.07);
+  border-color: rgba(96, 165, 250, 0.25);
+}
+
+.trn-detail-mode-strip.is-online {
+  background: rgba(var(--mg-accent-rgb, 124, 58, 237), 0.07);
+  border-color: rgba(var(--mg-accent-rgb, 124, 58, 237), 0.25);
+}
+
+.trn-detail-mode-strip strong {
+  color: var(--text-primary, #ffffff);
+}
+
+.trn-card-prize-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Championship Celebration Showcase (Tasteful Trophy + Subtle Sheen) */
+.trn-champions-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.trn-champ-showcase {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 26px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(22, 24, 38, 0.98) 0%, rgba(28, 24, 46, 0.96) 55%, rgba(18, 28, 38, 0.98) 100%);
+  border: 1px solid rgba(167, 139, 250, 0.34);
+  margin-bottom: 18px;
+}
+
+.trn-champions-stack .trn-champ-showcase {
+  margin-bottom: 0;
+}
+
+.trn-champ-showcase.is-compact {
+  margin-bottom: 0;
+  padding: 20px 22px;
+}
+
+.trn-champ-sheen {
+  position: absolute;
+  inset: -40% -20%;
+  background: linear-gradient(115deg, transparent 35%, rgba(167, 139, 250, 0.08) 48%, rgba(56, 189, 248, 0.06) 52%, transparent 65%);
+  transform: translateX(45%);
+  animation: trnChampSheen 9s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes trnChampSheen {
+  0%, 100% {
+    transform: translateX(45%);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translateX(-45%);
+    opacity: 0.9;
+  }
+}
+
+.trn-champ-top {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.trn-champ-trophy-badge {
+  width: 56px;
+  height: 56px;
+  border-radius: 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: rgba(245, 158, 11, 0.14);
+  border: 1px solid rgba(251, 191, 36, 0.38);
+  color: #fbbf24;
+  animation: trnTrophyFloat 4.5s ease-in-out infinite;
+}
+
+@keyframes trnTrophyFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.trn-champ-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.trn-champ-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.3;
+}
+
+.trn-champ-headline {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: #e2e8f0;
+}
+
+.trn-champ-details-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.trn-champ-showcase.is-compact .trn-champ-details-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.trn-champ-detail-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.trn-champ-detail-cell span {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.trn-champ-detail-cell strong {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #f8fafc;
+  line-height: 1.45;
+}
+
+.trn-champ-detail-cell.is-prize strong {
+  color: #fcd34d;
+}
+
+.trn-champ-members {
+  position: relative;
+  z-index: 1;
+  font-size: 13px;
+  color: #cbd5e1;
+}
+
+.trn-champ-members strong {
+  color: #ffffff;
+}
+
+.trn-champ-actions {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.trn-leaderboard-block {
+  margin-top: 6px;
+}
+
+/* Modal Info Boxes & Customer Check Grid */
+.trn-modal-info-box {
+  padding: 12px 14px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.09));
+  color: var(--text-primary, #f8fafc);
+}
+
+.trn-customer-check-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+}
+
+.trn-cust-check-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 11px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary, #f8fafc);
+  cursor: pointer;
+  margin: 0;
+}
+
+.trn-cust-check-pill small {
+  color: var(--text-muted, #94a3b8);
+}
+
+.trn-checkbox-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-primary, #f8fafc);
+  cursor: pointer;
+}
+
+/* Light Theme Adaptation for Expanded Sections */
+html[data-theme="light"] .trn-cat-card,
+html[data-theme="light"] .trn-workflow-card,
+html[data-theme="light"] .trn-ov-panel,
+html[data-theme="light"] .trn-challenge-card,
+html[data-theme="light"] .trn-team-card {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.1);
+}
+
+html[data-theme="light"] .trn-cat-card.is-active {
+  background: rgba(var(--mg-accent-rgb, 124, 58, 237), 0.08);
+  border-color: var(--mg-accent-1, #7c3aed);
+}
+
+html[data-theme="light"] .trn-cat-icon {
+  background: #f1f5f9;
+  color: var(--mg-accent-1, #6d28d9);
+}
+
+html[data-theme="light"] .trn-cat-card.is-active .trn-cat-icon {
+  background: var(--mg-accent-1, #7c3aed);
+  color: #ffffff;
+}
+
+html[data-theme="light"] .trn-cat-label,
+html[data-theme="light"] .trn-section-heading,
+html[data-theme="light"] .trn-workflow-card h4,
+html[data-theme="light"] .trn-ov-meta-line strong,
+html[data-theme="light"] .trn-challenge-specs strong,
+html[data-theme="light"] .trn-prize-agreement-summary,
+html[data-theme="light"] .trn-section-mini-label,
+html[data-theme="light"] .trn-center-row-main strong,
+html[data-theme="light"] .trn-auto-form-banner strong,
+html[data-theme="light"] .trn-team-meta-row strong,
+html[data-theme="light"] .trn-team-member-item strong,
+html[data-theme="light"] .trn-detail-mode-strip strong,
+html[data-theme="light"] .trn-modal-info-box,
+html[data-theme="light"] .trn-cust-check-pill,
+html[data-theme="light"] .trn-checkbox-row {
+  color: #0f172a;
+}
+
+html[data-theme="light"] .trn-workflow-card p,
+html[data-theme="light"] .trn-ov-statement,
+html[data-theme="light"] .trn-challenge-statement,
+html[data-theme="light"] .trn-center-team,
+html[data-theme="light"] .trn-auto-form-banner span,
+html[data-theme="light"] .trn-team-meta-row,
+html[data-theme="light"] .trn-detail-mode-strip {
+  color: #475569;
+}
+
+html[data-theme="light"] .trn-center-row,
+html[data-theme="light"] .trn-team-member-item,
+html[data-theme="light"] .trn-customer-check-grid,
+html[data-theme="light"] .trn-modal-info-box {
+  background: #f8fafc;
+  border-color: rgba(15, 23, 42, 0.1);
+}
+
+html[data-theme="light"] .trn-cust-check-pill {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.14);
+}
+
+html[data-theme="light"] .trn-inline-action {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.16);
+  color: #1e293b;
+}
+
+html[data-theme="light"] .trn-inline-action.is-confirm {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #047857;
+}
+
+html[data-theme="light"] .trn-prize-agreement-state.is-proposed,
+html[data-theme="light"] .trn-prize-state-inline.is-proposed,
+html[data-theme="light"] .trn-prize-wait {
+  color: #b45309;
+}
+
+html[data-theme="light"] .trn-prize-agreement-state.is-agreed,
+html[data-theme="light"] .trn-prize-state-inline.is-agreed,
+html[data-theme="light"] .trn-prize-ok {
+  color: #059669;
+}
+
+html[data-theme="light"] .trn-champ-showcase {
+  background: linear-gradient(135deg, #f8fafc 0%, #f5f3ff 60%, #eff6ff 100%);
+  border-color: rgba(109, 40, 217, 0.25);
+}
+
+html[data-theme="light"] .trn-champ-title,
+html[data-theme="light"] .trn-champ-detail-cell strong,
+html[data-theme="light"] .trn-champ-members strong {
+  color: #0f172a;
+}
+
+html[data-theme="light"] .trn-champ-headline,
+html[data-theme="light"] .trn-champ-members {
+  color: #334155;
+}
+
+html[data-theme="light"] .trn-champ-detail-cell.is-prize strong {
+  color: #b45309;
+}
+
+html[data-theme="light"] .trn-champ-details-grid {
+  border-top-color: rgba(15, 23, 42, 0.1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trn-champ-sheen,
+  .trn-champ-trophy-badge {
+    animation: none !important;
+  }
+}
+
 /* Responsive Breakpoints */
+@media (max-width: 1220px) {
+  .trn-category-grid,
+  .trn-workflow-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .trn-teams-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .trn-champ-details-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 1120px) {
-  .trn-hero {
+  .trn-hero,
+  .trn-ov-split,
+  .trn-detail-layout {
     grid-template-columns: 1fr;
   }
 
@@ -13000,15 +13990,17 @@ html[data-theme="light"] .trn-ghost-btn:hover {
   .trn-kpi-cell {
     border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
   }
-
-  .trn-detail-layout {
-    grid-template-columns: 1fr;
-  }
 }
 
 @media (max-width: 780px) {
   .trn-cards-grid,
-  .trn-form-grid {
+  .trn-teams-grid,
+  .trn-form-grid,
+  .trn-category-grid,
+  .trn-workflow-grid,
+  .trn-challenge-top,
+  .trn-champ-details-grid,
+  .trn-champ-showcase.is-compact .trn-champ-details-grid {
     grid-template-columns: 1fr;
   }
 
@@ -13023,5 +14015,11 @@ html[data-theme="light"] .trn-ghost-btn:hover {
   .trn-kpi-cell {
     border-left: none;
   }
+
+  .trn-search-wrap,
+  .trn-filter-select {
+    width: 100% !important;
+  }
 }
+
 

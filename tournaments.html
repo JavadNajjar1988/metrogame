@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>شبکه تورنومنت‌ها | پنل مدیریت گیم‌نت Game District</title>
+  <title>شبکه رقابتی تورنومنت‌ها | پنل مدیریت گیم‌نت Game District</title>
   <link rel="icon" href="src/assets/images/metrogame_emblem_1794207267121.jpg" type="image/jpeg">
   <script>(function(){try{var t=localStorage.getItem('mg_theme_v1');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');var a=localStorage.getItem('mg_accent_palette_v1');document.documentElement.setAttribute('data-accent',a||'violet');}catch(e){}})();</script>
   <link href="assets/bootstrap/bootstrap.min.css" rel="stylesheet">
   <link href="assets/bootstrap/bootstrap-rtl.css" rel="stylesheet">
   <link href="fontello/css/my-icon.css" rel="stylesheet">
-  <link href="assets/css/gaming-dashboard.css?v=20261125-1" rel="stylesheet">
+  <link href="assets/css/gaming-dashboard.css?v=20261126-1" rel="stylesheet">
   <script type="importmap">
     {
       "imports": {
@@ -201,28 +201,31 @@
 
       <main class="mg-content">
         <div id="mgTournamentsRoot" class="trn-workspace">
-          <!-- 1. Flagship Network Hero Banner -->
+          <!-- 1. Flagship Inter-Gamenet Competitive Network Hero -->
           <section class="trn-hero" aria-labelledby="trnHeroTitle">
             <div class="trn-hero-content">
-              <p class="trn-hero-kicker">سرویس اختصاصی شبکه گیم‌نت‌های متصل به سامانه</p>
-              <h2 id="trnHeroTitle" class="trn-hero-title">شبکه تورنومنت‌های آنلاین بین‌گیم‌نتی</h2>
+              <p class="trn-hero-kicker">شبکه رقابتی اختصاصی گیم‌نت‌های Game District · آنلاین و حضوری</p>
+              <h2 id="trnHeroTitle" class="trn-hero-title">باشگاه رقابت‌ها و چالش‌های بین‌گیم‌نتی</h2>
               <p class="trn-hero-desc">
-                مشتریان سالن خود را به رقابت‌های آنلاین سراسری متصل کنید، با گیم‌نت‌های همکار لیگ مشترک بسازید و جوایز دلخواه (نقدی، ساعت بازی رایگان، تجهیزات یا اعتبار بوفه) تعیین کنید.
+                از مشتریان ثبت‌نام‌شده خود تیم نماینده بسازید، مسابقه داخلی برگزار کنید، سایر گیم‌نت‌ها را در بازی‌های ویدیویی، فوتبال دستی و بیلیارد به چالش بکشید، روی جوایز توافق کنید و جدول قهرمانی را خودکار بسازید.
               </p>
               <div class="trn-hero-actions">
-                <button type="button" id="trnOpenCreateBtn" class="btn mg-btn mg-btn-primary trn-primary-cta">
+                <button type="button" id="trnHeroPublishChallengeBtn" class="btn mg-btn mg-btn-primary trn-primary-cta" data-trn-action="open-challenge">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                  <span>ساخت تورنومنت جدید</span>
+                  <span>انتشار چالش جدید</span>
                 </button>
-                <button type="button" id="trnHeroJumpBracketBtn" class="btn mg-btn trn-ghost-btn">
-                  <span>مشاهده جدول مسابقه فعال</span>
+                <button type="button" id="trnHeroCreateInternalBtn" class="btn mg-btn trn-ghost-btn" data-trn-action="open-create-internal">
+                  <span>ساخت مسابقه داخلی</span>
+                </button>
+                <button type="button" id="trnHeroCreateTeamBtn" class="btn mg-btn trn-ghost-btn" data-trn-action="open-create-team">
+                  <span>ساخت تیم نماینده</span>
                 </button>
               </div>
             </div>
             <div class="trn-hero-media">
               <img
                 src="src/assets/images/tournament_arena_hero_1795601704002.jpg"
-                alt="استیج رقابت‌های آنلاین شبکه تورنومنت گیم‌نت‌ها"
+                alt="استیج رقابت‌های شبکه گیم‌نت‌های Game District"
                 class="trn-hero-img"
                 referrerpolicy="no-referrer"
               >
@@ -236,73 +239,143 @@
           <!-- 2. Full-Width 4-Column Tabular KPI Strip -->
           <section class="trn-kpi-strip" aria-label="خلاصه وضعیت شبکه تورنومنت‌ها">
             <div class="trn-kpi-cell">
-              <span class="trn-kpi-label">تورنومنت‌های فعال شبکه</span>
+              <span class="trn-kpi-label">چالش‌های باز و آماده تشکیل</span>
+              <strong id="trnKpiChallenges" class="trn-kpi-value">۰</strong>
+              <span id="trnKpiChallengesSub" class="trn-kpi-sub">چالش بین گیم‌نت‌ها</span>
+            </div>
+            <div class="trn-kpi-cell">
+              <span class="trn-kpi-label">تورنومنت‌های فعال</span>
               <strong id="trnKpiActive" class="trn-kpi-value">۰</strong>
-              <span id="trnKpiActiveSub" class="trn-kpi-sub">در حال ثبت‌نام و برگزاری</span>
+              <span id="trnKpiActiveSub" class="trn-kpi-sub">آنلاین و حضوری</span>
             </div>
             <div class="trn-kpi-cell">
-              <span class="trn-kpi-label">گیم‌نت‌های متصل</span>
+              <span class="trn-kpi-label">تیم‌های نماینده سالن شما</span>
+              <strong id="trnKpiTeams" class="trn-kpi-value">۰</strong>
+              <span id="trnKpiTeamsSub" class="trn-kpi-sub">آماده اعزام به مسابقات</span>
+            </div>
+            <div class="trn-kpi-cell">
+              <span class="trn-kpi-label">قهرمانی‌ها و باشگاه‌های متصل</span>
               <strong id="trnKpiGamenets" class="trn-kpi-value">۰</strong>
-              <span class="trn-kpi-sub">سالن‌های فعال در شبکه سراسری</span>
-            </div>
-            <div class="trn-kpi-cell">
-              <span class="trn-kpi-label">مجموع جوایز فعال</span>
-              <strong id="trnKpiPrize" class="trn-kpi-value">۰ تومان</strong>
-              <span class="trn-kpi-sub">به‌علاوه ساعت بازی و هدایای سالن‌ها</span>
-            </div>
-            <div class="trn-kpi-cell">
-              <span class="trn-kpi-label">بازیکنان اعزامی</span>
-              <strong id="trnKpiPlayers" class="trn-kpi-value">۰</strong>
-              <span id="trnKpiPlayersSub" class="trn-kpi-sub">از سالن شما و گیم‌نت‌های همکار</span>
+              <span id="trnKpiGamenetsSub" class="trn-kpi-sub">گیم‌نت عضو شبکه</span>
             </div>
           </section>
 
-          <!-- 3. Segmented Workspace Navigation Tabs -->
+          <!-- 3. Elegant Category Selector (Video Games · Foosball · Billiards) -->
+          <section class="trn-category-strip" aria-label="انتخاب دسته مسابقه">
+            <div id="trnCategorySelector" class="trn-category-grid"></div>
+          </section>
+
+          <!-- 4. Clear 7-Section Navigation Tabs + Contextual Filter Bar -->
           <div class="trn-toolbar">
-            <div class="trn-tabs" role="tablist" aria-label="بخش‌های مدیریت تورنومنت">
-              <button type="button" class="trn-tab-btn is-active" role="tab" aria-selected="true" data-trn-tab="directory">
-                تورنومنت‌های شبکه
+            <div class="trn-tabs" role="tablist" aria-label="بخش‌های صفحه تورنومنت">
+              <button type="button" class="trn-tab-btn is-active" role="tab" aria-selected="true" data-trn-tab="overview">
+                نمای کلی
               </button>
-              <button type="button" class="trn-tab-btn" role="tab" aria-selected="false" data-trn-tab="bracket">
-                جدول و اتاق مسابقه
+              <button type="button" class="trn-tab-btn" role="tab" aria-selected="false" data-trn-tab="challenges">
+                چالش‌های باز
               </button>
-              <button type="button" class="trn-tab-btn" role="tab" aria-selected="false" data-trn-tab="network">
-                گیم‌نت‌های عضو شبکه
+              <button type="button" class="trn-tab-btn" role="tab" aria-selected="false" data-trn-tab="teams">
+                تیم‌های من
+              </button>
+              <button type="button" class="trn-tab-btn" role="tab" aria-selected="false" data-trn-tab="internal">
+                مسابقات داخلی
+              </button>
+              <button type="button" class="trn-tab-btn" role="tab" aria-selected="false" data-trn-tab="active">
+                تورنومنت‌های فعال
+              </button>
+              <button type="button" class="trn-tab-btn" role="tab" aria-selected="false" data-trn-tab="brackets">
+                جدول مسابقات
+              </button>
+              <button type="button" class="trn-tab-btn" role="tab" aria-selected="false" data-trn-tab="champions">
+                قهرمانان
               </button>
             </div>
 
-            <div id="trnDirectoryFilters" class="trn-filter-bar">
+            <div id="trnSearchFilterBar" class="trn-filter-bar" hidden>
               <div class="trn-search-wrap">
-                <input type="search" id="trnSearchInput" class="form-control mg-input trn-search-input" placeholder="جستجو در نام مسابقه، بازی یا شهر..." aria-label="جستجوی تورنومنت">
+                <input type="search" id="trnSearchInput" class="form-control mg-input trn-search-input" placeholder="جستجو در نام، بازی، گیم‌نت یا محل..." aria-label="جستجو در بخش تورنومنت">
               </div>
-              <select id="trnGameFilter" class="form-control mg-select trn-filter-select" aria-label="فیلتر بازی آنلاین">
-                <option value="all">همه بازی‌ها</option>
+              <select id="trnChallengeStatusFilter" class="form-control mg-select trn-filter-select" aria-label="فیلتر وضعیت چالش" hidden>
+                <option value="all">همه وضعیت‌های چالش</option>
+                <option value="open">در انتظار پذیرش</option>
+                <option value="ready">آماده تشکیل تورنومنت</option>
+                <option value="formed">تورنومنت تشکیل‌شده</option>
               </select>
-              <div class="trn-status-group" role="group" aria-label="فیلتر وضعیت تورنومنت">
-                <button type="button" class="trn-seg-btn is-active" data-trn-status="all">همه</button>
-                <button type="button" class="trn-seg-btn" data-trn-status="registration">ثبت‌نام باز</button>
-                <button type="button" class="trn-seg-btn" data-trn-status="live">در حال اجرا</button>
-                <button type="button" class="trn-seg-btn" data-trn-status="completed">پایان‌یافته</button>
-              </div>
             </div>
           </div>
 
-          <!-- TAB 1: NETWORK TOURNAMENT DIRECTORY -->
-          <section id="trnTabDirectory" class="trn-tab-pane is-active" data-trn-pane="directory" aria-label="فهرست تورنومنت‌های شبکه">
-            <div id="trnCardsGrid" class="trn-cards-grid"></div>
+          <!-- SECTION 1: TOURNAMENT OVERVIEW -->
+          <section id="trnTabOverview" class="trn-tab-pane is-active" data-trn-pane="overview" aria-label="نمای کلی تورنومنت">
+            <div id="trnOverviewRoot" class="trn-overview-wrap"></div>
           </section>
 
-          <!-- TAB 2: LIVE BRACKET & MATCH MANAGEMENT ROOM -->
-          <section id="trnTabBracket" class="trn-tab-pane" data-trn-pane="bracket" hidden aria-label="جدول و مدیریت مسابقه">
+          <!-- SECTION 2: OPEN PUBLIC CHALLENGES -->
+          <section id="trnTabChallenges" class="trn-tab-pane" data-trn-pane="challenges" hidden aria-label="چالش‌های باز شبکه">
+            <div class="trn-section-bar">
+              <div>
+                <h3 class="trn-section-heading">چالش‌های باز بین‌گیم‌نتی</h3>
+                <p class="trn-panel-sub">فراخوان‌های رسمی گیم‌نت‌ها را بررسی کنید، چالش را بپذیرید، روی جایزه توافق کنید و به‌محض حضور حداقل ۲ گیم‌نت، تورنومنت را خودکار تشکیل دهید.</p>
+              </div>
+              <button type="button" class="btn mg-btn mg-btn-primary mg-btn-sm" data-trn-action="open-challenge">
+                انتشار چالش جدید
+              </button>
+            </div>
+            <div id="trnChallengesList" class="trn-challenges-stack"></div>
+          </section>
+
+          <!-- SECTION 3: MY GAMING CENTER'S TEAMS -->
+          <section id="trnTabTeams" class="trn-tab-pane" data-trn-pane="teams" hidden aria-label="تیم‌های گیم‌نت من">
+            <div class="trn-section-bar">
+              <div>
+                <h3 class="trn-section-heading">تیم‌ها و نمایندگان رسمی Game District</h3>
+                <p class="trn-panel-sub">از مشتریان ثبت‌نام‌شده سالن، تیم‌های منتخب ویدیویی، فوتبال دستی و بیلیارد بسازید تا در چالش‌های شبکه نماینده شما باشند.</p>
+              </div>
+              <button type="button" class="btn mg-btn mg-btn-primary mg-btn-sm" data-trn-action="open-create-team">
+                ساخت تیم یا نماینده جدید
+              </button>
+            </div>
+            <div id="trnTeamsGrid" class="trn-teams-grid"></div>
+          </section>
+
+          <!-- SECTION 4: INTERNAL GAMING CENTER COMPETITIONS -->
+          <section id="trnTabInternal" class="trn-tab-pane" data-trn-pane="internal" hidden aria-label="مسابقات داخلی سالن">
+            <div class="trn-section-bar">
+              <div>
+                <h3 class="trn-section-heading">مسابقات داخلی گیم‌نت Game District</h3>
+                <p class="trn-panel-sub">برای مشتریان ثبت‌نام‌شده سالن رقابت داخلی برگزار کنید و برندگان را مستقیماً به فهرست تیم‌های نماینده سالن اضافه کنید.</p>
+              </div>
+              <button type="button" class="btn mg-btn mg-btn-primary mg-btn-sm" data-trn-action="open-create-internal">
+                ساخت مسابقه داخلی جدید
+              </button>
+            </div>
+            <div id="trnInternalGrid" class="trn-cards-grid"></div>
+          </section>
+
+          <!-- SECTION 5: ACTIVE INTER-CENTER TOURNAMENTS -->
+          <section id="trnTabActive" class="trn-tab-pane" data-trn-pane="active" hidden aria-label="تورنومنت‌های فعال">
+            <div class="trn-section-bar">
+              <div>
+                <h3 class="trn-section-heading">تورنومنت‌های فعال بین‌گیم‌نتی</h3>
+                <p class="trn-panel-sub">تمامی تورنومنت‌های آنلاین ویدیویی و مسابقات حضوری بیلیارد و فوتبال دستی که در حال ثبت‌نام یا برگزاری هستند.</p>
+              </div>
+              <button type="button" class="btn mg-btn mg-btn-primary mg-btn-sm" data-trn-action="open-create-network">
+                ایجاد تورنومنت بین‌گیم‌نتی
+              </button>
+            </div>
+            <div id="trnActiveGrid" class="trn-cards-grid"></div>
+          </section>
+
+          <!-- SECTION 6: INTERACTIVE TOURNAMENT BRACKETS -->
+          <section id="trnTabBrackets" class="trn-tab-pane" data-trn-pane="brackets" hidden aria-label="جدول مسابقات">
             <div id="trnDetailHeader" class="trn-detail-header"></div>
 
             <div class="trn-detail-layout">
-              <!-- Left / Primary: Knockout Bracket Canvas -->
+              <!-- Primary: Visual Knockout Bracket Canvas -->
               <div class="trn-bracket-panel">
                 <div class="trn-panel-head">
                   <div>
-                    <h3 class="trn-panel-title">جدول حذفی مسابقه</h3>
-                    <p class="trn-panel-sub">روی هر رقابت آماده کلیک کنید تا امتیاز را ثبت کرده و برنده را به دور بعد هدایت کنید.</p>
+                    <h3 class="trn-panel-title">جدول حذفی و مراحل مسابقه</h3>
+                    <p class="trn-panel-sub">روی دکمه «ثبت نتیجه» در هر دیدار آماده کلیک کنید تا امتیاز ثبت شده و برنده به مرحله بعد یا مقام قهرمانی برسد.</p>
                   </div>
                   <div class="trn-panel-actions">
                     <button type="button" id="trnGenerateBracketBtn" class="btn mg-btn mg-btn-primary mg-btn-sm">
@@ -313,44 +386,54 @@
                 <div id="trnBracketStage" class="trn-bracket-stage"></div>
               </div>
 
-              <!-- Right / Secondary: Prizes + Enrolled Players + Quick Local Enroll -->
+              <!-- Secondary: Prize Agreement + Quick Enroll + Roster -->
               <aside class="trn-side-panel">
                 <div class="trn-side-block">
-                  <h3 class="trn-panel-title">جوایز تعیین‌شده توسط گیم‌نت میزبان</h3>
+                  <div class="trn-side-head-row">
+                    <h3 class="trn-panel-title">توافق جوایز مسابقه</h3>
+                    <span id="trnDetailPrizeStatus" class="trn-prize-state-inline is-agreed">توافق نهایی شده</span>
+                  </div>
                   <ol id="trnPrizeList" class="trn-prize-list"></ol>
+                  <div id="trnDetailPrizeActions" class="trn-detail-prize-actions"></div>
                 </div>
 
                 <div class="trn-side-block">
                   <div class="trn-side-head-row">
-                    <h3 class="trn-panel-title">اعزام بازیکن از سالن شما</h3>
+                    <h3 id="trnEnrollHeading" class="trn-panel-title">اعزام بازیکن یا تیم</h3>
                     <span id="trnSlotsMeta" class="trn-muted-meta">۰ از ۸</span>
                   </div>
                   <form id="trnEnrollForm" class="trn-enroll-form" novalidate>
                     <div class="mg-form-group">
-                      <label for="trnCustomerPicker" class="mg-label">انتخاب سریع از باشگاه مشتریان</label>
+                      <label for="trnTeamQuickPicker" class="mg-label">انتخاب از تیم‌های نماینده Game District</label>
+                      <select id="trnTeamQuickPicker" class="form-control mg-select">
+                        <option value="">انتخاب تیم نماینده (اختیاری)...</option>
+                      </select>
+                    </div>
+                    <div class="mg-form-group">
+                      <label for="trnCustomerPicker" class="mg-label">یا انتخاب از باشگاه مشتریان سالن</label>
                       <select id="trnCustomerPicker" class="form-control mg-select">
                         <option value="">وارد کردن دستی نام بازیکن / تیم...</option>
                       </select>
                     </div>
                     <div class="mg-form-group">
                       <label for="trnPlayerName" class="mg-label">نام بازیکن یا تیم</label>
-                      <input type="text" id="trnPlayerName" class="form-control mg-input" placeholder="مثلاً: امیررضا کریمی یا تیم Viper" required>
+                      <input type="text" id="trnPlayerName" class="form-control mg-input" placeholder="مثلاً: تیم Alpha یا امیررضا کریمی" required>
                     </div>
-                    <div class="mg-form-group">
-                      <label for="trnOnlineId" class="mg-label">شناسه آنلاین (PSN / Steam / Riot ID)</label>
-                      <input type="text" id="trnOnlineId" class="form-control mg-input" placeholder="مثلاً: Amir_GD98" required>
+                    <div class="mg-form-group" id="trnEnrollOnlineIdWrap">
+                      <label for="trnOnlineId" class="mg-label">شناسه آنلاین (Steam / PSN / Riot ID)</label>
+                      <input type="text" id="trnOnlineId" class="form-control mg-input" placeholder="مثلاً: Steam:GD_Alpha">
                     </div>
                     <p id="trnEnrollError" class="trn-form-error" role="alert" hidden></p>
                     <button type="submit" id="trnEnrollSubmitBtn" class="btn mg-btn mg-btn-primary mg-btn-block">
-                      <span>ثبت‌نام بازیکن در تورنومنت</span>
+                      <span>ثبت در فهرست مسابقه</span>
                     </button>
                   </form>
                 </div>
 
                 <div class="trn-side-block">
                   <div class="trn-side-head-row">
-                    <h3 class="trn-panel-title">شرکت‌کنندگان ثبت‌نام‌شده</h3>
-                    <span id="trnPlayersCountMeta" class="trn-muted-meta">۰ نفر</span>
+                    <h3 class="trn-panel-title">شرکت‌کنندگان ثبت‌شده</h3>
+                    <span id="trnPlayersCountMeta" class="trn-muted-meta">۰ شرکت‌کننده</span>
                   </div>
                   <ul id="trnRosterList" class="trn-roster-list"></ul>
                 </div>
@@ -358,13 +441,21 @@
             </div>
           </section>
 
-          <!-- TAB 3: CONNECTED GAMENETS NETWORK LEADERBOARD -->
-          <section id="trnTabNetwork" class="trn-tab-pane" data-trn-pane="network" hidden aria-label="گیم‌نت‌های عضو شبکه">
-            <div class="trn-network-card">
+          <!-- SECTION 7: COMPLETED TOURNAMENTS, CHAMPIONS & NETWORK LEADERBOARD -->
+          <section id="trnTabChampions" class="trn-tab-pane" data-trn-pane="champions" hidden aria-label="تورنومنت‌های پایان‌یافته و قهرمانان">
+            <div class="trn-section-bar">
+              <div>
+                <h3 class="trn-section-heading">تالار قهرمانان و نتایج رسمی تورنومنت‌ها</h3>
+                <p class="trn-panel-sub">گزارش رسمی قهرمانان مسابقات ویدیویی، فوتبال دستی و بیلیارد همراه با گیم‌نت نماینده، نتیجه فینال و جوایز اهداشده.</p>
+              </div>
+            </div>
+            <div id="trnChampionsGrid" class="trn-champions-stack"></div>
+
+            <div class="trn-network-card trn-leaderboard-block">
               <div class="trn-panel-head">
                 <div>
-                  <h3 class="trn-panel-title">گیم‌نت‌های متصل به شبکه تورنومنت</h3>
-                  <p class="trn-panel-sub">سالن‌های مجهز به این سامانه که به صورت مشترک لیگ‌های آنلاین و جوایز دوره‌ای برگزار می‌کنند.</p>
+                  <h3 class="trn-panel-title">جدول رده‌بندی گیم‌نت‌های عضو شبکه</h3>
+                  <p class="trn-panel-sub">عملکرد باشگاه‌های متصل در میزبانی، اعزام تیم‌های نماینده و کسب عناوین قهرمانی.</p>
                 </div>
               </div>
               <div class="mg-table-responsive">
@@ -374,10 +465,10 @@
                       <th>رتبه</th>
                       <th>نام گیم‌نت</th>
                       <th>شهر</th>
-                      <th>تورنومنت‌های میزبانی‌شده</th>
-                      <th>بازیکنان اعزامی</th>
+                      <th>میزبانی رویداد</th>
+                      <th>نمایندگان اعزامی</th>
                       <th>قهرمانی‌ها</th>
-                      <th>ارزش جوایز ارائه‌شده</th>
+                      <th>ارزش جوایز</th>
                     </tr>
                   </thead>
                   <tbody id="trnNetworkTableBody"></tbody>
@@ -387,36 +478,55 @@
           </section>
         </div>
 
-        <!-- CREATE TOURNAMENT MODAL -->
+        <!-- ================================================================
+             MODAL 1: CREATE INTERNAL OR INTER-CENTER TOURNAMENT
+             ================================================================ -->
         <div id="trnCreateModal" class="trn-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="trnCreateModalTitle" hidden>
           <div class="trn-modal-sheet">
             <div class="trn-modal-head">
               <div>
-                <h3 id="trnCreateModalTitle" class="trn-panel-title">ساخت تورنومنت جدید در شبکه گیم‌نت‌ها</h3>
-                <p class="trn-panel-sub">تورنومنت شما در پنل تمام گیم‌نت‌های عضو سامانه نمایش داده می‌شود و جوایز را خودتان تعیین می‌کنید.</p>
+                <h3 id="trnCreateModalTitle" class="trn-panel-title">ساخت تورنومنت جدید</h3>
+                <p id="trnCreateModalSub" class="trn-panel-sub">دسته مسابقه (بازی ویدیویی، فوتبال دستی یا بیلیارد) را انتخاب کرده و جزئیات برگزاری را تنظیم کنید.</p>
               </div>
               <button type="button" class="trn-modal-close" data-trn-close="create" aria-label="بستن پنجره">&times;</button>
             </div>
 
             <form id="trnCreateForm" class="trn-create-form" novalidate>
               <div class="trn-form-grid">
-                <div class="mg-form-group trn-col-span-2">
-                  <label for="trnInputTitle" class="mg-label">عنوان تورنومنت</label>
-                  <input type="text" id="trnInputTitle" name="title" class="form-control mg-input" placeholder="مثلاً: جام زمستانی FC 25 شبکه گیم‌نت‌ها" required>
+                <div class="mg-form-group">
+                  <label for="trnInputScope" class="mg-label">نوع برگزاری</label>
+                  <select id="trnInputScope" name="scope" class="form-control mg-select">
+                    <option value="internal">مسابقه داخلی سالن (مشتریان Game District)</option>
+                    <option value="inter_center">تورنومنت بین‌گیم‌نتی (شبکه باشگاه‌ها)</option>
+                  </select>
                 </div>
 
                 <div class="mg-form-group">
-                  <label for="trnInputGame" class="mg-label">بازی آنلاین</label>
+                  <label for="trnInputCategory" class="mg-label">دسته‌بندی مسابقه</label>
+                  <select id="trnInputCategory" name="category" class="form-control mg-select">
+                    <option value="video_games">بازی‌های ویدیویی (آنلاین)</option>
+                    <option value="foosball">فوتبال دستی (حضوری)</option>
+                    <option value="billiards">بیلیارد (حضوری)</option>
+                  </select>
+                </div>
+
+                <div class="mg-form-group trn-col-span-2">
+                  <label for="trnInputTitle" class="mg-label">عنوان مسابقه</label>
+                  <input type="text" id="trnInputTitle" name="title" class="form-control mg-input" placeholder="مثلاً: لیگ داخلی بیلیارد ایت‌بال یا جام FC 25" required>
+                </div>
+
+                <div class="mg-form-group">
+                  <label for="trnInputGame" class="mg-label">بازی یا رشته ورزشی</label>
                   <select id="trnInputGame" name="gameId" class="form-control mg-select"></select>
                 </div>
 
                 <div class="mg-form-group" id="trnCustomGameWrap" hidden>
-                  <label for="trnInputCustomGame" class="mg-label">نام بازی دلخواه</label>
+                  <label for="trnInputCustomGame" class="mg-label">نام بازی / رشته دلخواه</label>
                   <input type="text" id="trnInputCustomGame" name="customGameName" class="form-control mg-input" placeholder="نام بازی را بنویسید">
                 </div>
 
-                <div class="mg-form-group">
-                  <label for="trnInputPlatform" class="mg-label">پلتفرم</label>
+                <div class="mg-form-group" id="trnCreatePlatformWrap">
+                  <label for="trnInputPlatform" class="mg-label">پلتفرم آنلاین</label>
                   <select id="trnInputPlatform" name="platform" class="form-control mg-select">
                     <option value="پلی‌استیشن ۵">پلی‌استیشن ۵</option>
                     <option value="PC">PC</option>
@@ -425,82 +535,76 @@
                   </select>
                 </div>
 
+                <div class="mg-form-group trn-col-span-2" id="trnCreateVenueWrap" hidden>
+                  <label for="trnInputVenue" class="mg-label">محل برگزاری حضوری (سالن و میز)</label>
+                  <input type="text" id="trnInputVenue" name="venue" class="form-control mg-input" value="سالن اصلی گیم‌نت Game District — تهران، سعادت‌آباد" placeholder="نام گیم‌نت میزبان و سالن برگزاری حضوری">
+                </div>
+
                 <div class="mg-form-group">
                   <label for="trnInputFormat" class="mg-label">فرمت رقابت</label>
                   <select id="trnInputFormat" name="format" class="form-control mg-select">
-                    <option value="حذفی ۱ به ۱">حذفی ۱ به ۱</option>
-                    <option value="دو نفره (2v2)">دو نفره (2v2)</option>
+                    <option value="انفرادی ۱ به ۱">انفرادی ۱ به ۱</option>
+                    <option value="تیمی ۲ به ۲">تیمی ۲ به ۲</option>
                     <option value="تیمی ۵ به ۵">تیمی ۵ به ۵</option>
-                    <option value="گروهی + حذفی">گروهی + حذفی</option>
+                    <option value="دوئل دو گیم‌نت">دوئل دو گیم‌نت</option>
                   </select>
                 </div>
 
                 <div class="mg-form-group">
-                  <label for="trnInputScope" class="mg-label">گستره شرکت‌کنندگان</label>
-                  <select id="trnInputScope" name="scope" class="form-control mg-select">
-                    <option value="network">سراسری (تمام گیم‌نت‌های سامانه)</option>
-                    <option value="local">داخلی (اختصاصی سالن من)</option>
-                  </select>
-                </div>
-
-                <div class="mg-form-group">
-                  <label for="trnInputSlots" class="mg-label">ظرفیت کل (نفر / تیم)</label>
+                  <label for="trnInputSlots" class="mg-label">ظرفیت (بازیکن یا تیم)</label>
                   <select id="trnInputSlots" name="maxSlots" class="form-control mg-select">
+                    <option value="2">۲ شرکت‌کننده (فینال مستقیم)</option>
                     <option value="4">۴ شرکت‌کننده</option>
                     <option value="8" selected>۸ شرکت‌کننده</option>
                     <option value="16">۱۶ شرکت‌کننده</option>
-                    <option value="32">۳۲ شرکت‌کننده</option>
                   </select>
                 </div>
 
                 <div class="mg-form-group">
-                  <label for="trnInputEntryFee" class="mg-label">ورودی هر شرکت‌کننده (تومان — ۰ برای رایگان)</label>
-                  <input type="number" id="trnInputEntryFee" name="entryFee" class="form-control mg-input" min="0" step="10000" value="100000">
+                  <label for="trnInputStartDate" class="mg-label">تاریخ و ساعت برگزاری</label>
+                  <input type="text" id="trnInputStartDate" name="startDate" class="form-control mg-input" value="پنج‌شنبه ساعت ۲۰:۳۰" placeholder="مثلاً: پنج‌شنبه ۶ آذر — ساعت ۲۰:۳۰">
                 </div>
 
                 <div class="mg-form-group">
-                  <label for="trnInputStartDate" class="mg-label">زمان شروع</label>
-                  <input type="text" id="trnInputStartDate" name="startDate" class="form-control mg-input" placeholder="مثلاً: پنج‌شنبه ساعت ۲۱:۰۰" value="پنج‌شنبه ساعت ۲۱:۰۰">
+                  <label for="trnInputEntryFee" class="mg-label">ورودی (تومان — ۰ برای رایگان)</label>
+                  <input type="number" id="trnInputEntryFee" name="entryFee" class="form-control mg-input" min="0" step="10000" value="0">
+                </div>
+
+                <div class="mg-form-group trn-col-span-2" id="trnInternalCustomerPickerWrap">
+                  <span class="mg-label">انتخاب سریع شرکت‌کنندگان از مشتریان ثبت‌نام‌شده (اختیاری)</span>
+                  <div id="trnInternalCustomerList" class="trn-customer-check-grid"></div>
                 </div>
 
                 <div class="trn-form-divider trn-col-span-2">
-                  <span>تنظیمات جوایز انتخابی گیم‌نت</span>
+                  <span>تنظیمات جایزه</span>
                 </div>
 
                 <div class="mg-form-group">
                   <label for="trnInputPrizeType" class="mg-label">نوع جایزه</label>
                   <select id="trnInputPrizeType" name="prizeType" class="form-control mg-select">
-                    <option value="mixed">ترکیبی (نقدی + هدیه سالن)</option>
-                    <option value="cash">جایزه نقدی</option>
                     <option value="playtime">ساعت بازی رایگان</option>
-                    <option value="hardware">تجهیزات گیمینگ</option>
-                    <option value="buffet">اعتبار بوفه و باشگاه</option>
+                    <option value="vip_session">سشن بازی VIP رایگان</option>
+                    <option value="hardware">تجهیزات و لوازم گیمینگ</option>
+                    <option value="gift_card">گیفت‌کارت بازی</option>
+                    <option value="cash">جایزه نقدی</option>
+                    <option value="mixed">ترکیبی (نقدی + خدمات سالن)</option>
+                    <option value="custom">جایزه توافقی / سفارشی</option>
                   </select>
                 </div>
 
                 <div class="mg-form-group">
-                  <label for="trnInputPrizePool" class="mg-label">ارزش تقریبی کل جوایز (تومان)</label>
-                  <input type="number" id="trnInputPrizePool" name="prizePoolValue" class="form-control mg-input" min="0" step="500000" value="10000000">
+                  <label for="trnInputPrizePool" class="mg-label">ارزش تقریبی جایزه (تومان — اختیاری)</label>
+                  <input type="number" id="trnInputPrizePool" name="prizePoolValue" class="form-control mg-input" min="0" step="500000" value="5000000">
                 </div>
 
                 <div class="mg-form-group trn-col-span-2">
-                  <label for="trnInputPrizeFirst" class="mg-label">جایزه نفر / تیم اول</label>
-                  <input type="text" id="trnInputPrizeFirst" name="prizeFirst" class="form-control mg-input" placeholder="مثلاً: ۶,۰۰۰,۰۰۰ تومان نقدی + ۱۰ ساعت بازی VIP رایگان" required>
-                </div>
-
-                <div class="mg-form-group">
-                  <label for="trnInputPrizeSecond" class="mg-label">جایزه نفر / تیم دوم</label>
-                  <input type="text" id="trnInputPrizeSecond" name="prizeSecond" class="form-control mg-input" placeholder="مثلاً: ۳,۰۰۰,۰۰۰ تومان + ۵ ساعت بازی">
-                </div>
-
-                <div class="mg-form-group">
-                  <label for="trnInputPrizeThird" class="mg-label">جایزه نفر / تیم سوم</label>
-                  <input type="text" id="trnInputPrizeThird" name="prizeThird" class="form-control mg-input" placeholder="مثلاً: ۱,۰۰۰,۰۰۰ تومان اعتبار بوفه">
+                  <label for="trnInputPrizeFirst" class="mg-label">شرح جایزه قهرمان</label>
+                  <input type="text" id="trnInputPrizeFirst" name="prizeFirst" class="form-control mg-input" placeholder="مثلاً: ۱۰ ساعت بازی VIP رایگان + معرفی به‌عنوان نماینده رسمی سالن" required>
                 </div>
 
                 <div class="mg-form-group trn-col-span-2">
-                  <label for="trnInputRules" class="mg-label">قوانین و توضیحات کوتاه (اختیاری)</label>
-                  <textarea id="trnInputRules" name="rules" rows="2" class="form-control mg-input" placeholder="نحوه اتصال به لابی، مدت زمان بازی و قوانین تأیید نتیجه..."></textarea>
+                  <label for="trnInputRules" class="mg-label">قوانین و توضیحات (اختیاری)</label>
+                  <textarea id="trnInputRules" name="rules" rows="2" class="form-control mg-input" placeholder="شرایط حضور، تعداد ست‌ها یا قوانین داوری..."></textarea>
                 </div>
               </div>
 
@@ -508,19 +612,408 @@
 
               <div class="trn-modal-footer">
                 <button type="button" class="btn mg-btn trn-ghost-btn" data-trn-close="create">انصراف</button>
-                <button type="submit" id="trnCreateSubmitBtn" class="btn mg-btn mg-btn-primary">انتشار تورنومنت در شبکه</button>
+                <button type="submit" id="trnCreateSubmitBtn" class="btn mg-btn mg-btn-primary">ثبت و ایجاد مسابقه</button>
               </div>
             </form>
           </div>
         </div>
 
-        <!-- RECORD MATCH RESULT MODAL -->
+        <!-- ================================================================
+             MODAL 2: CREATE REPRESENTATIVE TEAM FOR MY GAMING CENTER
+             ================================================================ -->
+        <div id="trnTeamModal" class="trn-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="trnTeamModalTitle" hidden>
+          <div class="trn-modal-sheet">
+            <div class="trn-modal-head">
+              <div>
+                <h3 id="trnTeamModalTitle" class="trn-panel-title">ساخت تیم یا نماینده جدید برای Game District</h3>
+                <p class="trn-panel-sub">از مشتریان ثبت‌نام‌شده سالن ترکیب تیم بسازید تا آماده شرکت در چالش‌های بین‌گیم‌نتی باشید.</p>
+              </div>
+              <button type="button" class="trn-modal-close" data-trn-close="team" aria-label="بستن پنجره">&times;</button>
+            </div>
+
+            <form id="trnTeamForm" class="trn-create-form" novalidate>
+              <div class="trn-form-grid">
+                <div class="mg-form-group">
+                  <label for="trnTeamCategory" class="mg-label">دسته‌بندی رشته</label>
+                  <select id="trnTeamCategory" name="category" class="form-control mg-select">
+                    <option value="video_games">بازی‌های ویدیویی</option>
+                    <option value="foosball">فوتبال دستی</option>
+                    <option value="billiards">بیلیارد</option>
+                  </select>
+                </div>
+
+                <div class="mg-form-group">
+                  <label for="trnTeamGame" class="mg-label">بازی یا رشته تخصصی</label>
+                  <select id="trnTeamGame" name="gameId" class="form-control mg-select"></select>
+                </div>
+
+                <div class="mg-form-group">
+                  <label for="trnTeamName" class="mg-label">نام تیم یا نماینده</label>
+                  <input type="text" id="trnTeamName" name="name" class="form-control mg-input" placeholder="مثلاً: تیم Omega یا زوج بیلیارد سالن" required>
+                </div>
+
+                <div class="mg-form-group">
+                  <label for="trnTeamEntryType" class="mg-label">ساختار نماینده</label>
+                  <select id="trnTeamEntryType" name="entryType" class="form-control mg-select">
+                    <option value="team">تیمی (۲ بازیکن یا بیشتر)</option>
+                    <option value="individual">انفرادی (۱ بازیکن)</option>
+                  </select>
+                </div>
+
+                <div class="mg-form-group trn-col-span-2" id="trnTeamOnlineTagWrap">
+                  <label for="trnTeamOnlineTag" class="mg-label">شناسه آنلاین تیم (اختیاری — ویژه بازی‌های ویدیویی)</label>
+                  <input type="text" id="trnTeamOnlineTag" name="onlineTag" class="form-control mg-input" placeholder="مثلاً: Steam:GD_Omega">
+                </div>
+
+                <div class="mg-form-group trn-col-span-2">
+                  <span class="mg-label">انتخاب اعضا از باشگاه مشتریان ثبت‌نام‌شده</span>
+                  <div id="trnTeamCustomerChecks" class="trn-customer-check-grid"></div>
+                </div>
+
+                <div class="mg-form-group trn-col-span-2">
+                  <label for="trnTeamExtraMembers" class="mg-label">افزودن دستی نام سایر اعضا (با ویرگول جدا کنید)</label>
+                  <input type="text" id="trnTeamExtraMembers" name="extraMembers" class="form-control mg-input" placeholder="مثلاً: آرش کاظمی، امیرحسین نادری">
+                </div>
+
+                <div class="mg-form-group trn-col-span-2">
+                  <label for="trnTeamNotes" class="mg-label">توضیحات تیم (اختیاری)</label>
+                  <input type="text" id="trnTeamNotes" name="notes" class="form-control mg-input" placeholder="مثلاً: برگزیده مسابقات داخلی آبان ماه">
+                </div>
+              </div>
+
+              <p id="trnTeamError" class="trn-form-error" role="alert" hidden></p>
+
+              <div class="trn-modal-footer">
+                <button type="button" class="btn mg-btn trn-ghost-btn" data-trn-close="team">انصراف</button>
+                <button type="submit" id="trnTeamSubmitBtn" class="btn mg-btn mg-btn-primary">ذخیره تیم نماینده</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             MODAL 3: PUBLISH PUBLIC CHALLENGE ANNOUNCEMENT
+             ================================================================ -->
+        <div id="trnChallengeModal" class="trn-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="trnChallengeModalTitle" hidden>
+          <div class="trn-modal-sheet">
+            <div class="trn-modal-head">
+              <div>
+                <h3 id="trnChallengeModalTitle" class="trn-panel-title">انتشار فراخوان چالش عمومی در شبکه</h3>
+                <p class="trn-panel-sub">فراخوان شما در پنل سایر گیم‌نت‌های عضو شبکه نمایش داده می‌شود تا برای رقابت اعلام آمادگی کنند.</p>
+              </div>
+              <button type="button" class="trn-modal-close" data-trn-close="challenge" aria-label="بستن پنجره">&times;</button>
+            </div>
+
+            <form id="trnChallengeForm" class="trn-create-form" novalidate>
+              <div class="trn-form-grid">
+                <div class="mg-form-group trn-col-span-2">
+                  <label for="trnChTeamSelect" class="mg-label">انتخاب از تیم‌های نماینده Game District (اختیاری)</label>
+                  <select id="trnChTeamSelect" name="teamId" class="form-control mg-select">
+                    <option value="">تعریف دستی تیم یا بازیکن نماینده...</option>
+                  </select>
+                </div>
+
+                <div class="mg-form-group">
+                  <label for="trnChCategory" class="mg-label">دسته‌بندی رقابت</label>
+                  <select id="trnChCategory" name="category" class="form-control mg-select">
+                    <option value="video_games">بازی‌های ویدیویی (آنلاین)</option>
+                    <option value="foosball">فوتبال دستی (حضوری)</option>
+                    <option value="billiards">بیلیارد (حضوری)</option>
+                  </select>
+                </div>
+
+                <div class="mg-form-group">
+                  <label for="trnChGame" class="mg-label">بازی یا رشته ورزشی</label>
+                  <select id="trnChGame" name="gameId" class="form-control mg-select"></select>
+                </div>
+
+                <div class="mg-form-group">
+                  <label for="trnChTeamName" class="mg-label">نام تیم یا شرکت‌کننده نماینده</label>
+                  <input type="text" id="trnChTeamName" name="teamName" class="form-control mg-input" placeholder="مثلاً: تیم Alpha" required>
+                </div>
+
+                <div class="mg-form-group">
+                  <label for="trnChScope" class="mg-label">گستره چالش</label>
+                  <select id="trnChScope" name="competitionScope" class="form-control mg-select">
+                    <option value="two_center">رقابت دو گیم‌نت (دوئل مستقیم)</option>
+                    <option value="multi_center">تورنومنت چندگیم‌نتی (۴ تا ۱۶ سالن)</option>
+                  </select>
+                </div>
+
+                <div class="mg-form-group trn-col-span-2">
+                  <label for="trnChMembers" class="mg-label">اعضای تیم یا نام بازیکن (با ویرگول جدا کنید)</label>
+                  <input type="text" id="trnChMembers" name="members" class="form-control mg-input" placeholder="مثلاً: علیرضا گوهری، آرش کاظمی، امیرحسین نادری" required>
+                </div>
+
+                <div class="mg-form-group" id="trnChPlatformWrap">
+                  <label for="trnChPlatform" class="mg-label">پلتفرم آنلاین</label>
+                  <select id="trnChPlatform" name="platform" class="form-control mg-select">
+                    <option value="PC">PC</option>
+                    <option value="پلی‌استیشن ۵">پلی‌استیشن ۵</option>
+                    <option value="ایکس‌باکس">ایکس‌باکس</option>
+                    <option value="کراس‌پلتفرم">کراس‌پلتفرم</option>
+                  </select>
+                </div>
+
+                <div class="mg-form-group trn-col-span-2" id="trnChVenueWrap" hidden>
+                  <label for="trnChVenue" class="mg-label">محل برگزاری حضوری (سالن میزبان)</label>
+                  <input type="text" id="trnChVenue" name="venue" class="form-control mg-input" value="سالن اصلی گیم‌نت Game District — تهران، سعادت‌آباد">
+                </div>
+
+                <div class="mg-form-group">
+                  <label for="trnChDate" class="mg-label">تاریخ و ساعت پیشنهادی</label>
+                  <input type="text" id="trnChDate" name="preferredDate" class="form-control mg-input" value="پنج‌شنبه ساعت ۲۱:۰۰" required>
+                </div>
+
+                <div class="mg-form-group">
+                  <label for="trnChMaxCenters" class="mg-label">حداکثر تعداد گیم‌نت‌ها</label>
+                  <select id="trnChMaxCenters" name="maxCenters" class="form-control mg-select">
+                    <option value="2">۲ گیم‌نت (دوئل)</option>
+                    <option value="4">۴ گیم‌نت</option>
+                    <option value="8">۸ گیم‌نت</option>
+                    <option value="16">۱۶ گیم‌نت</option>
+                  </select>
+                </div>
+
+                <div class="trn-form-divider trn-col-span-2">
+                  <span>پیشنهاد جایزه برای توافق گیم‌نت‌ها</span>
+                </div>
+
+                <div class="mg-form-group">
+                  <label for="trnChPrizeType" class="mg-label">نوع جایزه پیشنهادی</label>
+                  <select id="trnChPrizeType" name="prizeType" class="form-control mg-select">
+                    <option value="playtime">ساعت بازی رایگان</option>
+                    <option value="vip_session">سشن بازی VIP رایگان</option>
+                    <option value="hardware">تجهیزات و لوازم گیمینگ</option>
+                    <option value="gift_card">گیفت‌کارت بازی</option>
+                    <option value="cash">جایزه نقدی</option>
+                    <option value="custom">جایزه توافقی / سفارشی</option>
+                  </select>
+                </div>
+
+                <div class="mg-form-group">
+                  <label for="trnChDeadline" class="mg-label">مهلت پذیرش چالش</label>
+                  <input type="text" id="trnChDeadline" name="registrationDeadline" class="form-control mg-input" value="تا ۲۴ ساعت پیش از شروع">
+                </div>
+
+                <div class="mg-form-group trn-col-span-2">
+                  <label for="trnChPrize" class="mg-label">شرح جایزه پیشنهادی</label>
+                  <input type="text" id="trnChPrize" name="suggestedPrize" class="form-control mg-input" placeholder="مثلاً: ۲۰ ساعت بازی VIP رایگان + ۵ عدد هدست گیمینگ برای تیم قهرمان" required>
+                </div>
+
+                <div class="mg-form-group trn-col-span-2">
+                  <label for="trnChStatement" class="mg-label">متن فراخوان عمومی (اختیاری — در صورت خالی بودن خودکار نوشته می‌شود)</label>
+                  <textarea id="trnChStatement" name="statement" rows="2" class="form-control mg-input" placeholder="مثلاً: گیم‌نت Game District با تیم منتخب خود آماده رقابت است..."></textarea>
+                </div>
+              </div>
+
+              <p id="trnChallengeError" class="trn-form-error" role="alert" hidden></p>
+
+              <div class="trn-modal-footer">
+                <button type="button" class="btn mg-btn trn-ghost-btn" data-trn-close="challenge">انصراف</button>
+                <button type="submit" id="trnChallengeSubmitBtn" class="btn mg-btn mg-btn-primary">انتشار چالش در شبکه</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             MODAL 4: ACCEPT CHALLENGE & PRIZE AGREEMENT
+             ================================================================ -->
+        <div id="trnAcceptModal" class="trn-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="trnAcceptModalTitle" hidden>
+          <div class="trn-modal-sheet">
+            <div class="trn-modal-head">
+              <div>
+                <h3 id="trnAcceptModalTitle" class="trn-panel-title">پذیرش چالش و اعزام نماینده</h3>
+                <p id="trnAcceptModalSub" class="trn-panel-sub">تیم یا بازیکن اعزامی را مشخص کرده و وضعیت توافق جایزه را تأیید یا اصلاح کنید.</p>
+              </div>
+              <button type="button" class="trn-modal-close" data-trn-close="accept" aria-label="بستن پنجره">&times;</button>
+            </div>
+
+            <form id="trnAcceptForm" class="trn-create-form" novalidate>
+              <input type="hidden" id="trnAcceptChallengeId" name="challengeId">
+              <div class="trn-form-grid">
+                <div class="mg-form-group trn-col-span-2" id="trnAcceptPartnerWrap" hidden>
+                  <label for="trnAcceptGamenetSelect" class="mg-label">انتخاب گیم‌نت همکار پذیرنده</label>
+                  <select id="trnAcceptGamenetSelect" name="partnerGamenetId" class="form-control mg-select"></select>
+                </div>
+
+                <div class="mg-form-group trn-col-span-2" id="trnAcceptLocalTeamWrap">
+                  <label for="trnAcceptTeamPicker" class="mg-label">انتخاب سریع از تیم‌های نماینده Game District</label>
+                  <select id="trnAcceptTeamPicker" name="teamId" class="form-control mg-select">
+                    <option value="">وارد کردن دستی نام تیم یا بازیکن...</option>
+                  </select>
+                </div>
+
+                <div class="mg-form-group">
+                  <label for="trnAcceptTeamName" class="mg-label">نام تیم یا بازیکن اعزامی</label>
+                  <input type="text" id="trnAcceptTeamName" name="teamName" class="form-control mg-input" required>
+                </div>
+
+                <div class="mg-form-group" id="trnAcceptOnlineIdWrap">
+                  <label for="trnAcceptOnlineId" class="mg-label">شناسه آنلاین نماینده</label>
+                  <input type="text" id="trnAcceptOnlineId" name="onlineId" class="form-control mg-input" placeholder="مثلاً: Steam:GD_Squad">
+                </div>
+
+                <div class="mg-form-group trn-col-span-2">
+                  <label for="trnAcceptMembers" class="mg-label">نام اعضا یا بازیکن (با ویرگول جدا کنید)</label>
+                  <input type="text" id="trnAcceptMembers" name="members" class="form-control mg-input" required>
+                </div>
+
+                <div class="trn-form-divider trn-col-span-2">
+                  <span>بررسی و توافق جایزه</span>
+                </div>
+
+                <div class="trn-col-span-2">
+                  <div id="trnAcceptCurrentPrizeBox" class="trn-modal-info-box"></div>
+                </div>
+
+                <div class="mg-form-group trn-col-span-2">
+                  <label class="trn-checkbox-row" for="trnAcceptConfirmPrize">
+                    <input type="checkbox" id="trnAcceptConfirmPrize" name="confirmPrize" value="1" checked>
+                    <span>با جایزه پیشنهادی بالا موافقم (تأیید نهایی جایزه)</span>
+                  </label>
+                </div>
+
+                <div class="mg-form-group trn-col-span-2" id="trnAcceptCounterWrap" hidden>
+                  <label for="trnAcceptCounterPrize" class="mg-label">یا پیشنهاد جایزه جایگزین (در انتظار تأیید طرف مقابل قرار می‌گیرد)</label>
+                  <input type="text" id="trnAcceptCounterPrize" name="counterPrize" class="form-control mg-input" placeholder="مثلاً: ۲۰ ساعت بازی VIP + گیفت‌کارت">
+                </div>
+              </div>
+
+              <p id="trnAcceptError" class="trn-form-error" role="alert" hidden></p>
+
+              <div class="trn-modal-footer">
+                <button type="button" class="btn mg-btn trn-ghost-btn" data-trn-close="accept">انصراف</button>
+                <button type="submit" id="trnAcceptSubmitBtn" class="btn mg-btn mg-btn-primary">ثبت رسمی پذیرش چالش</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             MODAL 5: PROPOSE / EDIT PRIZE AGREEMENT
+             ================================================================ -->
+        <div id="trnPrizeModal" class="trn-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="trnPrizeModalTitle" hidden>
+          <div class="trn-modal-sheet trn-modal-compact">
+            <div class="trn-modal-head">
+              <div>
+                <h3 id="trnPrizeModalTitle" class="trn-panel-title">ویرایش و پیشنهاد جایزه مسابقه</h3>
+                <p class="trn-panel-sub">با ثبت پیشنهاد جدید، وضعیت جایزه به «پیشنهادی» تغییر می‌کند تا سایر گیم‌نت‌ها آن را تأیید کنند.</p>
+              </div>
+              <button type="button" class="trn-modal-close" data-trn-close="prize" aria-label="بستن پنجره">&times;</button>
+            </div>
+
+            <form id="trnPrizeForm" class="trn-create-form" novalidate>
+              <input type="hidden" id="trnPrizeTargetType">
+              <input type="hidden" id="trnPrizeTargetId">
+              <div class="trn-form-grid">
+                <div class="mg-form-group trn-col-span-2">
+                  <label for="trnPrizeEditType" class="mg-label">نوع جایزه</label>
+                  <select id="trnPrizeEditType" name="prizeType" class="form-control mg-select">
+                    <option value="playtime">ساعت بازی رایگان</option>
+                    <option value="vip_session">سشن بازی VIP رایگان</option>
+                    <option value="hardware">تجهیزات و لوازم گیمینگ</option>
+                    <option value="gift_card">گیفت‌کارت بازی</option>
+                    <option value="cash">جایزه نقدی</option>
+                    <option value="buffet">اعتبار بوفه و باشگاه</option>
+                    <option value="custom">جایزه توافقی / سفارشی</option>
+                  </select>
+                </div>
+                <div class="mg-form-group trn-col-span-2">
+                  <label for="trnPrizeEditSummary" class="mg-label">شرح دقیق جایزه پیشنهادی</label>
+                  <textarea id="trnPrizeEditSummary" name="summary" rows="3" class="form-control mg-input" required></textarea>
+                </div>
+              </div>
+              <p id="trnPrizeError" class="trn-form-error" role="alert" hidden></p>
+              <div class="trn-modal-footer">
+                <button type="button" class="btn mg-btn trn-ghost-btn" data-trn-close="prize">انصراف</button>
+                <button type="submit" class="btn mg-btn mg-btn-primary">ارسال پیشنهاد جایزه</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             MODAL 6: AUTOMATIC TOURNAMENT FORMATION FROM ACCEPTED CHALLENGE
+             ================================================================ -->
+        <div id="trnFormTournamentModal" class="trn-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="trnFormTournamentTitle" hidden>
+          <div class="trn-modal-sheet">
+            <div class="trn-modal-head">
+              <div>
+                <h3 id="trnFormTournamentTitle" class="trn-panel-title">تشکیل خودکار تورنومنت و تولید جدول حذفی</h3>
+                <p class="trn-panel-sub">حداقل ۲ گیم‌نت مشارکت خود را تأیید کرده‌اند. جزئیات نهایی را بررسی کنید تا تورنومنت و جدول مسابقات ایجاد شوند.</p>
+              </div>
+              <button type="button" class="trn-modal-close" data-trn-close="form-trn" aria-label="بستن پنجره">&times;</button>
+            </div>
+
+            <form id="trnFormTournamentForm" class="trn-create-form" novalidate>
+              <input type="hidden" id="trnFormChId" name="challengeId">
+              <div id="trnFormSummaryBox" class="trn-modal-info-box"></div>
+
+              <div class="trn-form-grid" style="margin-top: 14px;">
+                <div class="mg-form-group trn-col-span-2">
+                  <label for="trnFormTitle" class="mg-label">عنوان رسمی تورنومنت</label>
+                  <input type="text" id="trnFormTitle" name="title" class="form-control mg-input" required>
+                </div>
+
+                <div class="mg-form-group">
+                  <label for="trnFormDate" class="mg-label">زمان شروع رسمی</label>
+                  <input type="text" id="trnFormDate" name="startDate" class="form-control mg-input" required>
+                </div>
+
+                <div class="mg-form-group">
+                  <label for="trnFormMaxSlots" class="mg-label">ظرفیت جدول مسابقات</label>
+                  <select id="trnFormMaxSlots" name="maxSlots" class="form-control mg-select">
+                    <option value="2">۲ شرکت‌کننده (فینال مستقیم)</option>
+                    <option value="4">۴ شرکت‌کننده (نیمه‌نهایی + فینال)</option>
+                    <option value="8">۸ شرکت‌کننده (یک‌چهارم تا فینال)</option>
+                    <option value="16">۱۶ شرکت‌کننده</option>
+                  </select>
+                </div>
+
+                <div class="mg-form-group trn-col-span-2" id="trnFormVenueWrap" hidden>
+                  <label for="trnFormVenue" class="mg-label">محل برگزاری حضوری تأییدشده</label>
+                  <input type="text" id="trnFormVenue" name="venue" class="form-control mg-input">
+                </div>
+
+                <div class="mg-form-group trn-col-span-2" id="trnFormPlatformWrap">
+                  <label for="trnFormPlatform" class="mg-label">پلتفرم برگزاری آنلاین</label>
+                  <input type="text" id="trnFormPlatform" name="platform" class="form-control mg-input">
+                </div>
+
+                <div class="mg-form-group trn-col-span-2">
+                  <label for="trnFormPrizeSummary" class="mg-label">جایزه نهایی تورنومنت</label>
+                  <input type="text" id="trnFormPrizeSummary" name="prizeSummary" class="form-control mg-input" required>
+                </div>
+
+                <div class="mg-form-group trn-col-span-2">
+                  <label class="trn-checkbox-row" for="trnFormConfirmPrizeNow">
+                    <input type="checkbox" id="trnFormConfirmPrizeNow" name="confirmPrizeNow" value="1" checked>
+                    <span>توافق نهایی جایزه میان گیم‌نت‌های شرکت‌کننده ثبت و قفل شود</span>
+                  </label>
+                </div>
+              </div>
+
+              <p id="trnFormTrnError" class="trn-form-error" role="alert" hidden></p>
+
+              <div class="trn-modal-footer">
+                <button type="button" class="btn mg-btn trn-ghost-btn" data-trn-close="form-trn">انصراف</button>
+                <button type="submit" id="trnFormTrnSubmitBtn" class="btn mg-btn mg-btn-primary">تشکیل تورنومنت و تولید جدول</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             MODAL 7: RECORD MATCH RESULT & ADVANCE WINNER / CROWN CHAMPION
+             ================================================================ -->
         <div id="trnMatchModal" class="trn-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="trnMatchModalTitle" hidden>
           <div class="trn-modal-sheet trn-modal-compact">
             <div class="trn-modal-head">
               <div>
                 <h3 id="trnMatchModalTitle" class="trn-panel-title">ثبت نتیجه مسابقه و صعود برنده</h3>
-                <p id="trnMatchModalSub" class="trn-panel-sub">نتیجه نهایی را وارد کرده و برنده این دیدار را انتخاب کنید.</p>
+                <p id="trnMatchModalSub" class="trn-panel-sub">نتیجه نهایی این دیدار را وارد کرده و برنده رسمی را مشخص کنید.</p>
               </div>
               <button type="button" class="trn-modal-close" data-trn-close="match" aria-label="بستن پنجره">&times;</button>
             </div>
@@ -542,11 +1035,11 @@
                 <div class="trn-winner-choices">
                   <label class="trn-winner-option" for="trnWinnerA">
                     <input type="radio" id="trnWinnerA" name="winnerSide" value="A" checked>
-                    <span id="trnWinnerAName">بازیکن اول</span>
+                    <span id="trnWinnerAName">طرف اول</span>
                   </label>
                   <label class="trn-winner-option" for="trnWinnerB">
                     <input type="radio" id="trnWinnerB" name="winnerSide" value="B">
-                    <span id="trnWinnerBName">بازیکن دوم</span>
+                    <span id="trnWinnerBName">طرف دوم</span>
                   </label>
                 </div>
               </div>
@@ -565,7 +1058,7 @@
   </div>
 
   <script src="vendors/Flot/jquery.js"></script>
-  <script src="JS/tournaments.js?v=20261125-1"></script>
-  <script type="module" src="JS/dashboard-ui.js?v=20261125-1"></script>
+  <script src="JS/tournaments.js?v=20261126-1"></script>
+  <script type="module" src="JS/dashboard-ui.js?v=20261126-1"></script>
 </body>
 </html>

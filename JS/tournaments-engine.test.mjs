@@ -1,107 +1,208 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  COMPETITION_CATEGORIES,
   createSeedTournaments,
+  createSeedTeams,
+  createSeedChallenges,
   sanitizeTournamentInput,
+  sanitizeTeamInput,
+  sanitizeChallengeInput,
   validateParticipantInput,
+  acceptChallengeForCenter,
+  updateChallengePrizeAgreement,
+  canFormTournamentFromChallenge,
+  buildTournamentFromChallenge,
   generateSingleEliminationBracket,
   recordBracketMatchWinner,
   computeNetworkSummary,
   filterTournaments,
+  filterChallenges,
+  buildChampionHeadline,
   LOCAL_GAMENET_ID,
 } from './tournaments-engine.mjs';
 
-test('sanitizeTournamentInput validates required fields and normalizes Persian numbers', () => {
-  const bad = sanitizeTournamentInput({ title: 'ab', gameId: 'fc25', prizeFirst: 'جایزه' });
-  assert.ok(bad.error);
+test('supports all 3 categories and separates online video games from physical billiards/foosball', () => {
+  assert.equal(COMPETITION_CATEGORIES.length, 3);
 
-  const missingPrize = sanitizeTournamentInput({ title: 'جام زمستانی', gameId: 'fc25', prizeFirst: '' });
-  assert.ok(missingPrize.error);
-
-  const valid = sanitizeTournamentInput({
-    title: 'جام شبکه‌ای ولورانت',
+  const onlineTrn = sanitizeTournamentInput({
+    title: 'جام آنلاین ولورانت',
+    category: 'video_games',
     gameId: 'valorant',
-    maxSlots: '۱۶',
-    entryFee: '۱۰۰,۰۰۰',
-    prizeType: 'mixed',
-    prizePoolValue: '۱۲,۰۰۰,۰۰۰',
-    prizeFirst: '۸ میلیون تومان + ۱۰ ساعت بازی',
-    scope: 'network',
+    maxSlots: '۸',
+    prizeFirst: '۱۰ ساعت VIP رایگان',
+    scope: 'inter_center',
   });
-  assert.equal(valid.error, undefined);
-  assert.equal(valid.value.gameName, 'Valorant');
-  assert.equal(valid.value.maxSlots, 16);
-  assert.equal(valid.value.entryFee, 100000);
-  assert.equal(valid.value.prizePoolValue, 12000000);
-  assert.equal(valid.value.scope, 'network');
+  assert.equal(onlineTrn.error, undefined);
+  assert.equal(onlineTrn.value.mode, 'online');
+  assert.equal(onlineTrn.value.platform, 'PC');
+  assert.equal(onlineTrn.value.venue, '');
+
+  const physicalTrn = sanitizeTournamentInput({
+    title: 'مسابقه بیلیارد سالن',
+    category: 'billiards',
+    gameId: 'billiards-8ball',
+    venue: 'سالن بیلیارد طبقه اول Game District',
+    prizeFirst: 'چوب بیلیارد + ۵ ساعت بازی رایگان',
+    scope: 'internal',
+  });
+  assert.equal(physicalTrn.error, undefined);
+  assert.equal(physicalTrn.value.mode, 'physical');
+  assert.equal(physicalTrn.value.platform, '');
+  assert.equal(physicalTrn.value.lobbyCode, '');
+  assert.equal(physicalTrn.value.venue, 'سالن بیلیارد طبقه اول Game District');
+  assert.equal(physicalTrn.value.scope, 'internal');
+
+  // Physical tournaments must NOT require an online ID for participants
+  const physPlayer = validateParticipantInput(
+    { playerName: 'مهدی کریمی', onlineId: '' },
+    { status: 'registration', maxSlots: 8, category: 'billiards', mode: 'physical', participants: [] }
+  );
+  assert.equal(physPlayer.error, undefined);
+
+  // Online tournaments MUST require an online ID
+  const onlineMissingId = validateParticipantInput(
+    { playerName: 'مهدی کریمی', onlineId: '' },
+    { status: 'registration', maxSlots: 8, category: 'video_games', mode: 'online', participants: [] }
+  );
+  assert.ok(onlineMissingId.error);
 });
 
-test('validateParticipantInput prevents duplicates, empty fields, and over-capacity enrollment', () => {
-  const tournament = {
-    status: 'registration',
-    maxSlots: 2,
-    participants: [
-      { id: '1', playerName: 'علی', onlineId: 'Ali_Pro' },
-    ],
-  };
+test('representative team creation validates roster size for teams vs individuals', () => {
+  const tooSmallTeam = sanitizeTeamInput({
+    name: 'تیم بتا',
+    category: 'video_games',
+    gameId: 'cs2',
+    entryType: 'team',
+    members: ['علیرضا'],
+  });
+  assert.ok(tooSmallTeam.error);
 
-  assert.ok(validateParticipantInput({ playerName: '', onlineId: 'NewID' }, tournament).error);
-  assert.ok(validateParticipantInput({ playerName: 'رضا', onlineId: 'ali_pro' }, tournament).error);
+  const validTeam = sanitizeTeamInput({
+    name: 'تیم دلتا',
+    category: 'foosball',
+    gameId: 'foosball-2v2',
+    entryType: 'team',
+    members: ['علیرضا گوهری', 'جعفر محمدی'],
+  });
+  assert.equal(validTeam.error, undefined);
+  assert.equal(validTeam.value.mode, 'physical');
+  assert.equal(validTeam.value.members.length, 2);
 
-  const ok = validateParticipantInput({ playerName: 'رضا حسینی', onlineId: 'Reza_99' }, tournament);
-  assert.equal(ok.error, undefined);
-  assert.equal(ok.value.playerName, 'رضا حسینی');
-
-  tournament.participants.push({ id: '2', playerName: 'رضا حسینی', onlineId: 'Reza_99' });
-  const full = validateParticipantInput({ playerName: 'مهدی', onlineId: 'Mahdi_X' }, tournament);
-  assert.ok(full.error);
+  const validSolo = sanitizeTeamInput({
+    name: 'قهرمان ایت‌بال',
+    category: 'billiards',
+    gameId: 'billiards-8ball',
+    entryType: 'individual',
+    members: ['رضا حیدری'],
+  });
+  assert.equal(validSolo.error, undefined);
+  assert.equal(validSolo.value.entryType, 'individual');
 });
 
-test('generateSingleEliminationBracket handles byes and recordBracketMatchWinner crowns champion', () => {
+test('public challenge acceptance, prize agreement (proposed -> agreed), and automatic tournament formation', () => {
+  const created = sanitizeChallengeInput({
+    category: 'foosball',
+    gameId: 'foosball-2v2',
+    teamName: 'تیم رعد',
+    members: ['محمد باقر قالیباف', 'جعفر محمدی'],
+    competitionScope: 'two_center',
+    suggestedPrize: '۱۰ ساعت بازی VIP رایگان',
+    venue: 'سالن اصلی Game District',
+  });
+  assert.equal(created.error, undefined);
+
+  const challenge = { id: 'chl-test-1', ...created.value };
+  assert.equal(challenge.prizeAgreement.status, 'proposed');
+  assert.equal(canFormTournamentFromChallenge(challenge), false);
+
+  // Second gaming center accepts with a counter-proposal -> remains 'proposed', but tournament formation is now unlocked!
+  const accepted = acceptChallengeForCenter(challenge, {
+    gamenetId: 'arena-plus',
+    gamenetName: 'آرنا پلاس',
+    city: 'تهران',
+    teamName: 'زوج طوفان آرنا',
+    members: ['سروش امینی', 'پویا ملکی'],
+    counterPrize: '۱۵ ساعت بازی VIP + پذیرایی کامل بوفه',
+    counterPrizeType: 'vip_session',
+  });
+  assert.equal(accepted.error, undefined);
+  assert.equal(accepted.challenge.participatingCenters.length, 2);
+  assert.equal(accepted.challenge.prizeAgreement.status, 'proposed');
+  assert.equal(canFormTournamentFromChallenge(accepted.challenge), true);
+  assert.equal(accepted.challenge.status, 'ready');
+
+  // Host center confirms the counter-proposed prize -> status transitions to 'agreed'!
+  const agreed = updateChallengePrizeAgreement(accepted.challenge, {
+    actionType: 'confirm',
+    gamenetId: LOCAL_GAMENET_ID,
+    gamenetName: 'Game District',
+  });
+  assert.equal(agreed.error, undefined);
+  assert.equal(agreed.challenge.prizeAgreement.status, 'agreed');
+
+  // Auto-form tournament with 2-center direct Final bracket
+  const formed = buildTournamentFromChallenge(agreed.challenge, {}, 'trn-auto-1');
+  assert.equal(formed.error, undefined);
+  assert.equal(formed.tournament.id, 'trn-auto-1');
+  assert.equal(formed.tournament.mode, 'physical');
+  assert.equal(formed.tournament.status, 'live');
+  assert.equal(formed.tournament.participants.length, 2);
+  assert.equal(formed.tournament.bracket.rounds.length, 1);
+  assert.equal(formed.tournament.bracket.rounds[0].matches[0].status, 'ready');
+
+  // Record final match winner & crown champion
+  const crowned = recordBracketMatchWinner(formed.tournament.bracket, 'r1-m1', 'A', 10, 6);
+  assert.equal(crowned.completed, true);
+  assert.equal(crowned.champion.playerName, 'تیم رعد');
+  assert.equal(crowned.bracket.runnerUp.playerName, 'زوج طوفان آرنا');
+});
+
+test('multi-round bracket handles byes and crowns champion with headline', () => {
   const participants = [
-    { id: 'a', playerName: 'بازیکن ۱', onlineId: 'P1', gamenetId: LOCAL_GAMENET_ID, gamenetName: 'Game District' },
-    { id: 'b', playerName: 'بازیکن ۲', onlineId: 'P2', gamenetId: 'arena-plus', gamenetName: 'آرنا پلاس' },
-    { id: 'c', playerName: 'بازیکن ۳', onlineId: 'P3', gamenetId: 'cyberland-isf', gamenetName: 'سایبرلند' },
+    { id: 'a', playerName: 'تیم Alpha', onlineId: 'Steam:A', gamenetId: LOCAL_GAMENET_ID, gamenetName: 'Game District' },
+    { id: 'b', playerName: 'تیم Beta', onlineId: 'Steam:B', gamenetId: 'arena-plus', gamenetName: 'آرنا پلاس' },
+    { id: 'c', playerName: 'تیم Gamma', onlineId: 'Steam:C', gamenetId: 'cyberland-isf', gamenetName: 'سایبرلند' },
   ];
 
   const bracket = generateSingleEliminationBracket(participants, 4);
   assert.equal(bracket.rounds.length, 2);
-  // Match 1 has playerA (a) vs playerB (c), Match 2 has playerA (b) with automatic bye to Final!
-  assert.equal(bracket.rounds[0].matches[0].status, 'ready');
   assert.equal(bracket.rounds[0].matches[1].status, 'bye');
   assert.equal(bracket.rounds[1].matches[0].playerB.id, 'b');
 
-  // Advance Match 1 winner (a)
-  const step1 = recordBracketMatchWinner(bracket, 'r1-m1', 'A', 3, 1);
-  assert.equal(step1.completed, false);
-  assert.equal(step1.bracket.rounds[1].matches[0].playerA.id, 'a');
-  assert.equal(step1.bracket.rounds[1].matches[0].status, 'ready');
+  const semi = recordBracketMatchWinner(bracket, 'r1-m1', 'A', 16, 12);
+  assert.equal(semi.completed, false);
+  assert.equal(semi.bracket.rounds[1].matches[0].status, 'ready');
 
-  // Crown champion in Final
-  const step2 = recordBracketMatchWinner(step1.bracket, 'r2-m1', 'B', 1, 3);
-  assert.equal(step2.completed, true);
-  assert.equal(step2.champion.id, 'b');
+  const final = recordBracketMatchWinner(semi.bracket, 'r2-m1', 'A', 16, 10);
+  assert.equal(final.completed, true);
+  assert.equal(final.champion.playerName, 'تیم Alpha');
+
+  const headline = buildChampionHeadline({
+    gameName: 'Counter-Strike 2',
+    completedDateLabel: '۵ آذر ۱۴۰۵',
+    bracket: final.bracket,
+  });
+  assert.ok(headline.includes('تیم Alpha'));
+  assert.ok(headline.includes('Game District'));
+  assert.ok(headline.includes('Counter-Strike 2'));
 });
 
-test('computeNetworkSummary and filterTournaments compute accurate network KPIs and leaderboard', () => {
-  const seeds = createSeedTournaments();
-  const summary = computeNetworkSummary(seeds);
+test('seed data, category filtering, and network summary work seamlessly together', () => {
+  const tournaments = createSeedTournaments();
+  const challenges = createSeedChallenges();
+  const teams = createSeedTeams();
 
-  assert.equal(summary.totalTournaments, 4);
+  const summary = computeNetworkSummary(tournaments, challenges, teams);
+  assert.equal(summary.totalTournaments, 5);
   assert.equal(summary.activeTournaments, 3);
-  assert.ok(summary.connectedGamenets >= 6);
-  assert.ok(summary.totalPrizePool > 0);
-  assert.ok(summary.totalPlayers >= 16);
-  assert.equal(summary.partnerLeaderboard[0].championships, 1);
-  assert.equal(summary.partnerLeaderboard[0].id, LOCAL_GAMENET_ID);
+  assert.equal(summary.internalCount, 1);
+  assert.equal(summary.completedCount, 2);
+  assert.equal(summary.openChallenges, 3);
+  assert.equal(summary.readyChallenges, 1);
+  assert.equal(summary.localTeamsCount, 3);
 
-  const regOnly = filterTournaments(seeds, { status: 'registration' });
-  assert.equal(regOnly.length, 2);
-
-  const byGame = filterTournaments(seeds, { game: 'fc25' });
-  assert.equal(byGame.length, 1);
-  assert.equal(byGame[0].id, 'trn-fc25-autumn');
-
-  const search = filterTournaments(seeds, { query: 'اصفهان' });
-  assert.equal(search.length, 1);
+  assert.equal(filterTournaments(tournaments, { category: 'billiards' }).length, 2);
+  assert.equal(filterTournaments(tournaments, { scope: 'internal' }).length, 1);
+  assert.equal(filterChallenges(challenges, { category: 'foosball' }).length, 1);
 });
