@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>شبکه تورنومنت‌ها | پنل مدیریت گیم‌نت Game District</title>
+  <link rel="icon" href="src/assets/images/metrogame_emblem_1794207267121.jpg" type="image/jpeg">
+  <script>(function(){try{var t=localStorage.getItem('mg_theme_v1');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');var a=localStorage.getItem('mg_accent_palette_v1');document.documentElement.setAttribute('data-accent',a||'violet');}catch(e){}})();</script>
+  <link href="assets/bootstrap/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/bootstrap/bootstrap-rtl.css" rel="stylesheet">
+  <link href="fontello/css/my-icon.css" rel="stylesheet">
+  <link href="assets/css/gaming-dashboard.css?v=20261125-1" rel="stylesheet">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./node_modules/three/build/three.module.js",
+        "three/addons/": "./node_modules/three/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="sidebarBackdrop" class="mg-sidebar-backdrop"></div>
+  <div class="mg-app-shell">
+    <aside id="mgSidebar" class="mg-sidebar" aria-label="منوی اصلی مدیریت">
+      <div class="mg-brand">
+        <a href="index.html#overview" data-nav-view="overview" class="mg-brand-link" title="Game District — پیشخوان">
+          <img src="src/assets/images/metrogame_emblem_1794207267121.jpg" alt="لوگوی گیم‌نت Game District" class="mg-brand-logo">
+          <div class="mg-brand-text">
+            <h2 class="mg-brand-title">Game District</h2>
+            <span class="mg-brand-subtitle">مرکز فرماندهی گیم‌نت</span>
+          </div>
+        </a>
+        <button type="button" id="mgSidebarFoldBtn" class="mg-sidebar-fold-btn" aria-label="جمع کردن منوی کناری" title="جمع / باز کردن منو [">
+          <span class="mg-hamburger-box" aria-hidden="true">
+            <span class="mg-hm-bar bar-1"></span>
+            <span class="mg-hm-bar bar-2"></span>
+            <span class="mg-hm-bar bar-3"></span>
+          </span>
+        </button>
+      </div>
+
+      <div class="mg-sidebar-new-wrap">
+        <button type="button" id="mgSidebarQuickNew" class="mg-sidebar-new-btn" data-rail-tip="ثبت سریع میز جدید (N)">
+          <span class="mg-sidebar-new-ico">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </span>
+          <span class="mg-sidebar-new-label">ثبت سریع میز جدید</span>
+          <kbd class="mg-kbd">N</kbd>
+        </button>
+      </div>
+
+      <ul class="mg-nav-list" id="mgNavList">
+        <div id="mgNavSlidingPill" class="mg-nav-sliding-pill" aria-hidden="true"></div>
+
+        <li class="mg-nav-group-header" role="presentation">
+          <span>عملیات سالن</span>
+        </li>
+        <li class="mg-nav-item">
+          <a href="index.html#overview" data-nav-view="overview" data-rail-tip="خانه (پیشخوان)">
+            <span class="mg-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </span>
+            <span class="mg-nav-label">خانه (پیشخوان)</span>
+          </a>
+        </li>
+        <li class="mg-nav-item">
+          <a href="index.html#tables-section" data-nav-view="tables" data-rail-tip="مدیریت میزها">
+            <span class="mg-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="12" rx="2"/><line x1="2" y1="20" x2="22" y2="20"/><line x1="12" y1="16" x2="12" y2="20"/></svg>
+              <i class="mg-nav-dot"></i>
+            </span>
+            <span class="mg-nav-label">میزها</span>
+            <span id="navTablesBadge" class="mg-nav-badge badge-Highlight">۰</span>
+          </a>
+        </li>
+        <li class="mg-nav-item">
+          <a href="console.html" data-rail-tip="مدیریت کنسول‌ها">
+            <span class="mg-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><rect x="2" y="6" width="20" height="12" rx="4"/></svg>
+              <i class="mg-nav-dot"></i>
+            </span>
+            <span class="mg-nav-label">مدیریت کنسول‌ها</span>
+            <span id="navConsolesBadge" class="mg-nav-badge">۰</span>
+          </a>
+        </li>
+        <li class="mg-nav-item">
+          <a href="buffet.html" data-rail-tip="مدیریت بوفه">
+            <span class="mg-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+            </span>
+            <span class="mg-nav-label">مدیریت بوفه</span>
+          </a>
+        </li>
+        <li id="navItemMyGamenet" class="mg-nav-item">
+          <a href="index.html#my-gamenet" data-nav-view="my-gamenet" data-rail-tip="گیم نت من">
+            <span class="mg-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+            </span>
+            <span class="mg-nav-label">گیم نت من</span>
+          </a>
+        </li>
+        <li id="navItemTournaments" class="mg-nav-item active">
+          <a href="tournaments.html" data-rail-tip="تورنومنت">
+            <span class="mg-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+            </span>
+            <span class="mg-nav-label">تورنومنت</span>
+            <span id="navTournamentsBadge" class="mg-nav-badge">۰</span>
+          </a>
+        </li>
+
+        <li class="mg-nav-group-header" role="presentation">
+          <span>امور مالی و باشگاه</span>
+        </li>
+        <li class="mg-nav-item">
+          <a href="acounts.html" data-rail-tip="باشگاه مشتریان">
+            <span class="mg-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <i class="mg-nav-dot"></i>
+            </span>
+            <span class="mg-nav-label">مشتریان</span>
+            <span id="navCustomersBadge" class="mg-nav-badge">۰</span>
+          </a>
+        </li>
+        <li class="mg-nav-item">
+          <a href="Debtors.html" data-rail-tip="حساب بدهکاران">
+            <span class="mg-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            </span>
+            <span class="mg-nav-label">بدهکاران</span>
+            <span id="navDebtorsBadge" class="mg-nav-badge">۰</span>
+          </a>
+        </li>
+        <li class="mg-nav-item">
+          <a href="income.html" data-rail-tip="گزارش درآمد">
+            <span class="mg-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            </span>
+            <span class="mg-nav-label">گزارش درآمد</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="mg-sidebar-footer">
+        <div class="mg-sidebar-status-box">
+          <span><span class="mg-status-dot"></span>سرور محلی Game District</span>
+          <strong style="color: #10B981;">متصل</strong>
+        </div>
+        <a href="login.html" class="mg-logout-btn" data-rail-tip="خروج از پنل">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span class="mg-logout-label">خروج از پنل</span>
+        </a>
+      </div>
+    </aside>
+
+    <div class="mg-main-wrapper">
+      <header class="mg-topbar">
+        <div class="mg-topbar-right">
+          <button type="button" id="mobileMenuBtn" class="mg-mobile-menu-btn" aria-label="باز کردن منو">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="mg-page-heading">
+            <h1 id="mgTopbarTitle">تورنومنت</h1>
+          </div>
+        </div>
+        <div class="mg-topbar-left">
+          <div class="mg-live-clock" title="زمان سیستم">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span id="mgLiveClockText">ساعت سیستم</span>
+          </div>
+          <button type="button" id="mgThemeToggleBtn" class="mg-icon-btn mg-theme-toggle-btn" aria-label="تغییر به حالت روشن (Light Mode)" title="تغییر به حالت روشن (Light Mode)" aria-pressed="false">
+            <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </button>
+          <div class="mg-notification-wrap">
+            <button type="button" id="mgNotifBtn" class="mg-icon-btn" aria-label="اعلان‌های سیستم">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span id="mgNotifCount" class="mg-notif-count">۰</span>
+            </button>
+            <div id="mgNotifDropdown" class="mg-notif-dropdown">
+              <div class="mg-notif-header"><span>اعلان‌ها</span></div>
+              <ul id="mgNotifList" class="mg-notif-list"><li class="mg-notif-item">در حال بررسی...</li></ul>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="mg-content">
+        <div id="mgTournamentsRoot" class="trn-workspace">
+          <!-- 1. Flagship Network Hero Banner -->
+          <section class="trn-hero" aria-labelledby="trnHeroTitle">
+            <div class="trn-hero-content">
+              <p class="trn-hero-kicker">سرویس اختصاصی شبکه گیم‌نت‌های متصل به سامانه</p>
+              <h2 id="trnHeroTitle" class="trn-hero-title">شبکه تورنومنت‌های آنلاین بین‌گیم‌نتی</h2>
+              <p class="trn-hero-desc">
+                مشتریان سالن خود را به رقابت‌های آنلاین سراسری متصل کنید، با گیم‌نت‌های همکار لیگ مشترک بسازید و جوایز دلخواه (نقدی، ساعت بازی رایگان، تجهیزات یا اعتبار بوفه) تعیین کنید.
+              </p>
+              <div class="trn-hero-actions">
+                <button type="button" id="trnOpenCreateBtn" class="btn mg-btn mg-btn-primary trn-primary-cta">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  <span>ساخت تورنومنت جدید</span>
+                </button>
+                <button type="button" id="trnHeroJumpBracketBtn" class="btn mg-btn trn-ghost-btn">
+                  <span>مشاهده جدول مسابقه فعال</span>
+                </button>
+              </div>
+            </div>
+            <div class="trn-hero-media">
+              <img
+                src="src/assets/images/tournament_arena_hero_1795601704002.jpg"
+                alt="استیج رقابت‌های آنلاین شبکه تورنومنت گیم‌نت‌ها"
+                class="trn-hero-img"
+                referrerpolicy="no-referrer"
+              >
+              <div class="trn-hero-scrim" aria-hidden="true"></div>
+              <div id="trnHeroHighlight" class="trn-hero-caption">
+                <span class="trn-hero-caption-meta">در حال بارگذاری رویداد شاخص شبکه...</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- 2. Full-Width 4-Column Tabular KPI Strip -->
+          <section class="trn-kpi-strip" aria-label="خلاصه وضعیت شبکه تورنومنت‌ها">
+            <div class="trn-kpi-cell">
+              <span class="trn-kpi-label">تورنومنت‌های فعال شبکه</span>
+              <strong id="trnKpiActive" class="trn-kpi-value">۰</strong>
+              <span id="trnKpiActiveSub" class="trn-kpi-sub">در حال ثبت‌نام و برگزاری</span>
+            </div>
+            <div class="trn-kpi-cell">
+              <span class="trn-kpi-label">گیم‌نت‌های متصل</span>
+              <strong id="trnKpiGamenets" class="trn-kpi-value">۰</strong>
+              <span class="trn-kpi-sub">سالن‌های فعال در شبکه سراسری</span>
+            </div>
+            <div class="trn-kpi-cell">
+              <span class="trn-kpi-label">مجموع جوایز فعال</span>
+              <strong id="trnKpiPrize" class="trn-kpi-value">۰ تومان</strong>
+              <span class="trn-kpi-sub">به‌علاوه ساعت بازی و هدایای سالن‌ها</span>
+            </div>
+            <div class="trn-kpi-cell">
+              <span class="trn-kpi-label">بازیکنان اعزامی</span>
+              <strong id="trnKpiPlayers" class="trn-kpi-value">۰</strong>
+              <span id="trnKpiPlayersSub" class="trn-kpi-sub">از سالن شما و گیم‌نت‌های همکار</span>
+            </div>
+          </section>
+
+          <!-- 3. Segmented Workspace Navigation Tabs -->
+          <div class="trn-toolbar">
+            <div class="trn-tabs" role="tablist" aria-label="بخش‌های مدیریت تورنومنت">
+              <button type="button" class="trn-tab-btn is-active" role="tab" aria-selected="true" data-trn-tab="directory">
+                تورنومنت‌های شبکه
+              </button>
+              <button type="button" class="trn-tab-btn" role="tab" aria-selected="false" data-trn-tab="bracket">
+                جدول و اتاق مسابقه
+              </button>
+              <button type="button" class="trn-tab-btn" role="tab" aria-selected="false" data-trn-tab="network">
+                گیم‌نت‌های عضو شبکه
+              </button>
+            </div>
+
+            <div id="trnDirectoryFilters" class="trn-filter-bar">
+              <div class="trn-search-wrap">
+                <input type="search" id="trnSearchInput" class="form-control mg-input trn-search-input" placeholder="جستجو در نام مسابقه، بازی یا شهر..." aria-label="جستجوی تورنومنت">
+              </div>
+              <select id="trnGameFilter" class="form-control mg-select trn-filter-select" aria-label="فیلتر بازی آنلاین">
+                <option value="all">همه بازی‌ها</option>
+              </select>
+              <div class="trn-status-group" role="group" aria-label="فیلتر وضعیت تورنومنت">
+                <button type="button" class="trn-seg-btn is-active" data-trn-status="all">همه</button>
+                <button type="button" class="trn-seg-btn" data-trn-status="registration">ثبت‌نام باز</button>
+                <button type="button" class="trn-seg-btn" data-trn-status="live">در حال اجرا</button>
+                <button type="button" class="trn-seg-btn" data-trn-status="completed">پایان‌یافته</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 1: NETWORK TOURNAMENT DIRECTORY -->
+          <section id="trnTabDirectory" class="trn-tab-pane is-active" data-trn-pane="directory" aria-label="فهرست تورنومنت‌های شبکه">
+            <div id="trnCardsGrid" class="trn-cards-grid"></div>
+          </section>
+
+          <!-- TAB 2: LIVE BRACKET & MATCH MANAGEMENT ROOM -->
+          <section id="trnTabBracket" class="trn-tab-pane" data-trn-pane="bracket" hidden aria-label="جدول و مدیریت مسابقه">
+            <div id="trnDetailHeader" class="trn-detail-header"></div>
+
+            <div class="trn-detail-layout">
+              <!-- Left / Primary: Knockout Bracket Canvas -->
+              <div class="trn-bracket-panel">
+                <div class="trn-panel-head">
+                  <div>
+                    <h3 class="trn-panel-title">جدول حذفی مسابقه</h3>
+                    <p class="trn-panel-sub">روی هر رقابت آماده کلیک کنید تا امتیاز را ثبت کرده و برنده را به دور بعد هدایت کنید.</p>
+                  </div>
+                  <div class="trn-panel-actions">
+                    <button type="button" id="trnGenerateBracketBtn" class="btn mg-btn mg-btn-primary mg-btn-sm">
+                      <span>قرعه‌کشی و ساخت جدول</span>
+                    </button>
+                  </div>
+                </div>
+                <div id="trnBracketStage" class="trn-bracket-stage"></div>
+              </div>
+
+              <!-- Right / Secondary: Prizes + Enrolled Players + Quick Local Enroll -->
+              <aside class="trn-side-panel">
+                <div class="trn-side-block">
+                  <h3 class="trn-panel-title">جوایز تعیین‌شده توسط گیم‌نت میزبان</h3>
+                  <ol id="trnPrizeList" class="trn-prize-list"></ol>
+                </div>
+
+                <div class="trn-side-block">
+                  <div class="trn-side-head-row">
+                    <h3 class="trn-panel-title">اعزام بازیکن از سالن شما</h3>
+                    <span id="trnSlotsMeta" class="trn-muted-meta">۰ از ۸</span>
+                  </div>
+                  <form id="trnEnrollForm" class="trn-enroll-form" novalidate>
+                    <div class="mg-form-group">
+                      <label for="trnCustomerPicker" class="mg-label">انتخاب سریع از باشگاه مشتریان</label>
+                      <select id="trnCustomerPicker" class="form-control mg-select">
+                        <option value="">وارد کردن دستی نام بازیکن / تیم...</option>
+                      </select>
+                    </div>
+                    <div class="mg-form-group">
+                      <label for="trnPlayerName" class="mg-label">نام بازیکن یا تیم</label>
+                      <input type="text" id="trnPlayerName" class="form-control mg-input" placeholder="مثلاً: امیررضا کریمی یا تیم Viper" required>
+                    </div>
+                    <div class="mg-form-group">
+                      <label for="trnOnlineId" class="mg-label">شناسه آنلاین (PSN / Steam / Riot ID)</label>
+                      <input type="text" id="trnOnlineId" class="form-control mg-input" placeholder="مثلاً: Amir_GD98" required>
+                    </div>
+                    <p id="trnEnrollError" class="trn-form-error" role="alert" hidden></p>
+                    <button type="submit" id="trnEnrollSubmitBtn" class="btn mg-btn mg-btn-primary mg-btn-block">
+                      <span>ثبت‌نام بازیکن در تورنومنت</span>
+                    </button>
+                  </form>
+                </div>
+
+                <div class="trn-side-block">
+                  <div class="trn-side-head-row">
+                    <h3 class="trn-panel-title">شرکت‌کنندگان ثبت‌نام‌شده</h3>
+                    <span id="trnPlayersCountMeta" class="trn-muted-meta">۰ نفر</span>
+                  </div>
+                  <ul id="trnRosterList" class="trn-roster-list"></ul>
+                </div>
+              </aside>
+            </div>
+          </section>
+
+          <!-- TAB 3: CONNECTED GAMENETS NETWORK LEADERBOARD -->
+          <section id="trnTabNetwork" class="trn-tab-pane" data-trn-pane="network" hidden aria-label="گیم‌نت‌های عضو شبکه">
+            <div class="trn-network-card">
+              <div class="trn-panel-head">
+                <div>
+                  <h3 class="trn-panel-title">گیم‌نت‌های متصل به شبکه تورنومنت</h3>
+                  <p class="trn-panel-sub">سالن‌های مجهز به این سامانه که به صورت مشترک لیگ‌های آنلاین و جوایز دوره‌ای برگزار می‌کنند.</p>
+                </div>
+              </div>
+              <div class="mg-table-responsive">
+                <table class="table mg-table trn-network-table">
+                  <thead>
+                    <tr>
+                      <th>رتبه</th>
+                      <th>نام گیم‌نت</th>
+                      <th>شهر</th>
+                      <th>تورنومنت‌های میزبانی‌شده</th>
+                      <th>بازیکنان اعزامی</th>
+                      <th>قهرمانی‌ها</th>
+                      <th>ارزش جوایز ارائه‌شده</th>
+                    </tr>
+                  </thead>
+                  <tbody id="trnNetworkTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- CREATE TOURNAMENT MODAL -->
+        <div id="trnCreateModal" class="trn-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="trnCreateModalTitle" hidden>
+          <div class="trn-modal-sheet">
+            <div class="trn-modal-head">
+              <div>
+                <h3 id="trnCreateModalTitle" class="trn-panel-title">ساخت تورنومنت جدید در شبکه گیم‌نت‌ها</h3>
+                <p class="trn-panel-sub">تورنومنت شما در پنل تمام گیم‌نت‌های عضو سامانه نمایش داده می‌شود و جوایز را خودتان تعیین می‌کنید.</p>
+              </div>
+              <button type="button" class="trn-modal-close" data-trn-close="create" aria-label="بستن پنجره">&times;</button>
+            </div>
+
+            <form id="trnCreateForm" class="trn-create-form" novalidate>
+              <div class="trn-form-grid">
+                <div class="mg-form-group trn-col-span-2">
+                  <label for="trnInputTitle" class="mg-label">عنوان تورنومنت</label>
+                  <input type="text" id="trnInputTitle" name="title" class="form-control mg-input" placeholder="مثلاً: جام زمستانی FC 25 شبکه گیم‌نت‌ها" required>
+                </div>
+
+                <div class="mg-form-group">
+                  <label for="trnInputGame" class="mg-label">بازی آنلاین</label>
+                  <select id="trnInputGame" name="gameId" class="form-control mg-select"></select>
+                </div>
+
+                <div class="mg-form-group" id="trnCustomGameWrap" hidden>
+                  <label for="trnInputCustomGame" class="mg-label">نام بازی دلخواه</label>
+                  <input type="text" id="trnInputCustomGame" name="customGameName" class="form-control mg-input" placeholder="نام بازی را بنویسید">
+                </div>
+
+                <div class="mg-form-group">
+                  <label for="trnInputPlatform" class="mg-label">پلتفرم</label>
+                  <select id="trnInputPlatform" name="platform" class="form-control mg-select">
+                    <option value="پلی‌استیشن ۵">پلی‌استیشن ۵</option>
+                    <option value="PC">PC</option>
+                    <option value="ایکس‌باکس">ایکس‌باکس</option>
+                    <option value="کراس‌پلتفرم">کراس‌پلتفرم</option>
+                  </select>
+                </div>
+
+                <div class="mg-form-group">
+                  <label for="trnInputFormat" class="mg-label">فرمت رقابت</label>
+                  <select id="trnInputFormat" name="format" class="form-control mg-select">
+                    <option value="حذفی ۱ به ۱">حذفی ۱ به ۱</option>
+                    <option value="دو نفره (2v2)">دو نفره (2v2)</option>
+                    <option value="تیمی ۵ به ۵">تیمی ۵ به ۵</option>
+                    <option value="گروهی + حذفی">گروهی + حذفی</option>
+                  </select>
+                </div>
+
+                <div class="mg-form-group">
+                  <label for="trnInputScope" class="mg-label">گستره شرکت‌کنندگان</label>
+                  <select id="trnInputScope" name="scope" class="form-control mg-select">
+                    <option value="network">سراسری (تمام گیم‌نت‌های سامانه)</option>
+                    <option value="local">داخلی (اختصاصی سالن من)</option>
+                  </select>
+                </div>
+
+                <div class="mg-form-group">
+                  <label for="trnInputSlots" class="mg-label">ظرفیت کل (نفر / تیم)</label>
+                  <select id="trnInputSlots" name="maxSlots" class="form-control mg-select">
+                    <option value="4">۴ شرکت‌کننده</option>
+                    <option value="8" selected>۸ شرکت‌کننده</option>
+                    <option value="16">۱۶ شرکت‌کننده</option>
+                    <option value="32">۳۲ شرکت‌کننده</option>
+                  </select>
+                </div>
+
+                <div class="mg-form-group">
+                  <label for="trnInputEntryFee" class="mg-label">ورودی هر شرکت‌کننده (تومان — ۰ برای رایگان)</label>
+                  <input type="number" id="trnInputEntryFee" name="entryFee" class="form-control mg-input" min="0" step="10000" value="100000">
+                </div>
+
+                <div class="mg-form-group">
+                  <label for="trnInputStartDate" class="mg-label">زمان شروع</label>
+                  <input type="text" id="trnInputStartDate" name="startDate" class="form-control mg-input" placeholder="مثلاً: پنج‌شنبه ساعت ۲۱:۰۰" value="پنج‌شنبه ساعت ۲۱:۰۰">
+                </div>
+
+                <div class="trn-form-divider trn-col-span-2">
+                  <span>تنظیمات جوایز انتخابی گیم‌نت</span>
+                </div>
+
+                <div class="mg-form-group">
+                  <label for="trnInputPrizeType" class="mg-label">نوع جایزه</label>
+                  <select id="trnInputPrizeType" name="prizeType" class="form-control mg-select">
+                    <option value="mixed">ترکیبی (نقدی + هدیه سالن)</option>
+                    <option value="cash">جایزه نقدی</option>
+                    <option value="playtime">ساعت بازی رایگان</option>
+                    <option value="hardware">تجهیزات گیمینگ</option>
+                    <option value="buffet">اعتبار بوفه و باشگاه</option>
+                  </select>
+                </div>
+
+                <div class="mg-form-group">
+                  <label for="trnInputPrizePool" class="mg-label">ارزش تقریبی کل جوایز (تومان)</label>
+                  <input type="number" id="trnInputPrizePool" name="prizePoolValue" class="form-control mg-input" min="0" step="500000" value="10000000">
+                </div>
+
+                <div class="mg-form-group trn-col-span-2">
+                  <label for="trnInputPrizeFirst" class="mg-label">جایزه نفر / تیم اول</label>
+                  <input type="text" id="trnInputPrizeFirst" name="prizeFirst" class="form-control mg-input" placeholder="مثلاً: ۶,۰۰۰,۰۰۰ تومان نقدی + ۱۰ ساعت بازی VIP رایگان" required>
+                </div>
+
+                <div class="mg-form-group">
+                  <label for="trnInputPrizeSecond" class="mg-label">جایزه نفر / تیم دوم</label>
+                  <input type="text" id="trnInputPrizeSecond" name="prizeSecond" class="form-control mg-input" placeholder="مثلاً: ۳,۰۰۰,۰۰۰ تومان + ۵ ساعت بازی">
+                </div>
+
+                <div class="mg-form-group">
+                  <label for="trnInputPrizeThird" class="mg-label">جایزه نفر / تیم سوم</label>
+                  <input type="text" id="trnInputPrizeThird" name="prizeThird" class="form-control mg-input" placeholder="مثلاً: ۱,۰۰۰,۰۰۰ تومان اعتبار بوفه">
+                </div>
+
+                <div class="mg-form-group trn-col-span-2">
+                  <label for="trnInputRules" class="mg-label">قوانین و توضیحات کوتاه (اختیاری)</label>
+                  <textarea id="trnInputRules" name="rules" rows="2" class="form-control mg-input" placeholder="نحوه اتصال به لابی، مدت زمان بازی و قوانین تأیید نتیجه..."></textarea>
+                </div>
+              </div>
+
+              <p id="trnCreateError" class="trn-form-error" role="alert" hidden></p>
+
+              <div class="trn-modal-footer">
+                <button type="button" class="btn mg-btn trn-ghost-btn" data-trn-close="create">انصراف</button>
+                <button type="submit" id="trnCreateSubmitBtn" class="btn mg-btn mg-btn-primary">انتشار تورنومنت در شبکه</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- RECORD MATCH RESULT MODAL -->
+        <div id="trnMatchModal" class="trn-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="trnMatchModalTitle" hidden>
+          <div class="trn-modal-sheet trn-modal-compact">
+            <div class="trn-modal-head">
+              <div>
+                <h3 id="trnMatchModalTitle" class="trn-panel-title">ثبت نتیجه مسابقه و صعود برنده</h3>
+                <p id="trnMatchModalSub" class="trn-panel-sub">نتیجه نهایی را وارد کرده و برنده این دیدار را انتخاب کنید.</p>
+              </div>
+              <button type="button" class="trn-modal-close" data-trn-close="match" aria-label="بستن پنجره">&times;</button>
+            </div>
+            <form id="trnMatchForm" class="trn-match-form" novalidate>
+              <input type="hidden" id="trnMatchIdInput">
+              <div class="trn-match-score-grid">
+                <div class="trn-score-box">
+                  <label for="trnScoreA" id="trnScoreALabel" class="mg-label">امتیاز طرف اول</label>
+                  <input type="number" id="trnScoreA" class="form-control mg-input" min="0" max="999" value="2" required>
+                </div>
+                <div class="trn-score-box">
+                  <label for="trnScoreB" id="trnScoreBLabel" class="mg-label">امتیاز طرف دوم</label>
+                  <input type="number" id="trnScoreB" class="form-control mg-input" min="0" max="999" value="1" required>
+                </div>
+              </div>
+
+              <div class="mg-form-group">
+                <span class="mg-label">انتخاب برنده رسمی این دیدار</span>
+                <div class="trn-winner-choices">
+                  <label class="trn-winner-option" for="trnWinnerA">
+                    <input type="radio" id="trnWinnerA" name="winnerSide" value="A" checked>
+                    <span id="trnWinnerAName">بازیکن اول</span>
+                  </label>
+                  <label class="trn-winner-option" for="trnWinnerB">
+                    <input type="radio" id="trnWinnerB" name="winnerSide" value="B">
+                    <span id="trnWinnerBName">بازیکن دوم</span>
+                  </label>
+                </div>
+              </div>
+
+              <p id="trnMatchError" class="trn-form-error" role="alert" hidden></p>
+
+              <div class="trn-modal-footer">
+                <button type="button" class="btn mg-btn trn-ghost-btn" data-trn-close="match">انصراف</button>
+                <button type="submit" id="trnMatchSubmitBtn" class="btn mg-btn mg-btn-primary">تأیید نتیجه و صعود</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="vendors/Flot/jquery.js"></script>
+  <script src="JS/tournaments.js?v=20261125-1"></script>
+  <script type="module" src="JS/dashboard-ui.js?v=20261125-1"></script>
+</body>
+</html>

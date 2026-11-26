@@ -161,6 +161,17 @@ const SPA_SECTIONS = {
     tip: 'طراحی سه‌بعدی محیط سالن، ابعاد و نورپردازی و چیدمان میزها، صندلی‌ها و سیستم‌های بازی',
     url: 'index.html#my-gamenet',
   },
+  tournaments: {
+    key: 'tournaments',
+    file: 'tournaments.html?v=20261125-1',
+    script: 'JS/tournaments.js?v=20261125-1',
+    renderFn: 'renderTournamentsPage',
+    navMatch: 'tournaments.html',
+    title: 'تورنومنت',
+    docTitle: 'Game District | شبکه تورنومنت‌های آنلاین گیم‌نت‌ها',
+    tip: 'سرویس اختصاصی رقابت آنلاین بین گیم‌نت‌های متصل به سامانه با جوایز انتخابی هر سالن و جدول حذفی زنده',
+    url: 'tournaments.html',
+  },
   console: {
     key: 'console',
     file: 'console.html?v=20261121-3',
@@ -230,6 +241,9 @@ function resolveSectionKeyFromHref(href = '') {
   if (lower.includes('acounts.html')) return 'accounts';
   if (lower.includes('debtors.html')) return 'debtors';
   if (lower.includes('income.html')) return 'income';
+  if (lower.includes('tournaments.html') || lower.includes('#tournaments') || lower === 'tournaments') {
+    return 'tournaments';
+  }
   if (lower.includes('#my-gamenet') || lower === 'my-gamenet') {
     return 'my-gamenet';
   }
@@ -245,6 +259,7 @@ function resolveSectionKeyFromHref(href = '') {
 function detectInitialSectionKey() {
   const path = (window.location.pathname || '').toLowerCase();
   const hash = (window.location.hash || '').toLowerCase();
+  if (path.includes('tournaments.html') || hash === '#tournaments') return 'tournaments';
   if (path.includes('console.html')) return 'console';
   if (path.includes('buffet.html')) return 'buffet';
   if (path.includes('acounts.html')) return 'accounts';
@@ -416,7 +431,8 @@ function syncSidebarNavActiveState(sectionKey) {
       (sectionKey === 'overview' && (dataView === 'overview' || href.includes('#overview'))) ||
         (sectionKey === 'tables' && (dataView === 'tables' || href.includes('#tables'))) ||
         (sectionKey === 'my-gamenet' && (dataView === 'my-gamenet' || href.includes('#my-gamenet'))) ||
-        (Boolean(sec.file) && href.includes(sec.file.toLowerCase()))
+        (Boolean(sec.navMatch) && sec.file && href.includes(sec.navMatch.toLowerCase())) ||
+        (Boolean(sec.file) && href.includes(sec.file.split('?')[0].toLowerCase()))
     );
     if (isMatch && !matchedItem) {
       li.classList.add('active');
@@ -701,6 +717,8 @@ function initIndexViewRouter() {
       switchSpaSection('tables', { updateHistory: false, scrollToTop: true });
     } else if (hash === '#my-gamenet') {
       switchSpaSection('my-gamenet', { updateHistory: false, scrollToTop: true });
+    } else if (hash === '#tournaments') {
+      switchSpaSection('tournaments', { updateHistory: false, scrollToTop: true });
     } else if (hash === '#overview') {
       switchSpaSection('overview', { updateHistory: false, scrollToTop: true });
     }
@@ -1295,6 +1313,7 @@ function restoreCachedBadges() {
     if (parsed.consoles !== undefined) setText('navConsolesBadge', toPersianDigits(parsed.consoles));
     if (parsed.customers !== undefined) setText('navCustomersBadge', toPersianDigits(parsed.customers));
     if (parsed.debtors !== undefined) setText('navDebtorsBadge', toPersianDigits(parsed.debtors));
+    if (parsed.tournaments !== undefined) setText('navTournamentsBadge', toPersianDigits(parsed.tournaments));
     return parsed;
   } catch {
     return null;
@@ -1377,10 +1396,16 @@ async function loadAndRenderKPIs(options = {}) {
         : 0;
       const debtorsCount = Array.isArray(debtPayRes) ? debtPayRes.length : 0;
 
+      const tournamentsRes = await fetchSharedJson('./tournaments.json', []);
+      const activeTournamentsCount = Array.isArray(tournamentsRes)
+        ? tournamentsRes.filter((t) => t && (t.status === 'live' || t.status === 'registration')).length
+        : 0;
+
       setText('navTablesBadge', toPersianDigits(tablesCount));
       setText('navConsolesBadge', toPersianDigits(consolesCount));
       setText('navCustomersBadge', toPersianDigits(customersCount));
       setText('navDebtorsBadge', toPersianDigits(debtorsCount));
+      setText('navTournamentsBadge', toPersianDigits(activeTournamentsCount));
 
       try {
         sessionStorage.setItem(
@@ -1390,6 +1415,7 @@ async function loadAndRenderKPIs(options = {}) {
             consoles: consolesCount,
             customers: customersCount,
             debtors: debtorsCount,
+            tournaments: activeTournamentsCount,
           })
         );
       } catch {
@@ -1409,6 +1435,7 @@ async function loadAndRenderKPIs(options = {}) {
       customerPayRes,
       debtPayRes,
       customerDataRes,
+      tournamentsRes,
     ] = await Promise.all([
       fetchSharedJson('./data.json', { consoles: [] }),
       fetchSharedJson('./reservations.json', []),
@@ -1420,6 +1447,7 @@ async function loadAndRenderKPIs(options = {}) {
       fetchSharedJson('./customerPay.json', []),
       fetchSharedJson('./debtpay.json', []),
       fetchSharedJson('./customer_data.json', []),
+      fetchSharedJson('./tournaments.json', []),
     ]);
 
     const metrics = computeDashboardMetrics({
@@ -1440,12 +1468,16 @@ async function loadAndRenderKPIs(options = {}) {
       ? Object.keys(customerDataRes).length
       : 0;
     const debtorsCount = Array.isArray(debtPayRes) ? debtPayRes.length : 0;
+    const activeTournamentsCount = Array.isArray(tournamentsRes)
+      ? tournamentsRes.filter((t) => t && (t.status === 'live' || t.status === 'registration')).length
+      : 0;
 
     // Update Sidebar Badges
     setText('navTablesBadge', toPersianDigits(metrics.activeTablesCount));
     setText('navConsolesBadge', toPersianDigits(metrics.consolesCount));
     setText('navCustomersBadge', toPersianDigits(customersCount));
     setText('navDebtorsBadge', toPersianDigits(debtorsCount));
+    setText('navTournamentsBadge', toPersianDigits(activeTournamentsCount));
 
     try {
       sessionStorage.setItem(
@@ -1455,6 +1487,7 @@ async function loadAndRenderKPIs(options = {}) {
           consoles: metrics.consolesCount,
           customers: customersCount,
           debtors: debtorsCount,
+          tournaments: activeTournamentsCount,
         })
       );
     } catch {

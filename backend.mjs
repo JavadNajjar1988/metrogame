@@ -7,6 +7,13 @@ import {
   sanitizeLoyaltyConfig,
   computeCustomerLoyalty,
 } from './JS/loyalty-engine.mjs';
+import {
+  createSeedTournaments,
+  sanitizeTournamentInput,
+  validateParticipantInput,
+  generateSingleEliminationBracket,
+  recordBracketMatchWinner,
+} from './JS/tournaments-engine.mjs';
 
 const directory = process.env.METROGAME_DATA_DIR || fileURLToPath(new URL('.', import.meta.url));
 const defaults = {
@@ -25,6 +32,7 @@ const defaults = {
   'debtpay.json': [],
   'gamenet_layout.json': null,
   'loyalty_config.json': { ...DEFAULT_LOYALTY_CONFIG },
+  'tournaments.json': createSeedTournaments(),
 };
 
 export const isDataFile = name => Object.hasOwn(defaults, name);
@@ -545,6 +553,126 @@ const routes = {
       customerName: customer.customerName,
       loyalty,
     };
+  },
+  'tournaments_api.php': async form => {
+    const action = field(form, 'action');
+    const rawList = await readData('tournaments.json');
+    const tournaments = Array.isArray(rawList) ? rawList : createSeedTournaments();
+
+    if (action === 'create') {
+      const sanitized = sanitizeTournamentInput({
+        title: form.get('title'),
+        gameId: form.get('gameId'),
+        customGameName: form.get('customGameName'),
+        platform: form.get('platform'),
+        format: form.get('format'),
+        scope: form.get('scope'),
+        maxSlots: form.get('maxSlots'),
+        entryFee: form.get('entryFee'),
+        prizeType: form.get('prizeType'),
+        prizePoolValue: form.get('prizePoolValue'),
+        prizeFirst: form.get('prizeFirst'),
+        prizeSecond: form.get('prizeSecond'),
+        prizeThird: form.get('prizeThird'),
+        startDate: form.get('startDate'),
+        lobbyCode: form.get('lobbyCode'),
+        rules: form.get('rules'),
+      });
+      if (sanitized.error) invalid(sanitized.error);
+
+      const created = {
+        id: 'trn-' + randomUUID().slice(0, 8),
+        ...sanitized.value,
+        createdAt: new Date().toISOString(),
+        participants: [],
+        bracket: null,
+      };
+      const updated = [created, ...tournaments].slice(0, 80);
+      await save('tournaments.json', updated);
+      return { status: 'ok', tournament: created, tournaments: updated };
+    }
+
+    if (action === 'register_player') {
+      const tournamentId = field(form, 'tournamentId');
+      const idx = tournaments.findIndex((t) => same(t.id, tournamentId));
+      if (idx === -1) invalid('تورنومنت مورد نظر پیدا نشد.');
+
+      const target = tournaments[idx];
+      const validated = validateParticipantInput(
+        {
+          playerName: form.get('playerName'),
+          onlineId: form.get('onlineId'),
+          gamenetId: form.get('gamenetId') || 'game-district',
+          gamenetName: form.get('gamenetName') || 'Game District',
+          city: form.get('city') || 'تهران',
+          customerId: form.get('customerId') || '',
+        },
+        target
+      );
+      if (validated.error) invalid(validated.error);
+
+      const participant = {
+        id: 'p-' + randomUUID().slice(0, 8),
+        ...validated.value,
+        registeredAt: new Date().toISOString(),
+      };
+      target.participants = [...(Array.isArray(target.participants) ? target.participants : []), participant];
+      await save('tournaments.json', tournaments);
+      return { status: 'ok', tournament: target, participant, tournaments };
+    }
+
+    if (action === 'remove_player') {
+      const tournamentId = field(form, 'tournamentId');
+      const participantId = field(form, 'participantId');
+      const target = tournaments.find((t) => same(t.id, tournamentId));
+      if (!target) invalid('تورنومنت مورد نظر پیدا نشد.');
+      if (target.status === 'completed') invalid('تورنومنت پایان‌یافته قابل ویرایش نیست.');
+      target.participants = (target.participants || []).filter((p) => !same(p.id, participantId));
+      await save('tournaments.json', tournaments);
+      return { status: 'ok', tournament: target, tournaments };
+    }
+
+    if (action === 'generate_bracket') {
+      const tournamentId = field(form, 'tournamentId');
+      const target = tournaments.find((t) => same(t.id, tournamentId));
+      if (!target) invalid('تورنومنت مورد نظر پیدا نشد.');
+      if (!Array.isArray(target.participants) || target.participants.length < 2) {
+        invalid('برای قرعه‌کشی و ساخت جدول حداقل ۲ بازیکن یا تیم لازم است.');
+      }
+      target.bracket = generateSingleEliminationBracket(target.participants, target.maxSlots);
+      target.status = 'live';
+      await save('tournaments.json', tournaments);
+      return { status: 'ok', tournament: target, tournaments };
+    }
+
+    if (action === 'record_result') {
+      const tournamentId = field(form, 'tournamentId');
+      const matchId = field(form, 'matchId');
+      const winnerSide = field(form, 'winnerSide');
+      const scoreA = form.get('scoreA');
+      const scoreB = form.get('scoreB');
+      const target = tournaments.find((t) => same(t.id, tournamentId));
+      if (!target) invalid('تورنومنت مورد نظر پیدا نشد.');
+
+      const result = recordBracketMatchWinner(target.bracket, matchId, winnerSide, scoreA, scoreB);
+      if (result.error) invalid(result.error);
+
+      target.bracket = result.bracket;
+      if (result.completed) {
+        target.status = 'completed';
+      }
+      await save('tournaments.json', tournaments);
+      return { status: 'ok', tournament: target, tournaments };
+    }
+
+    if (action === 'delete') {
+      const tournamentId = field(form, 'tournamentId');
+      const next = tournaments.filter((t) => !same(t.id, tournamentId));
+      await save('tournaments.json', next);
+      return { status: 'ok', tournaments: next };
+    }
+
+    invalid('عملیات تورنومنت نامعتبر است.');
   },
 };
 

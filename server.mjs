@@ -108,6 +108,7 @@ const server = createServer(async (request, response) => {
         customer_data,
         gamenet_layout,
         loyalty_config,
+        tournaments,
       ] = await Promise.all([
         readData('data.json'),
         readData('reservations.json'),
@@ -122,6 +123,7 @@ const server = createServer(async (request, response) => {
         readData('customer_data.json'),
         readData('gamenet_layout.json'),
         readData('loyalty_config.json'),
+        readData('tournaments.json'),
       ]);
       return json(response, 200, {
         'data.json': data,
@@ -137,6 +139,7 @@ const server = createServer(async (request, response) => {
         'customer_data.json': customer_data,
         'gamenet_layout.json': gamenet_layout,
         'loyalty_config.json': loyalty_config,
+        'tournaments.json': tournaments,
       });
     }
 
