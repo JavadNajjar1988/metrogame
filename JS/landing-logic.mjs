@@ -737,6 +737,436 @@ export function toggleFaqState(currentOpenId, clickedId) {
 }
 
 /**
+ * ============================================================================
+ * 5-SCENE CINEMATIC STORYTELLING DATA & DETERMINISTIC TIMELINE COMPUTERS
+ * ============================================================================
+ */
+
+export const SOFTWARE_TOUR_STOPS = Object.freeze([
+  {
+    id: 'stations',
+    step: '۰۱',
+    shortLabel: 'ایستگاه‌ها و کنسول‌ها',
+    kicker: 'بخش ۰۱ · کنترل زنده سالن',
+    title: 'مدیریت دقیق ایستگاه‌ها، کنسول‌های PS4/PS5 و سیستم‌های PC',
+    description:
+      'وضعیت هر میز، تایمر زنده، تغییر تعداد دسته‌ها در میانه سشن و نرخ اختصاصی هر نسل دستگاه به‌صورت یکپارچه و بدون خطا ثبت می‌شود.',
+    bullets: [
+      'شروع، جابه‌جایی میز، توقف و تسویه آنی سشن‌ها',
+      'تعرفه جداگانه برای PS4، PS5، PC، بیلیارد و فوتبال‌دستی',
+    ],
+    route: 'app.metrogame.ir / tables',
+    calloutSide: 'right',
+    camera: { zoom: 1.07, panX: -2.2, panY: -1.8 },
+    focusBox: { x: 8, y: 18, w: 68, h: 48 },
+    darkSrc: 'assets/images/landing/preview-tables-dark.png',
+    lightSrc: 'assets/images/landing/preview-tables-light.png',
+    alt: 'نمای واقعی مدیریت ایستگاه‌ها و تایمر زنده در پنل مترو گیم',
+  },
+  {
+    id: 'customers',
+    step: '۰۲',
+    shortLabel: 'مدیریت مشتریان',
+    kicker: 'بخش ۰۲ · باشگاه مشتریان و اعتبار',
+    title: 'پرونده کامل بازیکنان، شارژ اعتباری و وفادارسازی خودکار',
+    description:
+      'مشتریان ثابت مجموعه را با سابقه بازی، شارژ کیف پول، تخفیف پلکانی خودکار و پیگیری شفاف مانده بدهی بدون دفترچه کاغذی مدیریت کنید.',
+    bullets: [
+      'کسر خودکار هزینه بازی و بوفه از اعتبار حساب مشتری',
+      'پایش دقیق بدهکاران و تسویه جزئی یا کامل در چند ثانیه',
+    ],
+    route: 'app.metrogame.ir / customers',
+    calloutSide: 'left',
+    camera: { zoom: 1.11, panX: 2.8, panY: -2.6 },
+    focusBox: { x: 16, y: 20, w: 64, h: 46 },
+    darkSrc: 'assets/images/landing/preview-overview-dark.png',
+    lightSrc: 'assets/images/landing/preview-overview-light.png',
+    alt: 'نمای واقعی پیشخوان و وضعیت مشتریان فعال در مترو گیم',
+  },
+  {
+    id: 'buffet',
+    step: '۰۳',
+    shortLabel: 'بوفه و فروش',
+    kicker: 'بخش ۰۳ · بوفه یکپارچه با میزها',
+    title: 'ثبت فوری سفارش بوفه مستقیماً روی فاکتور همان میز',
+    description:
+      'نوشیدنی‌ها و اقلام بوفه را با قیمت و موجودی زنده تعریف کنید تا با یک کلیک روی میز فعال یا به‌صورت فروش مستقیم ثبت شوند.',
+    bullets: [
+      'افزودن فوری سفارش به فاکتور ایستگاه بدون محاسبه دستی',
+      'تفکیک خودکار فروش بوفه از درآمد بازی در گزارش شیفت',
+    ],
+    route: 'app.metrogame.ir / buffet',
+    calloutSide: 'right',
+    camera: { zoom: 1.09, panX: -1.8, panY: 2.1 },
+    focusBox: { x: 12, y: 22, w: 66, h: 48 },
+    darkSrc: 'assets/images/landing/preview-buffet-dark.png',
+    lightSrc: 'assets/images/landing/preview-buffet-light.png',
+    alt: 'نمای واقعی مدیریت بوفه و ثبت سفارشات در مترو گیم',
+  },
+  {
+    id: 'finance',
+    step: '۰۴',
+    shortLabel: 'گزارش‌های مالی',
+    kicker: 'بخش ۰۴ · شفافیت کامل مالی',
+    title: 'گزارش درآمد روزانه و ماهانه به تفکیک روش پرداخت',
+    description:
+      'جمع کل درآمد نقدی، کارت‌خوان، پرداخت اعتباری و سهم بوفه را در پایان هر شیفت با نمودارهای دقیق و بدون ابهام بررسی نمایید.',
+    bullets: [
+      'بستن سریع صندوق پایان شیفت با تطبیق کامل تراکنش‌ها',
+      'نمایش تفکیکی درآمد هر بخش برای تصمیم‌گیری دقیق مدیر',
+    ],
+    route: 'app.metrogame.ir / income',
+    calloutSide: 'left',
+    camera: { zoom: 1.12, panX: 2.4, panY: 1.8 },
+    focusBox: { x: 10, y: 16, w: 70, h: 52 },
+    darkSrc: 'assets/images/landing/preview-finance-dark.png',
+    lightSrc: 'assets/images/landing/preview-finance-light.png',
+    alt: 'نمای واقعی گزارش‌های مالی و تحلیل درآمد در مترو گیم',
+  },
+  {
+    id: 'tournaments',
+    step: '۰۵',
+    shortLabel: 'مدیریت تورنومنت',
+    kicker: 'بخش ۰۵ · شبکه رقابت بین گیم‌نت‌ها',
+    title: 'برگزاری تورنومنت، ارسال چالش مستقیم و جدول رتبه‌بندی',
+    description:
+      'مسابقات داخلی مجموعه را بسازید، برای باشگاه‌های دیگر چالش مستقیم بفرستید و جایگاه گیم‌نت خود را در رتبه‌بندی شبکه تثبیت کنید.',
+    bullets: [
+      'پوشش کامل بازی‌های ویدیویی، بیلیارد و فوتبال‌دستی',
+      'توافق جایزه، میزبانی و جدول حذفی خودکار میان مدیران',
+    ],
+    route: 'app.metrogame.ir / tournaments',
+    calloutSide: 'right',
+    camera: { zoom: 1.06, panX: 0, panY: -1.4 },
+    focusBox: { x: 11, y: 20, w: 68, h: 50 },
+    darkSrc: 'assets/images/landing/preview-tournaments-dark.png',
+    lightSrc: 'assets/images/landing/preview-tournaments-light.png',
+    alt: 'نمای واقعی شبکه تورنومنت و چالش مستقیم مترو گیم',
+  },
+]);
+
+export const HORIZONTAL_EXHIBITION_PANELS = Object.freeze([
+  {
+    id: 'hall-3d',
+    index: '۰۱',
+    layout: 'panoramic-3d',
+    kicker: 'چیدمان فضایی و معماری سالن',
+    title: 'طراح سه‌بعدی گیم‌نت با دیوارکشی، طبقات و تایمر زنده',
+    description:
+      'سالن واقعی خود را از صفر بسازید؛ دیوار بکشید، طبقه جدید اضافه کنید و میزهای کنسول، PC، بیلیارد و فوتبال‌دستی را دقیقاً با تایمر زنده بالای هر دستگاه ببینید.',
+    points: [
+      'همگام‌سازی خودکار میزهای چیده‌شده با پنل تایمرها',
+      'ساخت دیوارهای داخلی، اتاق‌های VIP و مدیریت چندطبقه',
+    ],
+    route: 'app.metrogame.ir / gamenet-3d',
+    darkSrc: 'assets/images/landing/preview-3d-dark.png',
+    lightSrc: 'assets/images/landing/preview-3d-light.png',
+    alt: 'طراح سه‌بعدی سالن گیم‌نت من در مترو گیم',
+  },
+  {
+    id: 'console-matrix',
+    index: '۰۲',
+    layout: 'split-editorial',
+    kicker: 'موتور تعرفه‌گذاری هوشمند',
+    title: 'کنترل کامل PS4 و PS5 با تغییر لحظه‌ای تعداد دسته‌ها',
+    description:
+      'نرخ‌های تک‌دسته تا چهاردسته را برای هر نسل کنسول تعریف کنید تا هنگام تغییر تعداد بازیکنان در میانه سشن، محاسبه هزینه بدون توقف و بدون خطا ادامه یابد.',
+    points: [
+      'تفکیک دقیق تعرفه برای PlayStation 4 و PlayStation 5',
+      'پشتیبانی از تغییر تعداد دسته در میانه بازی بدون بستن فاکتور',
+    ],
+    route: 'app.metrogame.ir / consoles',
+    darkSrc: 'assets/images/landing/preview-console-dark.png',
+    lightSrc: 'assets/images/landing/preview-console-light.png',
+    alt: 'صفحه مدیریت کنسول‌های بازی و تعرفه‌ها در مترو گیم',
+  },
+  {
+    id: 'live-command',
+    index: '۰۳',
+    layout: 'cinema-wide',
+    kicker: 'مرکز فرماندهی لحظه‌ای',
+    title: 'پیشخوان زنده سالن برای نظارت یکپارچه در ساعات شلوغ',
+    description:
+      'در یک نگاه ببینید کدام ایستگاه‌ها فعال‌اند، چه زمانی به پایان سشن باقی مانده و وضعیت فروش لحظه‌ای سالن و بوفه در چه سطحی قرار دارد.',
+    points: [
+      'پایش هم‌زمان میزهای فعال، زمان سپری‌شده و هشدار پایان سشن',
+      'دسترسی سریع به ثبت میز جدید و عملیات پرتکرار اپراتور',
+    ],
+    route: 'app.metrogame.ir / dashboard',
+    darkSrc: 'assets/images/landing/preview-overview-dark.png',
+    lightSrc: 'assets/images/landing/preview-overview-light.png',
+    alt: 'پیشخوان اصلی و پیست زنده میزها در مترو گیم',
+  },
+  {
+    id: 'buffet-flow',
+    index: '۰۴',
+    layout: 'dual-focus',
+    kicker: 'جریان سریع فروش بوفه',
+    title: 'اتصال بی‌وقفه سفارش نوشیدنی و خوراکی به حساب هر ایستگاه',
+    description:
+      'از قلم افتادن سفارش‌ها در زمان شلوغی را متوقف کنید؛ هر قلم بوفه با یک کلیک روی میز مورد نظر می‌نشیند و در تسویه نهایی به‌صورت تفکیک‌شده نمایش داده می‌شود.',
+    points: [
+      'کنترل موجودی انبار بوفه و ویرایش سریع قیمت‌ها',
+      'امکان فروش مستقیم پیشخوانی در کنار اتصال به فاکتور میز',
+    ],
+    route: 'app.metrogame.ir / buffet',
+    darkSrc: 'assets/images/landing/preview-buffet-dark.png',
+    lightSrc: 'assets/images/landing/preview-buffet-light.png',
+    alt: 'بخش مدیریت بوفه و ثبت سفارشات در مترو گیم',
+  },
+  {
+    id: 'financial-clarity',
+    index: '۰۵',
+    layout: 'audit-matrix',
+    kicker: 'حسابرسی دقیق پایان شیفت',
+    title: 'شفافیت کامل نقدی، کارت‌خوان، اعتباری و لیست بدهکاران',
+    description:
+      'پایان هر شیفت را در کمتر از یک دقیقه جمع‌بندی کنید؛ تفکیک کامل روش‌های پرداخت، تاریخچه مشتریان و نمودارهای درآمد بدون نیاز به فایل‌های پراکنده.',
+    points: [
+      'گزارش‌های دقیق روزانه، هفتگی و ماهانه با تفکیک منبع درآمد',
+      'مدیریت ساختاریافته باشگاه مشتریان و تسویه شفاف بدهکاران',
+    ],
+    route: 'app.metrogame.ir / income',
+    darkSrc: 'assets/images/landing/preview-finance-dark.png',
+    lightSrc: 'assets/images/landing/preview-finance-light.png',
+    alt: 'صفحه گزارش‌های مالی و تحلیل درآمد در مترو گیم',
+  },
+]);
+
+/**
+ * Scene One — The Dashboard Reveal (0..1 scroll progress inside pinned 100vh stage)
+ * 0.00 - 0.25: Kinetic headline separates into 2 RTL layers, ambient focus tightens, floating glass frames separate.
+ * 0.25 - 0.65: Angled dashboard rotates toward frontal (15deg -> 0deg), grows to command the viewport, decorations sweep away.
+ * 0.65 - 1.00: Dashboard expands into near-fullscreen showcase, settles camera perspective, prepares smooth Scene Two handoff.
+ */
+export function computeSceneOneReveal(rawProgress) {
+  const p = clamp01(rawProgress);
+  const p1 = smoothstep(0.0, 0.28, p);
+  const p2 = smoothstep(0.20, 0.68, p);
+  const p3 = smoothstep(0.65, 1.0, p);
+  const frameClear = smoothstep(0.16, 0.52, p);
+
+  return {
+    progress: p,
+    phase: p < 0.25 ? 1 : p < 0.65 ? 2 : 3,
+    line1X: Number(lerp(0, 48, p1).toFixed(2)),
+    line2X: Number(lerp(0, -48, p1).toFixed(2)),
+    copyY: Number(lerp(0, -82, p1).toFixed(2)),
+    copyOpacity: Number(lerp(1, 0, smoothstep(0.04, 0.28, p)).toFixed(3)),
+    copyScale: Number(lerp(1, 0.94, p1).toFixed(4)),
+    floatSpreadX: Number(lerp(0, 96, smoothstep(0.02, 0.44, p)).toFixed(2)),
+    floatOpacity: Number(lerp(1, 0, frameClear).toFixed(3)),
+    focusBeamScale: Number(lerp(0.88, 1.24, p2).toFixed(3)),
+    focusBeamOpacity: Number(lerp(0.52, 0.96, p2).toFixed(3)),
+    stageRotateX: Number(lerp(15, 0, p2).toFixed(2)),
+    stageRotateY: Number(lerp(-1.4, 0, p2).toFixed(2)),
+    stageScale: Number((lerp(0.79, 1.0, p2) + lerp(0, 0.075, p3)).toFixed(4)),
+    stageY: Number((lerp(205, 8, p2) + lerp(0, -12, p3)).toFixed(2)),
+    stageRadius: Number(lerp(24, 14, smoothstep(0.25, 0.85, p)).toFixed(1)),
+    chromeOpacity: Number(lerp(1, 0.28, p3).toFixed(3)),
+    handoffOpacity: Number(lerp(0, 1, smoothstep(0.76, 1.0, p)).toFixed(3)),
+  };
+}
+
+/**
+ * Scene Two — Enter The Software (0..1 scroll progress across 5 camera stops)
+ * Uses plateau + crisp clip-path wipe transitions so there is zero double-exposure ghosting.
+ */
+export function computeSceneTwoSoftware(rawProgress, stopCount = SOFTWARE_TOUR_STOPS.length) {
+  const count = Math.max(1, Number(stopCount) || 5);
+  const p = clamp01(rawProgress);
+  const scaled = p * (count - 1);
+  const baseIdx = Math.min(count - 1, Math.floor(scaled));
+  const nextIdx = Math.min(count - 1, baseIdx + 1);
+  const frac = scaled - baseIdx;
+
+  // Hold each screen razor-sharp until 0.62, then perform a crisp wipe 0.62 -> 0.94
+  const wipeT = baseIdx === nextIdx ? 0 : smoothstep(0.58, 0.94, frac);
+  const activeIndex = wipeT >= 0.5 ? nextIdx : baseIdx;
+
+  const baseStop = SOFTWARE_TOUR_STOPS[baseIdx] || SOFTWARE_TOUR_STOPS[0];
+  const nextStop = SOFTWARE_TOUR_STOPS[nextIdx] || baseStop;
+
+  // Smooth virtual interface camera zoom & pan
+  const cameraScale = Number(lerp(baseStop.camera.zoom, nextStop.camera.zoom, wipeT).toFixed(4));
+  const cameraX = Number(lerp(baseStop.camera.panX, nextStop.camera.panX, wipeT).toFixed(2));
+  const cameraY = Number(lerp(baseStop.camera.panY, nextStop.camera.panY, wipeT).toFixed(2));
+
+  // Focus reticle interpolation
+  const focusX = Number(lerp(baseStop.focusBox.x, nextStop.focusBox.x, wipeT).toFixed(2));
+  const focusY = Number(lerp(baseStop.focusBox.y, nextStop.focusBox.y, wipeT).toFixed(2));
+  const focusW = Number(lerp(baseStop.focusBox.w, nextStop.focusBox.w, wipeT).toFixed(2));
+  const focusH = Number(lerp(baseStop.focusBox.h, nextStop.focusBox.h, wipeT).toFixed(2));
+
+  // Per-layer clip-path inset (0 = fully revealed, 100 = hidden off-edge)
+  const layers = [];
+  for (let i = 0; i < count; i++) {
+    let reveal = 0;
+    if (i === 0) {
+      reveal = 1;
+    } else if (i < baseIdx + 1) {
+      reveal = 1;
+    } else if (i === nextIdx && baseIdx !== nextIdx) {
+      reveal = wipeT;
+    } else {
+      reveal = 0;
+    }
+    const clipPct = Number(((1 - reveal) * 100).toFixed(2));
+    layers.push({
+      index: i,
+      reveal: Number(reveal.toFixed(3)),
+      clipPct,
+      visible: reveal > 0.001,
+    });
+  }
+
+  // Callout transitions subtly during wipe and settles cleanly on plateau
+  const calloutDip = Math.sin(wipeT * Math.PI);
+  const calloutOpacity = Number(lerp(1, 0.24, calloutDip).toFixed(3));
+  const calloutShiftY = Number((calloutDip * 14).toFixed(2));
+
+  return {
+    progress: p,
+    activeIndex,
+    wipeProgress: Number(wipeT.toFixed(3)),
+    cameraScale,
+    cameraX,
+    cameraY,
+    focusBox: { x: focusX, y: focusY, w: focusW, h: focusH },
+    calloutOpacity,
+    calloutShiftY,
+    layers,
+  };
+}
+
+/**
+ * Scene Three — Horizontal Cinematic Feature Exhibition (RTL track travel)
+ * In RTL flex-direction: row, panels lay out from right to left (panel 0 at right,
+ * panel N-1 extending off-screen to the left). Advancing forward moves the track
+ * in the POSITIVE +X direction.
+ */
+export function computeSceneThreeHorizontal(
+  rawProgress,
+  panelCount = HORIZONTAL_EXHIBITION_PANELS.length,
+  maxTravelPx = 2400
+) {
+  const count = Math.max(1, Number(panelCount) || 5);
+  const travelLimit = Math.max(0, Number(maxTravelPx) || 0);
+  const p = clamp01(rawProgress);
+
+  // Subtle lead-in & settle margins (0.04..0.96) for effortless entry/exit handoff
+  const easedTravel = smoothstep(0.03, 0.97, p);
+  const trackTranslateX = Number((easedTravel * travelLimit).toFixed(2));
+  const panelFloat = easedTravel * (count - 1);
+  const activeIndex = Math.max(0, Math.min(count - 1, Math.round(panelFloat)));
+
+  const panels = [];
+  for (let i = 0; i < count; i++) {
+    const signedDist = i - panelFloat; // >0 = upcoming (left in RTL), <0 = passed (right in RTL)
+    const absDist = Math.abs(signedDist);
+    const clampedDist = Math.min(1.4, absDist);
+    const rotateY = Number(Math.max(-6, Math.min(6, signedDist * 4.2)).toFixed(2));
+    const scale = Number(lerp(1.0, 0.935, clamp01(clampedDist)).toFixed(4));
+    const opacity = Number(lerp(1.0, 0.56, clamp01(clampedDist)).toFixed(3));
+    const depthZ = Number(lerp(0, -28, clamp01(clampedDist)).toFixed(1));
+    panels.push({ index: i, rotateY, scale, opacity, depthZ });
+  }
+
+  return {
+    progress: p,
+    easedProgress: Number(easedTravel.toFixed(4)),
+    trackTranslateX,
+    activeIndex,
+    panels,
+  };
+}
+
+/**
+ * Scene Four — Tournament Network Continuous Transformation
+ * 0.00 - 0.20: Single centered مترو گیم club card.
+ * 0.20 - 0.42: Home card shifts right, challenger enters from left, VS emblem scales, SVG connectors draw.
+ * 0.42 - 0.75: H2H stage compacts upward and transforms into live knockout bracket + drawn SVG paths.
+ * 0.75 - 1.00: Final champion highlight illuminates & ranked leaderboard rises into view.
+ */
+export function computeSceneFourTournament(rawProgress) {
+  const p = clamp01(rawProgress);
+  const splitT = smoothstep(0.18, 0.42, p);
+  const vsT = smoothstep(0.24, 0.44, p);
+  const bracketT = smoothstep(0.44, 0.72, p);
+  const championT = smoothstep(0.72, 0.96, p);
+
+  let beatIndex = 0;
+  if (p >= 0.72) beatIndex = 3;
+  else if (p >= 0.44) beatIndex = 2;
+  else if (p >= 0.20) beatIndex = 1;
+
+  return {
+    progress: p,
+    beatIndex,
+    // In RTL, home card starts centered (negative X shifts left toward center from its right grid column)
+    // and settles to 0px in its right-hand H2H slot as splitT -> 1.
+    homeCenterOffsetPct: Number(lerp(-58, 0, splitT).toFixed(2)),
+    homeScale: Number(lerp(1.07, 1.0, splitT).toFixed(4)),
+    challengerOffsetX: Number(lerp(-96, 0, splitT).toFixed(2)),
+    challengerOpacity: Number(lerp(0, 1, smoothstep(0.20, 0.38, p)).toFixed(3)),
+    challengerScale: Number(lerp(0.92, 1.0, splitT).toFixed(4)),
+    vsScale: Number(lerp(0.52, 1.0, vsT).toFixed(3)),
+    vsOpacity: Number(lerp(0, 1, vsT).toFixed(3)),
+    vsDashOffset: Number(lerp(120, 0, smoothstep(0.26, 0.46, p)).toFixed(1)),
+    h2hScale: Number(lerp(1.0, 0.94, bracketT).toFixed(4)),
+    h2hShiftY: Number(lerp(36, 0, bracketT).toFixed(2)),
+    bracketOpacity: Number(lerp(0, 1, bracketT).toFixed(3)),
+    bracketY: Number(lerp(44, 0, bracketT).toFixed(2)),
+    bracketScale: Number(lerp(0.94, 1.0, bracketT).toFixed(4)),
+    bracketDashOffset: Number(lerp(240, 0, smoothstep(0.50, 0.78, p)).toFixed(1)),
+    leaderboardOpacity: Number(lerp(0, 1, championT).toFixed(3)),
+    leaderboardY: Number(lerp(40, 0, championT).toFixed(2)),
+    championHighlight: Number(lerp(0, 1, championT).toFixed(3)),
+  };
+}
+
+/**
+ * Scene Five — Interactive Pricing Transformation
+ * Converged unified glass stack smoothly separates into 4 individual subscription cards.
+ * Once progress >= 0.85, all 4 cards settle to 0 offset / 1 scale / 1 opacity so pricing
+ * stays completely stationary, legible, and interactive.
+ */
+export function computeSceneFivePricing(rawProgress) {
+  const p = clamp01(rawProgress);
+  const spreadT = smoothstep(0.05, 0.78, p);
+  const featureReveal = smoothstep(0.32, 0.82, p);
+  const ultimateGlow = smoothstep(0.54, 0.92, p);
+
+  // Initial converged horizontal offsets (in px) pulling the 4 RTL columns toward center:
+  // Col 0 (rightmost) pulls left (-X), Col 3 (leftmost) pulls right (+X)
+  const initialOffsetsX = [-165, -55, 55, 165];
+  const initialRotatesY = [9, 3.5, -3.5, -9];
+  const initialOffsetsY = [26, 12, 12, 26];
+
+  const cards = initialOffsetsX.map((startX, idx) => {
+    const isUltimate = idx === 3;
+    const cardT = smoothstep(0.05 + idx * 0.04, 0.74 + idx * 0.03, p);
+    return {
+      index: idx,
+      offsetX: Number(lerp(startX, 0, cardT).toFixed(2)),
+      offsetY: Number(lerp(initialOffsetsY[idx], 0, cardT).toFixed(2)),
+      rotateY: Number(lerp(initialRotatesY[idx], 0, cardT).toFixed(2)),
+      scale: Number(lerp(isUltimate ? 0.96 : 0.91, 1.0, cardT).toFixed(4)),
+      opacity: Number(lerp(isUltimate ? 0.72 : 0.38, 1.0, cardT).toFixed(3)),
+    };
+  });
+
+  return {
+    progress: p,
+    spreadProgress: Number(spreadT.toFixed(3)),
+    featureOpacity: Number(lerp(0.15, 1.0, featureReveal).toFixed(3)),
+    ultimateGlow: Number(ultimateGlow.toFixed(3)),
+    settled: p >= 0.85,
+    cards,
+  };
+}
+
+/**
  * Validates demo / subscription consultation form submissions.
  */
 export function validateDemoInquiry(input = {}) {

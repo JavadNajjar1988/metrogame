@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>مترو گیم | مدیریت حرفه‌ای، فراتر از یک گیم‌نت</title>
-  <meta name="description" content="تمام ابزارهای مدیریت مجموعه، کنترل تجهیزات، گزارش‌های مالی و رقابت بین گیم‌نت‌ها؛ در یک پلتفرم قدرتمند برای مدیران گیم‌نت و باشگاه‌های بازی.">
+  <meta name="description" content="تمام ابزارهای مدیریت مجموعه، کنترل تجهیزات، طراح سه‌بعدی سالن، گزارش‌های مالی و شبکه رقابت بین گیم‌نت‌ها؛ در یک پلتفرم قدرتمند برای مدیران گیم‌نت.">
   <meta property="og:title" content="مترو گیم | مدیریت حرفه‌ای، فراتر از یک گیم‌نت">
-  <meta property="og:description" content="تمام ابزارهای مدیریت مجموعه، کنترل تجهیزات، گزارش‌های مالی و رقابت بین گیم‌نت‌ها؛ در یک پلتفرم قدرتمند.">
+  <meta property="og:description" content="تمام ابزارهای مدیریت مجموعه، کنترل تجهیزات، طراح سه‌بعدی سالن، گزارش‌های مالی و شبکه رقابت بین گیم‌نت‌ها؛ در یک پلتفرم قدرتمند.">
   <link rel="shortcut icon" href="src/assets/images/metrogame_emblem_1794207267121.jpg" type="image/jpeg">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,10 +26,10 @@
     })();
   </script>
 
-  <link rel="stylesheet" href="assets/css/landing.css?v=20261128-7">
+  <link rel="stylesheet" href="assets/css/landing.css?v=20261128-8">
 </head>
 <body class="gd-landing">
-  <!-- Dynamic Scroll-Linked Atmospheric Glass Background -->
+  <!-- Multi-Plane Atmospheric Glass Canvas (Scroll + Pointer Parallax) -->
   <div class="gd-ambient-canvas" id="gdAmbientCanvas" aria-hidden="true">
     <div class="gd-ambient-orb gd-ambient-orb-1" id="gdOrb1"></div>
     <div class="gd-ambient-orb gd-ambient-orb-2" id="gdOrb2"></div>
@@ -38,7 +38,7 @@
   </div>
 
   <!-- =====================================================================
-       1. PREMIUM STICKY NAVIGATION + SCROLL PROGRESS INDICATOR
+       TOP NAVIGATION BAR (3-Zone Contract + Scroll Progress Rail)
        ===================================================================== -->
   <header class="gd-header" id="gdHeader">
     <div class="gd-container gd-header-inner">
@@ -48,11 +48,11 @@
       </a>
 
       <nav class="gd-nav" aria-label="ناوبری صفحه فرود">
-        <a href="#product-journey" class="gd-nav-link" data-nav-target="product-journey">تجربه محصول</a>
-        <a href="#features" class="gd-nav-link" data-nav-target="features">امکانات</a>
-        <a href="#tournaments" class="gd-nav-link" data-nav-target="tournaments">شبکه تورنومنت</a>
+        <a href="#scene-reveal" class="gd-nav-link is-active" data-nav-target="scene-reveal">نمای کلی</a>
+        <a href="#scene-software" class="gd-nav-link" data-nav-target="scene-software">داخل نرم‌افزار</a>
+        <a href="#scene-exhibition" class="gd-nav-link" data-nav-target="scene-exhibition">گالری امکانات</a>
+        <a href="#scene-tournaments" class="gd-nav-link" data-nav-target="scene-tournaments">شبکه تورنومنت</a>
         <a href="#pricing" class="gd-nav-link" data-nav-target="pricing">پلن‌ها</a>
-        <a href="#faq" class="gd-nav-link" data-nav-target="faq">سوالات متداول</a>
       </nav>
 
       <div class="gd-header-actions">
@@ -91,18 +91,18 @@
       </div>
     </div>
 
-    <!-- Subtle Minimal Scroll Progress Rail -->
     <div class="gd-scroll-progress-track" aria-hidden="true">
       <div class="gd-scroll-progress-bar" id="gdScrollProgressBar"></div>
     </div>
   </header>
 
-  <!-- Animated Mobile Navigation Drawer -->
+  <!-- Mobile Navigation Drawer -->
   <div class="gd-mobile-drawer" id="gdMobileDrawer" aria-hidden="true">
     <nav class="gd-mobile-links" aria-label="ناوبری موبایل">
-      <a href="#product-journey" data-mobile-link>تجربه تعاملی محصول</a>
-      <a href="#features" data-mobile-link>امکانات پلتفرم</a>
-      <a href="#tournaments" data-mobile-link>شبکه تورنومنت و رتبه‌بندی</a>
+      <a href="#scene-reveal" data-mobile-link>نمای کلی و پیش‌نمایش زنده</a>
+      <a href="#scene-software" data-mobile-link>کاوش داخل نرم‌افزار</a>
+      <a href="#scene-exhibition" data-mobile-link>گالری امکانات و طراح سه‌بعدی</a>
+      <a href="#scene-tournaments" data-mobile-link>شبکه تورنومنت و رتبه‌بندی</a>
       <a href="#pricing" data-mobile-link>پلن‌های اشتراک</a>
       <a href="#faq" data-mobile-link>سوالات متداول</a>
     </nav>
@@ -114,101 +114,112 @@
 
   <main>
     <!-- ===================================================================
-         2. SCROLL-DRIVEN CINEMATIC HERO TRANSFORMATION (#hero)
+         SCENE ONE — THE DASHBOARD REVEAL (#scene-reveal)
+         Pinned 100vh stage: 0-25% kinetic split, 25-65% frontal rotation &
+         scale, 65-100% near-fullscreen showcase handoff into Scene Two.
          =================================================================== -->
-    <section class="gd-hero" id="hero">
-      <div class="gd-hero-atmosphere" id="gdHeroAtmosphere" aria-hidden="true">
-        <div class="gd-hero-beam"></div>
-        <div class="gd-hero-grid"></div>
-      </div>
-
-      <div class="gd-container">
-        <div class="gd-hero-copy" id="gdHeroCopy">
-          <div class="gd-hero-kicker gd-choreo" style="--delay: 40ms;">
-            <strong>پلتفرم جامع مدیریت گیم‌نت</strong>
-            <span class="gd-sep" aria-hidden="true">·</span>
-            <span>طراحی‌شده برای مدیران باشگاه‌های بازی، بیلیارد و مراکز تفریحی</span>
-          </div>
-
-          <h1 class="gd-hero-title gd-choreo" style="--delay: 110ms;">
-            مدیریت حرفه‌ای، فراتر از یک گیم‌نت
-          </h1>
-
-          <p class="gd-hero-lead gd-choreo" style="--delay: 200ms;">
-            تمام ابزارهای مدیریت مجموعه، کنترل تجهیزات، گزارش‌های مالی و رقابت بین گیم‌نت‌ها؛ در یک پلتفرم قدرتمند.
-          </p>
-
-          <div class="gd-hero-cta gd-choreo" style="--delay: 290ms;">
-            <a href="#pricing" class="gd-btn gd-btn-primary gd-btn-lg gd-magnetic">
-              <span>مشاهده پلن‌ها</span>
-              <svg class="gd-btn-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M12.5 8h-9M7 4.5 3.5 8 7 11.5"></path>
-              </svg>
-            </a>
-            <a href="#product-journey" class="gd-btn gd-btn-secondary gd-btn-lg">
-              <span>کشف امکانات</span>
-            </a>
-          </div>
+    <section class="gd-scene-runway gd-scene-reveal-runway" id="scene-reveal" data-scene="reveal">
+      <div class="gd-scene-sticky gd-reveal-sticky" id="gdRevealSticky">
+        <div class="gd-reveal-atmosphere" aria-hidden="true">
+          <div class="gd-reveal-beam" id="gdRevealBeam"></div>
+          <div class="gd-reveal-grid"></div>
         </div>
 
-        <!-- Layered Scroll-Transforming Dashboard Showcase -->
-        <div class="gd-stage-outer" id="gdHeroStageOuter">
-          <div class="gd-stage-halo" id="gdHeroHalo" aria-hidden="true"></div>
-          <div class="gd-stage-backplate" id="gdHeroBackplate" aria-hidden="true"></div>
-
-          <div class="gd-stage-frame" id="gdHeroStageFrame">
-            <div class="gd-stage-chrome">
-              <div class="gd-stage-tabs" role="tablist" aria-label="پیش‌نمایش بخش‌های داشبورد">
-                <button type="button" class="gd-stage-tab is-active" role="tab" aria-selected="true" data-hero-tab="overview">پیشخوان مدیریت</button>
-                <button type="button" class="gd-stage-tab" role="tab" aria-selected="false" data-hero-tab="tables">میزها و تایمر زنده</button>
-                <button type="button" class="gd-stage-tab" role="tab" aria-selected="false" data-hero-tab="studio3d">طراحی سه‌بعدی سالن</button>
-                <button type="button" class="gd-stage-tab" role="tab" aria-selected="false" data-hero-tab="tournaments">شبکه تورنومنت</button>
-              </div>
-
-              <div class="gd-chrome-meta">
-                <span class="gd-chrome-url gd-ltr" id="gdHeroRoute">app.metrogame.ir / dashboard</span>
-                <div class="gd-chrome-dots" aria-hidden="true">
-                  <span></span><span></span><span></span>
-                </div>
-              </div>
+        <div class="gd-container gd-reveal-layout">
+          <!-- Kinetic Split-Line Headline & Actions (0-25% Choreography) -->
+          <div class="gd-reveal-copy" id="gdRevealCopy">
+            <div class="gd-hero-kicker">
+              <strong>پلتفرم جامع مدیریت گیم‌نت</strong>
+              <span class="gd-sep" aria-hidden="true">·</span>
+              <span>طراحی‌شده برای مدیران باشگاه‌های بازی، بیلیارد و مراکز تفریحی</span>
             </div>
 
-            <div class="gd-stage-viewport">
-              <img
-                id="gdHeroPreviewImg"
-                class="gd-stage-img"
-                src="assets/images/landing/preview-overview-dark.png"
-                alt="پیش‌نمایش پیشخوان اصلی پنل مدیریت گیم‌نت مترو گیم"
-                width="1440"
-                height="900"
-                referrerPolicy="no-referrer"
-              >
-            </div>
+            <h1 class="gd-kinetic-title" aria-label="مدیریت حرفه‌ای، فراتر از یک گیم‌نت">
+              <span class="gd-kinetic-mask">
+                <span class="gd-kinetic-line" id="gdHeroLine1">مدیریت حرفه‌ای،</span>
+              </span>
+              <span class="gd-kinetic-mask">
+                <span class="gd-kinetic-line is-accent" id="gdHeroLine2">فراتر از یک گیم‌نت</span>
+              </span>
+            </h1>
 
-            <div class="gd-stage-footer">
-              <span id="gdHeroCaption">نمای یکپارچه وضعیت سالن، میزهای فعال و شاخص‌های روزانه</span>
-              <a href="/" class="gd-stage-footer-link">
-                <span>ورود مستقیم به پنل زنده</span>
+            <p class="gd-hero-lead">
+              تمام ابزارهای مدیریت مجموعه، کنترل تجهیزات، طراح سه‌بعدی سالن، گزارش‌های مالی و شبکه رقابت بین گیم‌نت‌ها؛ در یک محیط یکپارچه و دقیق.
+            </p>
+
+            <div class="gd-hero-cta">
+              <a href="#pricing" class="gd-btn gd-btn-primary gd-btn-lg gd-magnetic">
+                <span>مشاهده پلن‌ها</span>
                 <svg class="gd-btn-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M12.5 8h-9M7 4.5 3.5 8 7 11.5"></path>
                 </svg>
               </a>
+              <a href="#scene-software" class="gd-btn gd-btn-secondary gd-btn-lg">
+                <span>ورود به محیط نرم‌افزار</span>
+              </a>
+            </div>
+
+            <div class="gd-scroll-cue" id="gdScrollCue" aria-hidden="true">
+              <span class="gd-scroll-cue-line"></span>
+              <span>اسکرول کنید برای ورود به محیط نرم‌افزار</span>
+              <span class="gd-scroll-cue-line"></span>
             </div>
           </div>
 
-          <!-- Staggered Scroll-Parallax Glass Depth Panels -->
-          <div class="gd-stage-satellites" id="gdHeroSatellites">
-            <div class="gd-satellite" data-sat-idx="0" style="--sat-delay: 540ms;">
-              <span class="gd-satellite-title">کنترل هم‌زمان تجهیزات سالن</span>
-              <span class="gd-satellite-desc">مدیریت یکپارچه PS4، PS5، سیستم‌های PC، بیلیارد و فوتبال‌دستی با تایمر دقیق.</span>
-            </div>
-            <div class="gd-satellite" data-sat-idx="1" style="--sat-delay: 630ms;">
-              <span class="gd-satellite-title">بوفه، باشگاه مشتریان و شفافیت مالی</span>
-              <span class="gd-satellite-desc">اتصال مستقیم سفارش‌های بوفه به فاکتور میز، مدیریت بدهکاران و گزارش درآمد روزانه.</span>
-            </div>
-            <div class="gd-satellite" data-sat-idx="2" style="--sat-delay: 720ms;">
-              <span class="gd-satellite-title">شبکه رقابت بین گیم‌نت‌ها</span>
-              <span class="gd-satellite-desc">برگزاری مسابقات داخلی، ارسال چالش مستقیم به باشگاه‌های دیگر و حضور در جدول رتبه‌بندی.</span>
+          <!-- Depth Floating Glass Accents (Sweep Away Cleanly 16-52%) -->
+          <div class="gd-reveal-float gd-reveal-float-right" id="gdRevealFloatRight" aria-hidden="true">
+            <span class="gd-float-kicker">کنترل لحظه‌ای</span>
+            <strong>PS4 · PS5 · PC · بیلیارد</strong>
+            <span>تایمر زنده و تغییر تعداد دسته در میانه سشن</span>
+          </div>
+
+          <div class="gd-reveal-float gd-reveal-float-left" id="gdRevealFloatLeft" aria-hidden="true">
+            <span class="gd-float-kicker">شبکه رقابت</span>
+            <strong>چالش مستقیم و جدول حذفی</strong>
+            <span>میزبانی مسابقات بین گیم‌نت‌ها با رتبه‌بندی زنده</span>
+          </div>
+
+          <!-- Perspective-Transforming Real Dashboard Showcase -->
+          <div class="gd-reveal-stage-wrap" id="gdRevealStageWrap">
+            <div class="gd-reveal-stage" id="gdRevealStage">
+              <div class="gd-stage-chrome" id="gdRevealChrome">
+                <div class="gd-stage-tabs" role="tablist" aria-label="پیش‌نمایش بخش‌های داشبورد">
+                  <button type="button" class="gd-stage-tab is-active" role="tab" aria-selected="true" data-hero-tab="overview">پیشخوان مدیریت</button>
+                  <button type="button" class="gd-stage-tab" role="tab" aria-selected="false" data-hero-tab="tables">میزها و تایمر زنده</button>
+                  <button type="button" class="gd-stage-tab" role="tab" aria-selected="false" data-hero-tab="studio3d">طراحی سه‌بعدی سالن</button>
+                  <button type="button" class="gd-stage-tab" role="tab" aria-selected="false" data-hero-tab="tournaments">شبکه تورنومنت</button>
+                </div>
+
+                <div class="gd-chrome-meta">
+                  <span class="gd-chrome-url gd-ltr" id="gdHeroRoute">app.metrogame.ir / dashboard</span>
+                  <div class="gd-chrome-dots" aria-hidden="true">
+                    <span></span><span></span><span></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="gd-stage-viewport">
+                <img
+                  id="gdHeroPreviewImg"
+                  class="gd-stage-img"
+                  src="assets/images/landing/preview-overview-dark.png"
+                  alt="پیش‌نمایش پیشخوان اصلی پنل مدیریت گیم‌نت مترو گیم"
+                  width="1440"
+                  height="900"
+                  referrerPolicy="no-referrer"
+                >
+                <div class="gd-stage-glint" aria-hidden="true"></div>
+              </div>
+
+              <div class="gd-stage-footer" id="gdRevealFooter">
+                <span id="gdHeroCaption">نمای یکپارچه وضعیت سالن، میزهای فعال و شاخص‌های روزانه</span>
+                <a href="/" class="gd-stage-footer-link">
+                  <span>ورود مستقیم به پنل زنده</span>
+                  <svg class="gd-btn-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12.5 8h-9M7 4.5 3.5 8 7 11.5"></path>
+                  </svg>
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -216,61 +227,96 @@
     </section>
 
     <!-- ===================================================================
-         3. PINNED SCROLL STORYTELLING SHOWCASE (#product-journey)
+         SCENE TWO — ENTER THE SOFTWARE (#scene-software)
+         Pinned 100vh stage: One commanding central dashboard viewport with
+         virtual interface camera zoom/pan + crisp clip-path wipes across
+         5 authentic operational modules + choreographed glass callout.
          =================================================================== -->
-    <section class="gd-section gd-journey-section" id="product-journey">
-      <div class="gd-container">
-        <div class="gd-section-header gd-section-header-split gd-reveal">
-          <div>
-            <span class="gd-eyebrow">تور تعاملی همراه با اسکرول</span>
-            <h2 class="gd-section-title">چهار مرحله مدیریت یک گیم‌نت حرفه‌ای، در یک جریان پیوسته</h2>
-          </div>
-          <p class="gd-section-desc">
-            با حرکت اسکرول، محیط واقعی نرم‌افزار مترو گیم مرحله‌به‌مرحله پیش روی شما تغییر می‌کند؛ از کنترل لحظه‌ای کنسول‌ها و بوفه تا شفافیت مالی و شبکه تورنومنت.
-          </p>
-        </div>
+    <section class="gd-scene-runway gd-scene-software-runway" id="scene-software" data-scene="software">
+      <div class="gd-scene-sticky gd-software-sticky" id="gdSoftwareSticky">
+        <div class="gd-container gd-software-shell">
+          <!-- Compact Cinema Top Rail -->
+          <div class="gd-software-topbar">
+            <div class="gd-software-heading-group">
+              <span class="gd-eyebrow">صحنه دوم · کاوش درون نرم‌افزار</span>
+              <h2 class="gd-scene-title">پنج ستون اجرایی در یک نمای زنده و پیوسته</h2>
+            </div>
 
-        <!-- Mobile / Tablet Compact Stage Switcher -->
-        <div class="gd-journey-mobile-tabs" id="gdJourneyMobileTabs" role="tablist" aria-label="انتخاب مرحله تور محصول">
-          <!-- Populated from PINNED_STORY_STAGES -->
-        </div>
-
-        <!-- Pinned Split Canvas: Narrative Steps (Right in RTL) + Sticky Morphing Preview (Left in RTL) -->
-        <div class="gd-journey-grid" id="gdJourneyGrid">
-          <div class="gd-journey-steps" id="gdJourneySteps">
-            <!-- Populated from PINNED_STORY_STAGES -->
+            <div class="gd-software-stepper" id="gdSoftwareStepper" role="tablist" aria-label="مراحل کاوش داخل نرم‌افزار">
+              <!-- Populated from SOFTWARE_TOUR_STOPS -->
+            </div>
           </div>
 
-          <div class="gd-journey-sticky-col">
-            <div class="gd-journey-stage" id="gdJourneyStage">
-              <div class="gd-journey-stage-top">
-                <div class="gd-journey-stage-meta">
-                  <span class="gd-journey-step-counter gd-tabular" id="gdJourneyCounter">۰۱ / ۰۴</span>
+          <!-- Central Authentic Software Viewport with Virtual Camera Rig -->
+          <div class="gd-software-canvas">
+            <div class="gd-software-frame" id="gdSoftwareFrame">
+              <div class="gd-software-frame-bar">
+                <div class="gd-software-counter-wrap">
+                  <span class="gd-software-counter gd-tabular" id="gdSoftwareCounter">۰۱ / ۰۵</span>
                   <span class="gd-sep" aria-hidden="true">·</span>
-                  <span class="gd-journey-stage-heading" id="gdJourneyStageTitle">مدیریت زنده ایستگاه‌ها، کنسول‌ها و میزهای سالن</span>
+                  <span class="gd-software-active-label" id="gdSoftwareActiveLabel">ایستگاه‌ها و کنسول‌ها</span>
                 </div>
-                <span class="gd-chrome-url gd-ltr" id="gdJourneyStageRoute">app.metrogame.ir / tables</span>
+                <span class="gd-chrome-url gd-ltr" id="gdSoftwareRoute">app.metrogame.ir / tables</span>
               </div>
 
-              <!-- Stacked Cross-Morphing Dashboard Layers + Focus Highlight Frame -->
-              <div class="gd-journey-viewport" id="gdJourneyViewport">
-                <div class="gd-journey-layers" id="gdJourneyLayers">
-                  <!-- 4 stacked real screenshots rendered from PINNED_STORY_STAGES -->
+              <div class="gd-software-viewport" id="gdSoftwareViewport">
+                <div class="gd-software-camera" id="gdSoftwareCamera">
+                  <!-- 5 clip-path wiped real dashboard screenshots populated from SOFTWARE_TOUR_STOPS -->
                 </div>
-                <div class="gd-journey-focus-box" id="gdJourneyFocusBox" aria-hidden="true">
-                  <span class="gd-journey-focus-corner is-tl"></span>
-                  <span class="gd-journey-focus-corner is-tr"></span>
-                  <span class="gd-journey-focus-corner is-bl"></span>
-                  <span class="gd-journey-focus-corner is-br"></span>
-                </div>
-              </div>
 
-              <div class="gd-journey-stage-foot">
-                <span class="gd-journey-focus-label" id="gdJourneyFocusLabel">پایش زنده تایمرها و وضعیت ایستگاه‌ها</span>
-                <div class="gd-journey-dots" id="gdJourneyDots" role="tablist" aria-label="انتخاب سریع مرحله">
-                  <!-- Populated from PINNED_STORY_STAGES -->
+                <!-- Architectural Focus Reticle -->
+                <div class="gd-software-reticle" id="gdSoftwareReticle" aria-hidden="true">
+                  <span class="gd-reticle-corner is-tl"></span>
+                  <span class="gd-reticle-corner is-tr"></span>
+                  <span class="gd-reticle-corner is-bl"></span>
+                  <span class="gd-reticle-corner is-br"></span>
                 </div>
               </div>
+            </div>
+
+            <!-- Floating Frosted Glass Annotation Callout (Alternates Position per Stop) -->
+            <aside class="gd-software-callout is-side-right" id="gdSoftwareCallout" aria-live="polite">
+              <span class="gd-callout-kicker" id="gdSoftwareCalloutKicker">بخش ۰۱ · کنترل زنده سالن</span>
+              <h3 class="gd-callout-title" id="gdSoftwareCalloutTitle">مدیریت دقیق ایستگاه‌ها، کنسول‌های PS4/PS5 و سیستم‌های PC</h3>
+              <p class="gd-callout-desc" id="gdSoftwareCalloutDesc">
+                وضعیت هر میز، تایمر زنده، تغییر تعداد دسته‌ها در میانه سشن و نرخ اختصاصی هر نسل دستگاه به‌صورت یکپارچه و بدون خطا ثبت می‌شود.
+              </p>
+              <ul class="gd-callout-bullets" id="gdSoftwareCalloutBullets"></ul>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SCENE THREE — HORIZONTAL CINEMATIC FEATURE EXHIBITION (#scene-exhibition)
+         Pinned 100vh stage: Vertical scroll drives smooth horizontal RTL
+         glide across 5 varied-composition glass exhibition panels.
+         Cleanly degrades to a vertical stack on mobile/tablet (<= 1024px).
+         =================================================================== -->
+    <section class="gd-scene-runway gd-scene-exhibition-runway" id="scene-exhibition" data-scene="exhibition">
+      <div class="gd-scene-sticky gd-exhibition-sticky" id="gdExhibitionSticky">
+        <div class="gd-exhibition-shell">
+          <div class="gd-container gd-exhibition-header">
+            <div>
+              <span class="gd-eyebrow">صحنه سوم · گالری افقی قابلیت‌ها</span>
+              <h2 class="gd-scene-title">جزئیات مهندسی‌شده برای مدیریت بدون وقفه</h2>
+            </div>
+
+            <div class="gd-exhibition-controls">
+              <span class="gd-exhibition-counter gd-tabular" id="gdExhibitionCounter">۰۱ / ۰۵</span>
+              <div class="gd-exhibition-progress-track" aria-hidden="true">
+                <div class="gd-exhibition-progress-fill" id="gdExhibitionProgressFill"></div>
+              </div>
+              <div class="gd-exhibition-dots" id="gdExhibitionDots" role="tablist" aria-label="انتخاب پنل گالری امکانات">
+                <!-- Populated from HORIZONTAL_EXHIBITION_PANELS -->
+              </div>
+            </div>
+          </div>
+
+          <div class="gd-exhibition-viewport" id="gdExhibitionViewport">
+            <div class="gd-exhibition-track" id="gdExhibitionTrack">
+              <!-- 5 varied-composition glass exhibition panels populated from HORIZONTAL_EXHIBITION_PANELS -->
             </div>
           </div>
         </div>
@@ -278,378 +324,203 @@
     </section>
 
     <!-- ===================================================================
-         4. INTERACTIVE FEATURE EXPLORER & MORPHING DEEP-DIVES (#features)
+         SCENE FOUR — TOURNAMENT NETWORK TRANSFORMATION (#scene-tournaments)
+         Pinned 100vh stage: Single centered مترو گیم card -> splits right
+         as challenger arrives from left + VS & SVG lines draw -> morphs into
+         live knockout bracket -> champion crown & ranked leaderboard rise.
          =================================================================== -->
-    <section class="gd-section gd-section-alt" id="features">
-      <div class="gd-container">
-        <div class="gd-section-header gd-section-header-split gd-reveal">
-          <div>
-            <span class="gd-eyebrow">کاوش تعاملی امکانات</span>
-            <h2 class="gd-section-title">هر بخش از سالن، با نظم و دقت کامل در اختیار شما</h2>
-          </div>
-          <p class="gd-section-desc">
-            روی هر قابلیت حرکت کنید یا کلیک نمایید تا نمای واقعی آن در پنل مترو گیم به‌صورت زنده به‌روزرسانی شود؛ بدون پیچیدگی و بدون امکانات نمایشی.
-          </p>
-        </div>
+    <section class="gd-scene-runway gd-scene-arena-runway" id="scene-tournaments" data-scene="tournaments">
+      <div class="gd-scene-sticky gd-arena-sticky" id="gdArenaSticky">
+        <div class="gd-arena-grid-bg" aria-hidden="true"></div>
 
-        <div class="gd-story-deck">
-          <!-- Interactive 6-Chapter Capability Selector (Click + Hover + Keyboard) -->
-          <div class="gd-story-list gd-reveal" id="gdStoryList" role="tablist" aria-label="فهرست امکانات محصول">
-            <!-- Populated cleanly with semantic buttons via JS -->
-          </div>
-
-          <!-- Sticky Adjacent Real Dashboard Preview with Dual-Layer Cross-Morph -->
-          <div class="gd-story-stage gd-reveal-scale gd-tilt-card" id="gdStoryStageCard" style="--reveal-delay: 110ms;">
-            <div class="gd-story-stage-bar">
-              <span class="gd-story-stage-title" id="gdStoryStageTitle">مدیریت ایستگاه‌های بازی</span>
-              <span class="gd-chrome-url gd-ltr" id="gdStoryStageRoute">app.metrogame.ir / tables</span>
-            </div>
-            <div class="gd-story-stage-media">
-              <img
-                id="gdStoryStageImgA"
-                class="gd-story-stage-img is-active"
-                src="assets/images/landing/preview-tables-dark.png"
-                alt="صفحه مدیریت ایستگاه‌های بازی و تایمر زنده در مترو گیم"
-                width="1440"
-                height="900"
-                referrerPolicy="no-referrer"
-              >
-              <img
-                id="gdStoryStageImgB"
-                class="gd-story-stage-img"
-                src="assets/images/landing/preview-tables-dark.png"
-                alt=""
-                aria-hidden="true"
-                width="1440"
-                height="900"
-                referrerPolicy="no-referrer"
-              >
-            </div>
-            <div class="gd-story-stage-caption">
+        <div class="gd-container gd-arena-shell">
+          <!-- Stage Header + 4-Beat Progress Ribbon + Discipline Tabs -->
+          <div class="gd-arena-top">
+            <div class="gd-arena-title-row">
               <div>
-                <div class="gd-story-callout-title" id="gdStoryCalloutTitle">کنترل لحظه‌ای سشن‌ها</div>
-                <div class="gd-story-callout-meta" id="gdStoryCalloutMeta">تایمر دقیق · محاسبه خودکار تعرفه · تفکیک وضعیت میزها</div>
+                <span class="gd-eyebrow">صحنه چهارم · شبکه رقابت بین گیم‌نت‌ها</span>
+                <h2 class="gd-scene-title">از یک گیم‌نت مستقل تا قهرمانی در شبکه باشگاه‌ها</h2>
               </div>
-              <button type="button" class="gd-btn gd-btn-secondary" data-open-inquiry="ultimate">درخواست دمو</button>
-            </div>
-          </div>
-        </div>
 
-        <!-- Alternating Editorial Deep-Dives with Continuous Depth Parallax -->
-        <div class="gd-editorial-stack" id="studio-3d">
-          <!-- Editorial 01: 3D Floor Plan & Physical Stations -->
-          <article class="gd-editorial-row" data-editorial-morph>
-            <div class="gd-editorial-text gd-reveal" data-parallax-layer="text">
-              <span class="gd-editorial-num">۰۱ · چیدمان سه‌بعدی و کنترل بصری سالن</span>
-              <h3 class="gd-editorial-heading">نقشه سه‌بعدی گیم‌نت خود را دقیقاً مطابق واقعیت بسازید</h3>
-              <p class="gd-editorial-copy">
-                به‌جای جستجو در لیست‌های تکراری، چیدمان واقعی کنسول‌ها، سیستم‌های PC، میزهای بیلیارد و فوتبال‌دستی را در فضای سه‌بعدی طراحی کنید و وضعیت زنده هر ایستگاه را مستقیماً روی نقشه سالن ببینید.
-              </p>
-              <ul class="gd-editorial-list">
-                <li>
-                  <svg class="gd-check-svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5 6.5 11.5 12.5 4.5"></path></svg>
-                  <span>همگام‌سازی خودکار میزهای چیده‌شده در نمای سه‌بعدی با لیست تایمرها</span>
-                </li>
-                <li>
-                  <svg class="gd-check-svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5 6.5 11.5 12.5 4.5"></path></svg>
-                  <span>تنوع مدل میزهای بیلیارد، فوتبال‌دستی، دیوارکشی داخلی و مدیریت چندطبقه</span>
-                </li>
-                <li>
-                  <svg class="gd-check-svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5 6.5 11.5 12.5 4.5"></path></svg>
-                  <span>مشاهده فوری تایمر زنده بالای هر ایستگاه برای تصمیم‌گیری سریع در ساعات شلوغ</span>
-                </li>
-              </ul>
-            </div>
-
-            <div class="gd-editorial-visual gd-reveal-scale gd-tilt-card" data-parallax-layer="visual" style="--reveal-delay: 100ms;">
-              <div class="gd-editorial-img-wrap">
-                <img
-                  class="gd-theme-screenshot"
-                  src="assets/images/landing/preview-3d-dark.png"
-                  data-dark-src="assets/images/landing/preview-3d-dark.png"
-                  data-light-src="assets/images/landing/preview-3d-light.png"
-                  alt="محیط طراح سه‌بعدی سالن گیم‌نت در مترو گیم"
-                  loading="lazy"
-                  width="1440"
-                  height="900"
-                  referrerPolicy="no-referrer"
-                >
-              </div>
-            </div>
-          </article>
-
-          <!-- Editorial 02: Customers, Buffet & Financial Integrity -->
-          <article class="gd-editorial-row is-reversed" data-editorial-morph>
-            <div class="gd-editorial-text gd-reveal" data-parallax-layer="text">
-              <span class="gd-editorial-num">۰۲ · شفافیت مالی، بوفه و باشگاه مشتریان</span>
-              <h3 class="gd-editorial-heading">حسابرسی دقیق پایان شیفت، بدون خطا و بدون ابهام</h3>
-              <p class="gd-editorial-copy">
-                تمام فروش‌های ساعتی، سفارش‌های بوفه، شارژ کیف پول مشتریان ثابت و مانده بدهکاران به‌صورت یکپارچه ثبت می‌شوند تا در پایان هر روز تصویر کاملاً روشنی از درآمد مجموعه داشته باشید.
-              </p>
-              <ul class="gd-editorial-list">
-                <li>
-                  <svg class="gd-check-svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5 6.5 11.5 12.5 4.5"></path></svg>
-                  <span>تفکیک دقیق درآمد نقدی، کارت‌خوان، پرداخت اعتباری و بخش بوفه</span>
-                </li>
-                <li>
-                  <svg class="gd-check-svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5 6.5 11.5 12.5 4.5"></path></svg>
-                  <span>باشگاه مشتریان با تخفیف خودکار پس از ساعات بازی و سابقه کامل هر مشتری</span>
-                </li>
-                <li>
-                  <svg class="gd-check-svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5 6.5 11.5 12.5 4.5"></path></svg>
-                  <span>پیگیری شفاف لیست بدهکاران و تسویه جزئی یا کامل در چند ثانیه</span>
-                </li>
-              </ul>
-            </div>
-
-            <div class="gd-editorial-visual gd-reveal-scale gd-tilt-card" data-parallax-layer="visual" style="--reveal-delay: 100ms;">
-              <div class="gd-editorial-img-wrap">
-                <img
-                  class="gd-theme-screenshot"
-                  src="assets/images/landing/preview-finance-dark.png"
-                  data-dark-src="assets/images/landing/preview-finance-dark.png"
-                  data-light-src="assets/images/landing/preview-finance-light.png"
-                  alt="بخش گزارش‌های مالی و مدیریت درآمد مترو گیم"
-                  loading="lazy"
-                  width="1440"
-                  height="900"
-                  referrerPolicy="no-referrer"
-                >
-              </div>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===================================================================
-         5. SCROLL-DRIVEN TOURNAMENT CINEMATIC REVEAL (#tournaments)
-         =================================================================== -->
-    <section class="gd-section gd-arena-section" id="tournaments">
-      <div class="gd-arena-depth-veil" id="gdArenaDepthVeil" aria-hidden="true"></div>
-      <div class="gd-arena-grid-bg" aria-hidden="true"></div>
-
-      <div class="gd-container">
-        <div class="gd-section-header is-centered gd-reveal">
-          <span class="gd-eyebrow">مزیت متمایز مترو گیم</span>
-          <h2 class="gd-section-title">شبکه رقابت بین گیم‌نت‌ها؛ فراتر از یک نرم‌افزار حسابداری</h2>
-          <p class="gd-section-desc">
-            مسابقات داخلی مجموعه را برگزار کنید، تیم منتخب خود را آماده سازید، برای گیم‌نت‌های دیگر چالش مستقیم بفرستید و جایگاه باشگاهتان را در جدول رتبه‌بندی ارتقا دهید — در بازی‌های ویدیویی، بیلیارد و فوتبال‌دستی.
-          </p>
-        </div>
-
-        <!-- 4-Beat Scroll-Linked Narrative Ribbon (Connect -> Challenge -> Compete -> Champion) -->
-        <ol class="gd-arena-beats" id="gdArenaBeats" aria-label="مسیر رقابت بین گیم‌نت‌ها">
-          <li class="gd-arena-beat is-active" data-beat-idx="0">
-            <span class="gd-arena-beat-num">۰۱</span>
-            <span>اتصال گیم‌نت‌ها</span>
-          </li>
-          <li class="gd-arena-beat" data-beat-idx="1">
-            <span class="gd-arena-beat-num">۰۲</span>
-            <span>ارسال چالش مستقیم</span>
-          </li>
-          <li class="gd-arena-beat" data-beat-idx="2">
-            <span class="gd-arena-beat-num">۰۳</span>
-            <span>رقابت و جدول حذفی</span>
-          </li>
-          <li class="gd-arena-beat" data-beat-idx="3">
-            <span class="gd-arena-beat-num">۰۴</span>
-            <span>قهرمانی و رتبه‌بندی</span>
-          </li>
-        </ol>
-
-        <!-- Discipline Switcher -->
-        <div class="gd-arena-controls gd-reveal" style="--reveal-delay: 80ms;">
-          <div class="gd-discipline-bar" role="tablist" aria-label="انتخاب رشته رقابتی">
-            <button type="button" class="gd-discipline-btn is-active" role="tab" aria-selected="true" data-discipline="video">بازی‌های ویدیویی</button>
-            <button type="button" class="gd-discipline-btn" role="tab" aria-selected="false" data-discipline="billiards">بیلیارد</button>
-            <button type="button" class="gd-discipline-btn" role="tab" aria-selected="false" data-discipline="foosball">فوتبال‌دستی</button>
-          </div>
-          <span class="gd-discipline-sub" id="gdDisciplineSubtitle">EA Sports FC · Counter-Strike 2 · Tekken · Valorant</span>
-        </div>
-
-        <!-- Scroll-Scrubbed Head-to-Head Matchup Stage -->
-        <div class="gd-h2h-stage" id="gdH2hStage">
-          <div class="gd-h2h-grid">
-            <!-- Club A (Enters from Right in RTL) -->
-            <div class="gd-club-card is-home gd-tilt-card" id="gdClubACard">
-              <div class="gd-club-top">
-                <div class="gd-club-monogram gd-ltr" id="gdClubAMono">MG</div>
-                <div>
-                  <div class="gd-club-name" id="gdClubAName">مترو گیم</div>
-                  <div class="gd-club-city" id="gdClubACity">تهران</div>
+              <div class="gd-arena-controls">
+                <div class="gd-discipline-bar" role="tablist" aria-label="انتخاب رشته رقابتی">
+                  <button type="button" class="gd-discipline-btn is-active" role="tab" aria-selected="true" data-discipline="video">بازی‌های ویدیویی</button>
+                  <button type="button" class="gd-discipline-btn" role="tab" aria-selected="false" data-discipline="billiards">بیلیارد</button>
+                  <button type="button" class="gd-discipline-btn" role="tab" aria-selected="false" data-discipline="foosball">فوتبال‌دستی</button>
                 </div>
+                <span class="gd-discipline-sub" id="gdDisciplineSubtitle">EA Sports FC · Counter-Strike 2 · Tekken · Valorant</span>
               </div>
-              <div class="gd-club-roster" id="gdClubARoster">تیم منتخب پنج‌نفره · رتبه ۱ جدول</div>
-              <div class="gd-club-record gd-tabular" id="gdClubARecord">۲۴ برد · ۵ باخت</div>
             </div>
 
-            <!-- Sculpted VS Centerpiece with Scroll-Scrubbed SVG Connectors -->
-            <div class="gd-vs-hub" aria-hidden="true">
-              <svg class="gd-vs-lines" viewBox="0 0 146 82" fill="none">
-                <path class="gd-vs-path" id="gdVsPathLeft" d="M2 41 H43" />
-                <path class="gd-vs-path" id="gdVsPathRight" d="M144 41 H103" />
-              </svg>
-              <div class="gd-vs-emblem gd-ltr" id="gdVsEmblem">VS</div>
-            </div>
-
-            <!-- Club B (Enters from Left in RTL) -->
-            <div class="gd-club-card gd-tilt-card" id="gdClubBCard">
-              <div class="gd-club-top">
-                <div class="gd-club-monogram gd-ltr" id="gdClubBMono">NA</div>
-                <div>
-                  <div class="gd-club-name gd-ltr" id="gdClubBName">Nexus Arena</div>
-                  <div class="gd-club-city" id="gdClubBCity">اصفهان</div>
-                </div>
-              </div>
-              <div class="gd-club-roster" id="gdClubBRoster">تیم اول مجموعه · رتبه ۲ جدول</div>
-              <div class="gd-club-record gd-tabular" id="gdClubBRecord">۲۱ برد · ۷ باخت</div>
-            </div>
+            <ol class="gd-arena-beats" id="gdArenaBeats" aria-label="مراحل تحول رقابت بین گیم‌نت‌ها">
+              <li class="gd-arena-beat is-active" data-beat-idx="0">
+                <span class="gd-arena-beat-num">۰۱</span>
+                <span>معرفی باشگاه</span>
+              </li>
+              <li class="gd-arena-beat" data-beat-idx="1">
+                <span class="gd-arena-beat-num">۰۲</span>
+                <span>چالش مستقیم VS</span>
+              </li>
+              <li class="gd-arena-beat" data-beat-idx="2">
+                <span class="gd-arena-beat-num">۰۳</span>
+                <span>جدول حذفی زنده</span>
+              </li>
+              <li class="gd-arena-beat" data-beat-idx="3">
+                <span class="gd-arena-beat-num">۰۴</span>
+                <span>قهرمانی و رتبه‌بندی</span>
+              </li>
+            </ol>
           </div>
 
-          <div class="gd-h2h-footer">
-            <div class="gd-h2h-meta">
-              <strong id="gdArenaFormat">تورنومنت بین گیم‌نت‌ها · تیمی ۵ نفره</strong>
-              <span class="gd-sep" aria-hidden="true">·</span>
-              <span id="gdArenaMode">آنلاین / حضوری با داوری مدیران</span>
-              <span class="gd-sep" aria-hidden="true">·</span>
-              <span id="gdArenaPrize">جایزه توافقی: شارژ VIP و ساعت بازی رایگان</span>
-            </div>
-            <button type="button" class="gd-btn gd-btn-secondary" data-open-inquiry="ultimate">
-              <span>آشنایی با ارسال چالش مستقیم</span>
-              <svg class="gd-btn-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M12.5 8h-9M7 4.5 3.5 8 7 11.5"></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <!-- Scroll-Scrubbed Bracket Progression + Gaming Center Leaderboard -->
-        <div class="gd-arena-grid">
-          <!-- Bracket Panel -->
-          <div class="gd-arena-panel" id="gdBracketPanel">
-            <div class="gd-panel-head">
-              <h3 class="gd-panel-title">ساختار جدول حذفی خودکار</h3>
-              <span class="gd-panel-sub">شکل‌گیری خودکار پس از پذیرش چالش</span>
-            </div>
-
-            <div class="gd-bracket-layout">
-              <div class="gd-bracket-col">
-                <div class="gd-bracket-match">
-                  <div class="gd-bracket-row is-winner">
-                    <span id="gdBrS1A">مترو گیم</span>
-                    <span class="gd-bracket-score gd-tabular" id="gdBrS1SA">۲</span>
+          <!-- Single Continuous Transformation Arena Canvas -->
+          <div class="gd-arena-canvas" id="gdArenaCanvas">
+            <!-- Phase 1 -> 2: Centered Card Splitting into Head-to-Head Matchup -->
+            <div class="gd-h2h-stage" id="gdH2hStage">
+              <div class="gd-h2h-grid">
+                <div class="gd-club-card is-home" id="gdClubACard">
+                  <div class="gd-club-top">
+                    <div class="gd-club-monogram gd-ltr" id="gdClubAMono">MG</div>
+                    <div>
+                      <div class="gd-club-name" id="gdClubAName">مترو گیم</div>
+                      <div class="gd-club-city" id="gdClubACity">تهران</div>
+                    </div>
                   </div>
-                  <div class="gd-bracket-row">
-                    <span class="gd-ltr" id="gdBrS1B">Vortex Club</span>
-                    <span class="gd-bracket-score gd-tabular" id="gdBrS1SB">۰</span>
-                  </div>
+                  <div class="gd-club-roster" id="gdClubARoster">تیم منتخب پنج‌نفره · رتبه ۱ جدول</div>
+                  <div class="gd-club-record gd-tabular" id="gdClubARecord">۲۴ برد · ۵ باخت</div>
                 </div>
 
-                <div class="gd-bracket-match">
-                  <div class="gd-bracket-row is-winner">
-                    <span class="gd-ltr" id="gdBrS2A">Nexus Arena</span>
-                    <span class="gd-bracket-score gd-tabular" id="gdBrS2SA">۲</span>
+                <div class="gd-vs-hub" id="gdVsHub" aria-hidden="true">
+                  <svg class="gd-vs-lines" viewBox="0 0 146 82" fill="none">
+                    <path class="gd-vs-path" id="gdVsPathLeft" d="M2 41 H43" />
+                    <path class="gd-vs-path" id="gdVsPathRight" d="M144 41 H103" />
+                  </svg>
+                  <div class="gd-vs-emblem gd-ltr" id="gdVsEmblem">VS</div>
+                </div>
+
+                <div class="gd-club-card is-challenger" id="gdClubBCard">
+                  <div class="gd-club-top">
+                    <div class="gd-club-monogram gd-ltr" id="gdClubBMono">NA</div>
+                    <div>
+                      <div class="gd-club-name gd-ltr" id="gdClubBName">Nexus Arena</div>
+                      <div class="gd-club-city" id="gdClubBCity">اصفهان</div>
+                    </div>
                   </div>
-                  <div class="gd-bracket-row">
-                    <span class="gd-ltr" id="gdBrS2B">Pixel Hub</span>
-                    <span class="gd-bracket-score gd-tabular" id="gdBrS2SB">۱</span>
+                  <div class="gd-club-roster" id="gdClubBRoster">تیم اول مجموعه · رتبه ۲ جدول</div>
+                  <div class="gd-club-record gd-tabular" id="gdClubBRecord">۲۱ برد · ۷ باخت</div>
+                </div>
+              </div>
+
+              <div class="gd-h2h-meta-strip">
+                <strong id="gdArenaFormat">تورنومنت بین گیم‌نت‌ها · تیمی ۵ نفره</strong>
+                <span class="gd-sep" aria-hidden="true">·</span>
+                <span id="gdArenaMode">آنلاین / حضوری با داوری مدیران</span>
+                <span class="gd-sep" aria-hidden="true">·</span>
+                <span id="gdArenaPrize">جایزه توافقی: شارژ VIP و ساعت بازی رایگان</span>
+              </div>
+            </div>
+
+            <!-- Phase 3 -> 4: Live Knockout Bracket + Champion Highlight + Leaderboard -->
+            <div class="gd-arena-lower" id="gdArenaLower">
+              <div class="gd-arena-panel" id="gdBracketPanel">
+                <div class="gd-panel-head">
+                  <h3 class="gd-panel-title">ساختار جدول حذفی خودکار</h3>
+                  <span class="gd-panel-sub">از پذیرش چالش تا ثبت نتیجه قهرمانی</span>
+                </div>
+
+                <div class="gd-bracket-layout">
+                  <div class="gd-bracket-col">
+                    <div class="gd-bracket-match">
+                      <div class="gd-bracket-row is-winner">
+                        <span id="gdBrS1A">مترو گیم</span>
+                        <span class="gd-bracket-score gd-tabular" id="gdBrS1SA">۲</span>
+                      </div>
+                      <div class="gd-bracket-row">
+                        <span class="gd-ltr" id="gdBrS1B">Vortex Club</span>
+                        <span class="gd-bracket-score gd-tabular" id="gdBrS1SB">۰</span>
+                      </div>
+                    </div>
+
+                    <div class="gd-bracket-match">
+                      <div class="gd-bracket-row is-winner">
+                        <span class="gd-ltr" id="gdBrS2A">Nexus Arena</span>
+                        <span class="gd-bracket-score gd-tabular" id="gdBrS2SA">۲</span>
+                      </div>
+                      <div class="gd-bracket-row">
+                        <span class="gd-ltr" id="gdBrS2B">Pixel Hub</span>
+                        <span class="gd-bracket-score gd-tabular" id="gdBrS2SB">۱</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <svg class="gd-bracket-connector" id="gdBracketConnector" viewBox="0 0 48 146" aria-hidden="true">
+                    <path class="is-accent" d="M48 34 H24 V73 H0" />
+                    <path d="M48 112 H24 V73 H0" />
+                  </svg>
+
+                  <div class="gd-bracket-col">
+                    <div class="gd-bracket-match is-final" id="gdChampionCard">
+                      <div class="gd-champion-kicker">فینال شبکه · قهرمان برتر</div>
+                      <div class="gd-bracket-row is-winner">
+                        <span id="gdBrFinalA">مترو گیم</span>
+                        <span class="gd-bracket-score">رتبه ۱</span>
+                      </div>
+                      <div class="gd-bracket-row">
+                        <span class="gd-ltr" id="gdBrFinalB">Nexus Arena</span>
+                        <span class="gd-bracket-score">فینالیست</span>
+                      </div>
+                      <div class="gd-bracket-final-note" id="gdBrFinalStatus">چالش نهایی · آماده برگزاری</div>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Scroll-Scrubbed SVG Bracket Connector -->
-              <svg class="gd-bracket-connector" id="gdBracketConnector" viewBox="0 0 48 146" aria-hidden="true">
-                <path class="is-accent" d="M48 34 H24 V73 H0" />
-                <path d="M48 112 H24 V73 H0" />
-              </svg>
-
-              <div class="gd-bracket-col">
-                <div class="gd-bracket-match is-final">
-                  <div class="gd-bracket-row is-winner">
-                    <span id="gdBrFinalA">مترو گیم</span>
-                    <span class="gd-bracket-score">فینالیست</span>
-                  </div>
-                  <div class="gd-bracket-row">
-                    <span class="gd-ltr" id="gdBrFinalB">Nexus Arena</span>
-                    <span class="gd-bracket-score">فینالیست</span>
-                  </div>
-                  <div class="gd-bracket-final-note" id="gdBrFinalStatus">چالش نهایی · آماده برگزاری</div>
+              <div class="gd-arena-panel" id="gdLeaderboardPanel">
+                <div class="gd-panel-head">
+                  <h3 class="gd-panel-title">رتبه‌بندی گیم‌نت‌ها</h3>
+                  <a href="/tournaments.html" class="gd-panel-link">مشاهده در پنل ←</a>
                 </div>
+
+                <table class="gd-lb-table">
+                  <thead>
+                    <tr>
+                      <th>رتبه و مجموعه</th>
+                      <th>امتیاز</th>
+                      <th>برد / باخت</th>
+                      <th>نرخ برد</th>
+                    </tr>
+                  </thead>
+                  <tbody id="gdLeaderboardBody">
+                    <!-- Populated from active discipline -->
+                  </tbody>
+                </table>
               </div>
             </div>
-          </div>
-
-          <!-- Leaderboard Panel -->
-          <div class="gd-arena-panel" id="gdLeaderboardPanel">
-            <div class="gd-panel-head">
-              <h3 class="gd-panel-title">رتبه‌بندی گیم‌نت‌ها</h3>
-              <span class="gd-panel-sub">امتیازدهی شفاف بر اساس نتایج ثبت‌شده</span>
-            </div>
-
-            <table class="gd-lb-table">
-              <thead>
-                <tr>
-                  <th>رتبه و مجموعه</th>
-                  <th>امتیاز</th>
-                  <th>برد / باخت</th>
-                  <th>نرخ برد</th>
-                </tr>
-              </thead>
-              <tbody id="gdLeaderboardBody">
-                <!-- Populated by JS based on active discipline -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Authentic Tournament Dashboard Preview Strip -->
-        <div class="gd-arena-product-peek gd-reveal" style="--reveal-delay: 140ms;">
-          <div class="gd-arena-peek-copy">
-            <h3>بخش واقعی تورنومنت در پنل مدیریت</h3>
-            <p>
-              تمامی فراخوان‌های عمومی، ارسال چالش مستقیم به گیم‌نت‌های دیگر، توافق جایزه و جدول رتبه‌بندی، اختصاصاً برای مدیران مجموعه در پنل مترو گیم پیاده‌سازی شده است.
-            </p>
-            <a href="/tournaments.html" class="gd-btn gd-btn-secondary">
-              <span>مشاهده بخش تورنومنت در پنل</span>
-              <svg class="gd-btn-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M12.5 8h-9M7 4.5 3.5 8 7 11.5"></path>
-              </svg>
-            </a>
-          </div>
-          <div class="gd-arena-peek-frame">
-            <img
-              class="gd-theme-screenshot"
-              src="assets/images/landing/preview-tournaments-dark.png"
-              data-dark-src="assets/images/landing/preview-tournaments-dark.png"
-              data-light-src="assets/images/landing/preview-tournaments-light.png"
-              alt="نمای واقعی بخش تورنومنت و رتبه‌بندی گیم‌نت‌ها در مترو گیم"
-              loading="lazy"
-              width="1440"
-              height="900"
-              referrerPolicy="no-referrer"
-            >
           </div>
         </div>
       </div>
     </section>
 
     <!-- ===================================================================
-         5. BEAUTIFUL INTERACTIVE PRICING & COMPARISON (#pricing)
+         SCENE FIVE — INTERACTIVE PRICING TRANSFORMATION (#pricing)
+         Converged glass monolith smoothly fans out into the 4 subscription
+         cards (عادی، نقره‌ای، طلایی، ویژه) and settles cleanly for easy
+         reading, comparison, and interactive selection.
          =================================================================== -->
-    <section class="gd-section" id="pricing">
+    <section class="gd-section gd-pricing-scene" id="pricing" data-scene="pricing">
       <div class="gd-container">
         <div class="gd-section-header is-centered gd-reveal">
-          <span class="gd-eyebrow">پلن‌های اشتراک</span>
+          <span class="gd-eyebrow">صحنه پنجم · پلن‌های اشتراک</span>
           <h2 class="gd-section-title">چهار سطح اشتراک، متناسب با ابعاد و اهداف مجموعه شما</h2>
           <p class="gd-section-desc">
             تعرفه و شرایط هر پلن بر اساس تعداد تجهیزات و ساختار باشگاه شما در جلسه مشاوره نهایی می‌شود؛ بدون هزینه‌های پنهان و بدون پیچیدگی.
           </p>
         </div>
 
-        <!-- 4 Subscription Tiers (عادی، نقره‌ای، طلایی، ویژه) with Interactive Plan Selection -->
-        <div class="gd-pricing-grid" id="gdPricingGrid">
-          <!-- Rendered from pure SUBSCRIPTION_TIERS source of truth -->
+        <!-- Scroll-Transformed 4-Card Fan -> Stationary 4-Column Grid -->
+        <div class="gd-pricing-stage" id="gdPricingStage">
+          <div class="gd-pricing-grid" id="gdPricingGrid">
+            <!-- Rendered from pure SUBSCRIPTION_TIERS source of truth -->
+          </div>
         </div>
 
         <!-- Interactive Selected-Plan Capability Inspector + Comparison Matrix -->
@@ -707,7 +578,7 @@
     </section>
 
     <!-- ===================================================================
-         6. FAQ ACCORDION (#faq)
+         FAQ ACCORDION (#faq)
          =================================================================== -->
     <section class="gd-section gd-section-alt" id="faq">
       <div class="gd-container">
@@ -777,11 +648,11 @@
     </section>
 
     <!-- ===================================================================
-         7. CINEMATIC CLOSING CTA BAND
+         CINEMATIC CLOSING CTA BAND
          =================================================================== -->
     <section class="gd-cta-band">
       <div class="gd-container">
-        <div class="gd-cta-stage gd-reveal-scale">
+        <div class="gd-cta-stage gd-reveal">
           <h2>آماده‌اید مدیریت گیم‌نت خود را به سطحی بالاتر ببرید؟</h2>
           <p>
             هم‌اکنون محیط زنده پنل مدیریت مترو گیم را بررسی کنید یا برای انتخاب پلن مناسب با ظرفیت باشگاهتان مشاوره بگیرید.
@@ -801,7 +672,7 @@
   </main>
 
   <!-- =====================================================================
-       8. QUIET FOOTER
+       QUIET FOOTER
        ===================================================================== -->
   <footer class="gd-footer">
     <div class="gd-container gd-footer-inner">
@@ -811,10 +682,10 @@
       </a>
 
       <nav class="gd-footer-links" aria-label="پیوندهای فوتر">
-        <a href="#product-journey">تجربه محصول</a>
-        <a href="#features">امکانات</a>
-        <a href="#studio-3d">طراحی سه‌بعدی</a>
-        <a href="#tournaments">شبکه تورنومنت</a>
+        <a href="#scene-reveal">نمای کلی</a>
+        <a href="#scene-software">داخل نرم‌افزار</a>
+        <a href="#scene-exhibition">گالری امکانات</a>
+        <a href="#scene-tournaments">شبکه تورنومنت</a>
         <a href="#pricing">پلن‌ها</a>
         <a href="#faq">سوالات متداول</a>
         <a href="/">پنل مدیریت</a>
@@ -825,7 +696,7 @@
   </footer>
 
   <!-- =====================================================================
-       9. CONSULTATION / DEMO INQUIRY MODAL
+       CONSULTATION / DEMO INQUIRY MODAL
        ===================================================================== -->
   <div class="gd-modal-backdrop" id="gdInquiryModal" role="dialog" aria-modal="true" aria-labelledby="gdModalTitle" aria-hidden="true">
     <div class="gd-modal">
@@ -886,6 +757,6 @@
     </div>
   </div>
 
-  <script type="module" src="JS/landing.js?v=20261128-7"></script>
+  <script type="module" src="JS/landing.js?v=20261128-8"></script>
 </body>
 </html>

@@ -22,6 +22,13 @@ import {
   getTierCapabilitiesSummary,
   toggleFaqState,
   validateDemoInquiry,
+  SOFTWARE_TOUR_STOPS,
+  HORIZONTAL_EXHIBITION_PANELS,
+  computeSceneOneReveal,
+  computeSceneTwoSoftware,
+  computeSceneThreeHorizontal,
+  computeSceneFourTournament,
+  computeSceneFivePricing,
 } from './landing-logic.mjs';
 
 test('resolveLandingTheme defaults safely to dark and accepts light', () => {
@@ -223,4 +230,120 @@ test('validateDemoInquiry rejects incomplete inputs and accepts valid Persian-di
   assert.equal(valid.normalized.phone, '09123456789');
   assert.equal(valid.normalized.tierId, 'ultimate');
   assert.equal(valid.normalized.tierLabel, 'پلن ویژه');
+});
+
+test('Scene One (computeSceneOneReveal) executes 3-phase headline split, frontal rotation, and near-fullscreen expansion', () => {
+  const s0 = computeSceneOneReveal(0);
+  const sMid = computeSceneOneReveal(0.45);
+  const sEnd = computeSceneOneReveal(1);
+
+  assert.equal(s0.phase, 1);
+  assert.equal(s0.line1X, 0);
+  assert.equal(s0.line2X, 0);
+  assert.equal(s0.copyOpacity, 1);
+  assert.ok(s0.stageRotateX >= 14);
+
+  assert.equal(sMid.phase, 2);
+  assert.ok(sMid.line1X > 0 && sMid.line2X < 0);
+  assert.ok(sMid.stageRotateX < s0.stageRotateX);
+  assert.ok(sMid.stageScale > s0.stageScale);
+
+  assert.equal(sEnd.phase, 3);
+  assert.equal(sEnd.stageRotateX, 0);
+  assert.equal(sEnd.copyOpacity, 0);
+  assert.ok(sEnd.stageScale > 1.04);
+  assert.equal(sEnd.handoffOpacity, 1);
+  assert.deepEqual(computeSceneOneReveal(-2), s0);
+  assert.deepEqual(computeSceneOneReveal(4), sEnd);
+});
+
+test('Scene Two (computeSceneTwoSoftware) covers 5 authentic software stops with crisp clip-path transitions and camera pan/zoom', () => {
+  assert.equal(SOFTWARE_TOUR_STOPS.length, 5);
+  assert.deepEqual(
+    SOFTWARE_TOUR_STOPS.map((s) => s.id),
+    ['stations', 'customers', 'buffet', 'finance', 'tournaments']
+  );
+
+  const t0 = computeSceneTwoSoftware(0);
+  const t2 = computeSceneTwoSoftware(0.5);
+  const t4 = computeSceneTwoSoftware(1);
+
+  assert.equal(t0.activeIndex, 0);
+  assert.equal(t0.layers[0].clipPct, 0);
+  assert.equal(t0.layers[1].clipPct, 100);
+  assert.ok(t0.cameraScale > 1);
+
+  assert.equal(t2.activeIndex, 2);
+  assert.equal(t2.layers[2].clipPct, 0);
+  assert.equal(t2.layers[4].clipPct, 100);
+
+  assert.equal(t4.activeIndex, 4);
+  assert.equal(t4.layers[4].clipPct, 0);
+  assert.equal(t4.calloutOpacity, 1);
+});
+
+test('Scene Three (computeSceneThreeHorizontal) glides RTL exhibition panels smoothly with bounded 3D depth', () => {
+  assert.equal(HORIZONTAL_EXHIBITION_PANELS.length, 5);
+  const h0 = computeSceneThreeHorizontal(0, 5, 2400);
+  const hMid = computeSceneThreeHorizontal(0.5, 5, 2400);
+  const hEnd = computeSceneThreeHorizontal(1, 5, 2400);
+
+  assert.equal(h0.trackTranslateX, 0);
+  assert.equal(h0.activeIndex, 0);
+  assert.ok(hMid.trackTranslateX > 900 && hMid.trackTranslateX < 1500);
+  assert.equal(hMid.activeIndex, 2);
+  assert.equal(hEnd.trackTranslateX, 2400);
+  assert.equal(hEnd.activeIndex, 4);
+
+  for (const panel of hMid.panels) {
+    assert.ok(Math.abs(panel.rotateY) <= 6);
+    assert.ok(panel.scale >= 0.9 && panel.scale <= 1.0);
+  }
+});
+
+test('Scene Four (computeSceneFourTournament) transforms centered single card into H2H, bracket, and champion leaderboard', () => {
+  const f0 = computeSceneFourTournament(0.05);
+  const fSplit = computeSceneFourTournament(0.36);
+  const fBracket = computeSceneFourTournament(0.64);
+  const fChamp = computeSceneFourTournament(0.98);
+
+  assert.equal(f0.beatIndex, 0);
+  assert.ok(f0.homeCenterOffsetPct < -40);
+  assert.equal(f0.challengerOpacity, 0);
+  assert.equal(f0.bracketOpacity, 0);
+
+  assert.equal(fSplit.beatIndex, 1);
+  assert.ok(fSplit.challengerOpacity > 0.7);
+  assert.ok(fSplit.vsOpacity > 0.5);
+  assert.ok(fSplit.vsDashOffset < 120);
+
+  assert.equal(fBracket.beatIndex, 2);
+  assert.equal(fBracket.homeCenterOffsetPct, 0);
+  assert.ok(fBracket.bracketOpacity > 0.7);
+
+  assert.equal(fChamp.beatIndex, 3);
+  assert.equal(fChamp.bracketDashOffset, 0);
+  assert.equal(fChamp.leaderboardOpacity, 1);
+  assert.equal(fChamp.championHighlight, 1);
+});
+
+test('Scene Five (computeSceneFivePricing) fans converged glass monolith into 4 stationary readable pricing cards', () => {
+  const p0 = computeSceneFivePricing(0);
+  const pMid = computeSceneFivePricing(0.45);
+  const pSettled = computeSceneFivePricing(0.92);
+
+  assert.equal(p0.settled, false);
+  assert.ok(p0.cards[0].offsetX < 0 && p0.cards[3].offsetX > 0);
+  assert.ok(Math.abs(pMid.cards[0].offsetX) < Math.abs(p0.cards[0].offsetX));
+
+  assert.equal(pSettled.settled, true);
+  assert.equal(pSettled.featureOpacity, 1);
+  assert.equal(pSettled.ultimateGlow, 1);
+  for (const card of pSettled.cards) {
+    assert.equal(card.offsetX, 0);
+    assert.equal(card.offsetY, 0);
+    assert.equal(card.rotateY, 0);
+    assert.equal(card.scale, 1);
+    assert.equal(card.opacity, 1);
+  }
 });
