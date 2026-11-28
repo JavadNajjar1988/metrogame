@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game District | مدیریت حرفه‌ای، فراتر از یک گیم‌نت</title>
+  <meta name="description" content="تمام ابزارهای مدیریت مجموعه، کنترل تجهیزات، گزارش‌های مالی و رقابت بین گیم‌نت‌ها؛ در یک پلتفرم قدرتمند برای مدیران گیم‌نت و باشگاه‌های بازی.">
+  <meta property="og:title" content="Game District | مدیریت حرفه‌ای، فراتر از یک گیم‌نت">
+  <meta property="og:description" content="تمام ابزارهای مدیریت مجموعه، کنترل تجهیزات، گزارش‌های مالی و رقابت بین گیم‌نت‌ها؛ در یک پلتفرم قدرتمند.">
+  <link rel="shortcut icon" href="src/assets/images/metrogame_emblem_1794207267121.jpg" type="image/jpeg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Prevent theme flash on initial paint -->
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('mg_theme_v1');
+        var theme = saved === 'light' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
+
+  <link rel="stylesheet" href="assets/css/landing.css?v=20261128-5">
+</head>
+<body class="gd-landing">
+  <div class="gd-ambient-canvas" aria-hidden="true"></div>
+
+  <!-- =====================================================================
+       1. PREMIUM STICKY NAVIGATION
+       ===================================================================== -->
+  <header class="gd-header" id="gdHeader">
+    <div class="gd-container gd-header-inner">
+      <a href="/landing" class="gd-brand" aria-label="Game District">
+        <img src="src/assets/images/metrogame_emblem_1794207267121.jpg" alt="لوگوی Game District" class="gd-brand-mark" width="30" height="30" referrerPolicy="no-referrer">
+        <span class="gd-ltr">Game District</span>
+      </a>
+
+      <nav class="gd-nav" aria-label="ناوبری صفحه فرود">
+        <a href="#features" class="gd-nav-link" data-nav-target="features">امکانات</a>
+        <a href="#studio-3d" class="gd-nav-link" data-nav-target="studio-3d">طراحی سه‌بعدی</a>
+        <a href="#tournaments" class="gd-nav-link" data-nav-target="tournaments">شبکه تورنومنت</a>
+        <a href="#pricing" class="gd-nav-link" data-nav-target="pricing">پلن‌ها</a>
+        <a href="#faq" class="gd-nav-link" data-nav-target="faq">سوالات متداول</a>
+      </nav>
+
+      <div class="gd-header-actions">
+        <button
+          type="button"
+          id="gdThemeToggle"
+          class="gd-icon-btn"
+          aria-label="تغییر به حالت روشن"
+          title="تغییر به حالت روشن"
+        >
+          <svg id="gdSunIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+          </svg>
+          <svg id="gdMoonIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden>
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+
+        <a href="/" class="gd-btn gd-btn-primary gd-header-cta-desktop">ورود به پنل</a>
+
+        <button
+          type="button"
+          id="gdMenuToggle"
+          class="gd-menu-toggle"
+          aria-label="باز کردن منوی ناوبری"
+          aria-expanded="false"
+          aria-controls="gdMobileDrawer"
+        >
+          <span class="gd-hamburger" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Animated Mobile Navigation Drawer -->
+  <div class="gd-mobile-drawer" id="gdMobileDrawer" aria-hidden="true">
+    <nav class="gd-mobile-links" aria-label="ناوبری موبایل">
+      <a href="#features" data-mobile-link>امکانات پلتفرم</a>
+      <a href="#studio-3d" data-mobile-link>طراحی سه‌بعدی سالن</a>
+      <a href="#tournaments" data-mobile-link>شبکه تورنومنت و رتبه‌بندی</a>
+      <a href="#pricing" data-mobile-link>پلن‌های اشتراک</a>
+      <a href="#faq" data-mobile-link>سوالات متداول</a>
+    </nav>
+    <div class="gd-mobile-actions">
+      <a href="#pricing" class="gd-btn gd-btn-primary" data-mobile-link>مشاهده پلن‌ها</a>
+      <a href="/" class="gd-btn gd-btn-secondary">ورود به پنل</a>
+    </div>
+  </div>
+
+  <main>
+    <!-- ===================================================================
+         2. CINEMATIC HERO SECTION
+         =================================================================== -->
+    <section class="gd-hero" id="hero">
+      <div class="gd-hero-atmosphere" aria-hidden="true">
+        <div class="gd-hero-beam"></div>
+        <div class="gd-hero-grid"></div>
+      </div>
+
+      <div class="gd-container">
+        <div class="gd-hero-copy">
+          <div class="gd-hero-kicker gd-choreo" style="--delay: 40ms;">
+            <strong>پلتفرم جامع مدیریت گیم‌نت</strong>
+            <span class="gd-sep" aria-hidden="true">·</span>
+            <span>طراحی‌شده برای مدیران باشگاه‌های بازی، بیلیارد و مراکز تفریحی</span>
+          </div>
+
+          <h1 class="gd-hero-title gd-choreo" style="--delay: 110ms;">
+            مدیریت حرفه‌ای، فراتر از یک گیم‌نت
+          </h1>
+
+          <p class="gd-hero-lead gd-choreo" style="--delay: 200ms;">
+            تمام ابزارهای مدیریت مجموعه، کنترل تجهیزات، گزارش‌های مالی و رقابت بین گیم‌نت‌ها؛ در یک پلتفرم قدرتمند.
+          </p>
+
+          <div class="gd-hero-cta gd-choreo" style="--delay: 290ms;">
+            <a href="#pricing" class="gd-btn gd-btn-primary gd-btn-lg">
+              <span>مشاهده پلن‌ها</span>
+              <svg class="gd-btn-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12.5 8h-9M7 4.5 3.5 8 7 11.5"></path>
+              </svg>
+            </a>
+            <a href="#features" class="gd-btn gd-btn-secondary gd-btn-lg">
+              <span>کشف امکانات</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Layered Cinematic Dashboard Showcase -->
+        <div class="gd-stage-outer" id="gdHeroStageOuter">
+          <div class="gd-stage-halo" aria-hidden="true"></div>
+          <div class="gd-stage-backplate" aria-hidden="true"></div>
+
+          <div class="gd-stage-frame" id="gdHeroStageFrame">
+            <div class="gd-stage-chrome">
+              <div class="gd-stage-tabs" role="tablist" aria-label="پیش‌نمایش بخش‌های داشبورد">
+                <button type="button" class="gd-stage-tab is-active" role="tab" aria-selected="true" data-hero-tab="overview">پیشخوان مدیریت</button>
+                <button type="button" class="gd-stage-tab" role="tab" aria-selected="false" data-hero-tab="tables">میزها و تایمر زنده</button>
+                <button type="button" class="gd-stage-tab" role="tab" aria-selected="false" data-hero-tab="studio3d">طراحی سه‌بعدی سالن</button>
+                <button type="button" class="gd-stage-tab" role="tab" aria-selected="false" data-hero-tab="tournaments">شبکه تورنومنت</button>
+              </div>
+
+              <div class="gd-chrome-meta">
+                <span class="gd-chrome-url gd-ltr" id="gdHeroRoute">app.gamedistrict.ir / dashboard</span>
+                <div class="gd-chrome-dots" aria-hidden="true">
+                  <span></span><span></span><span></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="gd-stage-viewport">
+              <img
+                id="gdHeroPreviewImg"
+                class="gd-stage-img"
+                src="assets/images/landing/preview-overview-dark.png"
+                alt="پیش‌نمایش پیشخوان اصلی پنل مدیریت گیم‌نت Game District"
+                width="1440"
+                height="900"
+                referrerPolicy="no-referrer"
+              >
+            </div>
+
+            <div class="gd-stage-footer">
+              <span id="gdHeroCaption">نمای یکپارچه وضعیت سالن، میزهای فعال و شاخص‌های روزانه</span>
+              <a href="/" class="gd-stage-footer-link">
+                <span>ورود مستقیم به پنل زنده</span>
+                <svg class="gd-btn-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12.5 8h-9M7 4.5 3.5 8 7 11.5"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Staggered Supporting Product Depth Layers -->
+          <div class="gd-stage-satellites">
+            <div class="gd-satellite" style="--sat-delay: 540ms;">
+              <span class="gd-satellite-title">کنترل هم‌زمان تجهیزات سالن</span>
+              <span class="gd-satellite-desc">مدیریت یکپارچه PS4، PS5، سیستم‌های PC، بیلیارد و فوتبال‌دستی با تایمر دقیق.</span>
+            </div>
+            <div class="gd-satellite" style="--sat-delay: 630ms;">
+              <span class="gd-satellite-title">بوفه، باشگاه مشتریان و شفافیت مالی</span>
+              <span class="gd-satellite-desc">اتصال مستقیم سفارش‌های بوفه به فاکتور میز، مدیریت بدهکاران و گزارش درآمد روزانه.</span>
+            </div>
+            <div class="gd-satellite" style="--sat-delay: 720ms;">
+              <span class="gd-satellite-title">شبکه رقابت بین گیم‌نت‌ها</span>
+              <span class="gd-satellite-desc">برگزاری مسابقات داخلی، ارسال چالش مستقیم به باشگاه‌های دیگر و حضور در جدول رتبه‌بندی.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         3. SCROLL-DRIVEN INTERACTIVE PRODUCT STORYTELLING (#features)
+         =================================================================== -->
+    <section class="gd-section gd-section-alt" id="features">
+      <div class="gd-container">
+        <div class="gd-section-header gd-section-header-split gd-reveal">
+          <div>
+            <span class="gd-eyebrow">معرفی تعاملی امکانات</span>
+            <h2 class="gd-section-title">هر بخش از سالن، با نظم و دقت کامل در اختیار شما</h2>
+          </div>
+          <p class="gd-section-desc">
+            روی هر بخش کلیک کنید تا نحوه عملکرد آن را در محیط واقعی نرم‌افزار Game District مشاهده کنید؛ از تایمر کنسول‌ها و میز بیلیارد تا بوفه و گزارش‌های مالی.
+          </p>
+        </div>
+
+        <div class="gd-story-deck">
+          <!-- Interactive 6-Chapter Capability Selector -->
+          <div class="gd-story-list gd-reveal" id="gdStoryList" role="tablist" aria-label="فهرست امکانات محصول">
+            <!-- Populated cleanly with semantic buttons via JS / progressive enhancement -->
+          </div>
+
+          <!-- Sticky Adjacent Real Dashboard Preview -->
+          <div class="gd-story-stage gd-reveal-scale" style="--reveal-delay: 110ms;">
+            <div class="gd-story-stage-bar">
+              <span class="gd-story-stage-title" id="gdStoryStageTitle">مدیریت ایستگاه‌های بازی</span>
+              <span class="gd-chrome-url gd-ltr" id="gdStoryStageRoute">app.gamedistrict.ir / tables</span>
+            </div>
+            <div class="gd-story-stage-media">
+              <img
+                id="gdStoryStageImg"
+                class="gd-story-stage-img"
+                src="assets/images/landing/preview-tables-dark.png"
+                alt="صفحه مدیریت ایستگاه‌های بازی و تایمر زنده در Game District"
+                width="1440"
+                height="900"
+                referrerPolicy="no-referrer"
+              >
+            </div>
+            <div class="gd-story-stage-caption">
+              <div>
+                <div class="gd-story-callout-title" id="gdStoryCalloutTitle">کنترل لحظه‌ای سشن‌ها</div>
+                <div class="gd-story-callout-meta" id="gdStoryCalloutMeta">تایمر دقیق · محاسبه خودکار تعرفه · تفکیک وضعیت میزها</div>
+              </div>
+              <button type="button" class="gd-btn gd-btn-secondary" data-open-inquiry="ultimate">درخواست دمو</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alternating Editorial Deep-Dives -->
+        <div class="gd-editorial-stack" id="studio-3d">
+          <!-- Editorial 01: 3D Floor Plan & Physical Stations -->
+          <article class="gd-editorial-row">
+            <div class="gd-editorial-text gd-reveal">
+              <span class="gd-editorial-num">۰۱ · چیدمان سه‌بعدی و کنترل بصری سالن</span>
+              <h3 class="gd-editorial-heading">نقشه سه‌بعدی گیم‌نت خود را دقیقاً مطابق واقعیت بسازید</h3>
+              <p class="gd-editorial-copy">
+                به‌جای جستجو در لیست‌های تکراری، چیدمان واقعی کنسول‌ها، سیستم‌های PC، میزهای بیلیارد و فوتبال‌دستی را در فضای سه‌بعدی طراحی کنید و وضعیت زنده هر ایستگاه را مستقیماً روی نقشه سالن ببینید.
+              </p>
+              <ul class="gd-editorial-list">
+                <li>
+                  <svg class="gd-check-svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5 6.5 11.5 12.5 4.5"></path></svg>
+                  <span>همگام‌سازی خودکار میزهای چیده‌شده در نمای سه‌بعدی با لیست تایمرها</span>
+                </li>
+                <li>
+                  <svg class="gd-check-svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5 6.5 11.5 12.5 4.5"></path></svg>
+                  <span>تنوع مدل میزهای بیلیارد، فوتبال‌دستی، دکوراسیون، نورپردازی و کاغذ دیواری سالن</span>
+                </li>
+                <li>
+                  <svg class="gd-check-svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5 6.5 11.5 12.5 4.5"></path></svg>
+                  <span>مشاهده فوری تایمر زنده بالای هر ایستگاه برای تصمیم‌گیری سریع در ساعات شلوغ</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="gd-editorial-visual gd-reveal-scale" style="--reveal-delay: 100ms;">
+              <div class="gd-editorial-img-wrap">
+                <img
+                  class="gd-theme-screenshot"
+                  src="assets/images/landing/preview-3d-dark.png"
+                  data-dark-src="assets/images/landing/preview-3d-dark.png"
+                  data-light-src="assets/images/landing/preview-3d-light.png"
+                  alt="محیط طراح سه‌بعدی سالن گیم‌نت در Game District"
+                  loading="lazy"
+                  width="1440"
+                  height="900"
+                  referrerPolicy="no-referrer"
+                >
+              </div>
+            </div>
+          </article>
+
+          <!-- Editorial 02: Customers, Buffet & Financial Integrity -->
+          <article class="gd-editorial-row is-reversed">
+            <div class="gd-editorial-text gd-reveal">
+              <span class="gd-editorial-num">۰۲ · شفافیت مالی، بوفه و باشگاه مشتریان</span>
+              <h3 class="gd-editorial-heading">حسابرسی دقیق پایان شیفت، بدون خطا و بدون ابهام</h3>
+              <p class="gd-editorial-copy">
+                تمام فروش‌های ساعتی، سفارش‌های بوفه، شارژ کیف پول مشتریان ثابت و مانده بدهکاران به‌صورت یکپارچه ثبت می‌شوند تا در پایان هر روز تصویر کاملاً روشنی از درآمد مجموعه داشته باشید.
+              </p>
+              <ul class="gd-editorial-list">
+                <li>
+                  <svg class="gd-check-svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5 6.5 11.5 12.5 4.5"></path></svg>
+                  <span>تفکیک دقیق درآمد نقدی، کارت‌خوان، پرداخت اعتباری و بخش بوفه</span>
+                </li>
+                <li>
+                  <svg class="gd-check-svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5 6.5 11.5 12.5 4.5"></path></svg>
+                  <span>باشگاه مشتریان با تخفیف خودکار پس از ساعات بازی و سابقه کامل هر مشتری</span>
+                </li>
+                <li>
+                  <svg class="gd-check-svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5 6.5 11.5 12.5 4.5"></path></svg>
+                  <span>پیگیری شفاف لیست بدهکاران و تسویه جزئی یا کامل در چند ثانیه</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="gd-editorial-visual gd-reveal-scale" style="--reveal-delay: 100ms;">
+              <div class="gd-editorial-img-wrap">
+                <img
+                  class="gd-theme-screenshot"
+                  src="assets/images/landing/preview-finance-dark.png"
+                  data-dark-src="assets/images/landing/preview-finance-dark.png"
+                  data-light-src="assets/images/landing/preview-finance-light.png"
+                  alt="بخش گزارش‌های مالی و مدیریت درآمد Game District"
+                  loading="lazy"
+                  width="1440"
+                  height="900"
+                  referrerPolicy="no-referrer"
+                >
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         4. PREMIUM TOURNAMENT NETWORK SHOWCASE (#tournaments)
+         =================================================================== -->
+    <section class="gd-section gd-arena-section" id="tournaments">
+      <div class="gd-arena-grid-bg" aria-hidden="true"></div>
+
+      <div class="gd-container">
+        <div class="gd-section-header is-centered gd-reveal">
+          <span class="gd-eyebrow">مزیت متمایز Game District</span>
+          <h2 class="gd-section-title">شبکه رقابت بین گیم‌نت‌ها؛ فراتر از یک نرم‌افزار حسابداری</h2>
+          <p class="gd-section-desc">
+            مسابقات داخلی مجموعه را برگزار کنید، تیم منتخب خود را آماده سازید، برای گیم‌نت‌های دیگر چالش مستقیم بفرستید و جایگاه باشگاهتان را در جدول رتبه‌بندی ارتقا دهید — در بازی‌های ویدیویی، بیلیارد و فوتبال‌دستی.
+          </p>
+        </div>
+
+        <!-- Discipline Switcher -->
+        <div class="gd-arena-controls gd-reveal" style="--reveal-delay: 80ms;">
+          <div class="gd-discipline-bar" role="tablist" aria-label="انتخاب رشته رقابتی">
+            <button type="button" class="gd-discipline-btn is-active" role="tab" aria-selected="true" data-discipline="video">بازی‌های ویدیویی</button>
+            <button type="button" class="gd-discipline-btn" role="tab" aria-selected="false" data-discipline="billiards">بیلیارد</button>
+            <button type="button" class="gd-discipline-btn" role="tab" aria-selected="false" data-discipline="foosball">فوتبال‌دستی</button>
+          </div>
+          <span class="gd-discipline-sub" id="gdDisciplineSubtitle">EA Sports FC · Counter-Strike 2 · Tekken · Valorant</span>
+        </div>
+
+        <!-- Head-to-Head Matchup Stage -->
+        <div class="gd-h2h-stage gd-reveal" id="gdH2hStage">
+          <div class="gd-h2h-grid">
+            <!-- Club A -->
+            <div class="gd-club-card is-home">
+              <div class="gd-club-top">
+                <div class="gd-club-monogram gd-ltr" id="gdClubAMono">GD</div>
+                <div>
+                  <div class="gd-club-name gd-ltr" id="gdClubAName">Game District</div>
+                  <div class="gd-club-city" id="gdClubACity">تهران</div>
+                </div>
+              </div>
+              <div class="gd-club-roster" id="gdClubARoster">تیم منتخب پنج‌نفره · رتبه ۱ جدول</div>
+              <div class="gd-club-record gd-tabular" id="gdClubARecord">۲۴ برد · ۵ باخت</div>
+            </div>
+
+            <!-- Sculpted VS Centerpiece with Animated SVG Connectors -->
+            <div class="gd-vs-hub" aria-hidden="true">
+              <svg class="gd-vs-lines" viewBox="0 0 146 82" fill="none">
+                <path class="gd-vs-path" d="M2 41 H43" />
+                <path class="gd-vs-path" d="M144 41 H103" />
+              </svg>
+              <div class="gd-vs-emblem gd-ltr">VS</div>
+            </div>
+
+            <!-- Club B -->
+            <div class="gd-club-card">
+              <div class="gd-club-top">
+                <div class="gd-club-monogram gd-ltr" id="gdClubBMono">NA</div>
+                <div>
+                  <div class="gd-club-name gd-ltr" id="gdClubBName">Nexus Arena</div>
+                  <div class="gd-club-city" id="gdClubBCity">اصفهان</div>
+                </div>
+              </div>
+              <div class="gd-club-roster" id="gdClubBRoster">تیم اول مجموعه · رتبه ۲ جدول</div>
+              <div class="gd-club-record gd-tabular" id="gdClubBRecord">۲۱ برد · ۷ باخت</div>
+            </div>
+          </div>
+
+          <div class="gd-h2h-footer">
+            <div class="gd-h2h-meta">
+              <strong id="gdArenaFormat">تورنومنت بین گیم‌نت‌ها · تیمی ۵ نفره</strong>
+              <span class="gd-sep" aria-hidden="true">·</span>
+              <span id="gdArenaMode">آنلاین / حضوری با داوری مدیران</span>
+              <span class="gd-sep" aria-hidden="true">·</span>
+              <span id="gdArenaPrize">جایزه توافقی: شارژ VIP و ساعت بازی رایگان</span>
+            </div>
+            <button type="button" class="gd-btn gd-btn-secondary" data-open-inquiry="ultimate">
+              <span>آشنایی با ارسال چالش مستقیم</span>
+              <svg class="gd-btn-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12.5 8h-9M7 4.5 3.5 8 7 11.5"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Bracket Progression + Gaming Center Leaderboard -->
+        <div class="gd-arena-grid">
+          <!-- Bracket Panel -->
+          <div class="gd-arena-panel gd-reveal" id="gdBracketPanel">
+            <div class="gd-panel-head">
+              <h3 class="gd-panel-title">ساختار جدول حذفی خودکار</h3>
+              <span class="gd-panel-sub">شکل‌گیری خودکار پس از پذیرش چالش</span>
+            </div>
+
+            <div class="gd-bracket-layout">
+              <div class="gd-bracket-col">
+                <div class="gd-bracket-match">
+                  <div class="gd-bracket-row is-winner">
+                    <span class="gd-ltr" id="gdBrS1A">Game District</span>
+                    <span class="gd-bracket-score gd-tabular" id="gdBrS1SA">۲</span>
+                  </div>
+                  <div class="gd-bracket-row">
+                    <span class="gd-ltr" id="gdBrS1B">Vortex Club</span>
+                    <span class="gd-bracket-score gd-tabular" id="gdBrS1SB">۰</span>
+                  </div>
+                </div>
+
+                <div class="gd-bracket-match">
+                  <div class="gd-bracket-row is-winner">
+                    <span class="gd-ltr" id="gdBrS2A">Nexus Arena</span>
+                    <span class="gd-bracket-score gd-tabular" id="gdBrS2SA">۲</span>
+                  </div>
+                  <div class="gd-bracket-row">
+                    <span class="gd-ltr" id="gdBrS2B">Pixel Hub</span>
+                    <span class="gd-bracket-score gd-tabular" id="gdBrS2SB">۱</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Animated SVG Bracket Connector -->
+              <svg class="gd-bracket-connector" viewBox="0 0 48 146" aria-hidden="true">
+                <path class="is-accent" d="M48 34 H24 V73 H0" />
+                <path d="M48 112 H24 V73 H0" />
+              </svg>
+
+              <div class="gd-bracket-col">
+                <div class="gd-bracket-match is-final">
+                  <div class="gd-bracket-row is-winner">
+                    <span class="gd-ltr" id="gdBrFinalA">Game District</span>
+                    <span class="gd-bracket-score">فینالیست</span>
+                  </div>
+                  <div class="gd-bracket-row">
+                    <span class="gd-ltr" id="gdBrFinalB">Nexus Arena</span>
+                    <span class="gd-bracket-score">فینالیست</span>
+                  </div>
+                  <div class="gd-bracket-final-note" id="gdBrFinalStatus">چالش نهایی · آماده برگزاری</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Leaderboard Panel -->
+          <div class="gd-arena-panel gd-reveal" style="--reveal-delay: 100ms;">
+            <div class="gd-panel-head">
+              <h3 class="gd-panel-title">رتبه‌بندی گیم‌نت‌ها</h3>
+              <span class="gd-panel-sub">امتیازدهی شفاف بر اساس نتایج ثبت‌شده</span>
+            </div>
+
+            <table class="gd-lb-table">
+              <thead>
+                <tr>
+                  <th>رتبه و مجموعه</th>
+                  <th>امتیاز</th>
+                  <th>برد / باخت</th>
+                  <th>نرخ برد</th>
+                </tr>
+              </thead>
+              <tbody id="gdLeaderboardBody">
+                <!-- Populated by JS based on active discipline -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Authentic Tournament Dashboard Preview Strip -->
+        <div class="gd-arena-product-peek gd-reveal" style="--reveal-delay: 140ms;">
+          <div class="gd-arena-peek-copy">
+            <h3>بخش واقعی تورنومنت در پنل مدیریت</h3>
+            <p>
+              تمامی فراخوان‌های عمومی، ارسال چالش مستقیم به گیم‌نت‌های دیگر، توافق جایزه و جدول رتبه‌بندی، اختصاصاً برای مدیران مجموعه در پنل Game District پیاده‌سازی شده است.
+            </p>
+            <a href="/tournaments.html" class="gd-btn gd-btn-secondary">
+              <span>مشاهده بخش تورنومنت در پنل</span>
+              <svg class="gd-btn-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12.5 8h-9M7 4.5 3.5 8 7 11.5"></path>
+              </svg>
+            </a>
+          </div>
+          <div class="gd-arena-peek-frame">
+            <img
+              class="gd-theme-screenshot"
+              src="assets/images/landing/preview-tournaments-dark.png"
+              data-dark-src="assets/images/landing/preview-tournaments-dark.png"
+              data-light-src="assets/images/landing/preview-tournaments-light.png"
+              alt="نمای واقعی بخش تورنومنت و رتبه‌بندی گیم‌نت‌ها در Game District"
+              loading="lazy"
+              width="1440"
+              height="900"
+              referrerPolicy="no-referrer"
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         5. BEAUTIFUL INTERACTIVE PRICING & COMPARISON (#pricing)
+         =================================================================== -->
+    <section class="gd-section" id="pricing">
+      <div class="gd-container">
+        <div class="gd-section-header is-centered gd-reveal">
+          <span class="gd-eyebrow">پلن‌های اشتراک</span>
+          <h2 class="gd-section-title">چهار سطح اشتراک، متناسب با ابعاد و اهداف مجموعه شما</h2>
+          <p class="gd-section-desc">
+            تعرفه و شرایط هر پلن بر اساس تعداد تجهیزات و ساختار باشگاه شما در جلسه مشاوره نهایی می‌شود؛ بدون هزینه‌های پنهان و بدون پیچیدگی.
+          </p>
+        </div>
+
+        <!-- 4 Subscription Tiers (عادی، نقره‌ای، طلایی، ویژه) -->
+        <div class="gd-pricing-grid" id="gdPricingGrid">
+          <!-- Rendered from pure SUBSCRIPTION_TIERS source of truth -->
+        </div>
+
+        <!-- Interactive Feature Comparison Matrix -->
+        <div class="gd-compare-wrap gd-reveal">
+          <div class="gd-compare-head">
+            <h3 class="gd-compare-title">مقایسه دقیق امکانات پلن‌ها</h3>
+            <div class="gd-compare-tabs" role="tablist" aria-label="فیلتر دسته‌بندی مقایسه">
+              <button type="button" class="gd-compare-tab is-active" role="tab" aria-selected="true" data-compare-cat="all">همه امکانات</button>
+              <button type="button" class="gd-compare-tab" role="tab" aria-selected="false" data-compare-cat="operations">تجهیزات و سالن</button>
+              <button type="button" class="gd-compare-tab" role="tab" aria-selected="false" data-compare-cat="finance">بوفه و مالی</button>
+              <button type="button" class="gd-compare-tab" role="tab" aria-selected="false" data-compare-cat="network">سه‌بعدی و تورنومنت</button>
+            </div>
+          </div>
+
+          <div class="gd-compare-scroll">
+            <table class="gd-compare-table" id="gdCompareTable">
+              <thead>
+                <tr>
+                  <th>قابلیت</th>
+                  <th data-tier-col="standard">عادی</th>
+                  <th data-tier-col="silver">نقره‌ای</th>
+                  <th data-tier-col="gold">طلایی</th>
+                  <th data-tier-col="ultimate" class="col-featured">ویژه</th>
+                </tr>
+              </thead>
+              <tbody id="gdCompareBody">
+                <!-- Populated from pure COMPARISON_ROWS source of truth -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="gd-compare-footnote">
+            مبالغ اشتراک، دوره پرداخت و محدودیت‌های اختصاصی هر پلن به‌صورت جایگاه قابل ویرایش در نظر گرفته شده‌اند تا پیش از انتشار نهایی مطابق سیاست فروش مجموعه تکمیل شوند.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         6. FAQ ACCORDION (#faq)
+         =================================================================== -->
+    <section class="gd-section gd-section-alt" id="faq">
+      <div class="gd-container">
+        <div class="gd-section-header is-centered gd-reveal">
+          <span class="gd-eyebrow">سوالات متداول</span>
+          <h2 class="gd-section-title">پاسخ به پرسش‌های کلیدی مدیران گیم‌نت</h2>
+        </div>
+
+        <div class="gd-faq-list gd-reveal" id="gdFaqList">
+          <div class="gd-faq-item is-open" data-faq-id="faq-1">
+            <button type="button" class="gd-faq-trigger" aria-expanded="true">
+              <span>آیا Game District علاوه بر کنسول و PC از بیلیارد و فوتبال‌دستی هم پشتیبانی می‌کند؟</span>
+              <svg class="gd-faq-plus" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+                <path d="M10 4v12M4 10h12"></path>
+              </svg>
+            </button>
+            <div class="gd-faq-answer-wrap">
+              <div class="gd-faq-answer">
+                <p>بله. سیستم مدیریت میزها، طراح سه‌بعدی سالن و شبکه تورنومنت هر سه به‌طور کامل از بازی‌های ویدیویی (PS4، PS5 و PC) و فعالیت‌های فیزیکی مانند بیلیارد و فوتبال‌دستی پشتیبانی می‌کنند.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="gd-faq-item" data-faq-id="faq-2">
+            <button type="button" class="gd-faq-trigger" aria-expanded="false">
+              <span>شبکه تورنومنت و چالش مستقیم دقیقاً چگونه کار می‌کند؟</span>
+              <svg class="gd-faq-plus" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+                <path d="M10 4v12M4 10h12"></path>
+              </svg>
+            </button>
+            <div class="gd-faq-answer-wrap">
+              <div class="gd-faq-answer">
+                <p>مدیر هر گیم‌نت می‌تواند پس از برگزاری رقابت داخلی و انتخاب نماینده یا تیم برتر، فراخوان عمومی منتشر کند یا چالش مستقیم برای یک گیم‌نت مشخص بفرستد. پس از توافق روی تاریخ، میزبانی و جایزه، جدول مسابقه و امتیازدهی در رتبه‌بندی ثبت می‌شود.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="gd-faq-item" data-faq-id="faq-3">
+            <button type="button" class="gd-faq-trigger" aria-expanded="false">
+              <span>آیا مشتریان یا بازیکنان هم به این پنل دسترسی دارند؟</span>
+              <svg class="gd-faq-plus" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+                <path d="M10 4v12M4 10h12"></path>
+              </svg>
+            </button>
+            <div class="gd-faq-answer-wrap">
+              <div class="gd-faq-answer">
+                <p>خیر. Game District یک پلتفرم کاملاً مدیریتی است که اختصاصاً در اختیار مالک و مدیران گیم‌نت قرار می‌گیرد. ثبت بازیکنان، مدیریت شارژها، فاکتور بوفه و هماهنگی تورنومنت‌ها تماماً از طریق پنل مدیریت انجام می‌شود.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="gd-faq-item" data-faq-id="faq-4">
+            <button type="button" class="gd-faq-trigger" aria-expanded="false">
+              <span>تفاوت پلن ویژه با سایر پلن‌ها چیست و چگونه اشتراک تهیه کنیم؟</span>
+              <svg class="gd-faq-plus" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+                <path d="M10 4v12M4 10h12"></path>
+              </svg>
+            </button>
+            <div class="gd-faq-answer-wrap">
+              <div class="gd-faq-answer">
+                <p>پلن ویژه کامل‌ترین نسخه پلتفرم شامل طراح سه‌بعدی پیشرفته، دسترسی کامل به شبکه رقابت و رتبه‌بندی و پیکربندی اختصاصی متناسب با مجموعه شماست. برای دریافت مشاوره و برآورد دقیق، کافی است درخواست مشاوره را ثبت کنید.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         7. CINEMATIC CLOSING CTA BAND
+         =================================================================== -->
+    <section class="gd-cta-band">
+      <div class="gd-container">
+        <div class="gd-cta-stage gd-reveal-scale">
+          <h2>آماده‌اید مدیریت گیم‌نت خود را به سطحی بالاتر ببرید؟</h2>
+          <p>
+            هم‌اکنون محیط زنده پنل مدیریت Game District را بررسی کنید یا برای انتخاب پلن مناسب با ظرفیت باشگاهتان مشاوره بگیرید.
+          </p>
+          <div class="gd-hero-cta">
+            <button type="button" class="gd-btn gd-btn-primary gd-btn-lg" data-open-inquiry="ultimate">
+              <span>درخواست دمو و مشاوره</span>
+              <svg class="gd-btn-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12.5 8h-9M7 4.5 3.5 8 7 11.5"></path>
+              </svg>
+            </button>
+            <a href="/" class="gd-btn gd-btn-secondary gd-btn-lg">ورود به پنل مدیریت</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =====================================================================
+       8. QUIET FOOTER
+       ===================================================================== -->
+  <footer class="gd-footer">
+    <div class="gd-container gd-footer-inner">
+      <a href="/landing" class="gd-brand" aria-label="Game District">
+        <img src="src/assets/images/metrogame_emblem_1794207267121.jpg" alt="لوگوی Game District" class="gd-brand-mark" width="28" height="28" referrerPolicy="no-referrer">
+        <span class="gd-ltr">Game District</span>
+      </a>
+
+      <nav class="gd-footer-links" aria-label="پیوندهای فوتر">
+        <a href="#features">امکانات</a>
+        <a href="#studio-3d">طراحی سه‌بعدی</a>
+        <a href="#tournaments">شبکه تورنومنت</a>
+        <a href="#pricing">پلن‌ها</a>
+        <a href="#faq">سوالات متداول</a>
+        <a href="/">پنل مدیریت</a>
+      </nav>
+
+      <span class="gd-footer-copy">© ۱۴۰۵ Game District — پلتفرم مدیریت گیم‌نت</span>
+    </div>
+  </footer>
+
+  <!-- =====================================================================
+       9. CONSULTATION / DEMO INQUIRY MODAL
+       ===================================================================== -->
+  <div class="gd-modal-backdrop" id="gdInquiryModal" role="dialog" aria-modal="true" aria-labelledby="gdModalTitle" aria-hidden="true">
+    <div class="gd-modal">
+      <div class="gd-modal-head">
+        <div>
+          <h3 id="gdModalTitle">درخواست دمو و مشاوره اشتراک</h3>
+          <p>مشخصات مجموعه خود را ثبت کنید تا بر اساس ظرفیت سالن، پلن مناسب پیشنهاد شود.</p>
+        </div>
+        <button type="button" id="gdCloseModal" class="gd-icon-btn" aria-label="بستن پنجره">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <path d="M5 5l10 10M15 5 5 15"></path>
+          </svg>
+        </button>
+      </div>
+
+      <form id="gdInquiryForm" class="gd-form" novalidate>
+        <div class="gd-field">
+          <label for="gdFullName">نام و نام خانوادگی مدیر مجموعه</label>
+          <input type="text" id="gdFullName" name="fullName" class="gd-input" placeholder="مثلاً آرش محمدی" autocomplete="name" required>
+          <span class="gd-field-error" data-error-for="fullName" aria-live="polite"></span>
+        </div>
+
+        <div class="gd-field">
+          <label for="gdCenterName">نام گیم‌نت یا باشگاه</label>
+          <input type="text" id="gdCenterName" name="centerName" class="gd-input" placeholder="مثلاً گیم‌نت دیستریکت" required>
+          <span class="gd-field-error" data-error-for="centerName" aria-live="polite"></span>
+        </div>
+
+        <div class="gd-field">
+          <label for="gdPhone">شماره تماس</label>
+          <input type="tel" id="gdPhone" name="phone" class="gd-input gd-ltr" placeholder="09123456789" required>
+          <span class="gd-field-error" data-error-for="phone" aria-live="polite"></span>
+        </div>
+
+        <div class="gd-field">
+          <label for="gdTierSelect">پلن مورد نظر</label>
+          <select id="gdTierSelect" name="tierId" class="gd-input">
+            <option value="standard">پلن عادی</option>
+            <option value="silver">پلن نقره‌ای</option>
+            <option value="gold">پلن طلایی</option>
+            <option value="ultimate" selected>پلن ویژه (پیشنهاد پرچم‌دار)</option>
+          </select>
+        </div>
+
+        <div class="gd-field">
+          <label for="gdNotes">توضیحات مجموعه (اختیاری)</label>
+          <textarea id="gdNotes" name="notes" class="gd-input" rows="2" placeholder="تعداد تقریبی کنسول‌ها، سیستم‌های PC یا میزهای بیلیارد..."></textarea>
+        </div>
+
+        <button type="submit" class="gd-btn gd-btn-primary gd-btn-lg">ثبت درخواست مشاوره</button>
+      </form>
+
+      <div id="gdInquirySuccess" class="gd-modal-success" hidden>
+        <h4>درخواست شما با موفقیت ثبت شد</h4>
+        <p id="gdSuccessDetail"></p>
+        <button type="button" id="gdSuccessDoneBtn" class="gd-btn gd-btn-secondary">بازگشت به صفحه</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="JS/landing.js?v=20261128-4"></script>
+</body>
+</html>

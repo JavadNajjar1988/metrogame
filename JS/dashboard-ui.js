@@ -542,7 +542,7 @@ async function switchSpaSection(targetKey, options = {}) {
       } else if (sectionKey === 'tables' && typeof window.renderTablesWorkspace === 'function') {
         window.renderTablesWorkspace({ forceFresh: true });
       } else if (sectionKey === 'my-gamenet') {
-        import('./gamenet-3d.js?v=20261124-7')
+        import('./gamenet-3d.js?v=20261126-8')
           .then((mod) => {
             if (currentSpaSectionKey === 'my-gamenet' && typeof mod.mountMyGamenet3D === 'function') {
               mod.mountMyGamenet3D();

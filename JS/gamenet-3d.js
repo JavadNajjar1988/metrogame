@@ -16,6 +16,9 @@ import {
   FLOOR_FINISHES,
   WALL_FINISHES,
   LIGHTING_MOODS,
+  LED_COLORS,
+  ITEM_TINT_SWATCHES,
+  BILLIARD_FELT_VARIANTS,
   CATALOG_CATEGORIES,
   ITEM_CATALOG,
   getCatalogItem,
@@ -28,8 +31,9 @@ import {
   normalizeRotationDeg,
   moveItemToPoint,
   resolveGridRenderStyle,
+  resolveLedColorHex,
   formatStationMiniTimer,
-} from './gamenet-3d-engine.mjs?v=20261124-7';
+} from './gamenet-3d-engine.mjs?v=20261126-8';
 import {
   buildRoomShell,
   buildFurnitureModel,
@@ -37,7 +41,7 @@ import {
   buildSelectionRing,
   drawStationTimerCanvas,
   disposeObject3D,
-} from './gamenet-3d-models.js?v=20261124-7';
+} from './gamenet-3d-models.js?v=20261126-8';
 import { toPersianDigits } from './dashboard-metrics.mjs?v=20261109-3';
 
 // Pre-allocated scratch vectors (zero GC in render/interaction loops)
@@ -137,7 +141,7 @@ const builder = {
   timerTickId: null,
   gridSnap: true,
   renderMode: 'solid', // 'solid' | 'wireframe'
-  activeTab: 'catalog', // 'catalog' | 'room' | 'selected'
+  activeTab: 'catalog', // 'catalog' | 'style' | 'room' | 'selected'
   activeCategory: 'all',
   dockCollapsed: false,
   selectedId: null,
@@ -147,10 +151,84 @@ const builder = {
   placingValid: true,
   draggingId: null,
   dragStartSnapshot: null,
+  dragHistoryPushed: false,
   pointerDownPos: null,
   hasUnsavedChanges: false,
   lastMoveRaycast: 0,
+  undoStack: [],
+  redoStack: [],
+  lastHistoryKey: '',
+  lastHistoryAt: 0,
 };
+
+const MAX_HISTORY_STEPS = 30;
+
+function cloneLayoutSnapshot(layout) {
+  return {
+    version: layout.version || 2,
+    room: { ...layout.room },
+    items: (layout.items || []).map((it) => ({ ...it })),
+  };
+}
+
+function pushHistorySnapshot(coalesceKey = '') {
+  const now = Date.now();
+  if (coalesceKey && coalesceKey === builder.lastHistoryKey && now - builder.lastHistoryAt < 750) {
+    builder.lastHistoryAt = now;
+    return;
+  }
+  builder.undoStack.push(cloneLayoutSnapshot(builder.layout));
+  if (builder.undoStack.length > MAX_HISTORY_STEPS) {
+    builder.undoStack.shift();
+  }
+  builder.redoStack = [];
+  builder.lastHistoryKey = coalesceKey;
+  builder.lastHistoryAt = now;
+  updateUndoRedoButtons();
+}
+
+function updateUndoRedoButtons() {
+  const undoBtn = document.getElementById('mg3dUndoBtn');
+  const redoBtn = document.getElementById('mg3dRedoBtn');
+  if (undoBtn) undoBtn.disabled = builder.undoStack.length === 0;
+  if (redoBtn) redoBtn.disabled = builder.redoStack.length === 0;
+}
+
+function undoLayout() {
+  if (builder.undoStack.length === 0) return;
+  clearPlacementMode();
+  builder.redoStack.push(cloneLayoutSnapshot(builder.layout));
+  const prev = builder.undoStack.pop();
+  builder.layout = sanitizeLayout(prev);
+  if (builder.selectedId && !builder.layout.items.some((i) => i.id === builder.selectedId)) {
+    builder.selectedId = null;
+    if (builder.activeTab === 'selected') builder.activeTab = 'catalog';
+  }
+  builder.lastHistoryKey = '';
+  rebuildRoom3D();
+  rebuildItems3D();
+  markDirty();
+  syncDockUI();
+  showBuilderToast('تغییر قبلی بازگردانی شد.');
+}
+
+function redoLayout() {
+  if (builder.redoStack.length === 0) return;
+  clearPlacementMode();
+  builder.undoStack.push(cloneLayoutSnapshot(builder.layout));
+  const next = builder.redoStack.pop();
+  builder.layout = sanitizeLayout(next);
+  if (builder.selectedId && !builder.layout.items.some((i) => i.id === builder.selectedId)) {
+    builder.selectedId = null;
+    if (builder.activeTab === 'selected') builder.activeTab = 'catalog';
+  }
+  builder.lastHistoryKey = '';
+  rebuildRoom3D();
+  rebuildItems3D();
+  markDirty();
+  syncDockUI();
+  showBuilderToast('تغییر مجدداً اعمال شد.');
+}
 
 function afterDraw(cb) {
   if (!builder.renderer) return;
@@ -260,27 +338,45 @@ function applyLightingMood() {
   if (!builder.scene || !builder.keyLight || !builder.hemiLight || !builder.rimLight) return;
   const mood = builder.layout.room.mood;
   const lightTheme = isLightTheme();
-  const accentHex = getActiveAccentHex();
+  const accentHex = resolveLedColorHex(builder.layout.room.ledColor, getActiveAccentHex());
 
   let bgHex = lightTheme ? 0xe9eef6 : 0x0b0f1a;
   if (mood === 'daylight') {
     bgHex = lightTheme ? 0xeef3fa : 0x182133;
     builder.keyLight.color.setHex(0xfff6e8);
-    builder.keyLight.intensity = 2.0;
+    builder.keyLight.intensity = 2.05;
     builder.hemiLight.color.setHex(0xdbeafe);
     builder.hemiLight.groundColor.setHex(0x475569);
-    builder.hemiLight.intensity = 1.05;
+    builder.hemiLight.intensity = 1.08;
     builder.rimLight.color.setHex(0x93c5fd);
     builder.rimLight.intensity = 0.55;
   } else if (mood === 'lounge') {
     bgHex = lightTheme ? 0xe8e5e0 : 0x0e0b14;
     builder.keyLight.color.setHex(0xffd29d);
-    builder.keyLight.intensity = 1.45;
+    builder.keyLight.intensity = 1.42;
     builder.hemiLight.color.setHex(0x94a3b8);
     builder.hemiLight.groundColor.setHex(0x271d18);
     builder.hemiLight.intensity = 0.65;
     builder.rimLight.color.set(accentHex);
-    builder.rimLight.intensity = 0.8;
+    builder.rimLight.intensity = 0.85;
+  } else if (mood === 'neon-club') {
+    bgHex = lightTheme ? 0xe4e9f7 : 0x070a14;
+    builder.keyLight.color.setHex(0xe0f2fe);
+    builder.keyLight.intensity = 1.38;
+    builder.hemiLight.color.setHex(0x38bdf8);
+    builder.hemiLight.groundColor.setHex(0x1e1b4b);
+    builder.hemiLight.intensity = 0.72;
+    builder.rimLight.color.set(accentHex);
+    builder.rimLight.intensity = 1.15;
+  } else if (mood === 'warm-club') {
+    bgHex = lightTheme ? 0xefe9df : 0x120e0b;
+    builder.keyLight.color.setHex(0xffdfaa);
+    builder.keyLight.intensity = 1.72;
+    builder.hemiLight.color.setHex(0xfde68a);
+    builder.hemiLight.groundColor.setHex(0x312115);
+    builder.hemiLight.intensity = 0.68;
+    builder.rimLight.color.setHex(0xf59e0b);
+    builder.rimLight.intensity = 0.78;
   } else {
     // 'esports' balanced studio look
     bgHex = lightTheme ? 0xe6ecf5 : 0x0a0d16;
@@ -290,7 +386,7 @@ function applyLightingMood() {
     builder.hemiLight.groundColor.setHex(0x1e293b);
     builder.hemiLight.intensity = 0.78;
     builder.rimLight.color.set(accentHex);
-    builder.rimLight.intensity = 0.75;
+    builder.rimLight.intensity = 0.82;
   }
 
   builder.scene.background = new THREE.Color(bgHex);
@@ -694,6 +790,7 @@ function placeItemAtGhost(keepPlacing = false) {
       showBuilderToast('این فضا با وسیله دیگری هم‌پوشانی دارد؛ نقطه آزاد را انتخاب کنید.');
       return;
     }
+    pushHistorySnapshot();
     Object.assign(item, movedRes.item);
     const mesh = builder.itemMeshMap.get(item.id);
     if (mesh) {
@@ -710,6 +807,7 @@ function placeItemAtGhost(keepPlacing = false) {
   }
 
   const newId = `it-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+  const spec = getCatalogItem(builder.placingType);
   const newItem = clampItemToRoom(
     {
       id: newId,
@@ -718,16 +816,17 @@ function placeItemAtGhost(keepPlacing = false) {
       z: builder.placementGhost.position.z,
       rotation: builder.placingRotation,
       tableNumber: assignNextStationNumber(builder.layout.items, builder.placingType),
+      ...(spec?.defaultVariant ? { variant: spec.defaultVariant } : {}),
     },
     builder.layout.room,
     step
   );
 
+  pushHistorySnapshot();
   builder.layout.items.push(newItem);
   rebuildSingleItem3D(newItem);
   markDirty();
 
-  const spec = getCatalogItem(newItem.type);
   showBuilderToast(`${spec ? spec.name : 'آیتم'} روی نقشه قرار گرفت.`);
 
   if (!keepPlacing) {
@@ -767,6 +866,7 @@ function rotateSelectedItem(deltaDeg = 90) {
     showBuilderToast('فضای کافی برای چرخش در این نقطه نیست؛ ابتدا کمی جابه‌جا کنید.');
     return;
   }
+  pushHistorySnapshot();
   Object.assign(item, rotated);
   const mesh = builder.itemMeshMap.get(item.id);
   if (mesh) {
@@ -802,6 +902,8 @@ function duplicateSelectedItem() {
         z: src.z + dz,
         rotation: src.rotation,
         tableNumber: assignNextStationNumber(builder.layout.items, src.type),
+        ...(src.variant ? { variant: src.variant } : {}),
+        ...(src.tint ? { tint: src.tint } : {}),
       },
       builder.layout.room,
       step
@@ -817,6 +919,7 @@ function duplicateSelectedItem() {
     return;
   }
 
+  pushHistorySnapshot();
   builder.layout.items.push(placed);
   rebuildSingleItem3D(placed);
   markDirty();
@@ -828,6 +931,7 @@ function deleteSelectedItem() {
   if (!builder.selectedId) return;
   const idx = builder.layout.items.findIndex((i) => i.id === builder.selectedId);
   if (idx === -1) return;
+  pushHistorySnapshot();
   const [removed] = builder.layout.items.splice(idx, 1);
 
   const mesh = builder.itemMeshMap.get(removed.id);
@@ -835,6 +939,7 @@ function deleteSelectedItem() {
     builder.itemsContainer.remove(mesh);
     disposeObject3D(mesh);
     builder.itemMeshMap.delete(removed.id);
+    builder.stationTimerSprites.delete(removed.id);
     builder.pickProxies = builder.pickProxies.filter((p) => p.userData.pickItemId !== removed.id);
   }
   builder.selectedId = null;
@@ -845,7 +950,25 @@ function deleteSelectedItem() {
   showBuilderToast('آیتم از سالن حذف شد.');
 }
 
-function updateRoomConfig(patch) {
+function updateSelectedItemStyle(patch) {
+  const item = builder.layout.items.find((i) => i.id === builder.selectedId);
+  if (!item) return;
+  pushHistorySnapshot();
+  if ('variant' in patch) {
+    if (patch.variant) item.variant = patch.variant;
+    else delete item.variant;
+  }
+  if ('tint' in patch) {
+    if (patch.tint && patch.tint !== 'default') item.tint = patch.tint;
+    else delete item.tint;
+  }
+  rebuildSingleItem3D(item);
+  markDirty();
+  syncDockUI();
+}
+
+function updateRoomConfig(patch, coalesceKey = '') {
+  pushHistorySnapshot(coalesceKey);
   builder.layout.room = sanitizeLayout({
     room: { ...builder.layout.room, ...patch },
     items: [],
@@ -862,8 +985,10 @@ function updateRoomConfig(patch) {
 }
 
 function applyStarterPreset(preset) {
+  pushHistorySnapshot();
   clearPlacementMode();
   builder.selectedId = null;
+  if (builder.activeTab === 'selected') builder.activeTab = 'room';
   builder.layout = createStarterLayout(preset);
   rebuildRoom3D();
   rebuildItems3D();
@@ -871,7 +996,8 @@ function applyStarterPreset(preset) {
   markDirty();
   syncDockUI();
   const labels = {
-    'pro-arena': 'چیدمان سالن استاندارد بارگذاری شد.',
+    'pro-arena': 'چیدمان سالن پرچمدار بارگذاری شد.',
+    'billiard-club': 'چیدمان باشگاه بیلیارد VIP بارگذاری شد.',
     compact: 'چیدمان سالن جمع‌وجور بارگذاری شد.',
     empty: 'سالن خالی آماده طراحی اختصاصی شماست.',
   };
@@ -996,6 +1122,7 @@ function bindCanvasPointerEvents(canvas) {
         if (item && builder.raycaster.ray.intersectPlane(_groundPlane, _hitPoint)) {
           builder.draggingId = hitId;
           builder.dragStartSnapshot = { x: item.x, z: item.z };
+          builder.dragHistoryPushed = false;
           _dragOffset.set(item.x - _hitPoint.x, 0, item.z - _hitPoint.z);
           if (builder.controls) builder.controls.enabled = false;
           canvas.style.cursor = 'grabbing';
@@ -1036,6 +1163,13 @@ function bindCanvasPointerEvents(canvas) {
         );
         const mesh = builder.itemMeshMap.get(item.id);
         if (moved.ok && moved.item && mesh) {
+          if (
+            !builder.dragHistoryPushed &&
+            (Math.abs(moved.item.x - item.x) > 0.01 || Math.abs(moved.item.z - item.z) > 0.01)
+          ) {
+            pushHistorySnapshot();
+            builder.dragHistoryPushed = true;
+          }
           item.x = moved.item.x;
           item.z = moved.item.z;
           mesh.position.set(item.x, 0, item.z);
@@ -1056,6 +1190,7 @@ function bindCanvasPointerEvents(canvas) {
     if (builder.draggingId) {
       builder.draggingId = null;
       builder.dragStartSnapshot = null;
+      builder.dragHistoryPushed = false;
       if (builder.controls) builder.controls.enabled = true;
       canvas.style.cursor = 'grab';
       syncDockUI();
@@ -1193,17 +1328,19 @@ function syncDockUI() {
   });
   renderCatalogCards();
 
+  updateUndoRedoButtons();
+
   // Room controls values
-  const { width, depth, height, floor, wall, mood, cutawayWalls } = builder.layout.room;
+  const { width, depth, height, floor, wall, ledColor, mood, cutawayWalls } = builder.layout.room;
   const wVal = document.getElementById('mg3dRoomWVal');
   const dVal = document.getElementById('mg3dRoomDVal');
   const hVal = document.getElementById('mg3dRoomHVal');
   const wInput = document.getElementById('mg3dRoomWInput');
   const dInput = document.getElementById('mg3dRoomDInput');
   const hInput = document.getElementById('mg3dRoomHInput');
-  if (wVal) wVal.textContent = `${toPersianDigits(width)} متر`;
-  if (dVal) dVal.textContent = `${toPersianDigits(depth)} متر`;
-  if (hVal) hVal.textContent = `${toPersianDigits(height)} متر`;
+  if (wVal) wVal.textContent = `${toPersianDigits(width)} م`;
+  if (dVal) dVal.textContent = `${toPersianDigits(depth)} م`;
+  if (hVal) hVal.textContent = `${toPersianDigits(height)} م`;
   if (wInput) wInput.value = String(width);
   if (dInput) dInput.value = String(depth);
   if (hInput) hInput.value = String(height);
@@ -1214,18 +1351,21 @@ function syncDockUI() {
   document.querySelectorAll('[data-3d-wall]').forEach((btn) => {
     btn.classList.toggle('is-active', btn.getAttribute('data-3d-wall') === wall);
   });
+  document.querySelectorAll('[data-3d-led]').forEach((btn) => {
+    btn.classList.toggle('is-active', btn.getAttribute('data-3d-led') === (ledColor || 'auto'));
+  });
   document.querySelectorAll('[data-3d-mood]').forEach((btn) => {
     btn.classList.toggle('is-active', btn.getAttribute('data-3d-mood') === mood);
   });
 
   const cutawayBtn = document.getElementById('mg3dCutawayBtn');
   if (cutawayBtn) {
-    cutawayBtn.textContent = cutawayWalls ? 'نمای باز (۲ دیوار)' : 'نمای بسته (۴ دیوار)';
+    cutawayBtn.textContent = cutawayWalls ? '۲ دیوار' : '۴ دیوار';
     cutawayBtn.classList.toggle('is-active', cutawayWalls);
   }
   const snapBtn = document.getElementById('mg3dSnapBtn');
   if (snapBtn) {
-    snapBtn.textContent = builder.gridSnap ? 'تراز روی شبکه: روشن' : 'تراز روی شبکه: آزاد';
+    snapBtn.textContent = builder.gridSnap ? 'شبکه: روشن' : 'شبکه: آزاد';
     snapBtn.classList.toggle('is-active', builder.gridSnap);
   }
 
@@ -1237,13 +1377,32 @@ function syncDockUI() {
     const coordsEl = document.getElementById('mg3dSelCoords');
     const tableWrap = document.getElementById('mg3dSelTableWrap');
     const tableInput = document.getElementById('mg3dSelTableInput');
+    const variantWrap = document.getElementById('mg3dSelVariantWrap');
+    const tintWrap = document.getElementById('mg3dSelTintWrap');
+
     if (nameEl) nameEl.textContent = spec ? spec.name : selItem.type;
     if (coordsEl) {
-      coordsEl.textContent = `موقعیت (${toPersianDigits(itemCoords(selItem.x))}، ${toPersianDigits(itemCoords(selItem.z))}) · زاویه ${toPersianDigits(selItem.rotation)}° · بکشید یا دکمه جابه‌جایی را بزنید`;
+      coordsEl.textContent = `(${toPersianDigits(itemCoords(selItem.x))}، ${toPersianDigits(itemCoords(selItem.z))}) · ${toPersianDigits(selItem.rotation)}°`;
     }
     if (tableWrap) tableWrap.hidden = !(spec && spec.isStation);
     if (tableInput && document.activeElement !== tableInput) {
       tableInput.value = selItem.tableNumber || '';
+    }
+
+    const isBilliard = Boolean(spec && spec.isBilliard);
+    if (variantWrap) {
+      variantWrap.hidden = !isBilliard;
+      const activeVariant = selItem.variant || spec?.defaultVariant || 'classic-green';
+      variantWrap.querySelectorAll('[data-3d-item-variant]').forEach((btn) => {
+        btn.classList.toggle('is-active', btn.getAttribute('data-3d-item-variant') === activeVariant);
+      });
+    }
+    if (tintWrap) {
+      tintWrap.hidden = isBilliard;
+      const activeTint = selItem.tint || 'default';
+      tintWrap.querySelectorAll('[data-3d-item-tint]').forEach((btn) => {
+        btn.classList.toggle('is-active', btn.getAttribute('data-3d-item-tint') === activeTint);
+      });
     }
   }
 }
@@ -1251,15 +1410,36 @@ function syncDockUI() {
 function buildHudMarkup(shell) {
   const floorSwatches = FLOOR_FINISHES.map(
     (f) => `<button type="button" class="mg3d-swatch-btn" data-3d-floor="${f.id}" title="${f.label}">
-      <span class="mg3d-swatch-dot" style="background:${f.color}"></span>
+      <span class="mg3d-swatch-dot" style="background:linear-gradient(135deg, ${f.color}, ${f.secondary || f.color})"></span>
       <span>${f.label}</span>
     </button>`
   ).join('');
 
   const wallSwatches = WALL_FINISHES.map(
     (w) => `<button type="button" class="mg3d-swatch-btn" data-3d-wall="${w.id}" title="${w.label}">
-      <span class="mg3d-swatch-dot" style="background:${w.color}"></span>
+      <span class="mg3d-swatch-dot mg3d-wallpaper-dot" style="background:${w.swatchBg || w.color}"></span>
       <span>${w.label}</span>
+    </button>`
+  ).join('');
+
+  const ledSwatches = LED_COLORS.map(
+    (l) => `<button type="button" class="mg3d-swatch-btn" data-3d-led="${l.id}" title="${l.label}">
+      <span class="mg3d-led-dot" style="background:${l.hex || 'conic-gradient(#7c3aed, #06b6d4, #10b981, #f59e0b, #7c3aed)'}"></span>
+      <span>${l.label}</span>
+    </button>`
+  ).join('');
+
+  const billiardVariantBtns = BILLIARD_FELT_VARIANTS.map(
+    (v) => `<button type="button" class="mg3d-swatch-btn" data-3d-item-variant="${v.id}" title="${v.label}">
+      <span class="mg3d-swatch-dot" style="background:linear-gradient(135deg, ${v.feltHex} 60%, ${v.railHex} 60%)"></span>
+      <span>${v.label}</span>
+    </button>`
+  ).join('');
+
+  const itemTintBtns = ITEM_TINT_SWATCHES.map(
+    (t) => `<button type="button" class="mg3d-swatch-btn" data-3d-item-tint="${t.id}" title="${t.label}">
+      <span class="mg3d-led-dot" style="background:${t.hex || 'linear-gradient(135deg, #64748b, #cbd5e1)'}"></span>
+      <span>${t.label}</span>
     </button>`
   ).join('');
 
@@ -1274,7 +1454,7 @@ function buildHudMarkup(shell) {
   shell.innerHTML = `
     <div id="mg3dCanvasHost" class="mg3d-canvas-host" aria-label="فضای سه‌بعدی طراحی گیم‌نت"></div>
 
-    <!-- Minimal Top Spec & Camera Bar (zero mid-viewport occlusion) -->
+    <!-- Compact Top Spec, Camera & History Bar (zero mid-viewport occlusion) -->
     <div class="mg3d-top-hud">
       <div class="mg3d-spec-block">
         <strong class="mg3d-spec-title">طراح سه‌بعدی گیم‌نت</strong>
@@ -1284,8 +1464,22 @@ function buildHudMarkup(shell) {
         <div class="mg3d-cam-group" role="group" aria-label="زاویه دوربین سه‌بعدی">
           <button type="button" class="mg3d-cam-btn is-active" data-3d-cam="hero">سه‌بعدی</button>
           <button type="button" class="mg3d-cam-btn" data-3d-cam="iso">ایزومتریک</button>
-          <button type="button" class="mg3d-cam-btn" data-3d-cam="top">نمای بالا</button>
-          <button type="button" class="mg3d-cam-btn" data-3d-cam="inside">داخل سالن</button>
+          <button type="button" class="mg3d-cam-btn" data-3d-cam="top">بالا</button>
+          <button type="button" class="mg3d-cam-btn" data-3d-cam="inside">داخل</button>
+        </div>
+        <div class="mg3d-undo-group" role="group" aria-label="بازگردانی تغییرات">
+          <button type="button" id="mg3dUndoBtn" class="mg3d-icon-btn" title="بازگشت به مرحله قبل (Ctrl+Z)" aria-label="بازگشت به مرحله قبل" disabled>
+            <svg viewBox="0 0 18 18" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5.5 6.5H11a3.5 3.5 0 1 1 0 7H7.5"/>
+              <path d="M8 4 5.5 6.5 8 9"/>
+            </svg>
+          </button>
+          <button type="button" id="mg3dRedoBtn" class="mg3d-icon-btn" title="انجام مجدد (Ctrl+Y)" aria-label="انجام مجدد" disabled>
+            <svg viewBox="0 0 18 18" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12.5 6.5H7a3.5 3.5 0 1 0 0 7h3.5"/>
+              <path d="M10 4l2.5 2.5L10 9"/>
+            </svg>
+          </button>
         </div>
         <button
           type="button"
@@ -1293,10 +1487,10 @@ function buildHudMarkup(shell) {
           class="mg3d-view-toggle-btn"
           aria-pressed="false"
           aria-label="تغییر حالت نمایش شبکه سه‌بعدی بین توپر و سیمی"
-          title="تغییر نمایش شبکه سه‌بعدی بین حالت توپر و سیمی (W)"
+          title="تغییر نمایش بین حالت توپر و سیمی (W)"
           data-render-mode="solid"
         >
-          <svg class="mg3d-view-toggle-icon" viewBox="0 0 18 18" width="15" height="15" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="mg3d-view-toggle-icon" viewBox="0 0 18 18" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <path d="M9 1.75 15.25 5.25v7.5L9 16.25l-6.25-3.5v-7.5L9 1.75Z"/>
             <path d="M9 9.25 15.25 5.25M9 9.25 2.75 5.25M9 9.25v7"/>
           </svg>
@@ -1306,7 +1500,7 @@ function buildHudMarkup(shell) {
       </div>
     </div>
 
-    <!-- Placement Mode Prompt (visible only when actively placing an item) -->
+    <!-- Placement Mode Prompt (visible only when actively placing/moving an item) -->
     <div id="mg3dPlaceBanner" class="mg3d-place-banner" hidden>
       <span id="mg3dPlaceBannerText">حالت چیدمان فعال است</span>
       <div class="mg3d-place-banner-actions">
@@ -1315,68 +1509,82 @@ function buildHudMarkup(shell) {
       </div>
     </div>
 
-    <!-- Unified Collapsible Bottom Control Dock (Zero Side-Panel Clutter) -->
+    <!-- Compact Collapsible Bottom Studio Dock (leaves >= 75% of 3D hall unobstructed) -->
     <div id="mg3dBottomDock" class="mg3d-bottom-dock">
       <button type="button" id="mg3dDockToggle" class="mg3d-dock-toggle" aria-expanded="true">▾ مخفی کردن ابزارها</button>
       <div class="mg3d-dock-surface">
         <div class="mg3d-dock-tabs" role="tablist" aria-label="ابزارهای طراح سه‌بعدی">
-          <button type="button" role="tab" class="mg3d-tab-btn is-active" data-3d-tab="catalog" aria-selected="true">چیدمان میز و سیستم‌ها</button>
-          <button type="button" role="tab" class="mg3d-tab-btn" data-3d-tab="room" aria-selected="false">تنظیمات محیط و ابعاد</button>
-          <button type="button" role="tab" id="mg3dTabSelectedBtn" class="mg3d-tab-btn" data-3d-tab="selected" aria-selected="false" hidden>ویرایش وسیله انتخاب‌شده</button>
+          <button type="button" role="tab" class="mg3d-tab-btn is-active" data-3d-tab="catalog" aria-selected="true">چیدمان و وسایل</button>
+          <button type="button" role="tab" class="mg3d-tab-btn" data-3d-tab="style" aria-selected="false">کاغذ دیواری و فضا</button>
+          <button type="button" role="tab" class="mg3d-tab-btn" data-3d-tab="room" aria-selected="false">ابعاد و نور</button>
+          <button type="button" role="tab" id="mg3dTabSelectedBtn" class="mg3d-tab-btn" data-3d-tab="selected" aria-selected="false" hidden>ویرایش قطعه</button>
         </div>
 
-        <!-- TAB 1: Catalog & Furniture Placement -->
+        <!-- TAB 1: Equipment, Billiards & Decor Catalog -->
         <div class="mg3d-dock-pane" data-3d-pane="catalog">
           <div class="mg3d-cat-bar">${catBtns}</div>
           <div id="mg3dCatalogList" class="mg3d-catalog-strip"></div>
         </div>
 
-        <!-- TAB 2: Room Dimensions, Floor/Wall Finishes, Lighting & Presets -->
+        <!-- TAB 2: Wallpapers, Floor Finishes & Wall LED Color -->
+        <div class="mg3d-dock-pane" data-3d-pane="style" hidden>
+          <div class="mg3d-style-rows">
+            <div class="mg3d-style-row">
+              <span class="mg3d-row-label">کاغذ دیواری</span>
+              <div class="mg3d-style-scroll">${wallSwatches}</div>
+            </div>
+            <div class="mg3d-style-row">
+              <span class="mg3d-row-label">کف‌پوش سالن</span>
+              <div class="mg3d-style-scroll">${floorSwatches}</div>
+            </div>
+            <div class="mg3d-style-row">
+              <span class="mg3d-row-label">نور LED دیوار</span>
+              <div class="mg3d-style-scroll">${ledSwatches}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: Dimensions, Lighting Mood & Starter Presets -->
         <div class="mg3d-dock-pane" data-3d-pane="room" hidden>
-          <div class="mg3d-room-grid">
-            <div class="mg3d-room-col">
-              <div class="mg3d-slider-row">
-                <label for="mg3dRoomWInput">عرض سالن</label>
-                <span id="mg3dRoomWVal">۱۴ متر</span>
-                <input type="range" id="mg3dRoomWInput" min="6" max="24" step="1" value="14">
-              </div>
-              <div class="mg3d-slider-row">
-                <label for="mg3dRoomDInput">طول سالن</label>
-                <span id="mg3dRoomDVal">۱۰ متر</span>
-                <input type="range" id="mg3dRoomDInput" min="6" max="20" step="1" value="10">
-              </div>
-              <div class="mg3d-slider-row">
-                <label for="mg3dRoomHInput">ارتفاع سقف</label>
-                <span id="mg3dRoomHVal">۳.۵ متر</span>
-                <input type="range" id="mg3dRoomHInput" min="2.8" max="4.5" step="0.1" value="3.5">
-              </div>
+          <div class="mg3d-room-sliders-row">
+            <div class="mg3d-slider-inline">
+              <label for="mg3dRoomWInput">عرض</label>
+              <input type="range" id="mg3dRoomWInput" min="6" max="24" step="1" value="14">
+              <span id="mg3dRoomWVal">۱۴ م</span>
             </div>
-
-            <div class="mg3d-room-col">
-              <div class="mg3d-sub-label">کف‌پوش سالن</div>
-              <div class="mg3d-swatch-row">${floorSwatches}</div>
-              <div class="mg3d-sub-label">جنس دیوارها</div>
-              <div class="mg3d-swatch-row">${wallSwatches}</div>
+            <div class="mg3d-slider-inline">
+              <label for="mg3dRoomDInput">طول</label>
+              <input type="range" id="mg3dRoomDInput" min="6" max="20" step="1" value="10">
+              <span id="mg3dRoomDVal">۱۰ م</span>
             </div>
-
-            <div class="mg3d-room-col">
-              <div class="mg3d-sub-label">نورپردازی و نمایش</div>
+            <div class="mg3d-slider-inline">
+              <label for="mg3dRoomHInput">سقف</label>
+              <input type="range" id="mg3dRoomHInput" min="2.8" max="4.5" step="0.1" value="3.5">
+              <span id="mg3dRoomHVal">۳.۵ م</span>
+            </div>
+          </div>
+          <div class="mg3d-room-controls-row">
+            <div class="mg3d-ctrl-group">
+              <span class="mg3d-row-label">نور:</span>
               <div class="mg3d-btn-row">${moodBtns}</div>
+            </div>
+            <div class="mg3d-ctrl-group">
+              <button type="button" id="mg3dCutawayBtn" class="mg3d-seg-btn is-active">۲ دیوار</button>
+              <button type="button" id="mg3dSnapBtn" class="mg3d-seg-btn is-active">شبکه: روشن</button>
+            </div>
+            <div class="mg3d-ctrl-group">
+              <span class="mg3d-row-label">قالب:</span>
               <div class="mg3d-btn-row">
-                <button type="button" id="mg3dCutawayBtn" class="mg3d-seg-btn is-active">نمای باز (۲ دیوار)</button>
-                <button type="button" id="mg3dSnapBtn" class="mg3d-seg-btn is-active">تراز روی شبکه: روشن</button>
-              </div>
-              <div class="mg3d-sub-label">قالب‌های آماده</div>
-              <div class="mg3d-btn-row">
-                <button type="button" class="mg3d-seg-btn" data-3d-preset="pro-arena">سالن استاندارد</button>
-                <button type="button" class="mg3d-seg-btn" data-3d-preset="compact">سالن جمع‌وجور</button>
-                <button type="button" class="mg3d-seg-btn is-danger-ghost" data-3d-preset="empty">سالن خالی</button>
+                <button type="button" class="mg3d-seg-btn" data-3d-preset="pro-arena">سالن پرچمدار</button>
+                <button type="button" class="mg3d-seg-btn" data-3d-preset="billiard-club">باشگاه بیلیارد</button>
+                <button type="button" class="mg3d-seg-btn" data-3d-preset="compact">جمع‌وجور</button>
+                <button type="button" class="mg3d-seg-btn is-danger-ghost" data-3d-preset="empty">خالی</button>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- TAB 3: Selected Item Inspector -->
+        <!-- TAB 4: Selected Item Inspector + Live Material/Felt Customizer -->
         <div class="mg3d-dock-pane" data-3d-pane="selected" hidden>
           <div class="mg3d-selected-bar">
             <div class="mg3d-selected-info">
@@ -1384,16 +1592,24 @@ function buildHudMarkup(shell) {
               <span id="mg3dSelCoords">—</span>
             </div>
             <div id="mg3dSelTableWrap" class="mg3d-sel-table-field">
-              <label for="mg3dSelTableInput">شماره میز:</label>
-              <input type="text" id="mg3dSelTableInput" class="mg3d-table-input" inputmode="numeric" maxlength="6" placeholder="مثلاً ۱">
+              <label for="mg3dSelTableInput">میز:</label>
+              <input type="text" id="mg3dSelTableInput" class="mg3d-table-input" inputmode="numeric" maxlength="6" placeholder="۱">
             </div>
             <div class="mg3d-selected-actions">
               <button type="button" id="mg3dSelMoveBtn" class="mg3d-action-btn is-accent">جابه‌جایی (M)</button>
-              <button type="button" id="mg3dSelRotateBtn" class="mg3d-action-btn">چرخش ۹۰° (R)</button>
+              <button type="button" id="mg3dSelRotateBtn" class="mg3d-action-btn">چرخش (R)</button>
               <button type="button" id="mg3dSelDupBtn" class="mg3d-action-btn">تکثیر (D)</button>
               <button type="button" id="mg3dSelDelBtn" class="mg3d-action-btn is-danger">حذف</button>
               <button type="button" id="mg3dSelCloseBtn" class="mg3d-action-btn">بستن</button>
             </div>
+          </div>
+          <div id="mg3dSelVariantWrap" class="mg3d-style-row" hidden>
+            <span class="mg3d-row-label">طرح میز بیلیارد</span>
+            <div class="mg3d-style-scroll">${billiardVariantBtns}</div>
+          </div>
+          <div id="mg3dSelTintWrap" class="mg3d-style-row" hidden>
+            <span class="mg3d-row-label">رنگ و تم قطعه</span>
+            <div class="mg3d-style-scroll">${itemTintBtns}</div>
           </div>
         </div>
       </div>
@@ -1449,6 +1665,12 @@ function bindHudEvents(shell) {
       return;
     }
 
+    const ledBtn = e.target.closest('[data-3d-led]');
+    if (ledBtn) {
+      updateRoomConfig({ ledColor: ledBtn.getAttribute('data-3d-led') });
+      return;
+    }
+
     const moodBtn = e.target.closest('[data-3d-mood]');
     if (moodBtn) {
       updateRoomConfig({ mood: moodBtn.getAttribute('data-3d-mood') });
@@ -1460,12 +1682,27 @@ function bindHudEvents(shell) {
       applyStarterPreset(presetBtn.getAttribute('data-3d-preset'));
       return;
     }
+
+    const variantBtn = e.target.closest('[data-3d-item-variant]');
+    if (variantBtn) {
+      updateSelectedItemStyle({ variant: variantBtn.getAttribute('data-3d-item-variant') });
+      return;
+    }
+
+    const tintBtn = e.target.closest('[data-3d-item-tint]');
+    if (tintBtn) {
+      updateSelectedItemStyle({ tint: tintBtn.getAttribute('data-3d-item-tint') });
+      return;
+    }
   });
 
   document.getElementById('mg3dDockToggle')?.addEventListener('click', () => {
     builder.dockCollapsed = !builder.dockCollapsed;
     syncDockUI();
   });
+
+  document.getElementById('mg3dUndoBtn')?.addEventListener('click', () => undoLayout());
+  document.getElementById('mg3dRedoBtn')?.addEventListener('click', () => redoLayout());
 
   document.getElementById('mg3dSaveBtn')?.addEventListener('click', () => {
     saveLayoutToServer();
@@ -1489,13 +1726,13 @@ function bindHudEvents(shell) {
   });
 
   document.getElementById('mg3dRoomWInput')?.addEventListener('input', (e) => {
-    updateRoomConfig({ width: Number(e.target.value) });
+    updateRoomConfig({ width: Number(e.target.value) }, 'room-w');
   });
   document.getElementById('mg3dRoomDInput')?.addEventListener('input', (e) => {
-    updateRoomConfig({ depth: Number(e.target.value) });
+    updateRoomConfig({ depth: Number(e.target.value) }, 'room-d');
   });
   document.getElementById('mg3dRoomHInput')?.addEventListener('input', (e) => {
-    updateRoomConfig({ height: Number(e.target.value) });
+    updateRoomConfig({ height: Number(e.target.value) }, 'room-h');
   });
 
   document.getElementById('mg3dSelMoveBtn')?.addEventListener('click', () => {
@@ -1509,6 +1746,7 @@ function bindHudEvents(shell) {
   document.getElementById('mg3dSelTableInput')?.addEventListener('input', (e) => {
     const item = builder.layout.items.find((i) => i.id === builder.selectedId);
     if (!item) return;
+    pushHistorySnapshot(`table-${item.id}`);
     const normalized = String(e.target.value || '')
       .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 1776))
       .trim()
@@ -1526,6 +1764,18 @@ function bindHudEvents(shell) {
       if (!pane || pane.hasAttribute('hidden')) return;
       const tag = (e.target?.tagName || '').toLowerCase();
       if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'z' || e.key === 'Z')) {
+        e.preventDefault();
+        if (e.shiftKey) redoLayout();
+        else undoLayout();
+        return;
+      }
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || e.key === 'Y')) {
+        e.preventDefault();
+        redoLayout();
+        return;
+      }
 
       if (e.key === 'Escape') {
         if (builder.placingType) clearPlacementMode();

@@ -403,7 +403,7 @@ window.renderTablesWorkspace = function renderTablesWorkspace() {
     fetchSharedJson('./gamenet_layout.json', null),
     fetchSharedJson('./customer_data.json', {}),
     fetchSharedJson('./loyalty_config.json', { milestoneHours: 24, discountPercent: 20 }),
-    import('./gamenet-3d-engine.mjs?v=20261124-7').catch(() => null),
+    import('./gamenet-3d-engine.mjs?v=20261126-8').catch(() => null),
     import('./loyalty-engine.mjs?v=20261124-7').catch(() => null),
   ])
     .then(function ([

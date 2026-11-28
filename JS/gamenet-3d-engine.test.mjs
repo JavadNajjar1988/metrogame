@@ -2,6 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   ITEM_CATALOG,
+  WALL_FINISHES,
+  FLOOR_FINISHES,
+  LIGHTING_MOODS,
+  LED_COLORS,
+  BILLIARD_FELT_VARIANTS,
+  getBilliardFeltVariant,
+  resolveLedColorHex,
+  resolveItemTintHex,
   getRotatedFootprint,
   clampItemToRoom,
   checkItemCollision,
@@ -29,6 +37,10 @@ test('getRotatedFootprint swaps width and depth cleanly on 90 and 270 degree rot
   assert.equal(rotated90.depth, 2.6);
   assert.equal(rotated180.width, 2.6);
   assert.equal(rotated270.width, 1.45);
+
+  const snooker = getRotatedFootprint('billiard-snooker', 90);
+  assert.equal(snooker.width, 1.75);
+  assert.equal(snooker.depth, 3.2);
 });
 
 test('clampItemToRoom keeps furniture strictly within room walls and snaps to grid', () => {
@@ -57,10 +69,15 @@ test('checkItemCollision detects overlaps and respects ignoreId and spacing', ()
   assert.equal(checkItemCollision({ id: 'new', type: 'gaming-chair', x: 0, z: 0.8, rotation: 0 }, existing), false);
 });
 
-test('starter layouts are collision-free, valid, and summarize stats accurately', () => {
-  assert.ok(ITEM_CATALOG.length >= 12);
+test('expanded catalogs include wallpapers, multiple billiard styles, decorations, and collision-free starter layouts', () => {
+  assert.ok(ITEM_CATALOG.length >= 24);
+  assert.ok(WALL_FINISHES.length >= 8);
+  assert.ok(FLOOR_FINISHES.length >= 6);
+  assert.ok(LIGHTING_MOODS.length >= 5);
+  assert.ok(LED_COLORS.length >= 6);
+  assert.equal(BILLIARD_FELT_VARIANTS.length, 4);
 
-  for (const preset of ['pro-arena', 'compact', 'empty']) {
+  for (const preset of ['pro-arena', 'billiard-club', 'compact', 'empty']) {
     const layout = createStarterLayout(preset);
     const sanitized = sanitizeLayout(layout);
     assert.equal(sanitized.items.length, layout.items.length);
@@ -80,26 +97,50 @@ test('starter layouts are collision-free, valid, and summarize stats accurately'
   assert.equal(stats.stations, 8);
   assert.equal(assignNextStationNumber(pro.items, 'pc-station'), '9');
   assert.equal(assignNextStationNumber(pro.items, 'plant-pot'), '');
+
+  const club = createStarterLayout('billiard-club');
+  const clubStations = extract3DStations(club);
+  assert.equal(clubStations.length, 4);
+  assert.equal(clubStations.filter((s) => s.consoleType === 'pool-table').length, 3);
 });
 
-test('sanitizeLayout falls back gracefully on invalid input and drops unknown item types', () => {
+test('sanitizeLayout preserves valid wallpapers, LED colors, billiard variants, and item tints while rejecting invalid values', () => {
   const fallback = sanitizeLayout(null);
   assert.equal(fallback.room.width, 14);
   assert.ok(fallback.items.length > 0);
 
   const cleaned = sanitizeLayout({
-    room: { width: 999, depth: 2, floor: 'invalid-floor', wall: 'ivory', mood: 'daylight' },
+    room: {
+      width: 999,
+      depth: 2,
+      floor: 'invalid-floor',
+      wall: 'hex-cyber',
+      mood: 'neon-club',
+      ledColor: 'emerald',
+    },
     items: [
-      { id: 'ok', type: 'ps5-lounge', x: 0, z: 0, rotation: 90, tableNumber: '12' },
+      { id: 'ok', type: 'billiard-pro', x: 0, z: 0, rotation: 90, tableNumber: '12', variant: 'vip-burgundy' },
+      { id: 'dec', type: 'neon-sign-stand', x: 2, z: 0, rotation: 0, tint: 'cyan' },
+      { id: 'bad-tint', type: 'billiard-vip', x: -2, z: 0, rotation: 0, variant: 'nope', tint: 'hack' },
       { id: 'bad', type: 'nonexistent-item', x: 0, z: 0, rotation: 0 },
     ],
   });
   assert.equal(cleaned.room.width, 24);
   assert.equal(cleaned.room.depth, 6);
   assert.equal(cleaned.room.floor, 'slate-tile');
-  assert.equal(cleaned.room.wall, 'ivory');
-  assert.equal(cleaned.items.length, 1);
-  assert.equal(cleaned.items[0].tableNumber, '12');
+  assert.equal(cleaned.room.wall, 'hex-cyber');
+  assert.equal(cleaned.room.mood, 'neon-club');
+  assert.equal(cleaned.room.ledColor, 'emerald');
+  assert.equal(cleaned.items.length, 3);
+  assert.equal(cleaned.items[0].variant, 'vip-burgundy');
+  assert.equal(cleaned.items[1].tint, 'cyan');
+  assert.equal(cleaned.items[2].variant, 'vip-burgundy');
+  assert.equal(cleaned.items[2].tint, undefined);
+
+  assert.equal(getBilliardFeltVariant('luxury-black', 'billiard-table').feltHex, '#18181b');
+  assert.equal(resolveLedColorHex('cyan', '#7c3aed'), '#06b6d4');
+  assert.equal(resolveLedColorHex('auto', '#7c3aed'), '#7c3aed');
+  assert.equal(resolveItemTintHex('crimson', '#7c3aed'), '#e11d48');
 });
 
 test('moveItemToPoint snaps to 3D grid, clamps to room walls, and rejects collisions', () => {
@@ -108,19 +149,16 @@ test('moveItemToPoint snaps to 3D grid, clamps to room walls, and rejects collis
   const stationB = { id: 'st-2', type: 'pc-station', x: 2, z: 2, rotation: 0, tableNumber: '2' };
   const items = [stationA, stationB];
 
-  // Valid move snaps to 0.5m grid
   const moved = moveItemToPoint(stationA, 0.24, -0.76, room, items, 0.5);
   assert.equal(moved.ok, true);
   assert.equal(moved.collides, false);
   assert.equal(moved.item.x, 0);
   assert.equal(moved.item.z, -1);
 
-  // Move onto stationB is rejected
   const blocked = moveItemToPoint(stationA, 2.1, 2.0, room, items, 0.5);
   assert.equal(blocked.ok, false);
   assert.equal(blocked.collides, true);
 
-  // Move far past wall clamps safely inside room bounds
   const clamped = moveItemToPoint(stationA, -50, -50, room, items, 0.5);
   assert.equal(clamped.ok, true);
   assert.ok(clamped.item.x >= -5.2 && clamped.item.z >= -4.5);
@@ -152,7 +190,7 @@ test('resolveGridRenderStyle switches cleanly between solid and wireframe 3D gri
   assert.equal(fallback.wireframe, false);
 });
 
-test('extract3DStations and mergeTablesWith3DStations map PC, consoles, billiard and foosball into Tables list', () => {
+test('extract3DStations and mergeTablesWith3DStations map PC, consoles, billiard variants and foosball into Tables list', () => {
   const layout = createStarterLayout('pro-arena');
   const stations = extract3DStations(layout);
   assert.equal(stations.length, 8);
@@ -189,6 +227,3 @@ test('formatStationMiniTimer computes accurate idle, waiting, running, warning, 
   const preExpired = formatStationMiniTimer({ tableNumber: '5', prePayment: 'pre-payment' }, null, 9990, 10000);
   assert.equal(preExpired.status, 'expired');
 });
-
-
-

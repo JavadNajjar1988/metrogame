@@ -60,7 +60,13 @@ const server = createServer(async (request, response) => {
   let file;
   try {
     const path = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
-    file = path === '/' ? 'index.html' : path.slice(1);
+    if (path === '/') {
+      file = 'index.html';
+    } else if (path === '/landing' || path === '/landing/') {
+      file = 'landing.html';
+    } else {
+      file = path.slice(1);
+    }
   } catch {
     return json(response, 400, { error: 'نشانی معتبر نیست.' });
   }
