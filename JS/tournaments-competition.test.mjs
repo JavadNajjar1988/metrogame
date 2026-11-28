@@ -21,9 +21,9 @@ import {
 
 test('leaderboard points follow exact scoring rules (+100 win, +50 runner-up, +20 match win, 0 loss) without double-counting', () => {
   // Single completed 4-team tournament:
-  // Semi 1: Game District beats Nexus Club (GD +20, NX 0)
+  // Semi 1: مترو گیم beats Nexus Club (GD +20, NX 0)
   // Semi 2: Arena Plus beats Cyberland (AP +20, CL 0)
-  // Final: Game District beats Arena Plus (GD +20 + 100 = 140; AP +0 + 50 = 70)
+  // Final: مترو گیم beats Arena Plus (GD +20 + 100 = 140; AP +0 + 50 = 70)
   const tournaments = [
     {
       id: 'trn-test-1',
@@ -35,7 +35,7 @@ test('leaderboard points follow exact scoring rules (+100 win, +50 runner-up, +2
       createdAt: '2026-11-20T10:00:00Z',
       bracket: {
         completedAt: '2026-11-24T20:00:00Z',
-        champion: { id: 'p1', playerName: 'رضا', gamenetId: 'game-district', gamenetName: 'Game District' },
+        champion: { id: 'p1', playerName: 'رضا', gamenetId: 'game-district', gamenetName: 'مترو گیم' },
         runnerUp: { id: 'p3', playerName: 'کیان', gamenetId: 'arena-plus', gamenetName: 'آرنا پلاس' },
         rounds: [
           {
@@ -44,7 +44,7 @@ test('leaderboard points follow exact scoring rules (+100 win, +50 runner-up, +2
               {
                 id: 'r0-m0',
                 status: 'done',
-                playerA: { id: 'p1', playerName: 'رضا', gamenetId: 'game-district', gamenetName: 'Game District' },
+                playerA: { id: 'p1', playerName: 'رضا', gamenetId: 'game-district', gamenetName: 'مترو گیم' },
                 playerB: { id: 'p2', playerName: 'سامان', gamenetId: 'nexus-club', gamenetName: 'Nexus Club' },
                 winnerId: 'p1',
               },
@@ -80,7 +80,7 @@ test('leaderboard points follow exact scoring rules (+100 win, +50 runner-up, +2
               {
                 id: 'r1-m0',
                 status: 'done',
-                playerA: { id: 'p1', playerName: 'رضا', gamenetId: 'game-district', gamenetName: 'Game District' },
+                playerA: { id: 'p1', playerName: 'رضا', gamenetId: 'game-district', gamenetName: 'مترو گیم' },
                 playerB: { id: 'p3', playerName: 'کیان', gamenetId: 'arena-plus', gamenetName: 'آرنا پلاس' },
                 winnerId: 'p1',
               },
@@ -98,7 +98,7 @@ test('leaderboard points follow exact scoring rules (+100 win, +50 runner-up, +2
       status: 'completed',
       bracket: {
         completedAt: '2026-11-25T10:00:00Z',
-        champion: { id: 'i1', playerName: 'داخلی', gamenetId: 'game-district', gamenetName: 'Game District' },
+        champion: { id: 'i1', playerName: 'داخلی', gamenetId: 'game-district', gamenetName: 'مترو گیم' },
         rounds: [
           {
             index: 0,
@@ -106,8 +106,8 @@ test('leaderboard points follow exact scoring rules (+100 win, +50 runner-up, +2
               {
                 id: 'r0-m0',
                 status: 'done',
-                playerA: { id: 'i1', playerName: 'A', gamenetId: 'game-district', gamenetName: 'Game District' },
-                playerB: { id: 'i2', playerName: 'B', gamenetId: 'game-district', gamenetName: 'Game District' },
+                playerA: { id: 'i1', playerName: 'A', gamenetId: 'game-district', gamenetName: 'مترو گیم' },
+                playerB: { id: 'i2', playerName: 'B', gamenetId: 'game-district', gamenetName: 'مترو گیم' },
                 winnerId: 'i1',
               },
             ],
@@ -152,7 +152,7 @@ test('leaderboard filters by category, specific game, and monthly vs all-time wi
       status: 'completed',
       bracket: {
         completedAt: '2026-11-25T15:00:00Z',
-        champion: { id: 'a', playerName: 'رضا', gamenetId: 'game-district', gamenetName: 'Game District' },
+        champion: { id: 'a', playerName: 'رضا', gamenetId: 'game-district', gamenetName: 'مترو گیم' },
         runnerUp: { id: 'b', playerName: 'علی', gamenetId: 'nexus-club', gamenetName: 'Nexus Club' },
         rounds: [
           {
@@ -161,7 +161,7 @@ test('leaderboard filters by category, specific game, and monthly vs all-time wi
               {
                 id: 'r0-m0',
                 status: 'done',
-                playerA: { id: 'a', playerName: 'رضا', gamenetId: 'game-district', gamenetName: 'Game District' },
+                playerA: { id: 'a', playerName: 'رضا', gamenetId: 'game-district', gamenetName: 'مترو گیم' },
                 playerB: { id: 'b', playerName: 'علی', gamenetId: 'nexus-club', gamenetName: 'Nexus Club' },
                 winnerId: 'a',
               },
@@ -179,7 +179,7 @@ test('leaderboard filters by category, specific game, and monthly vs all-time wi
       bracket: {
         completedAt: '2026-09-10T18:00:00Z', // Older than 30 days
         champion: { id: 'c1', playerName: 'Wolves', gamenetId: 'cyberland-isf', gamenetName: 'سایبرلند' },
-        runnerUp: { id: 'c2', playerName: 'Alpha', gamenetId: 'game-district', gamenetName: 'Game District' },
+        runnerUp: { id: 'c2', playerName: 'Alpha', gamenetId: 'game-district', gamenetName: 'مترو گیم' },
         rounds: [
           {
             index: 0,
@@ -188,7 +188,7 @@ test('leaderboard filters by category, specific game, and monthly vs all-time wi
                 id: 'r0-m0',
                 status: 'done',
                 playerA: { id: 'c1', playerName: 'Wolves', gamenetId: 'cyberland-isf', gamenetName: 'سایبرلند' },
-                playerB: { id: 'c2', playerName: 'Alpha', gamenetId: 'game-district', gamenetName: 'Game District' },
+                playerB: { id: 'c2', playerName: 'Alpha', gamenetId: 'game-district', gamenetName: 'مترو گیم' },
                 winnerId: 'c1',
               },
             ],
@@ -203,7 +203,7 @@ test('leaderboard filters by category, specific game, and monthly vs all-time wi
     {
       id: 'dch-1',
       challengerGamenetId: 'game-district',
-      challengerGamenetName: 'Game District',
+      challengerGamenetName: 'مترو گیم',
       targetGamenetId: 'nexus-club',
       targetGamenetName: 'Nexus Club',
       category: 'billiards',
@@ -252,7 +252,7 @@ test('direct challenge lifecycle enforces validation, counter-proposal diffs, mu
     teamName: 'رضا حیدری',
     proposedDate: 'پنجشنبه ۶ آذر ۱۴۰۵',
     proposedTime: '۲۰:۰۰',
-    venue: 'سالن بیلیارد Game District',
+    venue: 'سالن بیلیارد مترو گیم',
     prizeType: 'vip_session',
     prizeSummary: '۲ ساعت سشن VIP رایگان',
   });

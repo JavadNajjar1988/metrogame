@@ -437,7 +437,7 @@
       el.innerHTML = `
         <div class="trn-empty-state">
           <h3>چالشی با این فیلتر پیدا نشد</h3>
-          <p>فیلتر دسته‌بندی یا جستجو را تغییر دهید یا یک چالش عمومی جدید از طرف Game District منتشر کنید.</p>
+          <p>فیلتر دسته‌بندی یا جستجو را تغییر دهید یا یک چالش عمومی جدید از طرف مترو گیم منتشر کنید.</p>
           <button type="button" class="btn mg-btn mg-btn-primary" data-trn-action="open-challenge">انتشار چالش جدید</button>
         </div>
       `;
@@ -578,7 +578,7 @@
         el.innerHTML = `
           <div class="trn-empty-state trn-glass-surface">
             <h3>مسابقه داخلی فعالی در این دسته وجود ندارد</h3>
-            <p>یک مسابقه داخلی بین مشتریان ثبت‌نام‌شده سالن برگزار کنید تا برنده آن نماینده رسمی Game District شود.</p>
+            <p>یک مسابقه داخلی بین مشتریان ثبت‌نام‌شده سالن برگزار کنید تا برنده آن نماینده رسمی مترو گیم شود.</p>
             <button type="button" class="btn mg-btn mg-btn-primary" data-trn-action="open-create-internal">ساخت مسابقه داخلی جدید</button>
           </div>
         `;
@@ -860,7 +860,7 @@
     if (titleHead) {
       titleHead.textContent =
         defaultScope === 'internal'
-          ? 'ساخت مسابقه داخلی گیم‌نت Game District'
+          ? 'ساخت مسابقه داخلی گیم‌نت مترو گیم'
           : 'ایجاد تورنومنت بین‌گیم‌نتی در شبکه';
     }
     const errEl = document.getElementById('trnCreateError');
@@ -941,7 +941,7 @@
     if (titleEl) {
       titleEl.textContent = asPartner
         ? `ثبت پذیرش گیم‌نت همکار در «${ch.gameName}»`
-        : `پذیرش چالش «${ch.gameName}» توسط Game District`;
+        : `پذیرش چالش «${ch.gameName}» توسط مترو گیم`;
     }
 
     if (asPartner) {
@@ -1196,7 +1196,7 @@
         if (membersEl) membersEl.value = (matchTeam.members || []).map((m) => m.name).join('، ');
         if (onlineEl && !isPhysical) onlineEl.value = matchTeam.onlineTag || 'Steam:GD_Squad';
       } else if (teamNameEl) {
-        teamNameEl.value = 'نماینده Game District';
+        teamNameEl.value = 'نماینده مترو گیم';
       }
     } else {
       if (teamNameEl) teamNameEl.value = dc.targetRoster?.teamName || `نماینده ${dc.targetGamenetName}`;
@@ -1520,7 +1520,7 @@
           });
           switchTab('teams');
           renderAll();
-          showToast('برنده مسابقه با موفقیت به تیم‌های نماینده Game District اضافه شد.');
+          showToast('برنده مسابقه با موفقیت به تیم‌های نماینده مترو گیم اضافه شد.');
         } catch (err) {
           showToast(err.message);
         }

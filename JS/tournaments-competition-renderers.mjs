@@ -223,7 +223,7 @@ export function renderGamingCenterLeaderboard(board, filters, fmt) {
 }
 
 /**
- * Renders an elegant Head-to-Head Direct Challenge Card ("Game District VS Nexus Club")
+ * Renders an elegant Head-to-Head Direct Challenge Card ("مترو گیم VS Nexus Club")
  * including term negotiation diffs, mutual agreement status, and contextual admin actions.
  */
 export function renderDirectChallengeCard(dc, fmt) {

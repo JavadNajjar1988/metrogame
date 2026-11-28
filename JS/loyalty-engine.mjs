@@ -1,5 +1,5 @@
 /**
- * Pure Customer Loyalty & 24-Hour Playtime Reward Engine for Game District.
+ * Pure Customer Loyalty & 24-Hour Playtime Reward Engine for مترو گیم.
  * Zero DOM dependencies — fully unit-tested via node:test.
  */
 

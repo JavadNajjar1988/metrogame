@@ -633,9 +633,9 @@ function buildPrintableReceiptInnerHtml() {
       <!-- Receipt Official Header -->
       <header class="mg-receipt-header">
         <div class="mg-receipt-brand">
-          <img src="src/assets/images/metrogame_emblem_1794207267121.jpg" alt="لوگوی Game District" class="mg-receipt-logo" onerror="this.style.display='none'">
+          <img src="src/assets/images/metrogame_emblem_1794207267121.jpg" alt="لوگوی مترو گیم" class="mg-receipt-logo" onerror="this.style.display='none'">
           <div>
-            <h1 class="mg-receipt-club-name">باشگاه بازی و گیم‌نت Game District</h1>
+            <h1 class="mg-receipt-club-name">باشگاه بازی و گیم‌نت مترو گیم</h1>
             <p class="mg-receipt-doc-subtitle">خلاصه دقیق وضعیت و صورت‌حساب رسمی تسویه میز</p>
           </div>
         </div>
@@ -767,8 +767,8 @@ function buildPrintableReceiptInnerHtml() {
       </section>
 
       <footer class="mg-receipt-footer">
-        <span>با تشکر از انتخاب باشگاه بازی Game District</span>
-        <span>سامانه یکپارچه مدیریت گیم‌نت Game District</span>
+        <span>با تشکر از انتخاب باشگاه بازی مترو گیم</span>
+        <span>سامانه یکپارچه مدیریت گیم‌نت مترو گیم</span>
       </footer>
     </div>
   `;
@@ -778,13 +778,13 @@ function getStandaloneReceiptDocumentHtml() {
   const receiptBody = buildPrintableReceiptInnerHtml();
   const tableTitle = invoiceState.tableNumber
     ? `میز ${toFaDigits(invoiceState.tableNumber)}`
-    : 'Game District';
+    : 'مترو گیم';
 
   return `<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="utf-8">
-  <title>صورت‌حساب رسمی ${tableTitle} | گیم‌نت Game District</title>
+  <title>صورت‌حساب رسمی ${tableTitle} | گیم‌نت مترو گیم</title>
   <style>
     @page {
       size: A4 portrait;

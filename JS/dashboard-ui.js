@@ -141,7 +141,7 @@ const SPA_SECTIONS = {
     key: 'overview',
     navMatch: '#overview',
     title: 'پیشخوان',
-    docTitle: 'Game District | پیشخوان مدیریت میزها و کنسول‌ها',
+    docTitle: 'مترو گیم | پیشخوان مدیریت میزها و کنسول‌ها',
     tip: 'مانیتورینگ زنده ظرفیت ایستگاه‌ها، نمودارهای دایره‌ای درآمد، وضعیت تایمرها و خلاصه میزهای فعال',
     url: 'index.html#overview',
   },
@@ -149,7 +149,7 @@ const SPA_SECTIONS = {
     key: 'tables',
     navMatch: '#tables-section',
     title: 'مدیریت میزها',
-    docTitle: 'Game District | مدیریت میزها',
+    docTitle: 'مترو گیم | مدیریت میزها',
     tip: 'ثبت و راه‌اندازی میز جدید، شارژ مجدد سشن‌ها، ثبت سفارش بوفه و مدیریت تایمرها',
     url: 'index.html#tables-section',
   },
@@ -157,7 +157,7 @@ const SPA_SECTIONS = {
     key: 'my-gamenet',
     navMatch: '#my-gamenet',
     title: 'گیم نت من',
-    docTitle: 'Game District | طراح سه‌بعدی گیم‌نت من',
+    docTitle: 'مترو گیم | طراح سه‌بعدی گیم‌نت من',
     tip: 'طراحی سه‌بعدی محیط سالن، ابعاد و نورپردازی و چیدمان میزها، صندلی‌ها و سیستم‌های بازی',
     url: 'index.html#my-gamenet',
   },
@@ -168,7 +168,7 @@ const SPA_SECTIONS = {
     renderFn: 'renderTournamentsPage',
     navMatch: 'tournaments.html',
     title: 'تورنومنت',
-    docTitle: 'Game District | شبکه رقابتی، چالش مستقیم و رتبه‌بندی گیم‌نت‌ها',
+    docTitle: 'مترو گیم | شبکه رقابتی، چالش مستقیم و رتبه‌بندی گیم‌نت‌ها',
     tip: 'سرویس اختصاصی رقابت آنلاین و حضوری بین گیم‌نت‌ها، چالش مستقیم و جدول رتبه‌بندی رسمی',
     url: 'tournaments.html',
   },
@@ -179,7 +179,7 @@ const SPA_SECTIONS = {
     renderFn: 'renderConsolePage',
     navMatch: 'console.html',
     title: 'مدیریت کنسول‌ها',
-    docTitle: 'Game District | مدیریت کنسول‌ها',
+    docTitle: 'مترو گیم | مدیریت کنسول‌ها',
     tip: 'تنظیم تعرفه ساعتی تک‌دسته و چنددسته برای کنسول‌ها، سیستم‌ها و میزهای بازی',
     url: 'console.html',
   },
@@ -190,7 +190,7 @@ const SPA_SECTIONS = {
     renderFn: 'renderBuffetPage',
     navMatch: 'buffet.html',
     title: 'مدیریت بوفه و خوراکی‌ها',
-    docTitle: 'Game District | مدیریت بوفه و خوراکی‌ها',
+    docTitle: 'مترو گیم | مدیریت بوفه و خوراکی‌ها',
     tip: 'ثبت محصولات خوراکی، نوشیدنی، قیمت واحد و کنترل لحظه‌ای موجودی انبار بوفه',
     url: 'buffet.html',
   },
@@ -201,7 +201,7 @@ const SPA_SECTIONS = {
     renderFn: 'renderAccountsPage',
     navMatch: 'acounts.html',
     title: 'باشگاه مشتریان',
-    docTitle: 'Game District | باشگاه مشتریان',
+    docTitle: 'مترو گیم | باشگاه مشتریان',
     tip: 'ثبت اشتراک اعضای باشگاه، کد اشتراک، شماره تماس و مدیریت حساب‌های مشتریان',
     url: 'acounts.html',
   },
@@ -212,7 +212,7 @@ const SPA_SECTIONS = {
     renderFn: 'renderDebtorsPage',
     navMatch: 'Debtors.html',
     title: 'مدیریت حساب بدهکاران',
-    docTitle: 'Game District | حساب بدهکاران',
+    docTitle: 'مترو گیم | حساب بدهکاران',
     tip: 'پیگیری مانده بدهی دفتری مشتریان، ثبت بدهکار جدید و تسویه حساب سریع',
     url: 'Debtors.html',
   },
@@ -223,7 +223,7 @@ const SPA_SECTIONS = {
     renderFn: 'renderIncomePage',
     navMatch: 'income.html',
     title: 'گزارش جامع درآمد و تحلیل مالی',
-    docTitle: 'Game District | گزارش جامع درآمد و تحلیل مالی',
+    docTitle: 'مترو گیم | گزارش جامع درآمد و تحلیل مالی',
     tip: 'تحلیل جامع درآمد کنسول‌ها، فروش بوفه، نمودار روش‌های پرداخت و فیلتر بازه زمانی',
     url: 'income.html',
   },
@@ -542,7 +542,7 @@ async function switchSpaSection(targetKey, options = {}) {
       } else if (sectionKey === 'tables' && typeof window.renderTablesWorkspace === 'function') {
         window.renderTablesWorkspace({ forceFresh: true });
       } else if (sectionKey === 'my-gamenet') {
-        import('./gamenet-3d.js?v=20261126-8')
+        import('./gamenet-3d.js?v=20261127-1')
           .then((mod) => {
             if (currentSpaSectionKey === 'my-gamenet' && typeof mod.mountMyGamenet3D === 'function') {
               mod.mountMyGamenet3D();
@@ -2809,7 +2809,7 @@ const GAMING_ACCENT_PALETTES = [
   {
     id: 'violet',
     title: 'بنفش نئون',
-    desc: 'ترکیب بنفش رویال و نیلی الکتریک (پوسته پیش‌فرض Game District)',
+    desc: 'ترکیب بنفش رویال و نیلی الکتریک (پوسته پیش‌فرض مترو گیم)',
     swatch: '#7C3AED',
     primary: '#7C3AED',
     secondary: '#C4B5FD',

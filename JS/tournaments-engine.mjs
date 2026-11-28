@@ -5,9 +5,9 @@
  */
 
 export const LOCAL_GAMENET_ID = 'game-district';
-export const LOCAL_GAMENET_NAME = 'Game District';
+export const LOCAL_GAMENET_NAME = 'مترو گیم';
 export const LOCAL_GAMENET_CITY = 'تهران';
-export const LOCAL_GAMENET_VENUE = 'سالن اصلی گیم‌نت Game District — تهران، سعادت‌آباد';
+export const LOCAL_GAMENET_VENUE = 'سالن اصلی گیم‌نت مترو گیم — تهران، سعادت‌آباد';
 
 export const TOURNAMENT_IMAGES = {
   hero: 'src/assets/images/tournament_arena_hero_1795601704002.jpg',
@@ -214,7 +214,7 @@ export const CHALLENGE_STATUS_META = {
 export const NETWORK_PARTNER_GAMENETS = [
   {
     id: 'game-district',
-    name: 'Game District',
+    name: 'مترو گیم',
     city: 'تهران',
     venue: LOCAL_GAMENET_VENUE,
     isLocal: true,
@@ -1475,12 +1475,12 @@ export function createSeedTeams() {
         { name: 'سهیل مرادی', customerId: null, role: 'Support' },
         { name: 'کیانوش رضایی', customerId: null, role: 'Lurker' },
       ],
-      notes: 'تیم منتخب ۵ نفره Game District برنده لیگ داخلی آبان ۱۴۰۵',
+      notes: 'تیم منتخب ۵ نفره مترو گیم برنده لیگ داخلی آبان ۱۴۰۵',
       createdAt: '2026-11-20T10:00:00.000Z',
     },
     {
       id: 'team-gd-foosball-duo',
-      name: 'تیم رعد Game District',
+      name: 'تیم رعد مترو گیم',
       category: 'foosball',
       mode: 'physical',
       gameId: 'foosball-2v2',
@@ -1510,7 +1510,7 @@ export function createSeedTeams() {
       gamenetName: LOCAL_GAMENET_NAME,
       city: LOCAL_GAMENET_CITY,
       members: [{ name: 'رضا حیدری', customerId: null, role: 'بازیکن انفرادی ایت‌بال' }],
-      notes: 'قهرمان دوره پاییزه بیلیارد داخلی Game District',
+      notes: 'قهرمان دوره پاییزه بیلیارد داخلی مترو گیم',
       createdAt: '2026-11-22T18:00:00.000Z',
     },
   ];
@@ -1522,7 +1522,7 @@ export function createSeedChallenges() {
       id: 'chl-gd-cs2-alpha',
       title: 'چالش ۵ به ۵ Counter-Strike 2 — تیم Alpha',
       statement:
-        'گیم‌نت Game District با تیم ۵ نفره منتخب خود (تیم Alpha) آماده رقابت در Counter-Strike 2 است. سایر گیم‌نت‌ها برای پذیرش این چالش دعوت می‌شوند.',
+        'گیم‌نت مترو گیم با تیم ۵ نفره منتخب خود (تیم Alpha) آماده رقابت در Counter-Strike 2 است. سایر گیم‌نت‌ها برای پذیرش این چالش دعوت می‌شوند.',
       category: 'video_games',
       mode: 'online',
       gameId: 'cs2',
@@ -1736,11 +1736,11 @@ export function createSeedChallenges() {
 export function createSeedTournaments() {
   // 1. Active Inter-Center Online Tournament (EA Sports FC 25)
   const fcParticipants = [
-    { id: 'p-fc-1', playerName: 'آرش کاظمی', onlineId: 'Arash_GD99', gamenetId: 'game-district', gamenetName: 'Game District', city: 'تهران', members: [{ name: 'آرش کاظمی' }] },
+    { id: 'p-fc-1', playerName: 'آرش کاظمی', onlineId: 'Arash_GD99', gamenetId: 'game-district', gamenetName: 'مترو گیم', city: 'تهران', members: [{ name: 'آرش کاظمی' }] },
     { id: 'p-fc-2', playerName: 'کیان مرادی', onlineId: 'KianPro_AP', gamenetId: 'arena-plus', gamenetName: 'آرنا پلاس', city: 'تهران', members: [{ name: 'کیان مرادی' }] },
     { id: 'p-fc-3', playerName: 'سهیل رضایی', onlineId: 'Soheil_CL', gamenetId: 'cyberland-isf', gamenetName: 'سایبرلند', city: 'اصفهان', members: [{ name: 'سهیل رضایی' }] },
     { id: 'p-fc-4', playerName: 'پویا شریفی', onlineId: 'Pouya_NZ', gamenetId: 'neonzone-mhd', gamenetName: 'نئون‌زون', city: 'مشهد', members: [{ name: 'پویا شریفی' }] },
-    { id: 'p-fc-5', playerName: 'امیرحسین نادری', onlineId: 'Amir_GD07', gamenetId: 'game-district', gamenetName: 'Game District', city: 'تهران', members: [{ name: 'امیرحسین نادری' }] },
+    { id: 'p-fc-5', playerName: 'امیرحسین نادری', onlineId: 'Amir_GD07', gamenetId: 'game-district', gamenetName: 'مترو گیم', city: 'تهران', members: [{ name: 'امیرحسین نادری' }] },
     { id: 'p-fc-6', playerName: 'مانی کریمی', onlineId: 'Mani_Pars', gamenetId: 'parsian-shz', gamenetName: 'گیم‌کلاب پارسیان', city: 'شیراز', members: [{ name: 'مانی کریمی' }] },
     { id: 'p-fc-7', playerName: 'نیما اکبری', onlineId: 'Nima_Pix', gamenetId: 'pixel-tbz', gamenetName: 'پیکسل استیشن', city: 'تبریز', members: [{ name: 'نیما اکبری' }] },
     { id: 'p-fc-8', playerName: 'شایان بهرامی', onlineId: 'Shayan_AP2', gamenetId: 'arena-plus', gamenetName: 'آرنا پلاس', city: 'تهران', members: [{ name: 'شایان بهرامی' }] },
@@ -1753,7 +1753,7 @@ export function createSeedTournaments() {
 
   // 2. Active Inter-Center Physical Billiards Tournament
   const billiardsParticipants = [
-    { id: 'p-bil-1', playerName: 'رضا حیدری', onlineId: '', gamenetId: 'game-district', gamenetName: 'Game District', city: 'تهران', members: [{ name: 'رضا حیدری' }] },
+    { id: 'p-bil-1', playerName: 'رضا حیدری', onlineId: '', gamenetId: 'game-district', gamenetName: 'مترو گیم', city: 'تهران', members: [{ name: 'رضا حیدری' }] },
     { id: 'p-bil-2', playerName: 'فرهاد شریفی', onlineId: '', gamenetId: 'arena-plus', gamenetName: 'آرنا پلاس', city: 'تهران', members: [{ name: 'فرهاد شریفی' }] },
     { id: 'p-bil-3', playerName: 'کامران ساعدی', onlineId: '', gamenetId: 'cyberland-isf', gamenetName: 'سایبرلند', city: 'اصفهان', members: [{ name: 'کامران ساعدی' }] },
     { id: 'p-bil-4', playerName: 'نوید جلالی', onlineId: '', gamenetId: 'parsian-shz', gamenetName: 'گیم‌کلاب پارسیان', city: 'شیراز', members: [{ name: 'نوید جلالی' }] },
@@ -1761,25 +1761,25 @@ export function createSeedTournaments() {
   let billiardsBracket = generateSingleEliminationBracket(billiardsParticipants, 4);
   billiardsBracket = recordBracketMatchWinner(billiardsBracket, 'r1-m1', 'A', 5, 3).bracket;
 
-  // 3. Internal Gaming Center Competition (Foosball inside Game District)
+  // 3. Internal Gaming Center Competition (Foosball inside مترو گیم)
   const internalFoosballParticipants = [
-    { id: 'p-int-1', playerName: 'تیم رعد (قالیباف / محمدی)', onlineId: '', gamenetId: 'game-district', gamenetName: 'Game District', city: 'تهران', members: [{ name: 'محمد باقر قالیباف', customerId: '05052' }, { name: 'جعفر محمدی2', customerId: '85852' }] },
-    { id: 'p-int-2', playerName: 'تیم عقاب (گوهری / محمد)', onlineId: '', gamenetId: 'game-district', gamenetName: 'Game District', city: 'تهران', members: [{ name: 'علیرضا گوهری', customerId: '37809' }, { name: 'محمد', customerId: '43876' }] },
-    { id: 'p-int-3', playerName: 'زوج شهاب', onlineId: '', gamenetId: 'game-district', gamenetName: 'Game District', city: 'تهران', members: [{ name: 'مهدی رحیمی' }, { name: 'سعید کریمی' }] },
-    { id: 'p-int-4', playerName: 'زوج طوفان', onlineId: '', gamenetId: 'game-district', gamenetName: 'Game District', city: 'تهران', members: [{ name: 'پدرام نوری' }, { name: 'احسان رضایی' }] },
+    { id: 'p-int-1', playerName: 'تیم رعد (قالیباف / محمدی)', onlineId: '', gamenetId: 'game-district', gamenetName: 'مترو گیم', city: 'تهران', members: [{ name: 'محمد باقر قالیباف', customerId: '05052' }, { name: 'جعفر محمدی2', customerId: '85852' }] },
+    { id: 'p-int-2', playerName: 'تیم عقاب (گوهری / محمد)', onlineId: '', gamenetId: 'game-district', gamenetName: 'مترو گیم', city: 'تهران', members: [{ name: 'علیرضا گوهری', customerId: '37809' }, { name: 'محمد', customerId: '43876' }] },
+    { id: 'p-int-3', playerName: 'زوج شهاب', onlineId: '', gamenetId: 'game-district', gamenetName: 'مترو گیم', city: 'تهران', members: [{ name: 'مهدی رحیمی' }, { name: 'سعید کریمی' }] },
+    { id: 'p-int-4', playerName: 'زوج طوفان', onlineId: '', gamenetId: 'game-district', gamenetName: 'مترو گیم', city: 'تهران', members: [{ name: 'پدرام نوری' }, { name: 'احسان رضایی' }] },
   ];
   let internalFoosballBracket = generateSingleEliminationBracket(internalFoosballParticipants, 4);
   internalFoosballBracket = recordBracketMatchWinner(internalFoosballBracket, 'r1-m1', 'A', 10, 7).bracket;
   internalFoosballBracket = recordBracketMatchWinner(internalFoosballBracket, 'r1-m2', 'A', 10, 8).bracket;
 
-  // 4. Completed Inter-Center CS2 Championship (Champion: Team Alpha representing Game District!)
+  // 4. Completed Inter-Center CS2 Championship (Champion: Team Alpha representing مترو گیم!)
   const cs2CompletedParticipants = [
     {
       id: 'p-cs-c1',
       playerName: 'تیم Alpha',
       onlineId: 'Steam:GD_AlphaSquad',
       gamenetId: 'game-district',
-      gamenetName: 'Game District',
+      gamenetName: 'مترو گیم',
       city: 'تهران',
       members: [
         { name: 'علیرضا گوهری', customerId: '37809' },
@@ -1801,7 +1801,7 @@ export function createSeedTournaments() {
 
   // 5. Completed Physical Billiards Championship
   const billiardsDoneParticipants = [
-    { id: 'p-bd-1', playerName: 'رضا حیدری', onlineId: '', gamenetId: 'game-district', gamenetName: 'Game District', city: 'تهران', members: [{ name: 'رضا حیدری' }] },
+    { id: 'p-bd-1', playerName: 'رضا حیدری', onlineId: '', gamenetId: 'game-district', gamenetName: 'مترو گیم', city: 'تهران', members: [{ name: 'رضا حیدری' }] },
     { id: 'p-bd-2', playerName: 'سینا محمدی', onlineId: '', gamenetId: 'parsian-shz', gamenetName: 'گیم‌کلاب پارسیان', city: 'شیراز', members: [{ name: 'سینا محمدی' }] },
     { id: 'p-bd-3', playerName: 'ماهان فرهادی', onlineId: '', gamenetId: 'cyberland-isf', gamenetName: 'سایبرلند', city: 'اصفهان', members: [{ name: 'ماهان فرهادی' }] },
     { id: 'p-bd-4', playerName: 'دانیال قاسمی', onlineId: '', gamenetId: 'neonzone-mhd', gamenetName: 'نئون‌زون', city: 'مشهد', members: [{ name: 'دانیال قاسمی' }] },
@@ -1839,7 +1839,7 @@ export function createSeedTournaments() {
         prizeType: 'mixed',
         summary: '۱۰,۰۰۰,۰۰۰ تومان نقدی + ۱۰ ساعت سشن VIP رایگان برای قهرمان',
         proposedByGamenetId: 'game-district',
-        proposedByGamenetName: 'Game District',
+        proposedByGamenetName: 'مترو گیم',
         confirmedGamenetIds: ['game-district', 'arena-plus', 'cyberland-isf', 'neonzone-mhd', 'parsian-shz', 'pixel-tbz'],
       },
       startDate: 'امشب ساعت ۲۱:۰۰',
@@ -1847,7 +1847,7 @@ export function createSeedTournaments() {
       lobbyCode: 'GD-FC25-884',
       rules: 'زمان هر نیمه ۶ دقیقه، تیم‌های باشگاهی آزاد و اتصال از طریق لابی آنلاین شبکه گیم‌نت‌ها الزامی است.',
       hostGamenetId: 'game-district',
-      hostGamenetName: 'Game District',
+      hostGamenetName: 'مترو گیم',
       hostCity: 'تهران',
       coverKey: 'console',
       createdAt: '2026-11-22T14:00:00.000Z',
@@ -1880,7 +1880,7 @@ export function createSeedTournaments() {
         prizeType: 'vip_session',
         summary: '۶,۰۰۰,۰۰۰ تومان + ۱۵ ساعت بازی VIP و بیلیارد رایگان',
         proposedByGamenetId: 'game-district',
-        proposedByGamenetName: 'Game District',
+        proposedByGamenetName: 'مترو گیم',
         confirmedGamenetIds: ['game-district', 'arena-plus', 'cyberland-isf', 'parsian-shz'],
       },
       startDate: 'جمعه ۷ آذر — ساعت ۱۸:۰۰',
@@ -1888,7 +1888,7 @@ export function createSeedTournaments() {
       lobbyCode: '',
       rules: 'برگزاری کاملاً حضوری روی میزهای استاندارد ۹ فوت در سالن میزبان. هر دیدار تا کسب ۵ گیم (Race to 5) ادامه دارد.',
       hostGamenetId: 'game-district',
-      hostGamenetName: 'Game District',
+      hostGamenetName: 'مترو گیم',
       hostCity: 'تهران',
       coverKey: 'billiards',
       createdAt: '2026-11-23T10:30:00.000Z',
@@ -1897,7 +1897,7 @@ export function createSeedTournaments() {
     },
     {
       id: 'trn-internal-foosball-qual',
-      title: 'انتخابی داخلی فوتبال دستی Game District (تیمی ۲ به ۲)',
+      title: 'انتخابی داخلی فوتبال دستی مترو گیم (تیمی ۲ به ۲)',
       category: 'foosball',
       mode: 'physical',
       gameId: 'foosball-2v2',
@@ -1919,17 +1919,17 @@ export function createSeedTournaments() {
       prizeAgreement: {
         status: 'agreed',
         prizeType: 'playtime',
-        summary: 'انتخاب به‌عنوان تیم رسمی Game District + ۱۰ ساعت بازی رایگان',
+        summary: 'انتخاب به‌عنوان تیم رسمی مترو گیم + ۱۰ ساعت بازی رایگان',
         proposedByGamenetId: 'game-district',
-        proposedByGamenetName: 'Game District',
+        proposedByGamenetName: 'مترو گیم',
         confirmedGamenetIds: ['game-district'],
       },
       startDate: 'امشب ساعت ۱۹:۳۰',
-      registrationDeadline: 'ویژه اعضای باشگاه مشتریان Game District',
+      registrationDeadline: 'ویژه اعضای باشگاه مشتریان مترو گیم',
       lobbyCode: '',
-      rules: 'رقابت داخلی مشتریان ثبت‌نام‌شده سالن؛ تیم قهرمان به‌عنوان نماینده رسمی Game District در چالش‌های بین‌گیم‌نتی معرفی می‌شود.',
+      rules: 'رقابت داخلی مشتریان ثبت‌نام‌شده سالن؛ تیم قهرمان به‌عنوان نماینده رسمی مترو گیم در چالش‌های بین‌گیم‌نتی معرفی می‌شود.',
       hostGamenetId: 'game-district',
-      hostGamenetName: 'Game District',
+      hostGamenetName: 'مترو گیم',
       hostCity: 'تهران',
       coverKey: 'foosball',
       createdAt: '2026-11-24T08:00:00.000Z',
@@ -1962,7 +1962,7 @@ export function createSeedTournaments() {
         prizeType: 'hardware',
         summary: '۱۵,۰۰۰,۰۰۰ تومان + ۵ ست هدست گیمینگ + ۲۰ ساعت سشن VIP رایگان',
         proposedByGamenetId: 'game-district',
-        proposedByGamenetName: 'Game District',
+        proposedByGamenetName: 'مترو گیم',
         confirmedGamenetIds: ['game-district', 'arena-plus', 'cyberland-isf', 'neonzone-mhd'],
       },
       startDate: '۵ آذر ۱۴۰۵ (۲۶ نوامبر ۲۰۲۶)',
@@ -1970,7 +1970,7 @@ export function createSeedTournaments() {
       lobbyCode: 'GD-CS2-901',
       rules: 'برگزاری روی سرور اختصاصی ۱۲۸ تیک بین تیم‌های ۵ نفره منتخب گیم‌نت‌ها.',
       hostGamenetId: 'game-district',
-      hostGamenetName: 'Game District',
+      hostGamenetName: 'مترو گیم',
       hostCity: 'تهران',
       coverKey: 'pc',
       createdAt: '2026-11-20T16:00:00.000Z',
@@ -2020,7 +2020,7 @@ export function createSeedTournaments() {
     },
     {
       id: 'trn-h2h-parsian-fc25',
-      title: 'دیدار رو‌در‌رو: گیم‌کلاب پارسیان مقابل Game District (EA Sports FC 25)',
+      title: 'دیدار رو‌در‌رو: گیم‌کلاب پارسیان مقابل مترو گیم (EA Sports FC 25)',
       category: 'video_games',
       mode: 'online',
       matchMode: 'head_to_head',
@@ -2075,9 +2075,9 @@ export function createSeedTournaments() {
           playerName: 'محمد باقر قالیباف',
           onlineId: 'PSN:GD_MBQ',
           gamenetId: 'game-district',
-          gamenetName: 'Game District',
+          gamenetName: 'مترو گیم',
           city: 'تهران',
-          members: [{ name: 'محمد باقر قالیباف', customerId: '1', role: 'نماینده Game District' }],
+          members: [{ name: 'محمد باقر قالیباف', customerId: '1', role: 'نماینده مترو گیم' }],
           joinedAt: '2026-11-24T17:30:00.000Z',
         },
       ],
@@ -2110,8 +2110,8 @@ export function createSeedTournaments() {
                   playerName: 'محمد باقر قالیباف',
                   onlineId: 'PSN:GD_MBQ',
                   gamenetId: 'game-district',
-                  gamenetName: 'Game District',
-                  members: [{ name: 'محمد باقر قالیباف', customerId: '1', role: 'نماینده Game District' }],
+                  gamenetName: 'مترو گیم',
+                  members: [{ name: 'محمد باقر قالیباف', customerId: '1', role: 'نماینده مترو گیم' }],
                 },
                 scoreA: null,
                 scoreB: null,
@@ -2165,7 +2165,7 @@ export function createSeedTournaments() {
       participants: [
         { id: 'fo1', playerName: 'زوج نکسوس', gamenetId: 'nexus-club', gamenetName: 'Nexus Club', city: 'تهران' },
         { id: 'fo2', playerName: 'زوج طوفان آرنا', gamenetId: 'arena-plus', gamenetName: 'آرنا پلاس', city: 'تهران' },
-        { id: 'fo3', playerName: 'تیم رعد Game District', gamenetId: 'game-district', gamenetName: 'Game District', city: 'تهران' },
+        { id: 'fo3', playerName: 'تیم رعد مترو گیم', gamenetId: 'game-district', gamenetName: 'مترو گیم', city: 'تهران' },
         { id: 'fo4', playerName: 'زوج سایبر', gamenetId: 'cyberland-isf', gamenetName: 'سایبرلند', city: 'اصفهان' },
       ],
       bracket: {
@@ -2197,7 +2197,7 @@ export function createSeedTournaments() {
                 roundIndex: 0,
                 matchIndex: 1,
                 playerA: { id: 'fo2', playerName: 'زوج طوفان آرنا', gamenetId: 'arena-plus', gamenetName: 'آرنا پلاس' },
-                playerB: { id: 'fo3', playerName: 'تیم رعد Game District', gamenetId: 'game-district', gamenetName: 'Game District' },
+                playerB: { id: 'fo3', playerName: 'تیم رعد مترو گیم', gamenetId: 'game-district', gamenetName: 'مترو گیم' },
                 scoreA: 3,
                 scoreB: 2,
                 winnerId: 'fo2',

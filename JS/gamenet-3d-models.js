@@ -1,6 +1,6 @@
 /**
  * Procedural PBR CanvasTextures & Composite 5-12 Part Three.js Models
- * for the Game District 3D Game Center Builder.
+ * for the مترو گیم 3D Game Center Builder.
  * Supports 9 procedural wallpapers, 6 floor finishes, 4 billiard/snooker models
  * with live felt/rail customization, and rich architectural decorations.
  * Zero external asset dependencies (zero 404s).
@@ -8,12 +8,14 @@
 import * as THREE from 'three';
 import {
   FLOOR_FINISHES,
+  FLOOR_LIMITS,
   WALL_FINISHES,
   getCatalogItem,
+  getWallMetrics,
   getBilliardFeltVariant,
   resolveItemTintHex,
   resolveLedColorHex,
-} from './gamenet-3d-engine.mjs?v=20261126-8';
+} from './gamenet-3d-engine.mjs?v=20261127-1';
 
 const textureCache = new Map();
 
@@ -502,9 +504,18 @@ function drawRoundedRectPath(ctx, x, y, w, h, r) {
 }
 
 /**
- * Redraws a crisp, balanced floating overhead station badge + live mini-timer canvas in-place.
+ * Redraws a crystal-clear, ultra-legible high-DPI overhead station badge showing:
+ * - Row 1: Crisp device label (e.g. PS5 / سیستم PC / بیلیارد) + vivid Station Number pill (میز ۱)
+ * - Row 2: Status indicator dot + high-contrast status/live timer text (آزاد / ۰۰:۴۵:۱۲)
+ * - Subtle pointer caret at bottom pointing straight down at the station.
  */
-export function drawStationTimerCanvas(canvas, tableNumber, timerState = null, accentHex = '#7c3aed') {
+export function drawStationTimerCanvas(
+  canvas,
+  tableNumber,
+  timerState = null,
+  accentHex = '#7c3aed',
+  deviceLabel = ''
+) {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
   const w = canvas.width;
@@ -515,82 +526,265 @@ export function drawStationTimerCanvas(canvas, tableNumber, timerState = null, a
   const rawText = timerState?.text || 'آزاد';
   const displayText = toFaDigitsLocal(rawText);
   const displayNum = toFaDigitsLocal(tableNumber);
+  const titleText = String(deviceLabel || 'ایستگاه').trim();
 
   const palette = {
-    running: { border: '#22c55e', badgeBg: '#16a34a', text: '#dcfce7', dot: '#4ade80' },
-    warning: { border: '#f59e0b', badgeBg: '#d97706', text: '#fef3c7', dot: '#fbbf24' },
-    expired: { border: '#ef4444', badgeBg: '#dc2626', text: '#fee2e2', dot: '#f87171' },
-    waiting: { border: accentHex, badgeBg: accentHex, text: '#ede9fe', dot: accentHex },
-    idle: { border: 'rgba(148, 163, 184, 0.72)', badgeBg: '#1e293b', text: '#f1f5f9', dot: '#94a3b8' },
-  }[status] || { border: accentHex, badgeBg: '#1e293b', text: '#f8fafc', dot: accentHex };
+    running: {
+      border: '#22c55e',
+      topTint: 'rgba(22, 163, 74, 0.24)',
+      numBg: '#16a34a',
+      statusText: '#86efac',
+      dot: '#4ade80',
+    },
+    warning: {
+      border: '#f59e0b',
+      topTint: 'rgba(217, 119, 6, 0.26)',
+      numBg: '#d97706',
+      statusText: '#fde68a',
+      dot: '#fbbf24',
+    },
+    expired: {
+      border: '#ef4444',
+      topTint: 'rgba(220, 38, 38, 0.28)',
+      numBg: '#dc2626',
+      statusText: '#fecaca',
+      dot: '#f87171',
+    },
+    waiting: {
+      border: '#a78bfa',
+      topTint: 'rgba(124, 58, 237, 0.28)',
+      numBg: accentHex,
+      statusText: '#ede9fe',
+      dot: '#c4b5fd',
+    },
+    idle: {
+      border: '#cbd5e1',
+      topTint: 'rgba(148, 163, 184, 0.14)',
+      numBg: accentHex,
+      statusText: '#4ade80',
+      dot: '#34d399',
+    },
+  }[status] || {
+    border: '#cbd5e1',
+    topTint: 'rgba(148, 163, 184, 0.14)',
+    numBg: accentHex,
+    statusText: '#f8fafc',
+    dot: '#94a3b8',
+  };
 
-  drawRoundedRectPath(ctx, 8, 10, w - 16, h - 20, (h - 20) / 2);
-  ctx.fillStyle = status === 'idle' ? 'rgba(10, 15, 28, 0.9)' : 'rgba(8, 13, 24, 0.96)';
+  const padX = 16;
+  const padTop = 12;
+  const caretH = 22;
+  const cardW = w - padX * 2;
+  const cardH = h - padTop - caretH - 8;
+  const radius = 32;
+
+  // 1. Crisp drop shadow for instant separation on both Light & Dark 3D floors
+  ctx.save();
+  ctx.shadowColor = 'rgba(2, 6, 23, 0.72)';
+  ctx.shadowBlur = 18;
+  ctx.shadowOffsetY = 6;
+  drawRoundedRectPath(ctx, padX, padTop, cardW, cardH, radius);
+  ctx.fillStyle = 'rgba(7, 11, 22, 0.96)';
   ctx.fill();
-  ctx.lineWidth = status === 'idle' ? 3.5 : 4.5;
+  ctx.restore();
+
+  // 2. Subtle top header tint clipped inside card
+  ctx.save();
+  drawRoundedRectPath(ctx, padX, padTop, cardW, cardH, radius);
+  ctx.clip();
+  ctx.fillStyle = palette.topTint;
+  ctx.fillRect(padX, padTop, cardW, cardH * 0.5);
+  // Crisp inner highlight along top edge
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.14)';
+  ctx.fillRect(padX, padTop, cardW, 4);
+  // Crisp horizontal divider between Row 1 and Row 2
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.16)';
+  ctx.fillRect(padX + 22, padTop + cardH * 0.52, cardW - 44, 2);
+  ctx.restore();
+
+  // 3. Strong outer border
+  drawRoundedRectPath(ctx, padX, padTop, cardW, cardH, radius);
+  ctx.lineWidth = 6;
   ctx.strokeStyle = palette.border;
   ctx.stroke();
 
-  const circleR = 40;
-  const circleX = w - 62;
-  const circleY = h / 2;
+  // 4. Downward pointer caret at bottom center
+  const caretMidX = w / 2;
+  const caretTopY = padTop + cardH - 2;
   ctx.beginPath();
-  ctx.arc(circleX, circleY, circleR, 0, Math.PI * 2);
-  ctx.fillStyle = palette.badgeBg;
+  ctx.moveTo(caretMidX - 18, caretTopY);
+  ctx.lineTo(caretMidX + 18, caretTopY);
+  ctx.lineTo(caretMidX, caretTopY + caretH);
+  ctx.closePath();
+  ctx.fillStyle = palette.border;
   ctx.fill();
-  ctx.lineWidth = 3;
-  ctx.strokeStyle = status === 'idle' ? accentHex : '#ffffff';
+
+  // 5. ROW 1: Vivid Station Number Pill on right + Crisp White Device Label on left
+  const row1Y = padTop + cardH * 0.27;
+  const numPillW = displayNum.length > 2 ? 174 : 154;
+  const numPillH = 66;
+  const numPillX = padX + cardW - numPillW - 18;
+  const numPillY = row1Y - numPillH / 2;
+
+  drawRoundedRectPath(ctx, numPillX, numPillY, numPillW, numPillH, 20);
+  ctx.fillStyle = palette.numBg;
+  ctx.fill();
+  ctx.lineWidth = 2.5;
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.48)';
   ctx.stroke();
 
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '800 38px Vazirmatn, Tahoma, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(`میز ${displayNum}`, numPillX + numPillW / 2, row1Y + 2, numPillW - 14);
+
+  // Device Label (PS5, سیستم PC, بیلیارد, ...) in crisp bold white
+  const labelLeft = padX + 24;
+  const labelRight = numPillX - 16;
+  const labelCenterX = (labelLeft + labelRight) / 2;
+  const maxLabelW = Math.max(150, labelRight - labelLeft);
+
+  ctx.save();
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
+  ctx.shadowBlur = 6;
   ctx.fillStyle = '#ffffff';
   ctx.font = '800 42px Vazirmatn, Tahoma, sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(displayNum, circleX, circleY + 2);
+  ctx.fillText(titleText, labelCenterX, row1Y + 2, maxLabelW);
+  ctx.restore();
 
+  // 6. ROW 2: High-contrast status dot + large crisp status/timer readout
+  const row2Y = padTop + cardH * 0.77;
+  const isClock = displayText.includes(':');
+  const statusFontSize = isClock ? (displayText.length > 7 ? 42 : 48) : 44;
+
+  ctx.font = `800 ${statusFontSize}px Vazirmatn, Tahoma, sans-serif`;
+  const textMetrics = ctx.measureText(displayText);
+  const measuredW = Math.min(cardW - 104, textMetrics.width);
+  const dotR = 11;
+  const dotGap = 18;
+  const totalGroupW = measuredW + dotR * 2 + dotGap;
+  const groupStartX = w / 2 - totalGroupW / 2;
+
+  // Bright status dot
   ctx.beginPath();
-  ctx.arc(38, h / 2, 8, 0, Math.PI * 2);
+  ctx.arc(groupStartX + dotR, row2Y, dotR, 0, Math.PI * 2);
   ctx.fillStyle = palette.dot;
   ctx.fill();
 
-  ctx.fillStyle = palette.text;
-  const isClock = displayText.includes(':');
-  const fontSize = isClock ? (displayText.length > 8 ? 36 : 42) : 38;
-  ctx.font = `800 ${fontSize}px Vazirmatn, Tahoma, sans-serif`;
-  ctx.textAlign = 'center';
+  // Crisp status/timer text
+  ctx.save();
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
+  ctx.shadowBlur = 6;
+  ctx.fillStyle = isClock ? '#ffffff' : palette.statusText;
+  ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
-  const textAreaLeft = 56;
-  const textAreaRight = circleX - circleR - 10;
-  const textCenterX = (textAreaLeft + textAreaRight) / 2;
-  const maxTextW = Math.max(140, textAreaRight - textAreaLeft);
-  ctx.fillText(displayText, textCenterX, h / 2 + 2, maxTextW);
+  ctx.fillText(displayText, groupStartX + dotR * 2 + dotGap, row2Y + 2, cardW - 104);
+  ctx.restore();
 }
 
-function createStationTimerSprite(tableNumber, timerState, accentHex, anisotropy = 4) {
+function createStationTimerSprite(tableNumber, timerState, accentHex, anisotropy = 4, deviceLabel = '') {
   const canvas = document.createElement('canvas');
-  canvas.width = 420;
-  canvas.height = 128;
-  drawStationTimerCanvas(canvas, tableNumber, timerState, accentHex);
+  canvas.width = 640;
+  canvas.height = 248;
+  drawStationTimerCanvas(canvas, tableNumber, timerState, accentHex, deviceLabel);
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.generateMipmaps = false;
+  texture.minFilter = THREE.LinearFilter;
+  texture.magFilter = THREE.LinearFilter;
   texture.anisotropy = Math.max(1, anisotropy);
   texture.needsUpdate = true;
 
   const mat = new THREE.SpriteMaterial({
     map: texture,
     transparent: true,
-    depthTest: true,
+    depthTest: false,
+    depthWrite: false,
   });
   mat.userData.ownsTexture = true;
 
   const sprite = new THREE.Sprite(mat);
   sprite.name = 'StationBadge';
+  sprite.renderOrder = 30;
   sprite.userData.timerCanvas = canvas;
   sprite.userData.timerTexture = texture;
   sprite.userData.tableNumber = String(tableNumber);
+  sprite.userData.deviceLabel = String(deviceLabel || '');
   sprite.userData.lastText = timerState?.text || 'آزاد';
   sprite.userData.lastStatus = timerState?.status || 'idle';
+  return sprite;
+}
+
+/**
+ * Builds a crisp floating label badge for wall length measurements or floor names.
+ */
+function createFloatingLabelSprite(text, bgHex = '#0f172a', borderHex = '#38bdf8', anisotropy = 4) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 384;
+  canvas.height = 112;
+  drawFloatingLabelCanvas(canvas, text, bgHex, borderHex);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.generateMipmaps = false;
+  texture.minFilter = THREE.LinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+  texture.anisotropy = Math.max(1, anisotropy);
+  texture.needsUpdate = true;
+
+  const mat = new THREE.SpriteMaterial({
+    map: texture,
+    transparent: true,
+    depthTest: false,
+    depthWrite: false,
+  });
+  mat.userData.ownsTexture = true;
+
+  const sprite = new THREE.Sprite(mat);
+  sprite.renderOrder = 32;
+  sprite.userData.labelCanvas = canvas;
+  sprite.userData.labelTexture = texture;
+  return sprite;
+}
+
+export function drawFloatingLabelCanvas(canvas, text, bgHex = '#0f172a', borderHex = '#38bdf8') {
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  const w = canvas.width;
+  const h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+
+  drawRoundedRectPath(ctx, 10, 10, w - 20, h - 20, 26);
+  ctx.fillStyle = bgHex;
+  ctx.fill();
+  ctx.lineWidth = 5;
+  ctx.strokeStyle = borderHex;
+  ctx.stroke();
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '800 42px Vazirmatn, Tahoma, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(toFaDigitsLocal(text), w / 2, h / 2 + 2, w - 40);
+}
+
+/**
+ * Builds a crisp floor-level badge for multi-story stacked cutaway view.
+ */
+export function buildFloorLevelBadge(floorName, isActive = true, accentHex = '#7c3aed', anisotropy = 4) {
+  const sprite = createFloatingLabelSprite(
+    floorName,
+    isActive ? 'rgba(15, 23, 42, 0.96)' : 'rgba(15, 23, 42, 0.82)',
+    isActive ? accentHex : '#64748b',
+    anisotropy
+  );
+  sprite.name = 'FloorLevelBadge';
+  sprite.scale.set(2.2, 0.64, 1);
   return sprite;
 }
 
@@ -614,21 +808,28 @@ function addPart(
 
 /**
  * Builds a grounded composite 3D architectural room shell with procedural wallpaper,
- * floor finish, plinth, dual-scale snapping grid, baseboards & customizable LED cornice.
+ * floor finish, plinth/inter-floor slab, dual-scale snapping grid, baseboards & customizable LED cornice.
  */
-export function buildRoomShell(room, accentHex = '#7c3aed', anisotropy = 4) {
+export function buildRoomShell(
+  room,
+  accentHex = '#7c3aed',
+  anisotropy = 4,
+  { elevationY = 0, isUpperFloor = false, isActiveFloor = true, floorName = '', showFloorLabel = false } = {}
+) {
   const group = new THREE.Group();
   group.name = 'RoomShell';
+  group.position.y = elevationY;
 
   const { width, depth, height, floor, wall, ledColor, cutawayWalls } = room;
   const wallThick = 0.16;
+  const slabH = FLOOR_LIMITS.slabThickness;
   const resolvedLedHex = resolveLedColorHex(ledColor, accentHex);
   const accentColor = new THREE.Color(resolvedLedHex);
 
-  // 1. Floor slab (top surface strictly at y = 0)
+  // 1. Floor slab (top surface strictly at local y = 0)
   const floorTex = createFloorTexture(floor, width, depth, anisotropy);
   const floorMat = new THREE.MeshStandardMaterial({
-    color: 0xffffff,
+    color: isActiveFloor ? 0xffffff : 0xdbe2ee,
     map: floorTex,
     roughness:
       floor === 'epoxy-dark'
@@ -646,19 +847,36 @@ export function buildRoomShell(room, accentHex = '#7c3aed', anisotropy = 4) {
   floorMesh.name = 'FloorHitPlane';
   group.add(floorMesh);
 
-  // 2. Architectural dark plinth trim beneath floor
+  // 2. Ground plinth OR Upper-floor architectural structural slab fascia
   const plinthMat = new THREE.MeshStandardMaterial({
-    color: 0x0b0e17,
-    roughness: 0.72,
-    metalness: 0.18,
+    color: isUpperFloor ? 0x161d2e : 0x0b0e17,
+    roughness: isUpperFloor ? 0.52 : 0.72,
+    metalness: isUpperFloor ? 0.34 : 0.18,
   });
-  const plinth = new THREE.Mesh(new THREE.BoxGeometry(width + 0.36, 0.24, depth + 0.36), plinthMat);
-  plinth.position.set(0, -0.22, 0);
+  const plinthH = isUpperFloor ? slabH : 0.24;
+  const plinth = new THREE.Mesh(
+    new THREE.BoxGeometry(width + 0.36, plinthH, depth + 0.36),
+    plinthMat
+  );
+  plinth.position.set(0, isUpperFloor ? -slabH / 2 - 0.02 : -0.22, 0);
   plinth.receiveShadow = true;
   plinth.name = 'RoomPlinth';
   group.add(plinth);
 
-  // 3. Crisp dual-scale 3D floor snapping grid
+  if (isUpperFloor) {
+    // Crisp architectural accent fascia rim around upper-story floor slab
+    const fasciaMat = new THREE.MeshStandardMaterial({
+      color: isActiveFloor ? accentColor : new THREE.Color(0x475569),
+      emissive: isActiveFloor ? accentColor : new THREE.Color(0x000000),
+      emissiveIntensity: isActiveFloor ? 0.55 : 0,
+      roughness: 0.35,
+      metalness: 0.45,
+    });
+    addPart(group, new THREE.BoxGeometry(width + 0.38, 0.045, 0.03), fasciaMat, 0, -0.05, depth / 2 + 0.18, { cast: false });
+    addPart(group, new THREE.BoxGeometry(0.03, 0.045, depth + 0.38), fasciaMat, width / 2 + 0.18, -0.05, 0, { cast: false });
+  }
+
+  // 3. Crisp dual-scale 3D floor snapping grid (shown on active floor)
   const gridGroup = new THREE.Group();
   gridGroup.name = 'FloorGrid';
   const halfW = width / 2;
@@ -704,13 +922,14 @@ export function buildRoomShell(room, accentHex = '#7c3aed', anisotropy = 4) {
     minorLines.name = 'MinorGridLines';
     gridGroup.add(minorLines);
   }
+  gridGroup.visible = isActiveFloor;
   group.add(gridGroup);
 
-  // 4. Walls with procedural wallpaper finish
+  // 4. Exterior Perimeter Walls with procedural wallpaper finish
   const wallTex = createWallTexture(wall, resolvedLedHex, anisotropy);
   const wallFinish = WALL_FINISHES.find((w) => w.id === wall) || WALL_FINISHES[0];
   const wallMat = new THREE.MeshStandardMaterial({
-    color: 0xffffff,
+    color: isActiveFloor ? 0xffffff : 0xcbd5e1,
     map: wallTex,
     roughness: wall === 'ivory' || wall === 'brick-loft' ? 0.8 : wall === 'geo-gold' ? 0.45 : 0.62,
     metalness: wall === 'geo-gold' ? 0.22 : 0.08,
@@ -723,7 +942,7 @@ export function buildRoomShell(room, accentHex = '#7c3aed', anisotropy = 4) {
   const ledStripMat = new THREE.MeshStandardMaterial({
     color: accentColor,
     emissive: accentColor,
-    emissiveIntensity: 1.55,
+    emissiveIntensity: isActiveFloor ? 1.55 : 0.65,
     roughness: 0.2,
     metalness: 0.1,
   });
@@ -751,7 +970,292 @@ export function buildRoomShell(room, accentHex = '#7c3aed', anisotropy = 4) {
     addPart(group, new THREE.BoxGeometry(0.05, 0.055, depth - 0.2), ledStripMat, halfW - 0.025, height - 0.14, 0, { cast: false, receive: false });
   }
 
+  // Optional floating floor tag along the architectural side edge when viewing multiple stacked stories
+  if (showFloorLabel && floorName) {
+    const floorBadge = buildFloorLevelBadge(floorName, isActiveFloor, resolvedLedHex, anisotropy);
+    floorBadge.position.set(halfW + 1.15, height * 0.48, -halfD + 1.6);
+    group.add(floorBadge);
+  }
+
   return { group, floorMesh, gridGroup };
+}
+
+/**
+ * Builds an architectural 3D interior partition wall (full, half, glass VIP, or doorway)
+ * with matching room wallpaper, baseboards, top cap/LED strip, and picking proxy.
+ */
+export function buildInteriorWallMesh(
+  wall,
+  room,
+  accentHex = '#7c3aed',
+  anisotropy = 4,
+  { elevationY = 0, isSelected = false, isInteractive = true } = {}
+) {
+  const m = getWallMetrics(wall);
+  const group = new THREE.Group();
+  group.name = `InteriorWall-${wall.id}`;
+  group.userData.wallId = wall.id;
+  if (m.length < 0.4) return group;
+
+  const style = wall.style || 'full';
+  const thick = Number(wall.thickness) || (style === 'glass' ? 0.12 : 0.16);
+  const roomH = Number(room?.height) || 3.4;
+  const wallH = style === 'half' ? 1.25 : Math.max(2.6, roomH - 0.02);
+
+  const resolvedLedHex = resolveLedColorHex(room?.ledColor, accentHex);
+  const accentColor = new THREE.Color(resolvedLedHex);
+  const wallFinish = WALL_FINISHES.find((w) => w.id === room?.wall) || WALL_FINISHES[0];
+
+  const wallTex = createWallTexture(room?.wall || 'charcoal', resolvedLedHex, anisotropy);
+  const wallMat = new THREE.MeshStandardMaterial({
+    color: isSelected ? 0xe0e7ff : 0xffffff,
+    map: wallTex,
+    roughness: room?.wall === 'ivory' || room?.wall === 'brick-loft' ? 0.8 : 0.62,
+    metalness: room?.wall === 'geo-gold' ? 0.22 : 0.08,
+    emissive: isSelected ? accentColor : new THREE.Color(0x000000),
+    emissiveIntensity: isSelected ? 0.22 : 0,
+  });
+  const trimMat = new THREE.MeshStandardMaterial({
+    color: isSelected ? accentColor : new THREE.Color(wallFinish.trim),
+    roughness: 0.36,
+    metalness: 0.42,
+  });
+  const darkMetal = new THREE.MeshStandardMaterial({
+    color: isSelected ? accentColor : new THREE.Color(0x1e2536),
+    roughness: 0.3,
+    metalness: 0.78,
+  });
+  const ledMat = new THREE.MeshStandardMaterial({
+    color: accentColor,
+    emissive: accentColor,
+    emissiveIntensity: isSelected ? 2.2 : 1.35,
+    roughness: 0.2,
+    metalness: 0.1,
+  });
+
+  if (style === 'glass') {
+    // VIP Architectural Smoked Glass Partition with dark aluminum mullions
+    const plinthH = 0.32;
+    addPart(group, new THREE.BoxGeometry(m.length, plinthH, thick + 0.02), darkMetal, 0, plinthH / 2, 0);
+    // Top header rail + subtle LED glow
+    addPart(group, new THREE.BoxGeometry(m.length, 0.1, thick + 0.02), darkMetal, 0, wallH - 0.05, 0);
+    addPart(group, new THREE.BoxGeometry(Math.max(0.2, m.length - 0.1), 0.032, thick + 0.04), ledMat, 0, wallH - 0.11, 0, { cast: false, receive: false });
+
+    // Vertical end posts + intermediate mullions every ~1.5m
+    const mullionCount = Math.max(2, Math.ceil(m.length / 1.5) + 1);
+    const glassH = wallH - plinthH - 0.1;
+    for (let i = 0; i < mullionCount; i++) {
+      const t = mullionCount === 1 ? 0 : i / (mullionCount - 1);
+      const px = -m.length / 2 + t * m.length;
+      addPart(group, new THREE.BoxGeometry(0.065, wallH, thick + 0.025), darkMetal, px, wallH / 2, 0);
+    }
+
+    // Smoked glass sheet
+    const glassMat = new THREE.MeshStandardMaterial({
+      color: isSelected ? accentColor : new THREE.Color(0x7dd3fc),
+      transparent: true,
+      opacity: isSelected ? 0.44 : 0.28,
+      roughness: 0.1,
+      metalness: 0.2,
+      depthWrite: false,
+    });
+    addPart(group, new THREE.BoxGeometry(Math.max(0.1, m.length - 0.08), glassH, 0.03), glassMat, 0, plinthH + glassH / 2, 0, { cast: false, receive: false });
+  } else if (style === 'doorway' && m.length >= 1.8) {
+    // Wall with centered 1.25m x 2.2m open doorway portal
+    const doorW = 1.25;
+    const doorH = Math.min(2.2, wallH - 0.4);
+    const sideW = (m.length - doorW) / 2;
+
+    if (sideW > 0.08) {
+      // Left & right solid piers
+      addPart(group, new THREE.BoxGeometry(sideW, wallH, thick), wallMat, -(doorW / 2 + sideW / 2), wallH / 2, 0);
+      addPart(group, new THREE.BoxGeometry(sideW, wallH, thick), wallMat, doorW / 2 + sideW / 2, wallH / 2, 0);
+      // Baseboards
+      addPart(group, new THREE.BoxGeometry(sideW, 0.11, thick + 0.03), trimMat, -(doorW / 2 + sideW / 2), 0.055, 0, { cast: false });
+      addPart(group, new THREE.BoxGeometry(sideW, 0.11, thick + 0.03), trimMat, doorW / 2 + sideW / 2, 0.055, 0, { cast: false });
+    }
+    // Top header lintel above doorway
+    const lintelH = Math.max(0.25, wallH - doorH);
+    addPart(group, new THREE.BoxGeometry(doorW + 0.04, lintelH, thick), wallMat, 0, doorH + lintelH / 2, 0);
+
+    // Sleek dark metallic doorway frame casing + top LED accent bar
+    addPart(group, new THREE.BoxGeometry(0.06, doorH, thick + 0.045), darkMetal, -doorW / 2, doorH / 2, 0);
+    addPart(group, new THREE.BoxGeometry(0.06, doorH, thick + 0.045), darkMetal, doorW / 2, doorH / 2, 0);
+    addPart(group, new THREE.BoxGeometry(doorW + 0.12, 0.065, thick + 0.05), darkMetal, 0, doorH + 0.02, 0);
+    addPart(group, new THREE.BoxGeometry(doorW - 0.06, 0.025, thick + 0.06), ledMat, 0, doorH - 0.02, 0, { cast: false, receive: false });
+    // Top architectural cap
+    addPart(group, new THREE.BoxGeometry(m.length + 0.02, 0.06, thick + 0.03), trimMat, 0, wallH + 0.02, 0, { cast: false });
+  } else {
+    // Full solid wall OR Half partition wall (1.25m)
+    addPart(group, new THREE.BoxGeometry(m.length, wallH, thick), wallMat, 0, wallH / 2, 0);
+    // Baseboard skirting on both sides
+    addPart(group, new THREE.BoxGeometry(m.length + 0.01, 0.11, thick + 0.03), trimMat, 0, 0.055, 0, { cast: false });
+    // Top architectural rail / ledge
+    const capW = style === 'half' ? thick + 0.08 : thick + 0.03;
+    const capH = style === 'half' ? 0.075 : 0.06;
+    addPart(group, new THREE.BoxGeometry(m.length + 0.04, capH, capW), style === 'half' ? darkMetal : trimMat, 0, wallH + capH / 2 - 0.01, 0, { cast: false });
+    // Subtle LED strip along top cornice
+    addPart(
+      group,
+      new THREE.BoxGeometry(Math.max(0.2, m.length - 0.14), 0.035, thick + 0.035),
+      ledMat,
+      0,
+      wallH - (style === 'half' ? 0.08 : 0.14),
+      0,
+      { cast: false, receive: false }
+    );
+  }
+
+  // Highlight ground outline if selected
+  if (isSelected) {
+    const selMat = new THREE.MeshBasicMaterial({
+      color: accentColor,
+      transparent: true,
+      opacity: 0.55,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    });
+    const selPad = new THREE.Mesh(new THREE.PlaneGeometry(m.length + 0.24, thick + 0.36), selMat);
+    selPad.rotation.x = -Math.PI / 2;
+    selPad.position.y = 0.022;
+    group.add(selPad);
+  }
+
+  // Invisible picking raycast proxy for selecting drawn walls
+  if (isInteractive) {
+    const pickProxy = new THREE.Mesh(
+      new THREE.BoxGeometry(m.length + 0.1, wallH + 0.1, Math.max(0.36, thick + 0.2)),
+      new THREE.MeshBasicMaterial({ visible: false })
+    );
+    pickProxy.position.y = wallH / 2;
+    pickProxy.userData.pickWallId = wall.id;
+    pickProxy.name = 'WallPickProxy';
+    group.add(pickProxy);
+  }
+
+  group.position.set(m.cx, elevationY, m.cz);
+  group.rotation.y = m.angleRad;
+  return group;
+}
+
+/**
+ * Builds the live interactive wall drawing preview (start anchor, end cursor pin, translucent wall box, length label).
+ */
+export function buildWallPreviewGroup(accentHex = '#22c55e', anisotropy = 4) {
+  const group = new THREE.Group();
+  group.name = 'WallDrawPreview';
+  group.visible = false;
+
+  const pinGeo = new THREE.CylinderGeometry(0.14, 0.14, 0.1, 16);
+  const startMat = new THREE.MeshBasicMaterial({ color: 0x22c55e });
+  const endMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(accentHex) });
+
+  const startPin = new THREE.Mesh(pinGeo, startMat);
+  startPin.name = 'WallStartPin';
+  startPin.position.y = 0.05;
+  group.add(startPin);
+
+  const endPin = new THREE.Mesh(pinGeo, endMat);
+  endPin.name = 'WallEndPin';
+  endPin.position.y = 0.05;
+  endPin.visible = false;
+  group.add(endPin);
+
+  const previewBoxMat = new THREE.MeshBasicMaterial({
+    color: 0x22c55e,
+    transparent: true,
+    opacity: 0.36,
+    depthWrite: false,
+  });
+  const previewBox = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 0.16), previewBoxMat);
+  previewBox.name = 'WallPreviewBox';
+  previewBox.visible = false;
+  group.add(previewBox);
+
+  const lengthLabel = createFloatingLabelSprite('۰ متر', 'rgba(8, 13, 25, 0.96)', '#22c55e', anisotropy);
+  lengthLabel.name = 'WallLengthLabel';
+  lengthLabel.scale.set(1.65, 0.48, 1);
+  lengthLabel.visible = false;
+  group.add(lengthLabel);
+
+  return group;
+}
+
+export function updateWallPreviewGroup(
+  previewGroup,
+  startPt,
+  endPt,
+  room,
+  style = 'full',
+  elevationY = 0
+) {
+  if (!previewGroup) return;
+  const startPin = previewGroup.getObjectByName('WallStartPin');
+  const endPin = previewGroup.getObjectByName('WallEndPin');
+  const box = previewGroup.getObjectByName('WallPreviewBox');
+  const label = previewGroup.getObjectByName('WallLengthLabel');
+
+  if (!startPt && !endPt) {
+    previewGroup.visible = false;
+    return;
+  }
+
+  previewGroup.visible = true;
+  previewGroup.position.y = elevationY;
+
+  // Hovering before first click: show single snapped cursor pin
+  if (!startPt && endPt) {
+    if (startPin) {
+      startPin.position.set(endPt.x, 0.05, endPt.z);
+      startPin.visible = true;
+    }
+    if (endPin) endPin.visible = false;
+    if (box) box.visible = false;
+    if (label) label.visible = false;
+    return;
+  }
+
+  // Actively dragging/rubber-banding a wall segment from startPt to endPt
+  if (startPin) {
+    startPin.position.set(startPt.x, 0.05, startPt.z);
+    startPin.visible = true;
+  }
+  if (!endPt) {
+    if (endPin) endPin.visible = false;
+    if (box) box.visible = false;
+    if (label) label.visible = false;
+    return;
+  }
+
+  if (endPin) {
+    endPin.position.set(endPt.x, 0.05, endPt.z);
+    endPin.visible = true;
+  }
+
+  const m = getWallMetrics({ x1: startPt.x, z1: startPt.z, x2: endPt.x, z2: endPt.z });
+  const isValid = m.length >= 0.45;
+  const wallH = style === 'half' ? 1.25 : Math.max(2.6, (Number(room?.height) || 3.4) - 0.02);
+
+  if (box) {
+    box.visible = m.length > 0.05;
+    box.scale.set(Math.max(0.05, m.length), wallH, 1);
+    box.position.set(m.cx, wallH / 2, m.cz);
+    box.rotation.y = m.angleRad;
+    box.material.color.setHex(isValid ? 0x22c55e : 0xef4444);
+  }
+
+  if (label && label.userData?.labelCanvas && label.userData?.labelTexture) {
+    label.visible = m.length > 0.1;
+    const lenText = `${m.length.toFixed(1).replace(/\.0$/, '')} متر`;
+    drawFloatingLabelCanvas(
+      label.userData.labelCanvas,
+      lenText,
+      'rgba(8, 13, 25, 0.96)',
+      isValid ? '#22c55e' : '#ef4444'
+    );
+    label.userData.labelTexture.needsUpdate = true;
+    label.position.set(m.cx, wallH + 0.55, m.cz);
+  }
 }
 
 /**
@@ -858,7 +1362,15 @@ function buildBilliardVariantParts(group, spec, item, { darkMetal, brushedSteel,
  */
 export function buildFurnitureModel(
   item,
-  { accentHex = '#7c3aed', isOccupied = false, timerState = null, anisotropy = 4 } = {}
+  {
+    accentHex = '#7c3aed',
+    isOccupied = false,
+    timerState = null,
+    anisotropy = 4,
+    elevationY = 0,
+    showBadge = true,
+    isInteractive = true,
+  } = {}
 ) {
   const spec = getCatalogItem(item.type);
   const group = new THREE.Group();
@@ -1372,35 +1884,86 @@ export function buildFurnitureModel(
       break;
     }
 
+    case 'stairs-modern': {
+      // Architectural floating staircase connecting multi-story floors
+      const steps = 11;
+      const totalH = 3.05;
+      const totalD = 2.45;
+      const stepH = totalH / steps;
+      const stepD = totalD / steps;
+
+      // Twin angled dark steel stringer beams
+      const slopeLen = Math.hypot(totalD, totalH);
+      const slopeAngle = Math.atan2(totalH, totalD);
+      [-0.56, 0.56].forEach((sx) => {
+        addPart(group, new THREE.BoxGeometry(0.08, 0.18, slopeLen), darkMetal, sx, totalH / 2 - 0.08, 0, {
+          rx: slopeAngle,
+        });
+      });
+
+      // Individual warm-wood treads + subtle under-tread LED strips
+      for (let i = 0; i < steps; i++) {
+        const sy = (i + 1) * stepH;
+        const sz = totalD / 2 - (i + 0.5) * stepD;
+        addPart(group, new THREE.BoxGeometry(1.24, 0.055, stepD + 0.04), warmWood, 0, sy, sz);
+        if (i % 2 === 0) {
+          addPart(group, new THREE.BoxGeometry(1.12, 0.018, 0.02), glowAccent, 0, sy - 0.036, sz + stepD * 0.45, { cast: false });
+        }
+      }
+
+      // Sleek brushed-steel side handrails & upright balusters
+      const railOffsetY = 0.92;
+      [-0.62, 0.62].forEach((rx) => {
+        addPart(group, new THREE.BoxGeometry(0.045, 0.045, slopeLen + 0.1), brushedSteel, rx, totalH / 2 + railOffsetY - 0.06, 0, {
+          rx: slopeAngle,
+        });
+        [0, 0.35, 0.7, 1].forEach((t) => {
+          const postY = t * totalH;
+          const postZ = totalD / 2 - t * totalD;
+          addPart(group, new THREE.CylinderGeometry(0.018, 0.018, railOffsetY, 8), brushedSteel, rx, postY + railOffsetY / 2, postZ);
+        });
+      });
+      break;
+    }
+
     default: {
       addPart(group, new THREE.BoxGeometry(spec.width, spec.height, spec.depth), matteDesk, 0, spec.height / 2, 0);
     }
   }
 
-  // Refined, compact overhead live mini-timer sprite above every 3D station
-  if (spec.isStation && item.tableNumber) {
+  // Ultra-clear, high-DPI floating overhead label (Device Name + Station # + Live Status/Timer)
+  if (showBadge && spec.isStation && item.tableNumber) {
     const resolvedTimer =
       timerState ||
       (isOccupied
         ? { text: 'فعال', status: 'running', isOccupied: true }
         : { text: 'آزاد', status: 'idle', isOccupied: false });
-    const sprite = createStationTimerSprite(item.tableNumber, resolvedTimer, itemAccentHex, anisotropy);
-    sprite.position.set(0, spec.height + 0.48, 0);
-    sprite.scale.set(1.42, 0.43, 1);
+    const deviceLabel = spec.shortName || spec.name;
+    const sprite = createStationTimerSprite(
+      item.tableNumber,
+      resolvedTimer,
+      itemAccentHex,
+      anisotropy,
+      deviceLabel
+    );
+    sprite.position.set(0, spec.height + 0.72, 0);
+    sprite.scale.set(1.9, 0.74, 1);
     group.add(sprite);
   }
 
   // Invisible simplified picking/raycast proxy box
-  const pickProxy = new THREE.Mesh(
-    new THREE.BoxGeometry(spec.width, Math.max(0.55, spec.height), spec.depth),
-    new THREE.MeshBasicMaterial({ visible: false })
-  );
-  pickProxy.position.y = Math.max(0.55, spec.height) / 2;
-  pickProxy.userData.pickItemId = item.id;
-  pickProxy.name = 'PickProxy';
-  group.add(pickProxy);
+  if (isInteractive) {
+    const pickProxy = new THREE.Mesh(
+      new THREE.BoxGeometry(spec.width, Math.max(0.55, spec.height), spec.depth),
+      new THREE.MeshBasicMaterial({ visible: false })
+    );
+    pickProxy.position.y = Math.max(0.55, spec.height) / 2;
+    pickProxy.userData.pickItemId = item.id;
+    pickProxy.name = 'PickProxy';
+    group.add(pickProxy);
+  }
 
-  group.position.set(item.x || 0, 0, item.z || 0);
+  group.position.set(item.x || 0, elevationY, item.z || 0);
   group.rotation.y = THREE.MathUtils.degToRad(item.rotation || 0);
   return group;
 }

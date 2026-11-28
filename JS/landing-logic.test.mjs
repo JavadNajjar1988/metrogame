@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import {
   HERO_PREVIEW_TABS,
   FEATURE_STORY_CHAPTERS,
+  PINNED_STORY_STAGES,
+  TOURNAMENT_STORY_BEATS,
   TOURNAMENT_DISCIPLINES,
   SUBSCRIPTION_TIERS,
   COMPARISON_ROWS,
@@ -12,6 +14,12 @@ import {
   getTournamentDiscipline,
   getComparisonRows,
   computeStageTilt,
+  computeHeroScrollState,
+  computePinnedStoryState,
+  computeTournamentRevealState,
+  computeAmbientState,
+  computeMagneticOffset,
+  getTierCapabilitiesSummary,
   toggleFaqState,
   validateDemoInquiry,
 } from './landing-logic.mjs';
@@ -43,6 +51,104 @@ test('FEATURE_STORY_CHAPTERS covers all 6 core product capabilities with real da
   assert.equal(getFeatureChapter('missing').id, 'stations');
 });
 
+test('PINNED_STORY_STAGES covers 4 sequential scroll storytelling stages with real previews', () => {
+  assert.equal(PINNED_STORY_STAGES.length, 4);
+  assert.deepEqual(
+    PINNED_STORY_STAGES.map((s) => s.id),
+    ['stations', 'buffet', 'finance', 'tournaments']
+  );
+  for (const stage of PINNED_STORY_STAGES) {
+    assert.ok(stage.darkSrc.startsWith('assets/images/landing/preview-'));
+    assert.ok(stage.lightSrc.startsWith('assets/images/landing/preview-'));
+    assert.equal(stage.metrics.length, 3);
+    assert.ok(stage.focusBox.w > 0 && stage.focusBox.h > 0);
+  }
+});
+
+test('computeHeroScrollState smoothly flattens tilt, scales dashboard, and lifts headline continuously', () => {
+  const start = computeHeroScrollState(0);
+  const mid = computeHeroScrollState(0.5);
+  const end = computeHeroScrollState(1);
+
+  assert.equal(start.copyY, 0);
+  assert.equal(start.copyOpacity, 1);
+  assert.ok(start.stageRotateX > mid.stageRotateX && mid.stageRotateX > end.stageRotateX);
+  assert.equal(end.stageRotateX, 0);
+  assert.ok(end.stageScale > mid.stageScale && mid.stageScale > start.stageScale);
+  assert.ok(end.copyY < mid.copyY && mid.copyY < start.copyY);
+  assert.equal(end.satellitesY[0], 0);
+  assert.deepEqual(computeHeroScrollState(-1), start);
+  assert.deepEqual(computeHeroScrollState(3), end);
+});
+
+test('computePinnedStoryState maps continuous scroll progress across 4 crossfading layers reversibly', () => {
+  const s0 = computePinnedStoryState(0);
+  const s1 = computePinnedStoryState(0.35);
+  const s2 = computePinnedStoryState(0.62);
+  const s3 = computePinnedStoryState(0.98);
+
+  assert.equal(s0.activeIndex, 0);
+  assert.equal(s0.layers[0].opacity, 1);
+  assert.equal(s0.layers[3].opacity, 0);
+
+  assert.equal(s1.activeIndex, 1);
+  assert.ok(s1.layers[1].opacity > 0.7);
+
+  assert.equal(s2.activeIndex, 2);
+  assert.ok(s2.layers[2].opacity > 0.7);
+
+  assert.equal(s3.activeIndex, 3);
+  assert.equal(s3.layers[3].opacity, 1);
+  assert.equal(s3.layers[0].opacity, 0);
+});
+
+test('computeTournamentRevealState scrubs H2H clubs, VS emblem, connectors, bracket, and leaderboard in order', () => {
+  assert.equal(TOURNAMENT_STORY_BEATS.length, 4);
+  const t0 = computeTournamentRevealState(0);
+  const tMid = computeTournamentRevealState(0.5);
+  const tEnd = computeTournamentRevealState(1);
+
+  assert.equal(t0.storyBeatIndex, 0);
+  assert.ok(t0.clubAOffsetX > 0 && t0.clubBOffsetX < 0);
+  assert.equal(t0.connectorDashOffset, 120);
+
+  assert.equal(tMid.storyBeatIndex, 2);
+  assert.equal(tMid.clubAOffsetX, 0);
+  assert.equal(tMid.clubBOffsetX, 0);
+  assert.ok(tMid.connectorDashOffset < 120);
+
+  assert.equal(tEnd.storyBeatIndex, 3);
+  assert.equal(tEnd.connectorDashOffset, 0);
+  assert.equal(tEnd.bracketDashOffset, 0);
+  assert.equal(tEnd.leaderboardOpacity, 1);
+});
+
+test('computeAmbientState and computeMagneticOffset stay smoothly bounded', () => {
+  const a0 = computeAmbientState(0);
+  const a1 = computeAmbientState(1);
+  assert.ok(Math.abs(a0.orb1X) <= 10);
+  assert.ok(a1.depthShiftY < a0.depthShiftY);
+
+  const mag = computeMagneticOffset(2, -2, 6);
+  assert.deepEqual(mag, { tx: 6, ty: -6 });
+  assert.deepEqual(computeMagneticOffset(0, 0, 6), { tx: 0, ty: 0 });
+});
+
+test('getTierCapabilitiesSummary counts unlocked and locked features accurately per plan', () => {
+  const std = getTierCapabilitiesSummary('standard');
+  const sil = getTierCapabilitiesSummary('silver');
+  const gld = getTierCapabilitiesSummary('gold');
+  const ult = getTierCapabilitiesSummary('ultimate');
+
+  assert.equal(std.persianName, 'عادی');
+  assert.equal(std.includedCount + std.excludedCount, COMPARISON_ROWS.length);
+  assert.ok(std.includedCount < sil.includedCount);
+  assert.ok(sil.includedCount < gld.includedCount);
+  assert.ok(gld.includedCount < ult.includedCount);
+  assert.equal(ult.includedCount, COMPARISON_ROWS.length);
+  assert.equal(ult.excludedCount, 0);
+});
+
 test('TOURNAMENT_DISCIPLINES covers video games, billiards, and foosball with H2H, bracket, and leaderboard', () => {
   assert.equal(TOURNAMENT_DISCIPLINES.length, 3);
   assert.deepEqual(
@@ -50,7 +156,7 @@ test('TOURNAMENT_DISCIPLINES covers video games, billiards, and foosball with H2
     ['video', 'billiards', 'foosball']
   );
   const billiards = getTournamentDiscipline('billiards');
-  assert.equal(billiards.clubA.name, 'Game District');
+  assert.equal(billiards.clubA.name, 'مترو گیم');
   assert.ok(billiards.leaderboard.length >= 4);
   assert.ok(billiards.bracket.final.a);
 });
@@ -108,7 +214,7 @@ test('validateDemoInquiry rejects incomplete inputs and accepts valid Persian-di
 
   const valid = validateDemoInquiry({
     fullName: 'آرش محمدی',
-    centerName: 'گیم‌نت دیستریکت',
+    centerName: 'گیم‌نت مترو گیم',
     phone: '۰۹۱۲-۳۴۵-۶۷۸۹',
     tierId: 'ultimate',
     notes: '۱۵ کنسول PS5 و ۳ میز بیلیارد',

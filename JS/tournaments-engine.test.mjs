@@ -42,7 +42,7 @@ test('supports all 3 categories and separates online video games from physical b
     title: 'مسابقه بیلیارد سالن',
     category: 'billiards',
     gameId: 'billiards-8ball',
-    venue: 'سالن بیلیارد طبقه اول Game District',
+    venue: 'سالن بیلیارد طبقه اول مترو گیم',
     prizeFirst: 'چوب بیلیارد + ۵ ساعت بازی رایگان',
     scope: 'internal',
   });
@@ -50,7 +50,7 @@ test('supports all 3 categories and separates online video games from physical b
   assert.equal(physicalTrn.value.mode, 'physical');
   assert.equal(physicalTrn.value.platform, '');
   assert.equal(physicalTrn.value.lobbyCode, '');
-  assert.equal(physicalTrn.value.venue, 'سالن بیلیارد طبقه اول Game District');
+  assert.equal(physicalTrn.value.venue, 'سالن بیلیارد طبقه اول مترو گیم');
   assert.equal(physicalTrn.value.scope, 'internal');
 
   // Physical tournaments must NOT require an online ID for participants
@@ -108,7 +108,7 @@ test('public challenge acceptance, prize agreement (proposed -> agreed), and aut
     members: ['محمد باقر قالیباف', 'جعفر محمدی'],
     competitionScope: 'two_center',
     suggestedPrize: '۱۰ ساعت بازی VIP رایگان',
-    venue: 'سالن اصلی Game District',
+    venue: 'سالن اصلی مترو گیم',
   });
   assert.equal(created.error, undefined);
 
@@ -136,7 +136,7 @@ test('public challenge acceptance, prize agreement (proposed -> agreed), and aut
   const agreed = updateChallengePrizeAgreement(accepted.challenge, {
     actionType: 'confirm',
     gamenetId: LOCAL_GAMENET_ID,
-    gamenetName: 'Game District',
+    gamenetName: 'مترو گیم',
   });
   assert.equal(agreed.error, undefined);
   assert.equal(agreed.challenge.prizeAgreement.status, 'agreed');
@@ -160,7 +160,7 @@ test('public challenge acceptance, prize agreement (proposed -> agreed), and aut
 
 test('multi-round bracket handles byes and crowns champion with headline', () => {
   const participants = [
-    { id: 'a', playerName: 'تیم Alpha', onlineId: 'Steam:A', gamenetId: LOCAL_GAMENET_ID, gamenetName: 'Game District' },
+    { id: 'a', playerName: 'تیم Alpha', onlineId: 'Steam:A', gamenetId: LOCAL_GAMENET_ID, gamenetName: 'مترو گیم' },
     { id: 'b', playerName: 'تیم Beta', onlineId: 'Steam:B', gamenetId: 'arena-plus', gamenetName: 'آرنا پلاس' },
     { id: 'c', playerName: 'تیم Gamma', onlineId: 'Steam:C', gamenetId: 'cyberland-isf', gamenetName: 'سایبرلند' },
   ];
@@ -184,7 +184,7 @@ test('multi-round bracket handles byes and crowns champion with headline', () =>
     bracket: final.bracket,
   });
   assert.ok(headline.includes('تیم Alpha'));
-  assert.ok(headline.includes('Game District'));
+  assert.ok(headline.includes('مترو گیم'));
   assert.ok(headline.includes('Counter-Strike 2'));
 });
 

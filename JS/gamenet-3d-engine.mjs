@@ -1,9 +1,10 @@
 /**
  * Pure 3D Game Center Builder domain engine:
- * - Room dimensions, procedural wallpapers, floors, lighting moods & LED strip colors
- * - Expanded 25-item gaming equipment, multi-style billiard tables & rich decor catalog
+ * - Multi-floor architecture (up to 4 floors), room dimensions, procedural wallpapers, floors & LED colors
+ * - Interactive interior partition wall geometry (full, half, glass VIP, doorway), snapping & collision
+ * - Expanded 26-item gaming equipment, multi-style billiard tables, staircase & rich decor catalog
  * - Per-item finish/tint customization, grid snapping, room boundary clamping, 90° rotation
- * - AABB collision detection, starter arena presets & Tables sync
+ * - AABB & wall collision detection, blank from-scratch & starter presets, multi-floor Tables sync
  * Zero DOM / Zero Three.js dependencies — 100% unit-testable via node:test.
  */
 
@@ -17,6 +18,19 @@ export const ROOM_LIMITS = Object.freeze({
   gridStep: 0.5,
   wallMargin: 0.16,
 });
+
+export const FLOOR_LIMITS = Object.freeze({
+  maxFloors: 4,
+  slabThickness: 0.24,
+  defaultNames: Object.freeze(['طبقه همکف', 'طبقه اول', 'طبقه دوم', 'طبقه سوم']),
+});
+
+export const WALL_STYLES = Object.freeze([
+  { id: 'full', label: 'دیوار کامل', heightRatio: 1, fixedHeight: null, thickness: 0.16, color: '#64748b' },
+  { id: 'half', label: 'نیم‌دیوار', heightRatio: 0, fixedHeight: 1.25, thickness: 0.16, color: '#94a3b8' },
+  { id: 'glass', label: 'شیشه‌ای VIP', heightRatio: 1, fixedHeight: null, thickness: 0.12, color: '#38bdf8' },
+  { id: 'doorway', label: 'با درگاه ورودی', heightRatio: 1, fixedHeight: null, thickness: 0.16, color: '#a78bfa' },
+]);
 
 export const FLOOR_FINISHES = Object.freeze([
   { id: 'slate-tile', label: 'سرامیک تیره', color: '#1c2230', secondary: '#262f42' },
@@ -134,7 +148,7 @@ export const CATALOG_CATEGORIES = Object.freeze([
   { id: 'systems', label: 'سیستم و کنسول' },
   { id: 'arcade', label: 'بیلیارد و سالنی' },
   { id: 'furniture', label: 'مبلمان' },
-  { id: 'decor', label: 'تزئینات و دکور' },
+  { id: 'decor', label: 'معماری و دکور' },
 ]);
 
 export const ITEM_CATALOG = Object.freeze([
@@ -142,7 +156,7 @@ export const ITEM_CATALOG = Object.freeze([
   {
     type: 'pc-station',
     name: 'سیستم گیمینگ PC',
-    shortName: 'PC',
+    shortName: 'سیستم PC',
     category: 'systems',
     width: 1.4,
     depth: 0.85,
@@ -178,7 +192,7 @@ export const ITEM_CATALOG = Object.freeze([
   {
     type: 'vr-pod',
     name: 'کابین VIP / VR',
-    shortName: 'VR',
+    shortName: 'کابین VR',
     category: 'systems',
     width: 2.1,
     depth: 2.1,
@@ -204,7 +218,7 @@ export const ITEM_CATALOG = Object.freeze([
   {
     type: 'billiard-table',
     name: 'بیلیارد کلاسیک سبز',
-    shortName: 'بیلیارد سبز',
+    shortName: 'بیلیارد',
     category: 'arcade',
     width: 2.6,
     depth: 1.45,
@@ -218,7 +232,7 @@ export const ITEM_CATALOG = Object.freeze([
   {
     type: 'billiard-pro',
     name: 'بیلیارد تورنومنت آبی',
-    shortName: 'بیلیارد آبی',
+    shortName: 'بیلیارد پرو',
     category: 'arcade',
     width: 2.75,
     depth: 1.5,
@@ -260,7 +274,7 @@ export const ITEM_CATALOG = Object.freeze([
   {
     type: 'foosball-table',
     name: 'فوتبال دستی',
-    shortName: 'فوتبال',
+    shortName: 'فوتبال دستی',
     category: 'arcade',
     width: 1.5,
     depth: 1.1,
@@ -327,7 +341,18 @@ export const ITEM_CATALOG = Object.freeze([
     accentColor: '#6366f1',
   },
 
-  // --- Decorations & Architectural Props ---
+  // --- Architecture & Decorations ---
+  {
+    type: 'stairs-modern',
+    name: 'راه‌پله طبقات',
+    shortName: 'راه‌پله',
+    category: 'decor',
+    width: 1.4,
+    depth: 2.6,
+    height: 3.1,
+    isStation: false,
+    accentColor: '#94a3b8',
+  },
   {
     type: 'reception-counter',
     name: 'پیشخوان و بوفه',
@@ -443,6 +468,7 @@ export const ITEM_CATALOG = Object.freeze([
 const CATALOG_MAP = new Map(ITEM_CATALOG.map((entry) => [entry.type, entry]));
 const FLOOR_IDS = new Set(FLOOR_FINISHES.map((f) => f.id));
 const WALL_IDS = new Set(WALL_FINISHES.map((w) => w.id));
+const WALL_STYLE_IDS = new Set(WALL_STYLES.map((s) => s.id));
 const MOOD_IDS = new Set(LIGHTING_MOODS.map((m) => m.id));
 const LED_IDS = new Set(LED_COLORS.map((c) => c.id));
 const TINT_IDS = new Set(ITEM_TINT_SWATCHES.map((t) => t.id));
@@ -450,6 +476,10 @@ const FELT_IDS = new Set(BILLIARD_FELT_VARIANTS.map((v) => v.id));
 
 export function getCatalogItem(type) {
   return CATALOG_MAP.get(String(type)) || null;
+}
+
+export function getWallStyleSpec(styleId) {
+  return WALL_STYLES.find((s) => s.id === styleId) || WALL_STYLES[0];
 }
 
 export function getBilliardFeltVariant(variantId, fallbackType = 'billiard-table') {
@@ -535,10 +565,188 @@ export function clampItemToRoom(item, room, gridStep = ROOM_LIMITS.gridStep) {
 }
 
 /**
+ * Interior Wall Geometry Helpers
+ */
+export function snapWallPointToRoom(rawX, rawZ, room, gridStep = ROOM_LIMITS.gridStep) {
+  const safeRoom = sanitizeRoom(room);
+  const maxW = safeRoom.width / 2 - 0.08;
+  const maxD = safeRoom.depth / 2 - 0.08;
+  const sx = snapToGrid(clamp(Number(rawX) || 0, -maxW, maxW), gridStep);
+  const sz = snapToGrid(clamp(Number(rawZ) || 0, -maxD, maxD), gridStep);
+  return {
+    x: Number(clamp(sx, -maxW, maxW).toFixed(2)),
+    z: Number(clamp(sz, -maxD, maxD).toFixed(2)),
+  };
+}
+
+/**
+ * Snaps the active wall endpoint relative to start point (supports clean 0°/90°/45° architectural snapping).
+ */
+export function snapWallEndpoint(
+  startX,
+  startZ,
+  rawX,
+  rawZ,
+  room,
+  { gridStep = ROOM_LIMITS.gridStep, orthoSnap = true } = {}
+) {
+  const base = snapWallPointToRoom(rawX, rawZ, room, gridStep);
+  if (!orthoSnap || startX == null || startZ == null) return base;
+
+  const dx = base.x - startX;
+  const dz = base.z - startZ;
+  const dist = Math.hypot(dx, dz);
+  if (dist < 0.01) return base;
+
+  const angle = Math.atan2(dz, dx);
+  // Snap to nearest 45-degree increment (0, 45, 90, 135, 180...)
+  const snapRad = Math.round(angle / (Math.PI / 4)) * (Math.PI / 4);
+  const absCos = Math.abs(Math.cos(snapRad));
+  const absSin = Math.abs(Math.sin(snapRad));
+
+  let targetX = base.x;
+  let targetZ = base.z;
+  if (absCos > 0.9) {
+    // Horizontal wall
+    targetZ = startZ;
+  } else if (absSin > 0.9) {
+    // Vertical wall
+    targetX = startX;
+  } else {
+    // 45-degree diagonal wall
+    const proj = Math.max(Math.abs(dx), Math.abs(dz));
+    targetX = startX + Math.sign(Math.cos(snapRad)) * proj;
+    targetZ = startZ + Math.sign(Math.sin(snapRad)) * proj;
+  }
+
+  return snapWallPointToRoom(targetX, targetZ, room, gridStep);
+}
+
+export function getWallMetrics(wall) {
+  const x1 = Number(wall?.x1) || 0;
+  const z1 = Number(wall?.z1) || 0;
+  const x2 = Number(wall?.x2) || 0;
+  const z2 = Number(wall?.z2) || 0;
+  const dx = x2 - x1;
+  const dz = z2 - z1;
+  const length = Math.hypot(dx, dz);
+  return {
+    cx: Number(((x1 + x2) / 2).toFixed(3)),
+    cz: Number(((z1 + z2) / 2).toFixed(3)),
+    dx,
+    dz,
+    length: Number(length.toFixed(3)),
+    angleRad: Math.atan2(-dz, dx),
+  };
+}
+
+export function createWallSegment(x1, z1, x2, z2, room, style = 'full', id = null) {
+  const safeRoom = sanitizeRoom(room);
+  const p1 = snapWallPointToRoom(x1, z1, safeRoom, 0);
+  const p2 = snapWallPointToRoom(x2, z2, safeRoom, 0);
+  const length = Math.hypot(p2.x - p1.x, p2.z - p1.z);
+  if (length < 0.45) return null;
+
+  const resolvedStyle = WALL_STYLE_IDS.has(style) ? style : 'full';
+  const styleSpec = getWallStyleSpec(resolvedStyle);
+
+  return {
+    id: id || `wall-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
+    x1: p1.x,
+    z1: p1.z,
+    x2: p2.x,
+    z2: p2.z,
+    style: resolvedStyle,
+    thickness: styleSpec.thickness,
+  };
+}
+
+export function sanitizeWalls(rawWalls, room) {
+  if (!Array.isArray(rawWalls)) return [];
+  const safeRoom = sanitizeRoom(room);
+  const seen = new Set();
+  const out = [];
+
+  for (let i = 0; i < rawWalls.length && out.length < 80; i++) {
+    const w = rawWalls[i];
+    if (!w || typeof w !== 'object') continue;
+    let id = String(w.id || `wall-${i + 1}`).slice(0, 48);
+    if (seen.has(id)) id = `${id}-${i}`;
+    const seg = createWallSegment(w.x1, w.z1, w.x2, w.z2, safeRoom, w.style, id);
+    if (seg) {
+      seen.add(seg.id);
+      out.push(seg);
+    }
+  }
+  return out;
+}
+
+/**
+ * Checks whether a furniture/station candidate overlaps any drawn interior wall segment.
+ * Allows passing through the centered 1.25m opening of 'doorway' walls when length >= 1.8m.
+ */
+export function checkItemWallCollision(candidate, walls = [], clearance = 0.06) {
+  if (!candidate || !Array.isArray(walls) || walls.length === 0) return false;
+  const fp = getRotatedFootprint(candidate.type, candidate.rotation);
+  const halfW = Math.max(0.05, fp.width / 2 - clearance);
+  const halfD = Math.max(0.05, fp.depth / 2 - clearance);
+
+  const corners = [
+    [candidate.x - halfW, candidate.z - halfD],
+    [candidate.x + halfW, candidate.z - halfD],
+    [candidate.x + halfW, candidate.z + halfD],
+    [candidate.x - halfW, candidate.z + halfD],
+  ];
+
+  for (const wall of walls) {
+    const m = getWallMetrics(wall);
+    if (m.length < 0.45) continue;
+    const ux = m.dx / m.length;
+    const uz = m.dz / m.length;
+    const nx = -uz;
+    const nz = ux;
+    const halfLen = m.length / 2;
+    const halfThick = (Number(wall.thickness) || 0.16) / 2;
+
+    let minAlong = Infinity;
+    let maxAlong = -Infinity;
+    let minPerp = Infinity;
+    let maxPerp = -Infinity;
+
+    for (const [px, pz] of corners) {
+      const rx = px - m.cx;
+      const rz = pz - m.cz;
+      const along = rx * ux + rz * uz;
+      const perp = rx * nx + rz * nz;
+      if (along < minAlong) minAlong = along;
+      if (along > maxAlong) maxAlong = along;
+      if (perp < minPerp) minPerp = perp;
+      if (perp > maxPerp) maxPerp = perp;
+    }
+
+    const overlapsPerp = minPerp < halfThick && maxPerp > -halfThick;
+    const overlapsAlong = minAlong < halfLen && maxAlong > -halfLen;
+    if (!overlapsPerp || !overlapsAlong) continue;
+
+    // For doorway walls, allow items cleanly positioned inside the open portal? Usually block jambs only:
+    if (wall.style === 'doorway' && m.length >= 1.8) {
+      const doorHalf = 0.625;
+      const hitsLeftJamb = minAlong < -doorHalf && maxAlong > -halfLen;
+      const hitsRightJamb = minAlong < halfLen && maxAlong > doorHalf;
+      if (!hitsLeftJamb && !hitsRightJamb) continue;
+    }
+
+    return true;
+  }
+
+  return false;
+}
+
+/**
  * Axis-aligned bounding-box overlap check on the floor plane (X/Z).
  * Uses a small clearance allowance (0.08m) so chairs tuck neatly near desks.
  */
-export function checkItemCollision(candidate, items = [], ignoreId = null, clearance = 0.08) {
+export function checkItemCollision(candidate, items = [], ignoreId = null, clearance = 0.08, walls = []) {
   if (!candidate || !getCatalogItem(candidate.type)) return false;
   const fpA = getRotatedFootprint(candidate.type, candidate.rotation);
   const axMin = candidate.x - fpA.width / 2 + clearance;
@@ -560,6 +768,11 @@ export function checkItemCollision(candidate, items = [], ignoreId = null, clear
       return true;
     }
   }
+
+  if (walls && walls.length > 0 && checkItemWallCollision(candidate, walls)) {
+    return true;
+  }
+
   return false;
 }
 
@@ -586,183 +799,13 @@ export function sanitizeRoom(rawRoom = {}) {
   };
 }
 
-export function assignNextStationNumber(items = [], type = '') {
-  const spec = getCatalogItem(type);
-  if (!spec || !spec.isStation) return '';
-  const used = new Set(
-    items
-      .map((i) => Number(i?.tableNumber))
-      .filter((n) => Number.isFinite(n) && n > 0)
-  );
-  let next = 1;
-  while (used.has(next)) next += 1;
-  return String(next);
-}
-
-/**
- * Generates curated, collision-free starter 3D Game Center layouts.
- */
-export function createStarterLayout(preset = 'pro-arena') {
-  if (preset === 'empty') {
-    return {
-      version: 1,
-      room: sanitizeRoom({
-        width: 12,
-        depth: 10,
-        height: 3.4,
-        floor: 'slate-tile',
-        wall: 'charcoal',
-        mood: 'esports',
-        ledColor: 'auto',
-        cutawayWalls: true,
-      }),
-      items: [],
-    };
-  }
-
-  if (preset === 'billiard-club') {
-    const room = sanitizeRoom({
-      width: 16,
-      depth: 12,
-      height: 3.6,
-      floor: 'warm-wood',
-      wall: 'brick-loft',
-      mood: 'warm-club',
-      ledColor: 'amber',
-      cutawayWalls: true,
-    });
-    const rawItems = [
-      // Three distinct styles of Billiard & Snooker tables
-      { id: 'bp-1', type: 'billiard-pro', x: -3.5, z: -2.2, rotation: 0, tableNumber: '1', variant: 'tournament-blue' },
-      { id: 'bv-2', type: 'billiard-vip', x: 2.2, z: -2.2, rotation: 0, tableNumber: '2', variant: 'vip-burgundy' },
-      { id: 'bs-3', type: 'billiard-snooker', x: -1.8, z: 2.3, rotation: 0, tableNumber: '3', variant: 'classic-green' },
-      { id: 'fb-4', type: 'foosball-table', x: 4.5, z: 2.4, rotation: 0, tableNumber: '4' },
-
-      // Club Lounge & Rich Decorations
-      { id: 'cue-1', type: 'cue-rack', x: -6.8, z: -2.2, rotation: 90, tableNumber: '' },
-      { id: 'trp-1', type: 'trophy-cabinet', x: -0.6, z: -5.4, rotation: 0, tableNumber: '' },
-      { id: 'wtv-1', type: 'wall-tv-spectator', x: -4.2, z: -5.4, rotation: 0, tableNumber: '' },
-      { id: 'neo-1', type: 'neon-sign-stand', x: 3.2, z: -5.4, rotation: 0, tableNumber: '', tint: 'amber' },
-      { id: 'frd-1', type: 'vending-fridge', x: -7.1, z: 1.4, rotation: 90, tableNumber: '' },
-      { id: 'rec-1', type: 'reception-counter', x: -5.8, z: 4.4, rotation: 180, tableNumber: '' },
-      { id: 'sof-1', type: 'lounge-sofa', x: 6.2, z: -2.2, rotation: 270, tableNumber: '' },
-      { id: 'ct-1', type: 'coffee-table', x: 4.9, z: -2.2, rotation: 90, tableNumber: '' },
-      { id: 'pil-1', type: 'rgb-pillar', x: -7.2, z: -5.2, rotation: 0, tableNumber: '', tint: 'amber' },
-      { id: 'pil-2', type: 'rgb-pillar', x: 7.2, z: -5.2, rotation: 0, tableNumber: '', tint: 'amber' },
-      { id: 'plt-1', type: 'plant-pot', x: 7.0, z: 4.8, rotation: 0, tableNumber: '' },
-    ];
-    return {
-      version: 1,
-      room,
-      items: rawItems.map((it) => clampItemToRoom(it, room, 0)),
-    };
-  }
-
-  if (preset === 'compact') {
-    const room = sanitizeRoom({
-      width: 10,
-      depth: 8,
-      height: 3.2,
-      floor: 'warm-wood',
-      wall: 'wood-slat',
-      mood: 'lounge',
-      ledColor: 'auto',
-      cutawayWalls: true,
-    });
-    const rawItems = [
-      { id: 'st-1', type: 'ps5-lounge', x: -3.0, z: -3.4, rotation: 0, tableNumber: '1' },
-      { id: 'sf-1', type: 'lounge-sofa', x: -3.0, z: -1.3, rotation: 180, tableNumber: '' },
-      { id: 'st-2', type: 'ps4-station', x: 0.0, z: -3.4, rotation: 0, tableNumber: '2' },
-      { id: 'sf-2', type: 'lounge-sofa', x: 0.0, z: -1.3, rotation: 180, tableNumber: '' },
-      { id: 'st-3', type: 'pc-station', x: 3.8, z: -2.0, rotation: 270, tableNumber: '3' },
-      { id: 'ch-3', type: 'gaming-chair', x: 2.9, z: -2.0, rotation: 90, tableNumber: '' },
-      { id: 'st-4', type: 'pc-station', x: 3.8, z: 0.0, rotation: 270, tableNumber: '4' },
-      { id: 'ch-4', type: 'gaming-chair', x: 2.9, z: 0.0, rotation: 90, tableNumber: '' },
-      { id: 'rc-1', type: 'reception-counter', x: -2.8, z: 2.6, rotation: 180, tableNumber: '' },
-      { id: 'fr-1', type: 'vending-fridge', x: 0.0, z: 2.9, rotation: 180, tableNumber: '' },
-      { id: 'pl-1', type: 'plant-pot', x: -4.4, z: -3.4, rotation: 0, tableNumber: '' },
-    ];
-    return {
-      version: 1,
-      room,
-      items: rawItems.map((it) => clampItemToRoom(it, room, 0)),
-    };
-  }
-
-  // Default 'pro-arena' (14m x 10m flagship Game District hall)
-  const room = sanitizeRoom({
-    width: 14,
-    depth: 10,
-    height: 3.5,
-    floor: 'slate-tile',
-    wall: 'hex-cyber',
-    mood: 'esports',
-    ledColor: 'auto',
-    cutawayWalls: true,
-  });
-
-  const rawItems = [
-    // North wall: 3 Console TV Lounges (PS5 + PS4) with sofas & coffee tables
-    { id: 'ps5-1', type: 'ps5-lounge', x: -4.2, z: -4.4, rotation: 0, tableNumber: '1' },
-    { id: 'ct-1', type: 'coffee-table', x: -4.2, z: -3.1, rotation: 0, tableNumber: '' },
-    { id: 'sofa-1', type: 'lounge-sofa', x: -4.2, z: -1.9, rotation: 180, tableNumber: '' },
-
-    { id: 'ps4-2', type: 'ps4-station', x: -1.4, z: -4.4, rotation: 0, tableNumber: '2' },
-    { id: 'ct-2', type: 'coffee-table', x: -1.4, z: -3.1, rotation: 0, tableNumber: '' },
-    { id: 'sofa-2', type: 'lounge-sofa', x: -1.4, z: -1.9, rotation: 180, tableNumber: '' },
-
-    { id: 'ps4-3', type: 'ps4-station', x: 1.4, z: -4.4, rotation: 0, tableNumber: '3' },
-    { id: 'ct-3', type: 'coffee-table', x: 1.4, z: -3.1, rotation: 0, tableNumber: '' },
-    { id: 'sofa-3', type: 'lounge-sofa', x: 1.4, z: -1.9, rotation: 180, tableNumber: '' },
-
-    // East Esports PC Zone (3 back-to-wall PC stations + gaming chairs)
-    { id: 'pc-4', type: 'pc-station', x: 5.9, z: -3.0, rotation: 270, tableNumber: '4' },
-    { id: 'ch-4', type: 'gaming-chair', x: 4.9, z: -3.0, rotation: 90, tableNumber: '' },
-
-    { id: 'pc-5', type: 'pc-station', x: 5.9, z: -1.0, rotation: 270, tableNumber: '5' },
-    { id: 'ch-5', type: 'gaming-chair', x: 4.9, z: -1.0, rotation: 90, tableNumber: '' },
-
-    { id: 'pc-6', type: 'pc-station', x: 5.9, z: 1.0, rotation: 270, tableNumber: '6' },
-    { id: 'ch-6', type: 'gaming-chair', x: 4.9, z: 1.0, rotation: 90, tableNumber: '' },
-
-    // Neon divider separating Esports PCs from lounge
-    { id: 'div-1', type: 'neon-divider', x: 3.4, z: -2.0, rotation: 90, tableNumber: '' },
-
-    // Center-South Arcade Zone: Billiard & Foosball + Cue Rack
-    { id: 'bil-7', type: 'billiard-table', x: 0.8, z: 2.3, rotation: 0, tableNumber: '7', variant: 'classic-green' },
-    { id: 'foo-8', type: 'foosball-table', x: 4.5, z: 3.3, rotation: 0, tableNumber: '8' },
-
-    // West Reception, Beverage Fridge, Trophy Cabinet & Architectural Decor
-    { id: 'rec-1', type: 'reception-counter', x: -4.4, z: 2.8, rotation: 180, tableNumber: '' },
-    { id: 'frd-1', type: 'vending-fridge', x: -6.3, z: 0.6, rotation: 90, tableNumber: '' },
-    { id: 'trp-1', type: 'trophy-cabinet', x: -6.3, z: -1.8, rotation: 90, tableNumber: '' },
-    { id: 'pil-1', type: 'rgb-pillar', x: -6.4, z: -4.4, rotation: 0, tableNumber: '' },
-    { id: 'plt-2', type: 'plant-pot', x: 6.3, z: -4.3, rotation: 0, tableNumber: '' },
-    { id: 'plt-3', type: 'plant-pot', x: -6.3, z: 3.8, rotation: 0, tableNumber: '' },
-  ];
-
-  return {
-    version: 1,
-    room,
-    items: rawItems.map((it) => clampItemToRoom(it, room, 0)),
-  };
-}
-
-/**
- * Validates and sanitizes a persisted layout object loaded from gamenet_layout.json.
- */
-export function sanitizeLayout(raw) {
-  if (!raw || typeof raw !== 'object' || !raw.room) {
-    return createStarterLayout('pro-arena');
-  }
-
-  const room = sanitizeRoom(raw.room);
-  const rawList = Array.isArray(raw.items) ? raw.items : [];
+function sanitizeFloorItems(rawList, room) {
+  const list = Array.isArray(rawList) ? rawList : [];
   const seenIds = new Set();
   const items = [];
 
-  for (let idx = 0; idx < rawList.length && items.length < 160; idx++) {
-    const entry = rawList[idx];
+  for (let idx = 0; idx < list.length && items.length < 160; idx++) {
+    const entry = list[idx];
     if (!entry || typeof entry !== 'object') continue;
     const spec = getCatalogItem(entry.type);
     if (!spec) continue;
@@ -789,34 +832,440 @@ export function sanitizeLayout(raw) {
       sanitizedItem.tint = entry.tint;
     }
 
-    const clamped = clampItemToRoom(sanitizedItem, room, 0);
-    items.push(clamped);
+    items.push(clampItemToRoom(sanitizedItem, room, 0));
+  }
+  return items;
+}
+
+export function getDefaultFloorName(level = 0) {
+  return FLOOR_LIMITS.defaultNames[level] || `طبقه ${level + 1}`;
+}
+
+export function createEmptyFloor(level = 0, baseRoom = null, name = null) {
+  const room = sanitizeRoom(
+    baseRoom || {
+      width: 14,
+      depth: 10,
+      height: 3.4,
+      floor: 'slate-tile',
+      wall: 'charcoal',
+      mood: 'esports',
+      ledColor: 'auto',
+      cutawayWalls: true,
+    }
+  );
+  return {
+    id: `floor-${level}-${Date.now().toString(36).slice(-4)}`,
+    name: String(name || getDefaultFloorName(level)).trim().slice(0, 32),
+    level,
+    room,
+    walls: [],
+    items: [],
+  };
+}
+
+export function syncActiveFloorAliases(layout) {
+  if (!layout || !Array.isArray(layout.floors) || layout.floors.length === 0) return layout;
+  const idx = clamp(Math.floor(Number(layout.activeFloorIndex) || 0), 0, layout.floors.length - 1);
+  layout.activeFloorIndex = idx;
+  const active = layout.floors[idx];
+  layout.room = active.room;
+  layout.walls = active.walls;
+  layout.items = active.items;
+  return layout;
+}
+
+export function getActiveFloor(layout) {
+  if (!layout) return null;
+  if (Array.isArray(layout.floors) && layout.floors.length > 0) {
+    const idx = clamp(Math.floor(Number(layout.activeFloorIndex) || 0), 0, layout.floors.length - 1);
+    return layout.floors[idx];
+  }
+  return {
+    id: 'floor-0',
+    name: getDefaultFloorName(0),
+    level: 0,
+    room: sanitizeRoom(layout.room),
+    walls: Array.isArray(layout.walls) ? layout.walls : [],
+    items: Array.isArray(layout.items) ? layout.items : [],
+  };
+}
+
+/**
+ * Computes the world-space Y elevation (top of floor slab) for any floor index.
+ */
+export function getFloorElevationY(floors = [], floorIndex = 0) {
+  let y = 0;
+  const safeIdx = clamp(Math.floor(Number(floorIndex) || 0), 0, Math.max(0, floors.length - 1));
+  for (let i = 0; i < safeIdx; i++) {
+    const h = Number(floors[i]?.room?.height) || 3.4;
+    y += h + FLOOR_LIMITS.slabThickness;
+  }
+  return Number(y.toFixed(3));
+}
+
+export function addFloorToLayout(layout, options = {}) {
+  const safe = sanitizeLayout(layout);
+  if (safe.floors.length >= FLOOR_LIMITS.maxFloors) {
+    return { ok: false, reason: 'max_floors', layout: safe, floorIndex: safe.activeFloorIndex };
+  }
+  const topFloor = safe.floors[safe.floors.length - 1];
+  const nextLevel = safe.floors.length;
+  const newFloor = createEmptyFloor(
+    nextLevel,
+    { ...topFloor.room, ...(options.room || {}) },
+    options.name || getDefaultFloorName(nextLevel)
+  );
+  if (options.copyWalls && Array.isArray(topFloor.walls)) {
+    newFloor.walls = topFloor.walls.map((w, idx) => ({
+      ...w,
+      id: `w-f${nextLevel}-${idx + 1}-${Date.now().toString(36).slice(-3)}`,
+    }));
+  }
+  safe.floors.push(newFloor);
+  safe.activeFloorIndex = nextLevel;
+  syncActiveFloorAliases(safe);
+  return { ok: true, layout: safe, floorIndex: nextLevel, floor: newFloor };
+}
+
+export function removeFloorFromLayout(layout, floorIndex) {
+  const safe = sanitizeLayout(layout);
+  if (safe.floors.length <= 1) {
+    return { ok: false, reason: 'min_floors', layout: safe };
+  }
+  const idx = clamp(Math.floor(Number(floorIndex) || 0), 0, safe.floors.length - 1);
+  safe.floors.splice(idx, 1);
+  safe.floors.forEach((f, i) => {
+    f.level = i;
+  });
+  safe.activeFloorIndex = clamp(safe.activeFloorIndex, 0, safe.floors.length - 1);
+  syncActiveFloorAliases(safe);
+  return { ok: true, layout: safe, activeFloorIndex: safe.activeFloorIndex };
+}
+
+export function setActiveFloorInLayout(layout, floorIndex) {
+  if (!layout || !Array.isArray(layout.floors) || layout.floors.length === 0) return layout;
+  layout.activeFloorIndex = clamp(Math.floor(Number(floorIndex) || 0), 0, layout.floors.length - 1);
+  return syncActiveFloorAliases(layout);
+}
+
+export function renameFloorInLayout(layout, floorIndex, newName) {
+  if (!layout || !Array.isArray(layout.floors)) return layout;
+  const idx = clamp(Math.floor(Number(floorIndex) || 0), 0, layout.floors.length - 1);
+  const cleaned = String(newName || '').trim().slice(0, 32);
+  if (cleaned && layout.floors[idx]) {
+    layout.floors[idx].name = cleaned;
+  }
+  return layout;
+}
+
+export function getAllLayoutItems(layout) {
+  if (!layout) return [];
+  if (Array.isArray(layout.floors) && layout.floors.length > 0) {
+    const out = [];
+    layout.floors.forEach((fl, floorIndex) => {
+      const items = Array.isArray(fl?.items) ? fl.items : [];
+      items.forEach((it) => {
+        out.push({
+          ...it,
+          floorIndex,
+          floorName: fl.name || getDefaultFloorName(floorIndex),
+        });
+      });
+    });
+    return out;
+  }
+  return (Array.isArray(layout.items) ? layout.items : []).map((it) => ({
+    ...it,
+    floorIndex: 0,
+    floorName: getDefaultFloorName(0),
+  }));
+}
+
+export function assignNextStationNumber(itemsOrLayout = [], type = '') {
+  const spec = getCatalogItem(type);
+  if (!spec || !spec.isStation) return '';
+  const list = Array.isArray(itemsOrLayout)
+    ? itemsOrLayout
+    : getAllLayoutItems(itemsOrLayout);
+  const used = new Set(
+    list
+      .map((i) => Number(i?.tableNumber))
+      .filter((n) => Number.isFinite(n) && n > 0)
+  );
+  let next = 1;
+  while (used.has(next)) next += 1;
+  return String(next);
+}
+
+function wrapSingleFloorLayout(room, items = [], walls = [], floorName = 'طبقه همکف') {
+  const safeRoom = sanitizeRoom(room);
+  const safeWalls = sanitizeWalls(walls, safeRoom);
+  const safeItems = items.map((it) => clampItemToRoom(it, safeRoom, 0));
+  const floor = {
+    id: 'floor-0',
+    name: floorName,
+    level: 0,
+    room: safeRoom,
+    walls: safeWalls,
+    items: safeItems,
+  };
+  return syncActiveFloorAliases({
+    version: 2,
+    activeFloorIndex: 0,
+    floors: [floor],
+    room: safeRoom,
+    walls: safeWalls,
+    items: safeItems,
+  });
+}
+
+/**
+ * Generates curated, collision-free starter 3D Game Center layouts —
+ * with 'empty' as the clean from-scratch canvas!
+ */
+export function createStarterLayout(preset = 'empty') {
+  if (preset === 'empty') {
+    return wrapSingleFloorLayout(
+      {
+        width: 14,
+        depth: 10,
+        height: 3.4,
+        floor: 'slate-tile',
+        wall: 'charcoal',
+        mood: 'esports',
+        ledColor: 'auto',
+        cutawayWalls: true,
+      },
+      [],
+      [],
+      'طبقه همکف'
+    );
   }
 
-  return {
-    version: 1,
+  if (preset === 'billiard-club') {
+    const room = sanitizeRoom({
+      width: 16,
+      depth: 12,
+      height: 3.6,
+      floor: 'warm-wood',
+      wall: 'brick-loft',
+      mood: 'warm-club',
+      ledColor: 'amber',
+      cutawayWalls: true,
+    });
+    const rawItems = [
+      { id: 'bp-1', type: 'billiard-pro', x: -3.5, z: -2.2, rotation: 0, tableNumber: '1', variant: 'tournament-blue' },
+      { id: 'bv-2', type: 'billiard-vip', x: 2.2, z: -2.2, rotation: 0, tableNumber: '2', variant: 'vip-burgundy' },
+      { id: 'bs-3', type: 'billiard-snooker', x: -1.8, z: 2.3, rotation: 0, tableNumber: '3', variant: 'classic-green' },
+      { id: 'fb-4', type: 'foosball-table', x: 4.5, z: 2.4, rotation: 0, tableNumber: '4' },
+
+      { id: 'cue-1', type: 'cue-rack', x: -6.8, z: -2.2, rotation: 90, tableNumber: '' },
+      { id: 'trp-1', type: 'trophy-cabinet', x: -0.6, z: -5.4, rotation: 0, tableNumber: '' },
+      { id: 'wtv-1', type: 'wall-tv-spectator', x: -4.2, z: -5.4, rotation: 0, tableNumber: '' },
+      { id: 'neo-1', type: 'neon-sign-stand', x: 3.2, z: -5.4, rotation: 0, tableNumber: '', tint: 'amber' },
+      { id: 'frd-1', type: 'vending-fridge', x: -7.1, z: 1.4, rotation: 90, tableNumber: '' },
+      { id: 'rec-1', type: 'reception-counter', x: -5.8, z: 4.4, rotation: 180, tableNumber: '' },
+      { id: 'sof-1', type: 'lounge-sofa', x: 6.2, z: -2.2, rotation: 270, tableNumber: '' },
+      { id: 'ct-1', type: 'coffee-table', x: 4.9, z: -2.2, rotation: 90, tableNumber: '' },
+      { id: 'pil-1', type: 'rgb-pillar', x: -7.2, z: -5.2, rotation: 0, tableNumber: '', tint: 'amber' },
+      { id: 'pil-2', type: 'rgb-pillar', x: 7.2, z: -5.2, rotation: 0, tableNumber: '', tint: 'amber' },
+      { id: 'plt-1', type: 'plant-pot', x: 7.0, z: 4.8, rotation: 0, tableNumber: '' },
+    ];
+    return wrapSingleFloorLayout(room, rawItems, []);
+  }
+
+  if (preset === 'compact') {
+    const room = sanitizeRoom({
+      width: 10,
+      depth: 8,
+      height: 3.2,
+      floor: 'warm-wood',
+      wall: 'wood-slat',
+      mood: 'lounge',
+      ledColor: 'auto',
+      cutawayWalls: true,
+    });
+    const rawItems = [
+      { id: 'st-1', type: 'ps5-lounge', x: -3.0, z: -3.4, rotation: 0, tableNumber: '1' },
+      { id: 'sf-1', type: 'lounge-sofa', x: -3.0, z: -1.3, rotation: 180, tableNumber: '' },
+      { id: 'st-2', type: 'ps4-station', x: 0.0, z: -3.4, rotation: 0, tableNumber: '2' },
+      { id: 'sf-2', type: 'lounge-sofa', x: 0.0, z: -1.3, rotation: 180, tableNumber: '' },
+      { id: 'st-3', type: 'pc-station', x: 3.8, z: -2.0, rotation: 270, tableNumber: '3' },
+      { id: 'ch-3', type: 'gaming-chair', x: 2.9, z: -2.0, rotation: 90, tableNumber: '' },
+      { id: 'st-4', type: 'pc-station', x: 3.8, z: 0.0, rotation: 270, tableNumber: '4' },
+      { id: 'ch-4', type: 'gaming-chair', x: 2.9, z: 0.0, rotation: 90, tableNumber: '' },
+      { id: 'rc-1', type: 'reception-counter', x: -2.8, z: 2.6, rotation: 180, tableNumber: '' },
+      { id: 'fr-1', type: 'vending-fridge', x: 0.0, z: 2.9, rotation: 180, tableNumber: '' },
+      { id: 'pl-1', type: 'plant-pot', x: -4.4, z: -3.4, rotation: 0, tableNumber: '' },
+    ];
+    return wrapSingleFloorLayout(room, rawItems, []);
+  }
+
+  // 'pro-arena' (14m x 10m flagship مترو گیم hall)
+  const room = sanitizeRoom({
+    width: 14,
+    depth: 10,
+    height: 3.5,
+    floor: 'slate-tile',
+    wall: 'hex-cyber',
+    mood: 'esports',
+    ledColor: 'auto',
+    cutawayWalls: true,
+  });
+
+  const rawItems = [
+    { id: 'ps5-1', type: 'ps5-lounge', x: -4.2, z: -4.4, rotation: 0, tableNumber: '1' },
+    { id: 'ct-1', type: 'coffee-table', x: -4.2, z: -3.1, rotation: 0, tableNumber: '' },
+    { id: 'sofa-1', type: 'lounge-sofa', x: -4.2, z: -1.9, rotation: 180, tableNumber: '' },
+
+    { id: 'ps4-2', type: 'ps4-station', x: -1.4, z: -4.4, rotation: 0, tableNumber: '2' },
+    { id: 'ct-2', type: 'coffee-table', x: -1.4, z: -3.1, rotation: 0, tableNumber: '' },
+    { id: 'sofa-2', type: 'lounge-sofa', x: -1.4, z: -1.9, rotation: 180, tableNumber: '' },
+
+    { id: 'ps4-3', type: 'ps4-station', x: 1.4, z: -4.4, rotation: 0, tableNumber: '3' },
+    { id: 'ct-3', type: 'coffee-table', x: 1.4, z: -3.1, rotation: 0, tableNumber: '' },
+    { id: 'sofa-3', type: 'lounge-sofa', x: 1.4, z: -1.9, rotation: 180, tableNumber: '' },
+
+    { id: 'pc-4', type: 'pc-station', x: 5.9, z: -3.0, rotation: 270, tableNumber: '4' },
+    { id: 'ch-4', type: 'gaming-chair', x: 4.9, z: -3.0, rotation: 90, tableNumber: '' },
+
+    { id: 'pc-5', type: 'pc-station', x: 5.9, z: -1.0, rotation: 270, tableNumber: '5' },
+    { id: 'ch-5', type: 'gaming-chair', x: 4.9, z: -1.0, rotation: 90, tableNumber: '' },
+
+    { id: 'pc-6', type: 'pc-station', x: 5.9, z: 1.0, rotation: 270, tableNumber: '6' },
+    { id: 'ch-6', type: 'gaming-chair', x: 4.9, z: 1.0, rotation: 90, tableNumber: '' },
+
+    { id: 'div-1', type: 'neon-divider', x: 3.4, z: -2.0, rotation: 90, tableNumber: '' },
+
+    { id: 'bil-7', type: 'billiard-table', x: 0.8, z: 2.3, rotation: 0, tableNumber: '7', variant: 'classic-green' },
+    { id: 'foo-8', type: 'foosball-table', x: 4.5, z: 3.3, rotation: 0, tableNumber: '8' },
+
+    { id: 'rec-1', type: 'reception-counter', x: -4.4, z: 2.8, rotation: 180, tableNumber: '' },
+    { id: 'frd-1', type: 'vending-fridge', x: -6.3, z: 0.6, rotation: 90, tableNumber: '' },
+    { id: 'trp-1', type: 'trophy-cabinet', x: -6.3, z: -1.8, rotation: 90, tableNumber: '' },
+    { id: 'pil-1', type: 'rgb-pillar', x: -6.4, z: -4.4, rotation: 0, tableNumber: '' },
+    { id: 'plt-2', type: 'plant-pot', x: 6.3, z: -4.3, rotation: 0, tableNumber: '' },
+    { id: 'plt-3', type: 'plant-pot', x: -6.3, z: 3.8, rotation: 0, tableNumber: '' },
+  ];
+
+  return wrapSingleFloorLayout(room, rawItems, []);
+}
+
+/**
+ * Validates and sanitizes a persisted layout object (supports both v1 single-floor and v2 multi-floor + walls).
+ */
+export function sanitizeLayout(raw) {
+  if (!raw || typeof raw !== 'object') {
+    return createStarterLayout('empty');
+  }
+
+  // Version 2 multi-floor format
+  if (Array.isArray(raw.floors) && raw.floors.length > 0) {
+    const floors = [];
+    const seenFloorIds = new Set();
+
+    for (let i = 0; i < raw.floors.length && floors.length < FLOOR_LIMITS.maxFloors; i++) {
+      const f = raw.floors[i];
+      if (!f || typeof f !== 'object') continue;
+      const room = sanitizeRoom(f.room || raw.room || {});
+      const walls = sanitizeWalls(f.walls, room);
+      const items = sanitizeFloorItems(f.items, room);
+      let id = String(f.id || `floor-${i}`).slice(0, 48);
+      if (seenFloorIds.has(id)) id = `${id}-${i}`;
+      seenFloorIds.add(id);
+
+      floors.push({
+        id,
+        name: String(f.name || getDefaultFloorName(floors.length)).trim().slice(0, 32) || getDefaultFloorName(floors.length),
+        level: floors.length,
+        room,
+        walls,
+        items,
+      });
+    }
+
+    if (floors.length === 0) {
+      return createStarterLayout('empty');
+    }
+
+    const activeFloorIndex = clamp(
+      Math.floor(Number(raw.activeFloorIndex) || 0),
+      0,
+      floors.length - 1
+    );
+
+    return syncActiveFloorAliases({
+      version: 2,
+      activeFloorIndex,
+      floors,
+      room: floors[activeFloorIndex].room,
+      walls: floors[activeFloorIndex].walls,
+      items: floors[activeFloorIndex].items,
+    });
+  }
+
+  // Version 1 legacy single-floor format
+  if (!raw.room) {
+    return createStarterLayout('empty');
+  }
+
+  const room = sanitizeRoom(raw.room);
+  const walls = sanitizeWalls(raw.walls, room);
+  const items = sanitizeFloorItems(raw.items, room);
+
+  return syncActiveFloorAliases({
+    version: 2,
+    activeFloorIndex: 0,
+    floors: [
+      {
+        id: 'floor-0',
+        name: getDefaultFloorName(0),
+        level: 0,
+        room,
+        walls,
+        items,
+      },
+    ],
     room,
+    walls,
     items,
-  };
+  });
 }
 
 export function summarizeLayoutStats(layout) {
   const safe = sanitizeLayout(layout);
+  const activeFloor = getActiveFloor(safe);
   let stations = 0;
   let furniture = 0;
   let decor = 0;
+  let totalItems = 0;
+  let totalWalls = 0;
+  let totalAreaSqm = 0;
 
-  for (const item of safe.items) {
-    const spec = getCatalogItem(item.type);
-    if (!spec) continue;
-    if (spec.isStation) stations += 1;
-    else if (spec.category === 'decor') decor += 1;
-    else furniture += 1;
+  for (const fl of safe.floors) {
+    totalAreaSqm += fl.room.width * fl.room.depth;
+    totalWalls += fl.walls.length;
+    totalItems += fl.items.length;
+    for (const item of fl.items) {
+      const spec = getCatalogItem(item.type);
+      if (!spec) continue;
+      if (spec.isStation) stations += 1;
+      else if (spec.category === 'decor') decor += 1;
+      else furniture += 1;
+    }
   }
 
   return {
-    areaSqm: safe.room.width * safe.room.depth,
-    totalItems: safe.items.length,
+    areaSqm: activeFloor.room.width * activeFloor.room.depth,
+    totalAreaSqm,
+    floorCount: safe.floors.length,
+    activeFloorIndex: safe.activeFloorIndex,
+    activeFloorName: activeFloor.name,
+    activeFloorItems: activeFloor.items.length,
+    activeFloorWalls: activeFloor.walls.length,
+    totalItems,
+    totalWalls,
     stations,
     furniture,
     decor,
@@ -825,9 +1274,17 @@ export function summarizeLayoutStats(layout) {
 
 /**
  * Computes a validated, room-clamped, grid-snapped target position when moving an existing item.
- * Returns { ok, item, collides } without mutating the input array.
+ * Optionally checks collision against drawn interior walls as well.
  */
-export function moveItemToPoint(item, targetX, targetZ, room, allItems, gridStep = ROOM_LIMITS.gridStep) {
+export function moveItemToPoint(
+  item,
+  targetX,
+  targetZ,
+  room,
+  allItems,
+  gridStep = ROOM_LIMITS.gridStep,
+  walls = []
+) {
   if (!item || !getCatalogItem(item.type)) {
     return { ok: false, item: null, collides: true };
   }
@@ -840,7 +1297,7 @@ export function moveItemToPoint(item, targetX, targetZ, room, allItems, gridStep
     room,
     gridStep
   );
-  const collides = checkItemCollision(candidate, allItems, item.id);
+  const collides = checkItemCollision(candidate, allItems, item.id, 0.08, walls);
   return {
     ok: !collides,
     item: candidate,
@@ -878,7 +1335,7 @@ export function resolveGridRenderStyle(renderMode = 'solid', floorId = 'slate-ti
 }
 
 /**
- * Maps 3D catalog station types directly to Game District consoleType codes in data.json.
+ * Maps 3D catalog station types directly to مترو گیم consoleType codes in data.json.
  */
 export const STATION_TO_CONSOLE_TYPE = Object.freeze({
   'ps5-lounge': 'ps50',
@@ -896,10 +1353,10 @@ export const STATION_TO_CONSOLE_TYPE = Object.freeze({
 
 /**
  * Extracts all playable stations (PC, PS5, PS4, VIP/VR, Arcade, Billiard variants, Foosball)
- * from a 3D layout, sorted naturally by tableNumber.
+ * across ALL floors of a 3D layout, sorted naturally by tableNumber.
  */
 export function extract3DStations(layout) {
-  const items = Array.isArray(layout?.items) ? layout.items : [];
+  const items = getAllLayoutItems(layout);
   const seen = new Set();
   const stations = [];
 
@@ -916,6 +1373,8 @@ export function extract3DStations(layout) {
       tableNumber: tableNum,
       consoleType: STATION_TO_CONSOLE_TYPE[spec.type] || spec.consoleType || 'ps50',
       accentColor: spec.accentColor,
+      floorIndex: item.floorIndex ?? 0,
+      floorName: item.floorName || getDefaultFloorName(item.floorIndex ?? 0),
     });
   }
 
@@ -930,8 +1389,8 @@ export function extract3DStations(layout) {
 }
 
 /**
- * Merges active reservations with all stations placed in the 3D floor plan so every
- * 3D PC, console, billiard, foosball, and VIP station appears inside the Tables section.
+ * Merges active reservations with all stations placed across all floors of the 3D floor plan
+ * so every 3D PC, console, billiard, foosball, and VIP station appears inside the Tables section.
  */
 export function mergeTablesWith3DStations(reservations = [], layout = null) {
   const activeList = Array.isArray(reservations) ? reservations : [];
@@ -982,7 +1441,7 @@ function formatHmsCompact(totalSeconds) {
 }
 
 /**
- * Computes the compact live timer text & status for floating overhead mini-timers in the 3D scene.
+ * Computes the compact live timer text & status for floating overhead badges in the 3D scene.
  */
 export function formatStationMiniTimer(
   reservation = null,

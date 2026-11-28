@@ -50,7 +50,7 @@ export const DIRECT_CHALLENGE_STATUS_META = {
 export const GAMING_CENTER_DIRECTORY = [
   {
     id: 'game-district',
-    name: 'Game District',
+    name: 'مترو گیم',
     shortCode: 'GD',
     city: 'تهران',
     venue: LOCAL_GAMENET_VENUE,
@@ -1055,11 +1055,11 @@ export function filterDirectChallenges(list = [], filters = {}) {
 
 /**
  * Deterministic rich seed Direct Challenges covering every workflow state:
- * 1. Sent & Pending: Game District VS Nexus Club (Billiards 1v1, 2 Hours VIP)
- * 2. Incoming & Pending: آرنا پلاس VS Game District (Foosball 2v2)
- * 3. Awaiting Agreement (Counter-Proposal Diff): Game District VS سایبرلند (CS2 5v5)
- * 4. Accepted (Ready Head-to-Head): گیم‌کلاب پارسیان VS Game District (EA Sports FC 25 1v1)
- * 5. Rejected: نئون‌زون VS Game District (Valorant 5v5)
+ * 1. Sent & Pending: مترو گیم VS Nexus Club (Billiards 1v1, 2 Hours VIP)
+ * 2. Incoming & Pending: آرنا پلاس VS مترو گیم (Foosball 2v2)
+ * 3. Awaiting Agreement (Counter-Proposal Diff): مترو گیم VS سایبرلند (CS2 5v5)
+ * 4. Accepted (Ready Head-to-Head): گیم‌کلاب پارسیان VS مترو گیم (EA Sports FC 25 1v1)
+ * 5. Rejected: نئون‌زون VS مترو گیم (Valorant 5v5)
  */
 export function createSeedDirectChallenges() {
   const cs2Orig = {
@@ -1103,7 +1103,7 @@ export function createSeedDirectChallenges() {
       proposedTime: '۱۹:۰۰',
       prizeType: 'vip_session',
       prizeSummary: '۲ ساعت بازی VIP رایگان در سالن میزبان',
-      notes: 'مسابقه حضوری روی میز شماره ۱ سالن بیلیارد Game District با داوری رسمی.',
+      notes: 'مسابقه حضوری روی میز شماره ۱ سالن بیلیارد مترو گیم با داوری رسمی.',
       challengerRoster: {
         teamId: 'team-gd-billiards',
         teamName: 'رضا حیدری (قهرمان ایت‌بال)',
@@ -1121,7 +1121,7 @@ export function createSeedDirectChallenges() {
         format: 'انفرادی ۱ به ۱ (بهترین از ۷ گیم)',
         prizeType: 'vip_session',
         prizeSummary: '۲ ساعت بازی VIP رایگان در سالن میزبان',
-        notes: 'مسابقه حضوری روی میز شماره ۱ سالن بیلیارد Game District با داوری رسمی.',
+        notes: 'مسابقه حضوری روی میز شماره ۱ سالن بیلیارد مترو گیم با داوری رسمی.',
       },
       currentTerms: {
         proposedDate: 'پنجشنبه ۶ آذر ۱۴۰۵',
@@ -1132,7 +1132,7 @@ export function createSeedDirectChallenges() {
         format: 'انفرادی ۱ به ۱ (بهترین از ۷ گیم)',
         prizeType: 'vip_session',
         prizeSummary: '۲ ساعت بازی VIP رایگان در سالن میزبان',
-        notes: 'مسابقه حضوری روی میز شماره ۱ سالن بیلیارد Game District با داوری رسمی.',
+        notes: 'مسابقه حضوری روی میز شماره ۱ سالن بیلیارد مترو گیم با داوری رسمی.',
       },
       pendingProposal: null,
       agreements: {
@@ -1165,7 +1165,7 @@ export function createSeedDirectChallenges() {
       proposedTime: '۱۸:۳۰',
       prizeType: 'playtime',
       prizeSummary: '۶ ساعت بازی رایگان + پذیرایی ویژه بوفه برای زوج برنده',
-      notes: 'دعوت رسمی باشگاه آرنا پلاس از تیم فوتبال دستی Game District برای دوئل حضوری.',
+      notes: 'دعوت رسمی باشگاه آرنا پلاس از تیم فوتبال دستی مترو گیم برای دوئل حضوری.',
       challengerRoster: {
         teamId: 'ext-arena-foos',
         teamName: 'زوج طوفان آرنا',
@@ -1186,7 +1186,7 @@ export function createSeedDirectChallenges() {
         format: 'تیمی ۲ به ۲ (بهترین از ۵ ست)',
         prizeType: 'playtime',
         prizeSummary: '۶ ساعت بازی رایگان + پذیرایی ویژه بوفه برای زوج برنده',
-        notes: 'دعوت رسمی باشگاه آرنا پلاس از تیم فوتبال دستی Game District برای دوئل حضوری.',
+        notes: 'دعوت رسمی باشگاه آرنا پلاس از تیم فوتبال دستی مترو گیم برای دوئل حضوری.',
       },
       currentTerms: {
         proposedDate: 'جمعه ۷ آذر ۱۴۰۵',
@@ -1197,7 +1197,7 @@ export function createSeedDirectChallenges() {
         format: 'تیمی ۲ به ۲ (بهترین از ۵ ست)',
         prizeType: 'playtime',
         prizeSummary: '۶ ساعت بازی رایگان + پذیرایی ویژه بوفه برای زوج برنده',
-        notes: 'دعوت رسمی باشگاه آرنا پلاس از تیم فوتبال دستی Game District برای دوئل حضوری.',
+        notes: 'دعوت رسمی باشگاه آرنا پلاس از تیم فوتبال دستی مترو گیم برای دوئل حضوری.',
       },
       pendingProposal: null,
       agreements: {
@@ -1307,7 +1307,7 @@ export function createSeedDirectChallenges() {
         teamId: '',
         teamName: 'محمد باقر قالیباف',
         onlineId: 'PSN:GD_MBQ',
-        members: [{ name: 'محمد باقر قالیباف', customerId: '1', role: 'نماینده Game District' }],
+        members: [{ name: 'محمد باقر قالیباف', customerId: '1', role: 'نماینده مترو گیم' }],
       },
       status: 'accepted',
       originalTerms: {

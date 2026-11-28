@@ -1,5 +1,5 @@
 /**
- * Pure domain logic for the standalone Game District Cinematic SaaS Landing Page (/landing).
+ * Pure domain logic for the standalone مترو گیم Cinematic SaaS Landing Page (/landing).
  * Zero DOM dependencies — 100% unit-testable via node:test.
  */
 
@@ -7,38 +7,38 @@ export const HERO_PREVIEW_TABS = Object.freeze([
   {
     id: 'overview',
     label: 'پیشخوان مدیریت',
-    route: 'app.gamedistrict.ir / dashboard',
+    route: 'app.metrogame.ir / dashboard',
     caption: 'نمای یکپارچه وضعیت سالن، میزهای فعال و شاخص‌های روزانه',
     darkSrc: 'assets/images/landing/preview-overview-dark.png',
     lightSrc: 'assets/images/landing/preview-overview-light.png',
-    alt: 'پیش‌نمایش پیشخوان اصلی پنل مدیریت گیم‌نت Game District',
+    alt: 'پیش‌نمایش پیشخوان اصلی پنل مدیریت گیم‌نت مترو گیم',
   },
   {
     id: 'tables',
     label: 'میزها و تایمر زنده',
-    route: 'app.gamedistrict.ir / tables',
+    route: 'app.metrogame.ir / tables',
     caption: 'کنترل لحظه‌ای زمان‌سنج ایستگاه‌ها، وضعیت پرداخت و سفارش بوفه',
     darkSrc: 'assets/images/landing/preview-tables-dark.png',
     lightSrc: 'assets/images/landing/preview-tables-light.png',
-    alt: 'پیش‌نمایش مدیریت میزها و تایمر زنده Game District',
+    alt: 'پیش‌نمایش مدیریت میزها و تایمر زنده مترو گیم',
   },
   {
     id: 'studio3d',
     label: 'طراحی سه‌بعدی سالن',
-    route: 'app.gamedistrict.ir / gamenet-3d',
+    route: 'app.metrogame.ir / gamenet-3d',
     caption: 'چیدمان تعاملی نقشه سه‌بعدی سالن همراه با تایمر زنده بالای هر ایستگاه',
     darkSrc: 'assets/images/landing/preview-3d-dark.png',
     lightSrc: 'assets/images/landing/preview-3d-light.png',
-    alt: 'پیش‌نمایش طراح سه‌بعدی سالن گیم‌نت من در Game District',
+    alt: 'پیش‌نمایش طراح سه‌بعدی سالن گیم‌نت من در مترو گیم',
   },
   {
     id: 'tournaments',
     label: 'شبکه تورنومنت',
-    route: 'app.gamedistrict.ir / tournaments',
+    route: 'app.metrogame.ir / tournaments',
     caption: 'برگزاری مسابقات داخلی، ارسال چالش مستقیم و جدول رتبه‌بندی گیم‌نت‌ها',
     darkSrc: 'assets/images/landing/preview-tournaments-dark.png',
     lightSrc: 'assets/images/landing/preview-tournaments-light.png',
-    alt: 'پیش‌نمایش بخش تورنومنت و رتبه‌بندی گیم‌نت‌ها در Game District',
+    alt: 'پیش‌نمایش بخش تورنومنت و رتبه‌بندی گیم‌نت‌ها در مترو گیم',
   },
 ]);
 
@@ -48,7 +48,7 @@ export const FEATURE_STORY_CHAPTERS = Object.freeze([
     index: '۰۱',
     title: 'مدیریت ایستگاه‌های بازی',
     shortLabel: 'ایستگاه‌ها و تایمر',
-    route: 'app.gamedistrict.ir / tables',
+    route: 'app.metrogame.ir / tables',
     summary:
       'تمامی ایستگاه‌های سالن با تایمر زنده، محاسبه خودکار هزینه بر اساس مدت بازی و تفکیک وضعیت آزاد یا اشغال در یک صفحه مدیریت می‌شوند.',
     highlights: [
@@ -60,14 +60,14 @@ export const FEATURE_STORY_CHAPTERS = Object.freeze([
     calloutMeta: 'تایمر دقیق · محاسبه خودکار تعرفه · تفکیک وضعیت میزها',
     darkSrc: 'assets/images/landing/preview-tables-dark.png',
     lightSrc: 'assets/images/landing/preview-tables-light.png',
-    alt: 'صفحه مدیریت ایستگاه‌های بازی و تایمر زنده در Game District',
+    alt: 'صفحه مدیریت ایستگاه‌های بازی و تایمر زنده در مترو گیم',
   },
   {
     id: 'consoles',
     index: '۰۲',
     title: 'مدیریت PS4 و PS5',
     shortLabel: 'PS4 و PS5',
-    route: 'app.gamedistrict.ir / consoles',
+    route: 'app.metrogame.ir / consoles',
     summary:
       'تعریف تعرفه مستقل برای هر نسل کنسول و تعداد دسته‌های فعال تا هزینه بازی‌های تک‌نفره، دونفره و چهارنفره دقیقاً مطابق نرخ مجموعه محاسبه شود.',
     highlights: [
@@ -79,14 +79,14 @@ export const FEATURE_STORY_CHAPTERS = Object.freeze([
     calloutMeta: 'PS4 · PS5 · محاسبه دقیق بر اساس تعداد دسته',
     darkSrc: 'assets/images/landing/preview-console-dark.png',
     lightSrc: 'assets/images/landing/preview-console-light.png',
-    alt: 'بخش مدیریت کنسول‌های PS4 و PS5 و تعرفه‌ها در Game District',
+    alt: 'بخش مدیریت کنسول‌های PS4 و PS5 و تعرفه‌ها در مترو گیم',
   },
   {
     id: 'pc',
     index: '۰۳',
     title: 'مدیریت سیستم‌های PC',
     shortLabel: 'سیستم‌های PC',
-    route: 'app.gamedistrict.ir / dashboard',
+    route: 'app.metrogame.ir / dashboard',
     summary:
       'ایستگاه‌های کامپیوتر و اتاق‌های VIP را با نرخ ساعتی اختصاصی، پیشخوان نظارتی یکپارچه و اتصال مستقیم به حساب اعتباری مشتریان ثابت کنترل کنید.',
     highlights: [
@@ -98,14 +98,14 @@ export const FEATURE_STORY_CHAPTERS = Object.freeze([
     calloutMeta: 'نمای زنده پیشخوان · نرخ اختصاصی · اتصال به کیف پول مشتری',
     darkSrc: 'assets/images/landing/preview-overview-dark.png',
     lightSrc: 'assets/images/landing/preview-overview-light.png',
-    alt: 'نمای پیشخوان و مدیریت سیستم‌های PC در Game District',
+    alt: 'نمای پیشخوان و مدیریت سیستم‌های PC در مترو گیم',
   },
   {
     id: 'physical',
     index: '۰۴',
     title: 'بیلیارد و فوتبال‌دستی',
     shortLabel: 'بیلیارد و فوتبال‌دستی',
-    route: 'app.gamedistrict.ir / gamenet-3d',
+    route: 'app.metrogame.ir / gamenet-3d',
     summary:
       'مجموعه‌های تفریحی تنها به کنسول محدود نیستند؛ میزهای بیلیارد، اسنوکر و فوتبال‌دستی را هم در تایمر سالن و هم در طراح سه‌بعدی مدیریت کنید.',
     highlights: [
@@ -117,14 +117,14 @@ export const FEATURE_STORY_CHAPTERS = Object.freeze([
     calloutMeta: 'بیلیارد · فوتبال‌دستی · همگام با مدیریت میزها',
     darkSrc: 'assets/images/landing/preview-3d-dark.png',
     lightSrc: 'assets/images/landing/preview-3d-light.png',
-    alt: 'بخش طراحی سه‌بعدی سالن شامل میزهای بیلیارد و فوتبال‌دستی در Game District',
+    alt: 'بخش طراحی سه‌بعدی سالن شامل میزهای بیلیارد و فوتبال‌دستی در مترو گیم',
   },
   {
     id: 'buffet',
     index: '۰۵',
     title: 'مدیریت بوفه و سفارشات',
     shortLabel: 'بوفه و سفارشات',
-    route: 'app.gamedistrict.ir / buffet',
+    route: 'app.metrogame.ir / buffet',
     summary:
       'فروش نوشیدنی و خوراکی‌های بوفه را با ثبت سریع روی فاکتور همان میز یا به‌صورت فروش مستقیم مدیریت کنید تا هیچ سفارشی از قلم نیفتد.',
     highlights: [
@@ -136,14 +136,14 @@ export const FEATURE_STORY_CHAPTERS = Object.freeze([
     calloutMeta: 'ثبت سریع سفارش · مدیریت اقلام · تسویه یکپارچه',
     darkSrc: 'assets/images/landing/preview-buffet-dark.png',
     lightSrc: 'assets/images/landing/preview-buffet-light.png',
-    alt: 'صفحه مدیریت بوفه و ثبت سفارشات در Game District',
+    alt: 'صفحه مدیریت بوفه و ثبت سفارشات در مترو گیم',
   },
   {
     id: 'finance',
     index: '۰۶',
     title: 'مشتریان و گزارش‌های مالی',
     shortLabel: 'مشتریان و مالی',
-    route: 'app.gamedistrict.ir / income',
+    route: 'app.metrogame.ir / income',
     summary:
       'باشگاه مشتریان، شارژ اعتباری، لیست بدهکاران و گزارش درآمد روزانه و ماهانه به تفکیک روش پرداخت با دقت کامل در اختیار مدیر مجموعه است.',
     highlights: [
@@ -155,7 +155,7 @@ export const FEATURE_STORY_CHAPTERS = Object.freeze([
     calloutMeta: 'گزارش درآمد · بدهکاران · شارژ اعتباری مشتریان',
     darkSrc: 'assets/images/landing/preview-finance-dark.png',
     lightSrc: 'assets/images/landing/preview-finance-light.png',
-    alt: 'صفحه گزارش‌های مالی و مدیریت مشتریان در Game District',
+    alt: 'صفحه گزارش‌های مالی و مدیریت مشتریان در مترو گیم',
   },
 ]);
 
@@ -168,9 +168,9 @@ export const TOURNAMENT_DISCIPLINES = Object.freeze([
     matchMode: 'آنلاین / حضوری با داوری مدیران',
     prizeSummary: 'جایزه توافقی: شارژ VIP و ساعت بازی رایگان',
     clubA: {
-      name: 'Game District',
+      name: 'مترو گیم',
       city: 'تهران',
-      monogram: 'GD',
+      monogram: 'MG',
       roster: 'تیم منتخب پنج‌نفره · رتبه ۱ جدول',
       record: '۲۴ برد · ۵ باخت',
     },
@@ -182,12 +182,12 @@ export const TOURNAMENT_DISCIPLINES = Object.freeze([
       record: '۲۱ برد · ۷ باخت',
     },
     bracket: {
-      semi1: { a: 'Game District', b: 'Vortex Club', scoreA: '۲', scoreB: '۰', winner: 'a' },
+      semi1: { a: 'مترو گیم', b: 'Vortex Club', scoreA: '۲', scoreB: '۰', winner: 'a' },
       semi2: { a: 'Nexus Arena', b: 'Pixel Hub', scoreA: '۲', scoreB: '۱', winner: 'a' },
-      final: { a: 'Game District', b: 'Nexus Arena', status: 'چالش نهایی · آماده برگزاری' },
+      final: { a: 'مترو گیم', b: 'Nexus Arena', status: 'چالش نهایی · آماده برگزاری' },
     },
     leaderboard: [
-      { rank: 1, club: 'Game District', points: '۱,۴۸۰', wins: '۲۴', losses: '۵', winRate: '۸۳٪', trend: 'up' },
+      { rank: 1, club: 'مترو گیم', points: '۱,۴۸۰', wins: '۲۴', losses: '۵', winRate: '۸۳٪', trend: 'up' },
       { rank: 2, club: 'Nexus Arena', points: '۱,۳۱۰', wins: '۲۱', losses: '۷', winRate: '۷۵٪', trend: 'up' },
       { rank: 3, club: 'Vortex Club', points: '۱,۱۹۰', wins: '۱۸', losses: '۸', winRate: '۶۹٪', trend: 'same' },
       { rank: 4, club: 'Pixel Hub', points: '۹۸۰', wins: '۱۵', losses: '۱۰', winRate: '۶۰٪', trend: 'down' },
@@ -201,9 +201,9 @@ export const TOURNAMENT_DISCIPLINES = Object.freeze([
     matchMode: 'میزبانی توافقی میان دو باشگاه',
     prizeSummary: 'جایزه توافقی: کاپ رقابت و اشتراک ویژه سالن',
     clubA: {
-      name: 'Game District',
+      name: 'مترو گیم',
       city: 'تهران',
-      monogram: 'GD',
+      monogram: 'MG',
       roster: 'نماینده برتر ایت‌بال · رتبه ۱ بیلیارد',
       record: '۱۶ برد · ۳ باخت',
     },
@@ -215,12 +215,12 @@ export const TOURNAMENT_DISCIPLINES = Object.freeze([
       record: '۱۴ برد · ۵ باخت',
     },
     bracket: {
-      semi1: { a: 'Game District', b: 'Royal Cue', scoreA: '۵', scoreB: '۲', winner: 'a' },
+      semi1: { a: 'مترو گیم', b: 'Royal Cue', scoreA: '۵', scoreB: '۲', winner: 'a' },
       semi2: { a: 'Crown Billiards', b: 'Metro Lounge', scoreA: '۵', scoreB: '۴', winner: 'a' },
-      final: { a: 'Game District', b: 'Crown Billiards', status: 'میزبانی تأییدشده · توافق جایزه' },
+      final: { a: 'مترو گیم', b: 'Crown Billiards', status: 'میزبانی تأییدشده · توافق جایزه' },
     },
     leaderboard: [
-      { rank: 1, club: 'Game District', points: '۹۴۰', wins: '۱۶', losses: '۳', winRate: '۸۴٪', trend: 'up' },
+      { rank: 1, club: 'مترو گیم', points: '۹۴۰', wins: '۱۶', losses: '۳', winRate: '۸۴٪', trend: 'up' },
       { rank: 2, club: 'Crown Billiards', points: '۸۶۰', wins: '۱۴', losses: '۵', winRate: '۷۴٪', trend: 'same' },
       { rank: 3, club: 'Royal Cue', points: '۷۷۰', wins: '۱۲', losses: '۶', winRate: '۶۷٪', trend: 'up' },
       { rank: 4, club: 'Metro Lounge', points: '۶۴۰', wins: '۱۰', losses: '۸', winRate: '۵۶٪', trend: 'down' },
@@ -234,9 +234,9 @@ export const TOURNAMENT_DISCIPLINES = Object.freeze([
     matchMode: 'حضوری در باشگاه میزبان',
     prizeSummary: 'جایزه توافقی: کارت هدیه و بسته تجهیزات',
     clubA: {
-      name: 'Game District',
+      name: 'مترو گیم',
       city: 'تهران',
-      monogram: 'GD',
+      monogram: 'MG',
       roster: 'زوج قهرمان داخلی · رتبه ۱ فوتبال‌دستی',
       record: '۱۳ برد · ۲ باخت',
     },
@@ -248,12 +248,12 @@ export const TOURNAMENT_DISCIPLINES = Object.freeze([
       record: '۱۱ برد · ۴ باخت',
     },
     bracket: {
-      semi1: { a: 'Game District', b: 'Orbit Play', scoreA: '۳', scoreB: '۱', winner: 'a' },
+      semi1: { a: 'مترو گیم', b: 'Orbit Play', scoreA: '۳', scoreB: '۱', winner: 'a' },
       semi2: { a: 'Pulse Club', b: 'Arena Plus', scoreA: '۳', scoreB: '۲', winner: 'a' },
-      final: { a: 'Game District', b: 'Pulse Club', status: 'فینال چالش مستقیم · ثبت نتیجه' },
+      final: { a: 'مترو گیم', b: 'Pulse Club', status: 'فینال چالش مستقیم · ثبت نتیجه' },
     },
     leaderboard: [
-      { rank: 1, club: 'Game District', points: '۷۸۰', wins: '۱۳', losses: '۲', winRate: '۸۷٪', trend: 'up' },
+      { rank: 1, club: 'مترو گیم', points: '۷۸۰', wins: '۱۳', losses: '۲', winRate: '۸۷٪', trend: 'up' },
       { rank: 2, club: 'Pulse Club', points: '۶۹۰', wins: '۱۱', losses: '۴', winRate: '۷۳٪', trend: 'up' },
       { rank: 3, club: 'Orbit Play', points: '۵۹۰', wins: '۹', losses: '۶', winRate: '۶۰٪', trend: 'same' },
       { rank: 4, club: 'Arena Plus', points: '۵۱۰', wins: '۸', losses: '۷', winRate: '۵۳٪', trend: 'down' },
@@ -317,7 +317,7 @@ export const SUBSCRIPTION_TIERS = Object.freeze([
     featured: true,
     pricePlaceholder: 'تعرفه: پیکربندی اختصاصی',
     termPlaceholder: 'دوره اشتراک: قابل تنظیم',
-    summary: 'کامل‌ترین تجربه Game District شامل شبکه کامل تورنومنت، چالش مستقیم، رتبه‌بندی و امکانات اختصاصی.',
+    summary: 'کامل‌ترین تجربه مترو گیم شامل شبکه کامل تورنومنت، چالش مستقیم، رتبه‌بندی و امکانات اختصاصی.',
     ctaLabel: 'شروع مشاوره پلن ویژه',
     highlights: [
       { label: 'دسترسی کامل به تمامی ابزارهای مدیریت سالن، بوفه و مالی', included: true },
@@ -432,9 +432,280 @@ export function getComparisonRows(category = 'all') {
   return COMPARISON_ROWS.filter((row) => row.category === category);
 }
 
+export const PINNED_STORY_STAGES = Object.freeze([
+  {
+    id: 'stations',
+    stepNumber: '۰۱',
+    kicker: 'مرحله اول · کنترل سالن و دستگاه‌ها',
+    title: 'مدیریت زنده ایستگاه‌ها، کنسول‌ها و میزهای سالن',
+    description:
+      'تمامی کنسول‌های PS4 و PS5، سیستم‌های PC، میزهای بیلیارد و فوتبال‌دستی را با تایمر دقیق، تغییر تعداد دسته در میانه بازی و محاسبه خودکار هزینه کنترل کنید.',
+    metrics: [
+      'ثبت و کنترل لحظه‌ای وضعیت هر میز و کنسول',
+      'محاسبه هوشمند نرخ بر اساس نسل دستگاه و تعداد دسته',
+      'همگام‌سازی کامل ایستگاه‌ها با نقشه سه‌بعدی سالن',
+    ],
+    route: 'app.metrogame.ir / tables',
+    focusLabel: 'پایش زنده تایمرها و وضعیت ایستگاه‌ها',
+    focusBox: { x: 10, y: 20, w: 66, h: 46 },
+    focalOrigin: '52% 34%',
+    darkSrc: 'assets/images/landing/preview-tables-dark.png',
+    lightSrc: 'assets/images/landing/preview-tables-light.png',
+    alt: 'مرحله اول: مدیریت ایستگاه‌ها و کنسول‌ها در مترو گیم',
+  },
+  {
+    id: 'buffet',
+    stepNumber: '۰۲',
+    kicker: 'مرحله دوم · فروش بوفه یکپارچه',
+    title: 'مدیریت بوفه و اتصال فوری سفارش به فاکتور میز',
+    description:
+      'منوی نوشیدنی‌ها و خوراکی‌های مجموعه را تعریف کنید و سفارش هر بازیکن را با یک کلیک روی فاکتور همان میز یا به‌صورت فروش مستقیم ثبت نمایید.',
+    metrics: [
+      'ثبت سریع اقلام بوفه بدون نیاز به فاکتور جداگانه',
+      'کنترل موجودی کالاها و قیمت‌گذاری منعطف در هر لحظه',
+      'تفکیک خودکار درآمد بوفه از هزینه بازی در تسویه نهایی',
+    ],
+    route: 'app.metrogame.ir / buffet',
+    focusLabel: 'منوی بوفه و ثبت سریع سفارش روی میزها',
+    focusBox: { x: 14, y: 24, w: 62, h: 48 },
+    focalOrigin: '48% 42%',
+    darkSrc: 'assets/images/landing/preview-buffet-dark.png',
+    lightSrc: 'assets/images/landing/preview-buffet-light.png',
+    alt: 'مرحله دوم: مدیریت بوفه و محصولات در مترو گیم',
+  },
+  {
+    id: 'finance',
+    stepNumber: '۰۳',
+    kicker: 'مرحله سوم · باشگاه مشتریان و شفافیت مالی',
+    title: 'مدیریت مشتریان، بدهکاران و گزارش‌های مالی دقیق',
+    description:
+      'باشگاه مشتریان با تخفیف خودکار، شارژ حساب اعتباری، لیست بدهکاران و گزارش شفاف درآمد روزانه و ماهانه را بدون خطا در پایان هر شیفت بررسی کنید.',
+    metrics: [
+      'تفکیک کامل پرداخت نقدی، کارت‌خوان و اعتبار مشتریان',
+      'پیگیری شفاف بدهکاران و تسویه جزئی یا کامل در چند ثانیه',
+      'نمودارها و گزارش‌های دقیق برای تصمیم‌گیری مالی مدیر',
+    ],
+    route: 'app.metrogame.ir / income',
+    focusLabel: 'تحلیل درآمد، تفکیک پرداخت‌ها و باشگاه مشتریان',
+    focusBox: { x: 12, y: 18, w: 68, h: 50 },
+    focalOrigin: '50% 36%',
+    darkSrc: 'assets/images/landing/preview-finance-dark.png',
+    lightSrc: 'assets/images/landing/preview-finance-light.png',
+    alt: 'مرحله سوم: مدیریت مشتریان و گزارش‌های مالی در مترو گیم',
+  },
+  {
+    id: 'tournaments',
+    stepNumber: '۰۴',
+    kicker: 'مرحله چهارم · شبکه رقابت بین گیم‌نت‌ها',
+    title: 'برگزاری تورنومنت، چالش مستقیم و رتبه‌بندی باشگاه‌ها',
+    description:
+      'فراتر از مدیریت داخلی، مسابقات رسمی مجموعه را برگزار کنید، برای گیم‌نت‌های دیگر چالش مستقیم بفرستید و جایگاه باشگاه خود را در جدول رتبه‌بندی بالا ببرید.',
+    metrics: [
+      'فراخوان عمومی و ارسال چالش مستقیم میان مدیران گیم‌نت‌ها',
+      'پوشش کامل بازی‌های ویدیویی، بیلیارد و فوتبال‌دستی',
+      'جدول حذفی خودکار، توافق جایزه و امتیازدهی شفاف در رتبه‌بندی',
+    ],
+    route: 'app.metrogame.ir / tournaments',
+    focusLabel: 'فراخوان‌ها، چالش مستقیم و رتبه‌بندی گیم‌نت‌ها',
+    focusBox: { x: 10, y: 22, w: 68, h: 52 },
+    focalOrigin: '50% 44%',
+    darkSrc: 'assets/images/landing/preview-tournaments-dark.png',
+    lightSrc: 'assets/images/landing/preview-tournaments-light.png',
+    alt: 'مرحله چهارم: شبکه مدیریت تورنومنت در مترو گیم',
+  },
+]);
+
+export const TOURNAMENT_STORY_BEATS = Object.freeze([
+  { id: 'connect', step: '۰۱', label: 'اتصال گیم‌نت‌ها' },
+  { id: 'challenge', step: '۰۲', label: 'ارسال چالش مستقیم' },
+  { id: 'compete', step: '۰۳', label: 'رقابت و جدول حذفی' },
+  { id: 'champion', step: '۰۴', label: 'قهرمانی و رتبه‌بندی' },
+]);
+
+/**
+ * Pure easing & interpolation primitives for deterministic scroll-linked timelines.
+ */
+export function clamp01(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return 0;
+  return Math.max(0, Math.min(1, n));
+}
+
+export function lerp(start, end, t) {
+  return start + (end - start) * clamp01(t);
+}
+
+export function smoothstep(edge0, edge1, x) {
+  if (edge1 === edge0) return x >= edge1 ? 1 : 0;
+  const t = clamp01((x - edge0) / (edge1 - edge0));
+  return t * t * (3 - 2 * t);
+}
+
+export function rangeProgress(progress, start, end) {
+  if (end <= start) return progress >= end ? 1 : 0;
+  return clamp01((progress - start) / (end - start));
+}
+
+/**
+ * Computes continuous scroll-linked transformation values for the Hero section.
+ * Progress 0 = top of page (angled perspective, full headline);
+ * Progress 1 = settled hero dashboard centerpiece handing off into product journey.
+ */
+export function computeHeroScrollState(rawProgress) {
+  const p = clamp01(rawProgress);
+  const copyFade = smoothstep(0.02, 0.56, p);
+  const stageSettle = smoothstep(0.0, 0.78, p);
+  const satEase = smoothstep(0.18, 0.88, p);
+
+  return {
+    progress: p,
+    copyY: Number(lerp(0, -68, copyFade).toFixed(2)),
+    copyOpacity: Number(lerp(1, 0.14, copyFade).toFixed(3)),
+    copyScale: Number(lerp(1, 0.96, copyFade).toFixed(4)),
+    stageScale: Number(lerp(0.945, 1.035, stageSettle).toFixed(4)),
+    stageRotateX: Number(lerp(8.5, 0, stageSettle).toFixed(2)),
+    stageY: Number(lerp(24, -16, stageSettle).toFixed(2)),
+    backplateY: Number(lerp(12, -10, stageSettle).toFixed(2)),
+    backplateScale: Number(lerp(0.95, 1.015, stageSettle).toFixed(4)),
+    haloScale: Number(lerp(0.92, 1.16, stageSettle).toFixed(3)),
+    haloOpacity: Number(lerp(0.66, 1, stageSettle).toFixed(3)),
+    satellitesY: [
+      Number(lerp(26, 0, satEase).toFixed(2)),
+      Number(lerp(42, 0, satEase).toFixed(2)),
+      Number(lerp(58, 0, satEase).toFixed(2)),
+    ],
+  };
+}
+
+/**
+ * Computes continuous stage progress and crossfade layer weights for the
+ * 4-stage pinned scroll storytelling showcase.
+ */
+export function computePinnedStoryState(rawProgress, stageCount = PINNED_STORY_STAGES.length) {
+  const count = Math.max(1, Number(stageCount) || 4);
+  const p = clamp01(rawProgress);
+  const stageFloat = p * (count - 1);
+  const activeIndex = Math.max(0, Math.min(count - 1, Math.round(stageFloat)));
+  const bandStart = Math.max(0, activeIndex - 0.5);
+  const bandEnd = Math.min(count - 1, activeIndex + 0.5);
+  const stageLocalProgress =
+    bandEnd > bandStart ? clamp01((stageFloat - bandStart) / (bandEnd - bandStart)) : 1;
+
+  const layers = [];
+  for (let i = 0; i < count; i++) {
+    const dist = Math.abs(stageFloat - i);
+    const opacity = Number(clamp01(1 - smoothstep(0.30, 0.56, dist)).toFixed(3));
+    const scale = Number(lerp(1.0, 0.972, clamp01(dist)).toFixed(4));
+    const translateY = Number(((i - stageFloat) * 14).toFixed(2));
+    layers.push({ index: i, opacity, scale, translateY });
+  }
+
+  return {
+    progress: p,
+    activeIndex,
+    stageFloat: Number(stageFloat.toFixed(3)),
+    stageLocalProgress: Number(stageLocalProgress.toFixed(3)),
+    layers,
+  };
+}
+
+/**
+ * Computes continuous scroll-linked choreography for the Tournament Network
+ * cinematic sequence: Connect -> Challenge -> Compete -> Become Champions.
+ */
+export function computeTournamentRevealState(rawProgress) {
+  const p = clamp01(rawProgress);
+  const atmo = smoothstep(0.0, 0.35, p);
+  const clubs = smoothstep(0.05, 0.38, p);
+  const vs = smoothstep(0.2, 0.48, p);
+  const connectors = smoothstep(0.28, 0.56, p);
+  const bracket = smoothstep(0.44, 0.74, p);
+  const leaderboard = smoothstep(0.62, 0.92, p);
+
+  let storyBeatIndex = 0;
+  if (p >= 0.66) storyBeatIndex = 3;
+  else if (p >= 0.44) storyBeatIndex = 2;
+  else if (p >= 0.22) storyBeatIndex = 1;
+
+  return {
+    progress: p,
+    atmosphereOpacity: Number(lerp(0.25, 1, atmo).toFixed(3)),
+    clubAOffsetX: Number(lerp(72, 0, clubs).toFixed(2)),
+    clubBOffsetX: Number(lerp(-72, 0, clubs).toFixed(2)),
+    clubsOpacity: Number(lerp(0.15, 1, clubs).toFixed(3)),
+    vsScale: Number(lerp(0.66, 1, vs).toFixed(3)),
+    vsOpacity: Number(lerp(0.05, 1, vs).toFixed(3)),
+    connectorDashOffset: Number(lerp(120, 0, connectors).toFixed(1)),
+    bracketOpacity: Number(lerp(0.18, 1, bracket).toFixed(3)),
+    bracketY: Number(lerp(28, 0, bracket).toFixed(2)),
+    bracketDashOffset: Number(lerp(220, 0, bracket).toFixed(1)),
+    leaderboardOpacity: Number(lerp(0.18, 1, leaderboard).toFixed(3)),
+    leaderboardY: Number(lerp(32, 0, leaderboard).toFixed(2)),
+    storyBeatIndex,
+  };
+}
+
+/**
+ * Computes subtle, restrained scroll-linked atmospheric glass lighting positions
+ * so sections feel visually connected without distracting neon effects.
+ */
+export function computeAmbientState(rawScrollProgress) {
+  const p = clamp01(rawScrollProgress);
+  const wave = Math.sin(p * Math.PI * 2);
+  const cosWave = Math.cos(p * Math.PI);
+
+  return {
+    progress: p,
+    orb1X: Number((wave * 9).toFixed(2)),
+    orb1Y: Number(lerp(-4, 18, p).toFixed(2)),
+    orb2X: Number((-wave * 11).toFixed(2)),
+    orb2Y: Number(lerp(14, -14, p).toFixed(2)),
+    orb3X: Number((cosWave * 8).toFixed(2)),
+    orb3Y: Number(lerp(10, -18, p).toFixed(2)),
+    depthShiftY: Number(lerp(0, -48, p).toFixed(2)),
+  };
+}
+
+/**
+ * Computes restrained magnetic attraction offset for primary CTA buttons.
+ */
+export function computeMagneticOffset(normX, normY, maxShift = 6) {
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+  const nx = clamp(Number(normX) || 0, -1, 1);
+  const ny = clamp(Number(normY) || 0, -1, 1);
+  const limit = Math.max(0, Number(maxShift) || 0);
+  return {
+    tx: Number((nx * limit).toFixed(2)),
+    ty: Number((ny * limit).toFixed(2)),
+  };
+}
+
+/**
+ * Summarizes included vs locked capabilities for any subscription tier id
+ * from COMPARISON_ROWS without inventing any price or entitlement data.
+ */
+export function getTierCapabilitiesSummary(tierId) {
+  const tier = SUBSCRIPTION_TIERS.find((t) => t.id === tierId) || SUBSCRIPTION_TIERS[3];
+  let includedCount = 0;
+  let excludedCount = 0;
+  for (const row of COMPARISON_ROWS) {
+    if (row.tiers[tier.id] === 'included') includedCount += 1;
+    else excludedCount += 1;
+  }
+  return {
+    tierId: tier.id,
+    persianName: tier.persianName,
+    subtitle: tier.subtitle,
+    includedCount,
+    excludedCount,
+    totalCount: COMPARISON_ROWS.length,
+    featured: tier.featured,
+  };
+}
+
 /**
  * Computes restrained pointer-responsive perspective tilt and specular coordinates
- * for the hero dashboard showcase stage.
+ * for the hero dashboard showcase stage and premium glass cards.
  */
 export function computeStageTilt(normX, normY, maxDeg = 3.2) {
   const clamp = (val, min, max) => Math.max(min, Math.min(max, val));

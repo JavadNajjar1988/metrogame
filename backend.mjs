@@ -493,7 +493,7 @@ const routes = {
   },
   'save_layout.php': async form => {
     const raw = form.get('layout');
-    if (typeof raw !== 'string' || !raw.trim() || raw.length > 52000) {
+    if (typeof raw !== 'string' || !raw.trim() || raw.length > 180000) {
       invalid('دادهٔ چیدمان سه‌بعدی معتبر نیست.');
     }
     let parsed;
@@ -502,13 +502,54 @@ const routes = {
     } catch {
       invalid('قالب JSON چیدمان معتبر نیست.');
     }
-    if (!parsed || typeof parsed !== 'object' || !parsed.room || !Array.isArray(parsed.items) || parsed.items.length > 160) {
+    const hasFloors = Array.isArray(parsed?.floors) && parsed.floors.length > 0 && parsed.floors.length <= 4;
+    const hasLegacy = parsed && typeof parsed === 'object' && parsed.room && Array.isArray(parsed.items);
+    if (!parsed || typeof parsed !== 'object' || (!hasFloors && !hasLegacy)) {
       invalid('ساختار چیدمان سه‌بعدی معتبر نیست.');
     }
+
+    if (hasFloors) {
+      const sanitizedFloors = parsed.floors.map((fl, idx) => ({
+        id: String(fl?.id || `floor-${idx}`).slice(0, 48),
+        name: String(fl?.name || `طبقه ${idx + 1}`).slice(0, 32),
+        level: idx,
+        room: fl?.room || parsed.room || {},
+        walls: Array.isArray(fl?.walls) ? fl.walls.slice(0, 80) : [],
+        items: Array.isArray(fl?.items) ? fl.items.slice(0, 160) : [],
+      }));
+      const activeIdx = Math.max(0, Math.min(sanitizedFloors.length - 1, Math.floor(Number(parsed.activeFloorIndex) || 0)));
+      const active = sanitizedFloors[activeIdx];
+      await save('gamenet_layout.json', {
+        version: 2,
+        updatedAt: new Date().toISOString(),
+        activeFloorIndex: activeIdx,
+        floors: sanitizedFloors,
+        room: active.room,
+        walls: active.walls,
+        items: active.items,
+      });
+      return ok;
+    }
+
+    if (parsed.items.length > 160) {
+      invalid('تعداد آیتم‌های چیدمان بیش از حد مجاز است.');
+    }
     await save('gamenet_layout.json', {
-      version: 1,
+      version: 2,
       updatedAt: new Date().toISOString(),
+      activeFloorIndex: 0,
+      floors: [
+        {
+          id: 'floor-0',
+          name: 'طبقه همکف',
+          level: 0,
+          room: parsed.room,
+          walls: Array.isArray(parsed.walls) ? parsed.walls.slice(0, 80) : [],
+          items: parsed.items,
+        },
+      ],
       room: parsed.room,
+      walls: Array.isArray(parsed.walls) ? parsed.walls.slice(0, 80) : [],
       items: parsed.items,
     });
     return ok;

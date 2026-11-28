@@ -1,6 +1,6 @@
 /**
  * Pure oval stadium track geometry, runner speed physics, lane de-collision,
- * and live session cost calculations for the Game District Home Arena Track.
+ * and live session cost calculations for the مترو گیم Home Arena Track.
  * Zero DOM dependencies — 100% unit-testable via node:test.
  */
 

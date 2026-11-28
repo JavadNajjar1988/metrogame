@@ -3,7 +3,9 @@ import assert from 'node:assert/strict';
 import {
   ITEM_CATALOG,
   WALL_FINISHES,
+  WALL_STYLES,
   FLOOR_FINISHES,
+  FLOOR_LIMITS,
   LIGHTING_MOODS,
   LED_COLORS,
   BILLIARD_FELT_VARIANTS,
@@ -13,8 +15,17 @@ import {
   getRotatedFootprint,
   clampItemToRoom,
   checkItemCollision,
+  checkItemWallCollision,
+  snapWallEndpoint,
+  createWallSegment,
+  getWallMetrics,
   createStarterLayout,
   sanitizeLayout,
+  addFloorToLayout,
+  removeFloorFromLayout,
+  setActiveFloorInLayout,
+  renameFloorInLayout,
+  getFloorElevationY,
   assignNextStationNumber,
   summarizeLayoutStats,
   snapToGrid,
@@ -50,9 +61,7 @@ test('clampItemToRoom keeps furniture strictly within room walls and snaps to gr
     room,
     0.5
   );
-  // Half room width = 5 - 0.16 = 4.84; half billiard width = 1.3 -> maxX = 3.54
   assert.ok(clamped.x <= 3.55 && clamped.x >= 3.5);
-  // Half room depth = 4 - 0.16 = 3.84; half billiard depth = 0.725 -> minZ = -3.115
   assert.ok(clamped.z >= -3.12 && clamped.z <= -3.1);
   assert.equal(snapToGrid(1.26, 0.5), 1.5);
   assert.equal(snapToGrid(1.24, 0.5), 1);
@@ -69,8 +78,102 @@ test('checkItemCollision detects overlaps and respects ignoreId and spacing', ()
   assert.equal(checkItemCollision({ id: 'new', type: 'gaming-chair', x: 0, z: 0.8, rotation: 0 }, existing), false);
 });
 
-test('expanded catalogs include wallpapers, multiple billiard styles, decorations, and collision-free starter layouts', () => {
-  assert.ok(ITEM_CATALOG.length >= 24);
+test('interior wall drawing snaps cleanly, rejects tiny walls, and collides with furniture while allowing doorway opening', () => {
+  const room = { width: 14, depth: 10, height: 3.4 };
+  assert.equal(WALL_STYLES.length, 4);
+
+  // Ortho snap pulls nearly-horizontal line to exact horizontal
+  const snappedH = snapWallEndpoint(-2, -1, 3.1, -0.7, room, { gridStep: 0.5, orthoSnap: true });
+  assert.equal(snappedH.z, -1);
+  assert.equal(snappedH.x, 3);
+
+  // Rejects degenerate short segments (< 0.45m)
+  assert.equal(createWallSegment(0, 0, 0.2, 0.1, room, 'full'), null);
+
+  // Creates valid wall and computes metrics
+  const wall = createWallSegment(-3, 0, 3, 0, room, 'full', 'w-1');
+  assert.ok(wall);
+  assert.equal(getWallMetrics(wall).length, 6);
+
+  // Furniture placed across solid wall collides
+  const pcOnWall = { id: 'p1', type: 'pc-station', x: 0, z: 0, rotation: 0 };
+  assert.equal(checkItemWallCollision(pcOnWall, [wall]), true);
+
+  // Furniture safely beside wall does not collide
+  const pcClear = { id: 'p2', type: 'pc-station', x: 0, z: 1.5, rotation: 0 };
+  assert.equal(checkItemWallCollision(pcClear, [wall]), false);
+
+  // Doorway wall allows small item in center opening but blocks solid side jambs
+  const doorWall = createWallSegment(-3, 0, 3, 0, room, 'doorway', 'w-door');
+  const plantInOpening = { id: 'pl-1', type: 'plant-pot', x: 0, z: 0, rotation: 0 };
+  const plantOnJamb = { id: 'pl-2', type: 'plant-pot', x: -2, z: 0, rotation: 0 };
+  assert.equal(checkItemWallCollision(plantInOpening, [doorWall]), false);
+  assert.equal(checkItemWallCollision(plantOnJamb, [doorWall]), true);
+});
+
+test('multi-floor management supports adding up to maxFloors, elevation stacking, renaming, removing, and cross-floor station sync', () => {
+  const scratch = createStarterLayout('empty');
+  assert.equal(scratch.version, 2);
+  assert.equal(scratch.floors.length, 1);
+  assert.equal(scratch.items.length, 0);
+  assert.equal(scratch.walls.length, 0);
+
+  // Place station #1 on ground floor
+  scratch.floors[0].items.push({ id: 'g-1', type: 'ps5-lounge', x: -2, z: -2, rotation: 0, tableNumber: '1' });
+
+  // Add floor 1
+  const add1 = addFloorToLayout(scratch);
+  assert.equal(add1.ok, true);
+  assert.equal(add1.layout.floors.length, 2);
+  assert.equal(add1.layout.activeFloorIndex, 1);
+  assert.equal(add1.layout.floors[1].name, 'طبقه اول');
+
+  // Elevation of floor 1 = ground height + slabThickness
+  const expectedElev1 = Number((3.4 + FLOOR_LIMITS.slabThickness).toFixed(3));
+  assert.equal(getFloorElevationY(add1.layout.floors, 1), expectedElev1);
+
+  // Next auto station number scans ALL floors so floor 1 gets station #2
+  const nextNum = assignNextStationNumber(add1.layout, 'pc-station');
+  assert.equal(nextNum, '2');
+  add1.layout.floors[1].items.push({ id: 'f1-2', type: 'pc-station', x: 1, z: 1, rotation: 0, tableNumber: nextNum });
+
+  // Rename floor 1
+  renameFloorInLayout(add1.layout, 1, 'طبقه VIP');
+  assert.equal(add1.layout.floors[1].name, 'طبقه VIP');
+
+  // Stations extracted across ALL floors with floor labels
+  const allStations = extract3DStations(add1.layout);
+  assert.equal(allStations.length, 2);
+  assert.equal(allStations[0].tableNumber, '1');
+  assert.equal(allStations[0].floorIndex, 0);
+  assert.equal(allStations[1].tableNumber, '2');
+  assert.equal(allStations[1].floorName, 'طبقه VIP');
+
+  // Add up to maxFloors (4) and ensure 5th is rejected
+  const add2 = addFloorToLayout(add1.layout);
+  const add3 = addFloorToLayout(add2.layout);
+  const add4 = addFloorToLayout(add3.layout);
+  assert.equal(add3.ok, true);
+  assert.equal(add3.layout.floors.length, FLOOR_LIMITS.maxFloors);
+  assert.equal(add4.ok, false);
+
+  // Switch active floor and verify top-level aliases sync cleanly
+  setActiveFloorInLayout(add3.layout, 0);
+  assert.equal(add3.layout.items.length, 1);
+  assert.equal(add3.layout.items[0].id, 'g-1');
+
+  // Remove floors cleanly down to 1, and block deleting the last remaining floor
+  let cur = add3.layout;
+  cur = removeFloorFromLayout(cur, 3).layout;
+  cur = removeFloorFromLayout(cur, 2).layout;
+  cur = removeFloorFromLayout(cur, 1).layout;
+  assert.equal(cur.floors.length, 1);
+  assert.equal(removeFloorFromLayout(cur, 0).ok, false);
+});
+
+test('expanded catalogs include wallpapers, staircase, multiple billiard styles, decorations, and collision-free starter layouts', () => {
+  assert.ok(ITEM_CATALOG.length >= 25);
+  assert.ok(ITEM_CATALOG.some((i) => i.type === 'stairs-modern'));
   assert.ok(WALL_FINISHES.length >= 8);
   assert.ok(FLOOR_FINISHES.length >= 6);
   assert.ok(LIGHTING_MOODS.length >= 5);
@@ -104,10 +207,12 @@ test('expanded catalogs include wallpapers, multiple billiard styles, decoration
   assert.equal(clubStations.filter((s) => s.consoleType === 'pool-table').length, 3);
 });
 
-test('sanitizeLayout preserves valid wallpapers, LED colors, billiard variants, and item tints while rejecting invalid values', () => {
+test('sanitizeLayout migrates legacy v1 layouts, defaults null to blank scratch room, and validates fields', () => {
   const fallback = sanitizeLayout(null);
+  assert.equal(fallback.version, 2);
   assert.equal(fallback.room.width, 14);
-  assert.ok(fallback.items.length > 0);
+  assert.equal(fallback.items.length, 0);
+  assert.equal(fallback.floors.length, 1);
 
   const cleaned = sanitizeLayout({
     room: {
@@ -118,6 +223,10 @@ test('sanitizeLayout preserves valid wallpapers, LED colors, billiard variants, 
       mood: 'neon-club',
       ledColor: 'emerald',
     },
+    walls: [
+      { id: 'w1', x1: -2, z1: -2, x2: 2, z2: -2, style: 'glass' },
+      { id: 'w-bad', x1: 0, z1: 0, x2: 0.1, z2: 0, style: 'full' },
+    ],
     items: [
       { id: 'ok', type: 'billiard-pro', x: 0, z: 0, rotation: 90, tableNumber: '12', variant: 'vip-burgundy' },
       { id: 'dec', type: 'neon-sign-stand', x: 2, z: 0, rotation: 0, tint: 'cyan' },
@@ -125,12 +234,15 @@ test('sanitizeLayout preserves valid wallpapers, LED colors, billiard variants, 
       { id: 'bad', type: 'nonexistent-item', x: 0, z: 0, rotation: 0 },
     ],
   });
+  assert.equal(cleaned.version, 2);
   assert.equal(cleaned.room.width, 24);
   assert.equal(cleaned.room.depth, 6);
   assert.equal(cleaned.room.floor, 'slate-tile');
   assert.equal(cleaned.room.wall, 'hex-cyber');
   assert.equal(cleaned.room.mood, 'neon-club');
   assert.equal(cleaned.room.ledColor, 'emerald');
+  assert.equal(cleaned.walls.length, 1);
+  assert.equal(cleaned.walls[0].style, 'glass');
   assert.equal(cleaned.items.length, 3);
   assert.equal(cleaned.items[0].variant, 'vip-burgundy');
   assert.equal(cleaned.items[1].tint, 'cyan');
@@ -143,23 +255,28 @@ test('sanitizeLayout preserves valid wallpapers, LED colors, billiard variants, 
   assert.equal(resolveItemTintHex('crimson', '#7c3aed'), '#e11d48');
 });
 
-test('moveItemToPoint snaps to 3D grid, clamps to room walls, and rejects collisions', () => {
+test('moveItemToPoint snaps to 3D grid, clamps to room walls, and rejects collisions with items or walls', () => {
   const room = { width: 12, depth: 10, height: 3.4 };
   const stationA = { id: 'st-1', type: 'pc-station', x: -2, z: -2, rotation: 0, tableNumber: '1' };
   const stationB = { id: 'st-2', type: 'pc-station', x: 2, z: 2, rotation: 0, tableNumber: '2' };
   const items = [stationA, stationB];
+  const walls = [createWallSegment(-4, 0, 4, 0, room, 'full', 'w-mid')];
 
-  const moved = moveItemToPoint(stationA, 0.24, -0.76, room, items, 0.5);
+  const moved = moveItemToPoint(stationA, 0.24, -1.76, room, items, 0.5, walls);
   assert.equal(moved.ok, true);
   assert.equal(moved.collides, false);
   assert.equal(moved.item.x, 0);
-  assert.equal(moved.item.z, -1);
+  assert.equal(moved.item.z, -2);
 
-  const blocked = moveItemToPoint(stationA, 2.1, 2.0, room, items, 0.5);
-  assert.equal(blocked.ok, false);
-  assert.equal(blocked.collides, true);
+  const blockedByItem = moveItemToPoint(stationA, 2.1, 2.0, room, items, 0.5, walls);
+  assert.equal(blockedByItem.ok, false);
+  assert.equal(blockedByItem.collides, true);
 
-  const clamped = moveItemToPoint(stationA, -50, -50, room, items, 0.5);
+  const blockedByWall = moveItemToPoint(stationA, 0, 0, room, items, 0.5, walls);
+  assert.equal(blockedByWall.ok, false);
+  assert.equal(blockedByWall.collides, true);
+
+  const clamped = moveItemToPoint(stationA, -50, -50, room, items, 0.5, walls);
   assert.equal(clamped.ok, true);
   assert.ok(clamped.item.x >= -5.2 && clamped.item.z >= -4.5);
 });

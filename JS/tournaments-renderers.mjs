@@ -181,7 +181,7 @@ export function renderOverviewDashboard({ tournaments, challenges, directChallen
       <article class="trn-workflow-card trn-glass-surface">
         <span class="trn-workflow-step">۰۲</span>
         <h4>رتبه‌بندی گیم‌نت‌ها</h4>
-        <p>${localRankRow ? `جایگاه فعلی Game District: رتبه ${fmt.num(localRankRow.rank)} با ${fmt.num(localRankRow.points)} امتیاز رسمی.` : 'جایگاه و درصد برد گیم‌نت‌های عضو شبکه را در همه رشته‌ها بررسی کنید.'}</p>
+        <p>${localRankRow ? `جایگاه فعلی مترو گیم: رتبه ${fmt.num(localRankRow.rank)} با ${fmt.num(localRankRow.points)} امتیاز رسمی.` : 'جایگاه و درصد برد گیم‌نت‌های عضو شبکه را در همه رشته‌ها بررسی کنید.'}</p>
         <button type="button" class="btn mg-btn trn-ghost-btn mg-btn-sm" data-trn-jump-tab="leaderboard">مشاهده رتبه‌بندی</button>
       </article>
       <article class="trn-workflow-card trn-glass-surface">
@@ -343,7 +343,7 @@ export function renderChallengeCard(ch, fmt) {
           ch.status === 'formed' && ch.formedTournamentId
             ? `<button type="button" class="btn mg-btn mg-btn-primary mg-btn-sm" data-trn-open-detail="${escapeHtml(ch.formedTournamentId)}">مشاهده جدول تورنومنت تشکیل‌شده</button>`
             : !localJoined && !isFull
-              ? `<button type="button" class="btn mg-btn mg-btn-primary mg-btn-sm" data-trn-open-accept="${escapeHtml(ch.id)}">پذیرش چالش توسط Game District</button>`
+              ? `<button type="button" class="btn mg-btn mg-btn-primary mg-btn-sm" data-trn-open-accept="${escapeHtml(ch.id)}">پذیرش چالش توسط مترو گیم</button>`
               : !isFull
                 ? `<button type="button" class="btn mg-btn trn-ghost-btn mg-btn-sm" data-trn-open-accept-partner="${escapeHtml(ch.id)}">ثبت پذیرش گیم‌نت همکار دیگر</button>`
                 : ''
